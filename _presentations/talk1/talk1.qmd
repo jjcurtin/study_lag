@@ -1,0 +1,192 @@
+---
+title: "Everyone Is Talking About This!!!" 
+author: "John J. Curtin, Ph.D."
+institute: "University of Wisconsin-Madison"
+
+title-slide-attributes:
+  data-background-image: https://github.com/jjcurtin/lectures/blob/main/images/smartphone_know_you.png?raw=true
+  data-background-size: 35%
+  data-background-repeat: no
+  data-background-position: left 10% bottom 10%
+
+format: 
+  revealjs:
+    scrollable: true
+    css: arc.css
+  
+fig-cap-location: top
+---
+
+## Need is High and Unmet
+
+
+- In 2019, [52 million]{style="color: red;"} Americans had an active mental illness
+  - More than half did not receive any [treatment]{style="color: red;"}
+
+
+
+::: {.notes}
+We have a mental health crisis in the U.S. and it is a crisis of **unmet** high need because our delivery of mental healthcare is deeply flawed. 
+
+In 2019, **more than half of the 52 million Americans** with an active mental illness did not receive any treatment. **More than half**!
+:::
+
+
+
+## Need is High and Unmet
+
+- [In 2019, 52 million Americans had an active mental illness]{style="color: grey;"}
+  - [More than half did not receive any treatment]{style="color: grey;"}
+
+
+- [20 million]{style="color: red;"} adults had an active substance use disorder
+  - 9 out of 10 did not receive any treatment
+
+
+::: {.notes}
+
+
+And for the 20 million adults suffering with a substance use disorder, it was worse still.
+
+**9 out of 10 without any treatment**
+:::
+
+
+
+## Need is High and Unmet
+
+- [In 2019, 52 million Americans had an active mental illness]{style="color: grey;"}
+  - [More than half did not receive any treatment]{style="color: grey;"}
+
+- [20 million adults had an active substance use disorder]{style="color: grey;"}
+  - [9 out of 10 did not receive any treatment]{style="color: grey;"}
+
+- Large treatment disparities exist by race, ethnicity, geography, and income
+
+
+
+::: {.notes}
+Our failure to treat is even more troubling for vulnerable groups.  Black and LatinX adults receive mental healthcare services at only half the rate of whites.  
+
+And similar mental healthcare disparities exist for people living in rural communities and for those with lower incomes.
+:::
+
+## Need is High and Unmet
+
+- Failure to treat is not surprising given many treatment barriers:
+  - Access
+  - Availability
+  - Affordability
+  - Acceptability
+
+
+::: {.notes}
+Our failure to treat is, unfortunately, not surprising.  There are many well known barriers to receiving traditional mental healthcare.
+
+These include problems with access that are particularly limiting for people living in rural communities
+
+Problems with availability
+
+Treatment costs are often prohibitive for those without health insurance 
+
+and stigma and related issues make traditional treatments for mental illness less acceptable to some patients.  
+:::
+
+## Digital Therapeutics (DTx)
+
+Digital therapeutics are smartphone "apps" that are designed to prevent, manage, or treat disease, including mental illness. 
+
+
+Can augment mental health services to address barriers
+
+- Accessible everywhere
+- Available 24/7
+- Highly scalable (affordable?)
+
+::: {.notes}
+Fortunately, digital therapeutics are now being developed and used by patients to address many of these treatment barriers.
+
+For those of you that are not yet familiar with this treatment modality, digital therapeutics are smartphone "apps" that are designed to prevent, manage, or treat disease, including substance use disorders and other mental illness. 
+
+These digital therapeutics can be combined with traditional treatments to reduce barriers because they are
+
+- Accessible everywhere
+
+- Available everyday, 24/7
+
+- and highlighly scalable, which may lower costs
+:::
+
+
+## Lapse Prediction for AUD
+:::: {.columns}
+
+::: {.column width="60%"}
+- 151 patients with AUD
+- Early in recovery (1-8 weeks)
+- Committed to abstinence throughout study
+- Followed for up to 3 months
+- Collected active and passive personal sensing data streams
+:::
+
+
+::: {.column width="40%"}
+![risk1_pis.png](https://github.com/jjcurtin/lectures/blob/main/images/risk1_pis.png?raw=true)\    
+![niaaa_logo.png](https://github.com/jjcurtin/lectures/blob/main/images/niaaa_logo.png?raw=true)\    
+
+
+:::
+
+
+::::
+[GOAL:]{style="color: red;"} Develop a temporally precise lapse monitoring (prediction) system for patients with AUD
+
+
+
+
+::: {.notes}
+So let me transition now to describing how we are taking the first baby steps toward developing smart digital therapeutics for SUD
+
+We have recently completed a NIAAA funded project where we collected data from 151 participants who were in early recovery from a moderate to severe alcohol use disorder.  
+
+These participants were committed to abstinence at the start of the study and we followed them for up to 3 months, collecting a variety of active and passive personal sensing data streams.
+
+Our first goal with this grant was to develop machine learning algorithms that can generate temporally precise predictions about when future lapses back to alcohol use will occur for patients with AUD.
+
+:::
+
+## 4x Daily EMA
+
+
+:::: {.columns}
+
+::: {.column width="60%"}
+![risk1_ema_questions.png](https://github.com/jjcurtin/lectures/blob/main/images/risk1_ema_questions.png?raw=true){.absolute width="60%" top="15%" height="auto"}\    
+
+:::
+::: {.column width="30%"}
+
+- Current
+  - Craving
+  - Affect
+  - Risky situations
+  - Stressful events
+  - Pleasant events
+
+- Future
+  - Risky situations
+  - Stressful events
+  - Confidence
+:::
+::::
+
+::: {.notes}
+So let me tell you a bit more about the 4x daily EMA we collected.  
+
+On each EMA, participants reported the date and time of any lapses back to alcohol use that they hadn’t previously reported. 
+
+All of the EMAs also asked them about their current craving, affective valence and arousal, recent risky situations, and recent stressful and pleasant events since their last EMA.
+
+On the first EMA each day, they also reported any future risky situations and stressful events that they expected in the next week and their confidence that they would remain abstinent. 
+:::
+

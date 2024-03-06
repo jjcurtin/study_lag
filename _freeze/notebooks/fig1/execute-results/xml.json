@@ -1,0 +1,17 @@
+{
+  "hash": "90aa7fd35f61e80fc109df76b89cd87e",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: Figure 1\nauthor: John Curtin\n---\n\n::: {.cell}\n\n```{.r .cell-code .hidden}\n#| message: false\n#| warning: false\n\nlibrary(tidyverse)\n```\n\n::: {.cell-output .cell-output-stderr .hidden}\n\n```\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors\n```\n\n\n:::\n\n```{.r .cell-code .hidden}\n#| message: false\n#| warning: false\n\ntheme_set(theme_classic())\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code .hidden}\n# Create data\ndata <- tibble(\n  name = c(\"A\",\"B\",\"C\",\"D\",\"E\") ,  \n  value = c(3,12,5,18,45)\n  )\n```\n:::\n\n::: {#cell-fig-1 .cell}\n\n```{.r .cell-code .hidden}\n#| label: fig-1\n#| fig-cap: \"A Basic Barplot Figure\"\n\nggplot(data, aes(x=name, y=value)) + \n  geom_bar(stat = \"identity\")\n```\n\n::: {.cell-output-display}\n![A Basic Barplot Figure](fig1_files/figure-jats/fig-1-1.png){#fig-1}\n:::\n:::",
+    "supporting": [
+      "fig1_files/figure-jats"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": null,
+    "postProcess": false
+  }
+}

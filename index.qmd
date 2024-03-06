@@ -1,0 +1,130 @@
+---
+title: A Super Cool Study 
+author:
+  - name: Josephine Student 
+    orcid: 0000-0002-7859-8394
+    corresponding: false
+    roles: []
+    affiliations:
+      - Department of Psychology, University of Wisconsin-Madison
+  - name: John J. Curtin 
+    orcid: 0000-0002-3286-938X
+    corresponding: true
+    email: jjcurtin@wisc.edu
+    roles:
+      - Investigation
+      - Project administration
+      - Software
+      - Visualization
+    affiliations:
+      - Department of Psychology, University of Wisconsin-Madison 
+keywords:
+  - Substance use disorders
+  - Precision mental health 
+abstract: |
+  This study found some pretty cool results that have both high impact and important clinical implications.  For example ...
+plain-language-summary: |
+  The ARC produces some of the best science around! ...
+key-points:
+  - Take away point 1 
+  - Take away point 2
+date: last-modified
+bibliography: references.bib
+citation:
+  container-title: Journal of Important Findings 
+number-sections: false 
+---
+
+## Introduction {#sec-intro}
+
+You can write your text using markdown.  
+
+Top level section headings use ##
+
+Notice use of curly braces to label a section if you want to later cross-reference to it.  #sec-  is required as part of the label
+
+
+### Sub-heading Demo
+
+You can use sub-headings in your paper as well
+
+### Symbols and Equations
+
+You can use quarto inline or display math equations as needed.  Quarto provides [details](https://quarto.org/docs/authoring/markdown-basics.html#equations) on the use of these equations.
+
+For example $x$ and $y$ are two variables. And here is an important formula:
+
+$$
+p(x) = \frac{e^{-\lambda} \lambda^{x}}{x !}
+$$ 
+
+### Tables
+
+Tables are generally created and output from notebooks in the /notebooks folder.  You can then embed these tables in your manuscript.
+<!--Demo use of embeded table from tables.qmd notebook-->
+
+Alternatively, this is an example of a simple table that is hard-coded using markdown table format.  We don't recommend this for tables built from data. Tables values should come directly from data so they don't need to be typed in and will update if your data change.  However, you may have other uses for simple tables where this method is helpful.
+
+| Name                | Year |
+|---------------------|------|
+| Current             | 2021 |
+| Teneguía            | 1971 |
+| Nambroque           | 1949 |
+| El Charco           | 1712 |
+| Volcán San Antonio  | 1677 |
+| Volcán San Martin   | 1646 |
+| Tajuya near El Paso | 1585 |
+| Montaña Quemada     | 1492 |
+
+: Recent historic eruptions on La Palma {#tbl-history}
+
+### Figures
+
+Figures are also generally created in separate notebooks and embedded into your manuscript.
+
+{{< embed notebooks/fig1.qmd#fig-1 >}}
+
+
+We can also insert image files directly into our manuscript using images that are saved in the /images folder
+
+![Map of La Palma](images/la-palma-map.png){#fig-map}
+
+Alternatively, these images can be saved in a repository that is available via the web  
+
+<!--insert demo of an image from my lectures repo-->
+
+
+
+
+### References
+
+We can use cite relevant research in multiple formats.  The two most common are: 
+
+- @marrero2019 concluded something.  
+- These are the conclusions[@marrero2019].
+
+Article references are stored in a .bib file using betterbibtex (BBT) format.  We create these references in Zotero collections.
+
+You can also reference other sections in the paper (e.g., Methods are described in @sec-methods)
+
+You can reference them elsewhere using the @ symbol.   Here is a reference to @fig-1
+
+We can also reference this type of figure elsewhere if we want (@fig-map).
+
+
+## Methods {#sec-methods}
+
+
+
+## Results {#sec-results}
+
+
+We can also print results (HOW???)
+`r summary(m)`
+
+## Discussion {#sec-discussion}
+
+## References {.unnumbered}
+
+::: {#refs}
+:::

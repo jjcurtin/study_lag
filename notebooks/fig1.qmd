@@ -1,0 +1,29 @@
+---
+title: Figure 1
+author: John Curtin
+---
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+theme_set(theme_classic())
+```
+
+```{r}
+
+# Create data
+data <- tibble(
+  name = c("A","B","C","D","E") ,  
+  value = c(3,12,5,18,45)
+  )
+```
+
+```{r}
+#| label: fig-1
+#| fig-cap: "A Basic Barplot Figure"
+
+ggplot(data, aes(x=name, y=value)) + 
+  geom_bar(stat = "identity")
+```
