@@ -1,0 +1,202 @@
+---
+title: "Summarizes `r params$model` `r params$algorithms` models of inner loops for `r params$study` study"
+author: "Kendra Wyant"
+date: "March 24, 2024"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+params:
+  study: "lag"
+  version: "v2"
+  algorithms: "xgboost"   # "all" or name of specific algorithm
+  model: "main" # "main" or "baseline"
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+### Set Up Environment
+
+```{r}
+study <- params$study
+version <- params$version
+algorithms <- params$algorithms
+model <- params$model
+```
+
+```{r}
+#| message: false
+#| warning: false
+
+options(conflicts.policy = "depends.ok")
+```
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_eda.R?raw=true")
+theme_set(theme_classic()) 
+```
+
+
+```{r}
+#| message: false
+
+source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
+
+path_input <- format_path(str_c("studydata/risk/chtc/", study))
+path_models <- format_path(str_c("studydata/risk/models/", study))
+```
+
+
+### Read results.csv files
+
+Set up object for results
+
+```{r}
+results_all <- NULL
+```
+
+Get batch_names
+
+```{r}
+batch_names <- list.dirs(path_input, full.names = FALSE, recursive = FALSE)
+  
+if (algorithms == "all") {
+  batch_names <- batch_names[str_detect(batch_names, "train") & 
+                               str_detect(batch_names, version)]
+  if (model == "main") {
+    batch_names <- batch_names[!str_detect(batch_names, "baseline")]
+  }
+} else {
+    batch_names <- batch_names[str_detect(batch_names, "train") & 
+                               str_detect(batch_names, version) &
+                               str_detect(batch_names, algorithms)]
+  if (model == "main") {
+    batch_names <- batch_names[!str_detect(batch_names, "baseline")]
+  }
+}  
+ 
+
+# tmp filter out 336 lag
+batch_names <- batch_names[!str_detect(batch_names, "336")]
+
+batch_names
+```
+
+Loop over batch_names to read in files and perform checks
+
+```{r}
+
+for (batch_name in batch_names) {
+  message("Processing Batch: ", batch_name)
+  
+  lag <- str_remove(str_split(batch_name, "_")[[1]][4], "lag")
+  
+  # read in configs
+  configs <- read_csv(here::here(path_input, batch_name, "input", "configs.csv"), 
+                      show_col_types = FALSE)
+  (n_configs <- nrow(configs))
+  
+  # read in results
+  results_batch <- read_csv(here::here(path_input, batch_name, "output", 
+                                      "batch_results.csv"), 
+                            show_col_types = FALSE) |> 
+    mutate(lag = lag)
+  (n_results_batch <- nrow(results_batch))
+  
+  # Check counts of results files
+  if (!(n_configs == n_results_batch)) {
+    stop(n_configs, " configs != ", n_results_batch, " results files!")
+  } else {
+    message(n_results_batch, " results files detected.  Correct!")
+  }
+  
+  # Check col count
+  if (!(ncol(results_batch) == 18)) {
+    stop(ncol(results_batch), " columns != 18")
+  } else {
+    message(ncol(results_batch), " columns detected.  Correct!\n")
+  }
+
+  # Add batch to all metrics
+  results_all <- results_all %>% 
+    bind_rows(results_batch)
+}
+```
+
+### Wrap up processing of raw metrics
+
+Check for duplicates
+```{r}
+n_results <- nrow(results_all)
+
+results_all <- results_all |> 
+  distinct(split_num, outer_split_num, inner_split_num, algorithm, feature_set,
+           hp1, hp2, hp3, resample, lag, .keep_all = TRUE)
+
+if (nrow(results_all) != n_results) {
+  stop(n_results - nrow(results_all), " duplicates detected")
+}
+```
+
+Final checks across all batches
+
+Check 300 performance metrics for all configurations
+```{r}
+results_all |> 
+  group_by(algorithm, hp1, hp2, hp3, resample, lag) |> 
+  count() |> 
+  arrange(n) |> 
+  head(n = 50)
+```
+
+
+### Median metrics across inner folds for model configurations
+
+Inner loop performance of best config.
+This median performance for each configuration over inner x outer folds (e.g., 300 folds for 1x10 inner and 3x10 outer). It is what we would get (essentially) if we just did simple k-fold but with LOTs of folds
+
+```{r}
+metrics_avg <- results_all %>% 
+  group_by(algorithm, feature_set, hp1, hp2, hp3, resample, lag) %>% 
+   summarize(across(c(accuracy, bal_accuracy, roc_auc, sens, spec, ppv, npv),
+                    median),
+             n_jobs = n(), .groups = "drop") %>% 
+  relocate(n_jobs) %>% 
+  arrange(desc(roc_auc)) |> 
+  ungroup()
+
+best_configs <- metrics_avg |> 
+  group_by(lag) |> 
+  slice(1) |> 
+  print()
+```
+
+Performance metric plot across all inner folds
+
+```{r}
+for (i in 1:nrow(best_configs)) {
+  best_config <- best_configs[i,]
+  plot <- results_all |> 
+    filter(algorithm == best_config$algorithm,
+           feature_set == best_config$feature_set,
+           hp1 == best_config$hp1,
+           hp2 == best_config$hp2,
+           hp3 == best_config$hp3,
+           resample == best_config$resample) |> 
+    ggplot(aes(x = roc_auc)) +
+    geom_histogram(bins = 10) +
+    labs(title = str_c(best_config$lag, " lag"))
+  print(plot)
+}
+
+```
