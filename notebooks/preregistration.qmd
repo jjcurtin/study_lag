@@ -1,0 +1,67 @@
+---
+title: "Preregistration: Lagged predictions of next week alcohol use" 
+author: "Kendra Wyant"
+date: "`r March 21, 2024"
+format: 
+  html: 
+    embed-resources: true
+    toc: true 
+    toc_depth: 4
+editor_options: 
+  chunk_output_type: console
+---
+
+
+### Prior Work
+
+In a previous manuscript ([Wyant et al., in press](https://osf.io/preprints/psyarxiv/cgsf7)), we demonstrated that it was possible to predict next week, next day, and next hour alcohol use with high sensitivity and specificity (auROCs of .89, .90, and .93 respectively).
+
+
+### Current Study
+
+#### Rationale
+
+
+
+#### Methods
+
+##### Lapse Labels
+As in our previous work we create lapse labels on an hour-by-hour rolling basis. We made two deviations from our prior work. 
+
+1. Instead of excluding `no lapse` labels within 24 hours of a lapse, we used a less conservative buffer of 6 hours. Inner loop performance metrics for this new buffer for `no lapse` sampling suggests similar performance to our previous 24 hour buffer (.89 vs. .90 auROC respectively).
+
+2. The first possible label for each participant starts 24 hours + lag time (in hours) after their study start date. For example, the first label for 24 hour lagged predictions would be 48 hours after participants start date.
+
+##### Feature Engineering
+We followed the same feature engineering steps as our previous work. However, we also created an additional four feature sets for our lagged prediction models. The last EMA data used for feature engineering in these models were one day, three days, one week, or two weeks prior to the label. 
+
+##### Modeling Decisions
+We will replicate our initial modeling decisions made in our prior manuscript, including using nested k-fold (3 x 10 outer, 1 x 10 inner) cross-validation and XgBoost as the statistical algorithm. 
+
+*Decide about additional algorithms?*
+
+### Progress at Time of Preregistration
+Labels and features for all five models (no lag, one day, three day, one week, or two week lagged predictions) are created. 
+
+The inner loops of our nested k-fold cross-validation have been run for all five models. These folds serve as validation sets for selecting the optimal hyperparameters and resampling methods.
+
+*No performance metrics have been calculated in the 30 outer folds (i.e., our test sets for model evaluation).*  
+
+*No model comparisons (proposed or otherwise) have been done.*   
+
+
+### Proposed Data Analysis Plan
+
+#### Model Evaluation
+
+
+#### Model Comparisons
+
+
+
+
+
+
+
+
+
