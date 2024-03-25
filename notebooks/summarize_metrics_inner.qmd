@@ -1,5 +1,5 @@
 ---
-title: "Summarizes `r params$model` `r params$algorithms` models of inner loops for `r params$study` study"
+title: "Summarizes inner loop performance for xgboost models in lag study"
 author: "Kendra Wyant"
 date: "March 24, 2024"
 output: 
@@ -9,11 +9,6 @@ output:
 format:
   html:
     embed-resources: true
-params:
-  study: "lag"
-  version: "v2"
-  algorithms: "xgboost"   # "all" or name of specific algorithm
-  model: "main" # "main" or "baseline"
 editor_options: 
   chunk_output_type: console
 ---
@@ -23,15 +18,17 @@ editor_options:
 ### Set Up Environment
 
 ```{r}
-study <- params$study
-version <- params$version
-algorithms <- params$algorithms
-model <- params$model
+#| include: false
+
+version <- "v2"
+algorithms <- "xgboost"
+model <- "main"
 ```
 
 ```{r}
 #| message: false
 #| warning: false
+#| include: false
 
 options(conflicts.policy = "depends.ok")
 ```
@@ -39,21 +36,35 @@ options(conflicts.policy = "depends.ok")
 ```{r}
 #| message: false
 #| warning: false
+#| include: false
 
-library(tidyverse)
+library(tidyverse) |> 
+  suppressPackageStartupMessages()
 
-devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_eda.R?raw=true")
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_eda.R?raw=true") |> 
+  suppressMessages()
 theme_set(theme_classic()) 
 ```
 
 
 ```{r}
 #| message: false
+#| include: false
 
-source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
+source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true") |> 
+  suppressMessages()
 
-path_input <- format_path(str_c("studydata/risk/chtc/", study))
-path_models <- format_path(str_c("studydata/risk/models/", study))
+path_input <- format_path(str_c("studydata/risk/chtc/lag/"))
+path_models <- format_path(str_c("studydata/risk/models/lag/"))
+```
+
+```{r}
+#| include: false
+
+knitr::opts_chunk$set(attr.output='style="max-height: 500px;"')
+
+options(tibble.width = Inf)
+options(tibble.print_max = Inf)
 ```
 
 
@@ -84,10 +95,6 @@ if (algorithms == "all") {
     batch_names <- batch_names[!str_detect(batch_names, "baseline")]
   }
 }  
- 
-
-# tmp filter out 336 lag
-batch_names <- batch_names[!str_detect(batch_names, "336")]
 
 batch_names
 ```
@@ -178,6 +185,7 @@ metrics_avg <- results_all %>%
 best_configs <- metrics_avg |> 
   group_by(lag) |> 
   slice(1) |> 
+  arrange(as.numeric(lag)) |> 
   print()
 ```
 
