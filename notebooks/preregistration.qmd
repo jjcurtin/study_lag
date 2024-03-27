@@ -74,6 +74,7 @@ inner_lag <- read_csv(file.path(path_models_lag,
 
 - additional candidate statistical algorithms (glmnet, rda and neural nets)
 - Will need to change importance indices methods to use a model agnostic method for calculating shapley values.
+- Create simulated data to demonstrate code. 
 
 -->
 
