@@ -70,6 +70,13 @@ inner_lag <- read_csv(file.path(path_models_lag,
   select(lag, algorithm, hp1, hp2, hp3, resample, roc_auc)
 ```
 
+<!--Outstanding decisions:
+
+- additional candidate statistical algorithms (glmnet, rda and neural nets)
+- Will need to change importance indices methods to use a model agnostic method for calculating shapley values.
+
+-->
+
 
 ### Prior Work
 
@@ -118,13 +125,16 @@ Labels and features for all five models (no lag and one day, three day, one week
 
 The inner nested k-fold cross-validation loops have been run for XGBoost for all five models. These folds serve as validation sets for selecting the best performing model configuration (i.e., the combination of algorithm, hyperparameter values, and resampling method).   
 
-- *algorithm* - In our prior study, preliminary testing suggested XGBoost was the best model configuration (i.e., it most closely represented the true data generating process) from a handful of algorithms, including Random Forest, K-Nearest Neighbors, and Elastic Net. Thus, in this study our focus has also been on XGBoost (*Make decisions about additional algorithms*).
+- *algorithm* - In our prior study, preliminary testing suggested XGBoost was the best model configuration (i.e., it most closely represented the true data generating process) from a handful of algorithms, including Random Forest, K-Nearest Neighbors, and Elastic Net. Thus, in this study our focus has also been on XGBoost (*Make decisions about additional algorithms [rda and neural network?] and model agnostic method for calculating Shapley values if using additional candidate algorithms*).
 
 - *Hyperparameter values* - Candidate model configurations differed across sensible values for the XGBoost hyperparameters mtry, tree depth, and learning rate. All configurations used 500 trees with early stopping to prevent over-fitting. All other hyperparameters were set to tidymodels package defaults. 
 
 - *Resampling method* - Candidate model configurations also differed on outcome resampling method (i.e., up-sampling and down-sampling of the outcome using majority/no lapse to minority/lapse ratios ranging from 1:1 to 3:1).   
 
-The best model configurations for each model are detailed below.  
+**No performance metrics have been calculated in the 30 outer folds (i.e., our test sets for model evaluation) and no planned data analyses have been done.**     
+
+
+The best model configurations for each model selected from the inner loop validation sets are detailed below.  
 
 ```{r}
 inner_lag |> 
@@ -132,8 +142,6 @@ inner_lag |>
   kableExtra::kable_classic()
 ```
 
-
-**No performance metrics have been calculated in the 30 outer folds (i.e., our test sets for model evaluation) and no planned data analyses have been done.**    
 
 ### Planned Data Analyses
 
