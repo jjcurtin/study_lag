@@ -70,9 +70,7 @@ inner_lag <- read_csv(file.path(path_models_lag,
   select(lag, algorithm, hp1, hp2, hp3, resample, roc_auc)
 ```
 
-<!--Outstanding decisions:
-
-- additional candidate statistical algorithms (glmnet, rda and neural nets)
+<!--Outstanding edits:
 - Will need to change importance indices methods to use a model agnostic method for calculating shapley values.
 - Create simulated data to demonstrate code. 
 
@@ -116,6 +114,8 @@ Following our previous work, features were derived from three data sources:
 #### Modeling Decisions
 Our primary performance metric for model selection and evaluation will be auROC.   
 
+We will consider four candidate statistical algorithms including elastic net, XGBoost, regularized discriminant analysis (rda), and neural networks. This will ensure we are considering algorithms that differ in terms of bias-variance tradeoff (e.g., parametric vs non-parametric) to select the model configuration that most closely represents the true data generating process.   
+
 We will use participant-grouped, nested cross-validation for model training, selection, and evaluation with auROC. We will use 1 repeat of 10-fold cross-validation for the inner loops (i.e., *validation* sets) and 3 repeats of 10-fold cross-validation for the outer loop (i.e., *test* sets).    
 
 Best model configurations will be selected using median auROC across the 10 validation sets.  Final performance evaluation of those best model configurations used median auROC across the 30 test sets.     
@@ -126,9 +126,9 @@ Labels and features for all five models (no lag and one day, three day, one week
 
 The inner nested k-fold cross-validation loops have been run for XGBoost for all five models. These folds serve as validation sets for selecting the best performing model configuration (i.e., the combination of algorithm, hyperparameter values, and resampling method).   
 
-- *algorithm* - In our prior study, preliminary testing suggested XGBoost was the best model configuration (i.e., it most closely represented the true data generating process) from a handful of algorithms, including Random Forest, K-Nearest Neighbors, and Elastic Net. Thus, in this study our focus has also been on XGBoost (*Make decisions about additional algorithms [rda and neural network?] and model agnostic method for calculating Shapley values if using additional candidate algorithms*).
+- *algorithm* - In our prior study, preliminary testing suggested XGBoost was the best model configuration from a handful of algorithms, including Random Forest, K-Nearest Neighbors, and Elastic Net. Thus, we began with training XGBoost model configurations. Next, we will train our remaining candidate statistical algorithms (elastic net, rda, and neural networks).    
 
-- *Hyperparameter values* - Candidate model configurations differed across sensible values for the XGBoost hyperparameters mtry, tree depth, and learning rate. All configurations used 500 trees with early stopping to prevent over-fitting. All other hyperparameters were set to tidymodels package defaults. 
+- *Hyperparameter values* - Candidate XGBoost model configurations differed across sensible values for the XGBoost hyperparameters mtry, tree depth, and learning rate. All configurations used 500 trees with early stopping to prevent over-fitting. All other hyperparameters were set to tidymodels package defaults. Our elastic net model configurations will differ across sensible values for the hyperparameters lambda and alpha. Our rda model configurations will differ across sensible values for the hyperparameters gamma and delta. Our neural network models will differ across sensible values for learning rate and number of hidden layers.
 
 - *Resampling method* - Candidate model configurations also differed on outcome resampling method (i.e., up-sampling and down-sampling of the outcome using majority/no lapse to minority/lapse ratios ranging from 1:1 to 3:1).   
 
@@ -162,6 +162,8 @@ We will perform four Bayesian model comparisons to determine the probability tha
 To determine the probability that the models' performances differed systematically from each other, we will regress the auROCs (logit transformed) from the 30 test sets for each model as a function of contrast (No lag vs. 1 day, 1 day vs. 3 day, 3 day vs. 1 week, 1 week vs. 2 week). We will set two random intercepts: one for the repeat, and another for the fold within repeat (folds are nested within repeats for 3x10-fold cross-validation). We will also report 95% (equal-tailed) Bayesian CIs for the differences in performance associated with the Bayesian comparisons. 
 
 #### Feature Importance Indices
+
+**Update to model agnostic method for calculating Shapley values if using additional candidate algorithms**
 
 We will calculate Shapley values from the 30 test sets using the SHAPforxgboost package to provide an explanation of the importance of categories of features across our five models. The SHAPforxgboost package provides Shapley values in log-odds units for binary classification models. We will average the three Shapley values for each observation for each feature (i.e., across the three repeats) to increase their stability. An inherent property of Shapley values is their additivity, allowing us to combine features into feature categories. We will create separate feature categories for each of the nine EMA questions, the rates of past alcohol use and missing surveys, the time of day and day of the week of the start of the prediction window, and the seven demographic variables included in the models.
 
