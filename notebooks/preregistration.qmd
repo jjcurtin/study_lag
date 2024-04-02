@@ -114,7 +114,7 @@ Following our previous work, features were derived from three data sources:
 #### Modeling Decisions
 Our primary performance metric for model selection and evaluation will be auROC.   
 
-We will consider four candidate statistical algorithms including elastic net, XGBoost, regularized discriminant analysis (rda), and neural networks. This will ensure we are considering algorithms that differ in terms of bias-variance tradeoff (e.g., parametric vs non-parametric) to select the model configuration that most closely represents the true data generating process.   
+We will consider four candidate statistical algorithms including elastic net, XGBoost, regularized discriminant analysis (rda), and single layer neural networks. This will ensure we are considering algorithms that differ in terms of bias-variance tradeoff (e.g., parametric vs non-parametric) to select the model configuration that most closely represents the true data generating process.   
 
 We will use participant-grouped, nested cross-validation for model training, selection, and evaluation with auROC. We will use 1 repeat of 10-fold cross-validation for the inner loops (i.e., *validation* sets) and 3 repeats of 10-fold cross-validation for the outer loop (i.e., *test* sets).    
 
@@ -128,7 +128,7 @@ The inner nested k-fold cross-validation loops have been run for XGBoost for all
 
 - *algorithm* - In our prior study, preliminary testing suggested XGBoost was the best model configuration from a handful of algorithms, including Random Forest, K-Nearest Neighbors, and Elastic Net. Thus, we began with training XGBoost model configurations. Next, we will train our remaining candidate statistical algorithms (elastic net, rda, and neural networks).    
 
-- *Hyperparameter values* - Candidate XGBoost model configurations differed across sensible values for the XGBoost hyperparameters mtry, tree depth, and learning rate. All configurations used 500 trees with early stopping to prevent over-fitting. All other hyperparameters were set to tidymodels package defaults. Our elastic net model configurations will differ across sensible values for the hyperparameters lambda and alpha. Our rda model configurations will differ across sensible values for the hyperparameters gamma and delta. Our neural network models will differ across sensible values for learning rate and number of hidden layers.
+- *Hyperparameter values* - Candidate XGBoost model configurations differed across sensible values for the XGBoost hyperparameters mtry, tree depth, and learning rate. All configurations used 500 trees with early stopping to prevent over-fitting. All other hyperparameters were set to tidymodels package defaults. Our elastic net model configurations will differ across sensible values for the hyperparameters lambda and alpha. Our rda model configurations will differ across sensible values for the hyperparameters gamma and delta. Our neural network models will differ across sensible values for number of hidden units, and regularization values for penalty and dropout. We will also use two activation functions (relu and softmax). All neural network configurations will use the Adam optimizer for tuning learning rate. 
 
 - *Resampling method* - Candidate model configurations also differed on outcome resampling method (i.e., up-sampling and down-sampling of the outcome using majority/no lapse to minority/lapse ratios ranging from 1:1 to 3:1).   
 
