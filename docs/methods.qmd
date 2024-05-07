@@ -1,0 +1,45 @@
+---
+title: "Methods: Lagged predictions of next week alcohol use" 
+author: "Kendra Wyant"
+date: "`r April 2, 2024"
+format: 
+  html: 
+    embed-resources: true
+    toc: true 
+    toc_depth: 4
+editor_options: 
+  chunk_output_type: console
+---
+
+   
+
+
+### Methods
+#### Participants
+We recruited participants in early recovery (1-8 weeks of abstinence) from moderate to severe alcohol use disorder in Madison, Wisconsin, US for a three month longitudinal study. We used data from all participants included in our previous study (N = 151; see [Wyant et al., in press](https://osf.io/preprints/psyarxiv/cgsf7) for enrollment, disposition, and demographic information).   
+
+#### Lapse Labels
+We predicted lapses occurring in one week windows. Predictions were updated hourly. Therefore our models provided hour-by-hour predictions of future probability of an alcohol lapse within a one week window shifted at various time points (i.e., lags) into the future (no lag and one day, three day, one week, or two week lagged predictions). The first prediction for each participant occurs 24 hours + lag time (in hours) after their study start date. For example, the first prediction for the one day lagged prediction model would be 48 hours after participants' start date.
+
+A prediction window was labeled *lapse* if the start date/hour of any drinking episode fell within that window.  A window was labeled *no lapse* if no alcohol use occurred within that window +/- 6 hours.  If no alcohol use occurred within the window but did occur within 6 hours of the start or end of the window, the window was excluded. We had previously used a more conservative fence around lapse exclusions (24 hours vs. 6 hours), however, after re-evaluation we deemed this to be too conservative. Inner loop auROCs of our initial no lag models suggest similar performance to our previous 24 hour fence (`r sprintf("%1.2f", inner_lag |> filter(lag == 0) |> pull(roc_auc))` vs. `r sprintf("%1.2f", val_auc_week |> pull(roc_auc_in) |> median())` auROC respectively).
+
+
+#### Feature Engineering
+Features were calculated using only data collected before the start of each prediction window. For our no lag models this included all data prior to the hour of the start of the prediction window. For our lagged models, the last EMA data used for feature engineering were collected up to one day, three days, one week, or two weeks prior to the start of the prediction window.   
+
+Following our previous work, features were derived from three data sources:    
+
+- *Demographics*: We created quantitative features for age and personal income, and dummy-coded features for sex, race/ethnicity, marital status, education, and employment.    
+
+- *Day and time of prediction window onset*: We created dummy-coded features to indicate time of day and day of week that the prediction window began.    
+
+- *Previous EMA responses*: We created raw EMA and change features for varying scoring epochs before the start of the prediction window for all EMA items (i.e., 12, 24, 48, 72, and 168 hours). Raw features included min, max, and median scores for each EMA question across all EMAs in each epoch for that participant. We calculated change features by subtracting the participant's mean score for each EMA question (using all EMAs collected before the start of the prediction window) from the associated raw feature. We also created raw and change features based on the most recent response for each EMA question and raw and change rate features from previously reported lapses.
+
+#### Modeling Decisions
+Our primary performance metric for model selection and evaluation will be auROC.   
+
+We will consider four candidate statistical algorithms including elastic net, XGBoost, regularized discriminant analysis (rda), and single layer neural networks. This will ensure we are considering algorithms that differ in terms of bias-variance tradeoff (e.g., parametric vs non-parametric) to select the model configuration that most closely represents the true data generating process.   
+
+We will use participant-grouped, nested cross-validation for model training, selection, and evaluation with auROC. We will use 1 repeat of 10-fold cross-validation for the inner loops (i.e., *validation* sets) and 3 repeats of 10-fold cross-validation for the outer loop (i.e., *test* sets).    
+
+Best model configurations will be selected using median auROC across the 10 validation sets.  Final performance evaluation of those best model configurations used median auROC across the 30 test sets.     

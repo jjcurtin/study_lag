@@ -1,7 +1,7 @@
 ---
 title: "Preregistration: Lagged predictions of next week alcohol use" 
 author: "Kendra Wyant"
-date: "`r March 26, 2024"
+date: "`r April 2, 2024"
 editor_options: 
   chunk_output_type: console
 ---
@@ -11,6 +11,7 @@ editor_options:
 
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
+suppressPackageStartupMessages(library(tidyposterior))
 
 path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
 path_models_ema <- format_path(str_c("studydata/risk/models/ema"))
@@ -135,7 +136,7 @@ The inner nested k-fold cross-validation loops have been run for XGBoost for all
 **No performance metrics have been calculated in the 30 outer folds (i.e., our test sets for model evaluation) and no planned data analyses have been done.**     
 
 
-The best model configurations for each model selected from the inner loop validation sets are detailed below.  
+The best XGBoost configurations for each lag model (selected from the inner loop validation sets) are presented below.  
 
 ```{r}
 inner_lag |> 
@@ -163,19 +164,202 @@ To determine the probability that the models' performances differed systematical
 
 #### Feature Importance Indices
 
-In our previous study we used a XGBoost-specific method for calculating feature importance indices. A benefit of using an ensemble method like XGBoost is that it requires low computational cost to get estimates of feature importance from a trained model. Therefore, if XGBoost is our best candidate statistical algorithm, we will use the SHAPforxgboost package designed for XGBoost models. The SHAPforxgboost package provides Shapley values in log-odds units for binary classification models.
+We will calculate Shapley values from the 30 test sets to provide a description of the importance of categories of features across our five models in one of two ways.
 
-If our best model configuration uses an algorithm other than XGBoost we will use a model-agnostic, more computationally expensive, method for calculating Shapley values. Specifically, we will **add explanation of method.**
+1. If our best model is an XGBoost model, we will calculate Shapley values as we did in our previous study. We will use the `SHAPforxgboost` package designed specifically for XGBoost models. This method is preferred in that has low computational cost.   
 
-Using one of the two methods above, we will calculate Shapley values from the 30 test sets to provide an explanation of the importance of categories of features across our five models. We will average the three Shapley values for each observation for each feature (i.e., across the three repeats) to increase their stability. An inherent property of Shapley values is their additivity, allowing us to combine features into feature categories. We will create separate feature categories for each of the nine EMA questions, the rates of past alcohol use and missing surveys, the time of day and day of the week of the start of the prediction window, and the seven demographic variables included in the models.
+2. However, if our best model configuration uses an algorithm other than XGBoost we will use a model-agnostic, more computationally expensive, method for calculating Shapley values. Specifically, we will calculate Shapley values using the `DALEX` package. This package calculates Shapley values by generating permutations of feature values, computing the model's predictions for each permutation, and then aggregating the differences between these predictions and the original prediction. This process, however, is time-intensive and computationally expensive.
+
+Once Shapley values are calculated, we will average the three Shapley values for each observation for each feature (i.e., across the three repeats) to increase their stability. An inherent property of Shapley values is their additivity, allowing us to combine features into feature categories. We will create separate feature categories for each of the nine EMA questions, the rates of past alcohol use and missing surveys, the time of day and day of the week of the start of the prediction window, and the seven demographic variables included in the models.
 
 To calculate the local (i.e., for each observation) importance for each category of features, we will add Shapley values across all features in a category, separately for each observation.  To calculate global importance for each feature category, we will average the absolute value of the Shapley values of all features in the category across all observations. These local and global importance scores based on Shapley values allow us to contextualize relative feature importance.    
 
 ### Data Simulation Example
 
-Below we simulate 30 folds of random data to demonstrate the code and feasibility of our planned analyses. 
+Below we simulate 30 folds of auROC performance estimates for each of the five models to demonstrate our planned analyses. We simulated truncated normal distributions (upper limit set to 1) with means decreasing as lag increases. Standard deviations were set to .04 for all models (based on SD of outer fold auROCs for our no lag one week model in our previous paper).
+
+```{r}
+sim_auroc <- tibble(lag = rep(0, 10),
+                    repeat_num = rep(1, 10),
+                    fold_num = seq(1:10),
+                    auroc = truncnorm::rtruncnorm(n = 10, 
+                                                  b = 1.0, 
+                                                  mean = .88, 
+                                                  sd = .04)) |> 
+  bind_rows(tibble(lag = rep(0, 10),
+                   repeat_num = rep(2, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .88, 
+                                                 sd = .04))) |> 
+   bind_rows(tibble(lag = rep(0, 10),
+                   repeat_num = rep(3, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .88, 
+                                                 sd = .04))) |> 
+   bind_rows(tibble(lag = rep(24, 10),
+                   repeat_num = rep(1, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .87, 
+                                                 sd = .04))) |> 
+   bind_rows(tibble(lag = rep(24, 10),
+                   repeat_num = rep(2, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .87, 
+                                                 sd = .04))) |> 
+   bind_rows(tibble(lag = rep(24, 10),
+                   repeat_num = rep(3, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .87, 
+                                                 sd = .04))) |> 
+  bind_rows(tibble(lag = rep(72, 10),
+                   repeat_num = rep(1, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10,
+                                                 b = 1.0, 
+                                                 mean = .85, 
+                                                 sd = .04))) |> 
+   bind_rows(tibble(lag = rep(72, 10),
+                   repeat_num = rep(2, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .85, 
+                                                 sd = .04))) |> 
+   bind_rows(tibble(lag = rep(72, 10),
+                   repeat_num = rep(3, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .85, 
+                                                 sd = .04))) |> 
+  bind_rows(tibble(lag = rep(168, 10),
+                   repeat_num = rep(1, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .82, 
+                                                 sd = .04))) |> 
+   bind_rows(tibble(lag = rep(168, 10),
+                   repeat_num = rep(2, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .82, 
+                                                 sd = .04))) |> 
+   bind_rows(tibble(lag = rep(168, 10),
+                   repeat_num = rep(3, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .82, 
+                                                 sd = .04))) |> 
+   bind_rows(tibble(lag = rep(336, 10),
+                   repeat_num = rep(1, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .78, 
+                                                 sd = .04))) |> 
+   bind_rows(tibble(lag = rep(336, 10),
+                   repeat_num = rep(2, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .78, 
+                                                 sd = .04))) |> 
+   bind_rows(tibble(lag = rep(336, 10),
+                   repeat_num = rep(3, 10),
+                   fold_num = seq(1:10),
+                   auroc = truncnorm::rtruncnorm(n = 10, 
+                                                 b = 1.0, 
+                                                 mean = .78, 
+                                                 sd = .04)))
+
+sim_auroc |> 
+  group_by(lag) |> 
+  summarize(mean(auroc), sd(auroc), min(auroc), max(auroc)) |> 
+  kableExtra::kbl(digits = 2) |> 
+  kableExtra::kable_classic()
+```
+
+Plot simulated auROCs to look at distributions
+```{r}
+sim_auroc |> 
+  group_by(lag) |> 
+  ggplot(aes(x = auroc)) +
+  geom_histogram(bins = 15, color = "black", fill = "light grey") +
+  facet_wrap(~lag, ncol = 1) +
+  theme_classic()
+```
 
 
+#### Model Evaluation
+
+```{r}
+set.seed(101)
+pp <- sim_auroc |> 
+  pivot_wider(names_from = lag, values_from = auroc) |> 
+  rename(id = repeat_num,
+         id2 = fold_num) |> 
+  perf_mod(formula = statistic ~ model + (1 | id2/id),
+         transform = tidyposterior::logit_trans,  # for skewed & bounded AUC
+         adapt_delta = .99,
+         family = gaussian)  
+```
+
+```{r}
+pp_tidy <- pp |> 
+  tidy(seed = 123) 
+
+q = c(.025, .5, .975)
+pp_tidy |> 
+  group_by(model) |> 
+  summarize(median = quantile(posterior, probs = q[2]),
+            lower = quantile(posterior, probs = q[1]), 
+            upper = quantile(posterior, probs = q[3])) |> 
+  mutate(model = factor(model, levels = c(0, 24, 72, 168, 336),
+                        labels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag")),
+         y = 1000) |> 
+  arrange(model)
+```
+
+Plots of posterior probabilities
+```{r}
+ci <- pp_tidy |> 
+  summary() |> 
+  mutate(model = factor(model, levels = c(0, 24, 72, 168, 336),
+                        labels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag")),
+         y = 1000)
+
+pp_tidy |> 
+  mutate(model = factor(model, levels = c(0, 24, 72, 168, 336),
+                        labels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"))) |>
+  ggplot() + 
+  geom_histogram(aes(x = posterior, fill = model), color = "black", alpha = .4, 
+                 bins = 30) +
+  geom_segment(mapping = aes(y = y+100, yend = y-100, x = mean, xend = mean,
+                           color = model),
+               data = ci) +
+  geom_segment(mapping = aes(y = y, yend = y, x = lower, xend = upper, color = model),
+                data = ci) +
+  facet_wrap(~model, ncol = 1) +
+  scale_y_continuous("Posterior Probability", breaks = c(0, 500, 1000)) +
+  xlab("Area Under ROC Curve")
+```
+
+
+
+#### Model Comparisons
 
 
 
