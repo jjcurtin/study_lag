@@ -75,6 +75,39 @@
 \makeatletter
 \def\fps@figure{htbp}
 \makeatother
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 \usepackage{url} %this package should fix any errors with URLs in refs.
 \usepackage{lineno}
@@ -165,32 +198,90 @@ important clinical implications. For example \ldots{}
 
 \subsection{Introduction}\label{introduction}
 
-Digital therapeutics can be optimized for jitais
+Substance use disorders (SUDs) are highly prevalent. In 2022, the
+National Survey on Drug Use and Health estimated that over 46 million
+adults in the United States had some form of active SUD within that year
+({``2022 {National Survey} on {Drug Use} and {Health}. {Public} data
+set.''} n.d.). Almost half of these SUDS were labeled as moderate to
+severe, and less than 25\% people with an SUD got any treatment ({``2022
+{National Survey} on {Drug Use} and {Health}. {Public} data set.''}
+n.d.).
 
-But at times interventions and recommendations may point the user
-outside of the app. (Examples). These multimodal interventions are not
-available 24/7. They may take time to implement (eg a day, three days, a
-week, two weeks).
+For those that do receive treatment, treatment is time limited and
+inconsistent with regard to quality of treatment (Mark et al., 2020).
+Substance use treatment resources are stretched thin and providers are
+operating at or above full capacity. As a result patients often leave
+treatment without proper supports in place.
+
+This is unfortunate because SUDs are chronic relapsing conditions
+(Substance Abuse and Mental Health Services Administration (US) \&
+Office of the Surgeon General (US), 2016). Lapses, or instances of goal
+inconsistent use, are expected and can occur at any point during
+recovery. On their own they do not necessarily indicate relapse or a
+full return to previous patterns of use. However, lapses are often an
+early warning sign of relapse, maladaptive responses to lapses can
+undermine recovery, and for some substances a single lapse can result in
+an overdose and/or death.
+
+Digital therapeutics are smartphone apps designed for the purpose of
+managing, preventing, or treating a disorder. They are well-positioned
+for delivering continuity of care for chronic conditions, like SUDs.
+They are accessible 24/7 and provide a suite of tools and supports that
+can be used in conjunction with traditional care or on their own. With
+the widespread use of smartphones, digital therapeutics are easily
+scalable and can mitigate many of the economic, cultural, and geographic
+barriers to accessing traditional treatment.
+
+Just in time adaptive interventions (JITAIs) are AI-powered
+interventions situated within a digital therapeutic. They use personal
+sensing data for monitoring individuals longitudinally in their day to
+day lives and then feed these data as inputs into machine learning
+algorithms to predict the probability of a health outcome (e.g., lapse
+risk). The goal is to adapt interventions to an individual's changing
+needs so that they receive the right type and amount of support for that
+moment (Nahum-Shani et al., 2018; Wang \& Miller, 2020).
+
+To be clear, JITAIs are still in development. However, they show much
+promise for capturing dynamic changes in affect, behavior, and
+cognitions to deliver personalized interventions that evolve over time.
+For substance use, a JITAI may use both the predicted probability of a
+lapse and the important features contributing to that lapse probability.
+Someone who has been experiencing steady high levels of stress this past
+week might be directed to engage in a mindfulness activity. Someone who
+is experiencing peak levels of craving might be directed to a coping
+with cravings exercise.
 
 In a previous study, we demonstrated that it was possible to predict
 future alcohol lapses in the next week, day, and hour with high
 sensitivity and specificity (area under the receiver operating curves
-{[}auROCs{]} of 0.89, 0.90, and 0.93 respectively). The next hour and
-next day models are well-positioned to identify changes in lapse risk
-factors and recommend just-in-time interventions to address these
-immediate risks. The next week model may not have sufficient temporal
-specificity to recommend immediate patient action. Its clinical utility
-may improve if we shift this coarser window width into the future. This
-``time-lagged'' model could provide patients with increased lead time to
-implement multi-modal supports that might not be immediately available
-to them (e.g., schedule therapy appointment, request support from an AA
-sponsor).
+{[}auROCs{]} of 0.89, 0.90, and 0.93 respectively) (Wyant et al., in
+press). We also characterized the relative important features to these
+risk probabilities for specific individuals at specific moments in time.
 
-In this study, we train models to predict the probability of lapse at
-any point during a week window that is shifted 24 hours (one day), 72
-hours (three days), 168 hours (one week), or 336 hours (two weeks) into
-the future. Our primary goal is to assess how model performance changes
-as lag increases.
+Models that predict into the next hour or next day are well-positioned
+to identify changes in lapse risk factors and recommend
+\emph{just-in-time} interventions to address these immediate risks.
+However, at times an individual may need to be pointed to interventions
+outside the digital therapeutic. For example, someone who has reported
+recent past use and low abstinence self-efficacy might be encouraged to
+attend a self-help meeting, plan an outing with important people in
+their life, or schedule an appointment with a therapist.
+
+These multimodal interventions (i.e., combined human and digital
+intervention) are not available 24/7. They may take time to implement.
+Therefore models that predict into the next week may not have sufficient
+temporal specificity to recommend immediate patient action. Its clinical
+utility may improve if we shift this coarser window width into the
+future. This ``time-lagged'' model could provide patients with increased
+lead time to implement supports that might not be immediately available
+to them.
+
+In this study, we will build off our previous next week alcohol lapse
+model. We will train models to predict the probability of lapse at any
+point during a week window that is shifted 24 hours (one day), 72 hours
+(three days), 168 hours (one week), or 336 hours (two weeks) into the
+future. Our primary goal is to assess whether and by how much model
+performance decreases as lag time increases.
 
 \subsection{Methods}\label{methods}
 
@@ -199,8 +290,7 @@ as lag increases.
 We recruited participants in early recovery (1-8 weeks of abstinence)
 from moderate to severe alcohol use disorder in Madison, Wisconsin, US
 for a three month longitudinal study. We used data from all participants
-included in our previous study (N = 151; see
-\href{https://osf.io/preprints/psyarxiv/cgsf7}{Wyant et al., in press}
+included in our previous study (N = 151; see (Wyant et al., in press)
 for enrollment, disposition, and demographic information).
 
 \subsubsection{Lapse Labels}\label{lapse-labels}
@@ -283,6 +373,52 @@ configurations used median auROC across the 30 test sets.
 \subsection{Results}\label{results}
 
 \subsection{Discussion}\label{discussion}
+
+\subsection*{References}\label{references}
+\addcontentsline{toc}{subsection}{References}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-2022NationalSurvey}
+2022 {National Survey} on {Drug Use} and {Health}. {Public} data set.
+(n.d.). \emph{Substance Abuse and Mental Health Services
+Administration}.
+https://www.samhsa.gov/data/report/2022-nsduh-detailed-tables.
+
+\bibitem[\citeproctext]{ref-markTrackingQualityAddiction2020}
+Mark, T., Dowd, W. N., \& Council, C. L. (2020). \emph{Tracking the
+quality of addiction treatment over time and across states}. RTI Press.
+
+\bibitem[\citeproctext]{ref-nahum-shaniJustinTimeAdaptiveInterventions2018}
+Nahum-Shani, I., Smith, S. N., Spring, B. J., Collins, L. M.,
+Witkiewitz, K., Tewari, A., \& Murphy, S. A. (2018). Just-in-{Time
+Adaptive Interventions} ({JITAIs}) in {Mobile Health}: {Key Components}
+and {Design Principles} for {Ongoing Health Behavior Support}.
+\emph{Annals of Behavioral Medicine: A Publication of the Society of
+Behavioral Medicine}, \emph{52}(6), 446--462.
+\url{https://doi.org/10.1007/s12160-016-9830-8}
+
+\bibitem[\citeproctext]{ref-substanceabuseandmentalhealthservicesadministrationusFacingAddictionAmerica2016a}
+Substance Abuse and Mental Health Services Administration (US), \&
+Office of the Surgeon General (US). (2016).
+\emph{\href{https://www.ncbi.nlm.nih.gov/pubmed/28252892}{Facing
+{Addiction} in {America}: {The Surgeon General}'s {Report} on {Alcohol},
+{Drugs}, and {Health}}}. Washington (DC): {US Department of Health and
+Human Services}.
+
+\bibitem[\citeproctext]{ref-wangJustintheMomentAdaptiveInterventions2020}
+Wang, L., \& Miller, L. C. (2020). Just-in-the-{Moment Adaptive
+Interventions} ({JITAI}): {A Meta-Analytical Review}. \emph{Health
+Communication}, \emph{35}(12), 1531--1544.
+\url{https://doi.org/10.1080/10410236.2019.1652388}
+
+\bibitem[\citeproctext]{ref-wyantMachineLearningModels2023}
+Wyant, K., Sant'Ana, S. J. K., Fronk, G., \& Curtin, J. J. (in press).
+Machine learning models for temporally precise lapse prediction in
+alcohol use disorder. \emph{Psychopathology and Clinical Science}.
+\url{https://doi.org/10.31234/osf.io/cgsf7}
+
+\end{CSLReferences}
 
 
 

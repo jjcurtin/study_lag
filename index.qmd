@@ -30,62 +30,69 @@ citation:
 number-sections: false 
 ---
 
-## Introduction 
+## Introduction
 
-Substance use disorders (SUDs) are highly prevalent. In 2022, the National Survey on Drug Use and Health estimated that over 46 million adults in the United States had some form of active SUD within that year. Almost half of these SUDS were labeled as moderate to severe, and less than 25% people with an SUD got any treatment.
+Substance use disorders (SUDs) are highly prevalent. In 2022, the National Survey on Drug Use and Health estimated that over 46 million adults in the United States had some form of active SUD within that year [@2022NationalSurvey]. Almost half of these SUDS were labeled as moderate to severe, and less than 25% people with an SUD got any treatment [@2022NationalSurvey].
 
-For those that do receive treatment, treatment is time limited, resources are stretched thin, and providers are operating at or above full capacity. As a result patients often leave treatment without proper supports in place.
+For those that do receive treatment, treatment is time limited and the quality of care is inconsistent [@markTrackingQualityAddiction2020]. Substance use treatment resources are stretched thin and providers are operating at or above full capacity. As a result patients often leave treatment without proper supports in place.
 
-This is unfortunate because SUDs are chronic relapsing conditions [@substanceabuseandmentalhealthservicesadministrationusFacingAddictionAmerica2016a]. Lapses, or instances of goal inconsistent use, are expected and can occur at any point during recovery. On their own they do not necessarily indicate relapse or a full return to previous patterns of use. However, lapses are often an early warning sign of relapse and maladaptive responses to lapses can undermine recovery.
+This is unfortunate because SUDs are chronic relapsing conditions [@substanceabuseandmentalhealthservicesadministrationusFacingAddictionAmerica2016a]. Lapses, or instances of goal inconsistent use, are expected and can occur at any point during recovery. On their own they do not necessarily indicate relapse, or a full return to previous patterns of use. However, lapses are often an early warning sign of relapse, maladaptive responses to lapses can undermine recovery, and for some substances a single lapse can result in an overdose and/or death.
 
-Digital therapeutics are smartphone apps designed for the purpose of managing, preventing, or treating a disorder. They are well-positioned for delivering continuity of care for chronic conditions, like substance use disorders. They are accessible 24/7 and provide a suite of tools and supports that can be used in conjunction with traditional care or on their own. As software, digital therapeutics are easily scalable and can mitigate many of the economic, cultural, and geographic barriers to accessing traditional treatment.
+Digital therapeutics are smartphone apps designed for the purpose of managing, preventing, or treating a disorder. They are well-positioned for delivering continuity of care for chronic conditions, like SUDs. They are accessible 24/7 and provide a suite of tools and supports that can be used in conjunction with traditional care or on their own. With the widespread use of smartphones, digital therapeutics are easily scalable and can mitigate many of the economic, cultural, and geographic barriers to accessing traditional treatment.
 
-Just in time adaptive interventions (JITAIs) are AI-powered interventions situated within a digital therapeutic. They incorporate personal sensing data for monitoring individuals longitudinally in their day to day lives and uses these data as inputs into an algorithm to predict the probability of a mental health outcome. To be clear, JITAIs are still in development. However, they show much promise for capturing immediate fluctuations of risk in real time and deliver personalized interventions in that moment.
+Just in time adaptive interventions (JITAIs) are AI-powered interventions situated within a digital therapeutic. They use personal sensing data for monitoring individuals longitudinally in their day to day lives and then feed these data as inputs into machine learning algorithms to predict the probability of a specific health outcome (e.g., lapse risk). The goal is to adapt interventions to an individual's changing needs so that they receive the right type and amount of support for that moment [@nahum-shaniJustinTimeAdaptiveInterventions2018; @wangJustintheMomentAdaptiveInterventions2020].
 
-For a JITAI targeting substance use, both the predicted probability of a lapse and the important features contributing to that lapse can be used to personalize an intervention just in time. Someone who has been experiencing steady high levels of stress this past week might be directed to engage in a mindfulness activity. Someone who is experiencing peak levels of craving might be directed to a coping with cravings exercise.
+To be clear, JITAIs are still in development. However, they show much promise for capturing dynamic changes in affect, behavior, and cognitions needed to deliver personalized interventions that evolve over time. For substance use, a JITAI may use information from the predicted probability of a lapse and the important features contributing to that lapse probability. Specifically, lapse probability might tell us *when* to intervene, whereas the important features might tell us *how* to intervene. For someone at high risk of lapsing who has been encountering several stressful events this past week, a JITAI might recommend a mindfulness activity. For someone at high risk of lapsing who is experiencing increased levels of craving, a JITAI might be suggest a coping with cravings exercise.
 
-In a previous study, we demonstrated that it was possible to predict future alcohol lapses in the next week, day, and hour with high sensitivity and specificity (area under the receiver operating curves \[auROCs\] of 0.89, 0.90, and 0.93 respectively). We also characterized the relative important features to these risk probabilities for specific individuals at specific moments in time. The next hour and next day models are well-positioned to identify changes in lapse risk factors and recommend just-in-time interventions to address these immediate risks.
+Ecological momentary assessment (EMA) may be the most feasible personal sensing data stream for these early JITAIs. It offers momentary subjective insight into constructs easily mapped onto the relapse prevention model [@marlattRelapsePreventionMaintenance1985; @witkiewitzRelapsePreventionAlcohol2004].
 
-However, at times an individual may need to be pointed to interventions outside the digital therapeutic. For example, someone who has reported recent past use and low abstinence self-efficacy might be encouraged to attend a self-help meeting, schedule an appointment with a therapist, or plan an outing with important people in their life.
+In a previous study, we demonstrated that it was possible to predict future alcohol lapses in the next week, day, and hour with clinically meaningful accuracy using EMA (area under the receiver operating curves \[auROCs\] of 0.89, 0.90, and 0.93 respectively) [@wyantMachineLearningModels2023]. We also characterized the relative important features to these risk probabilities for specific individuals at specific moments in time.
 
-These multimodal interventions are not available 24/7. They may take time to implement (eg a day, three days, a week, two weeks). The next week model may not have sufficient temporal specificity to recommend immediate patient action. Its clinical utility may improve if we shift this coarser window width into the future. This "time-lagged" model could provide patients with increased lead time to implement multi-modal supports that might not be immediately available to them.
+Models that predict into the next hour or next day are well-positioned to identify changes in lapse risk factors and recommend *just-in-time* interventions to address these immediate risks. However, at times an individual may need to be pointed to interventions outside the digital therapeutic. For example, someone who has reported recent past use and low abstinence self-efficacy might be encouraged to attend a self-help meeting, plan an outing with important people in their life, or schedule an appointment with a therapist.
 
-In this study, we train models to predict the probability of lapse at any point during a week window that is shifted 24 hours (one day), 72 hours (three days), 168 hours (one week), or 336 hours (two weeks) into the future. Our primary goal is to assess how model performance changes as lag increases.
+These multimodal interventions (i.e., combined human and digital intervention) are not available 24/7. They may take time to implement. Therefore models that predict into the next week may not have sufficient temporal specificity to recommend immediate patient action. Its clinical utility may improve if we shift this coarser window width into the future. This "time-lagged" model could provide patients with increased lead time to implement supports that might not be immediately available to them.
+
+In this study, we will build off our previous next week alcohol lapse model. We will use the same EMA features to train models that predict the probability of a lapse at any point during a week window that is shifted 24 hours (one day), 72 hours (three days), 168 hours (one week), or 336 hours (two weeks) into the future. Our primary goal is to assess whether and by how much model performance decreases as lag time increases.
+
+
+
 
 
 ## Methods
+
 ### Participants
-We recruited participants in early recovery (1-8 weeks of abstinence) from moderate to severe alcohol use disorder in Madison, Wisconsin, US for a three month longitudinal study. We used data from all participants included in our previous study (N = 151; see [Wyant et al., in press](https://osf.io/preprints/psyarxiv/cgsf7) for enrollment, disposition, and demographic information).   
+
+We recruited participants in early recovery (1-8 weeks of abstinence) from moderate to severe alcohol use disorder in Madison, Wisconsin, US for a three month longitudinal study. We used data from all participants included in our previous study (N = 151; see [@wyantMachineLearningModels2023] for enrollment, disposition, and demographic information).
 
 ### Lapse Labels
+
 We predicted lapses occurring in one week windows. Predictions were updated hourly. Therefore our models provided hour-by-hour predictions of future probability of an alcohol lapse within a one week window shifted at various time points (i.e., lags) into the future (no lag and one day, three day, one week, or two week lagged predictions). The first prediction for each participant occurs 24 hours + lag time (in hours) after their study start date. For example, the first prediction for the one day lagged prediction model would be 48 hours after participants' start date.
 
-A prediction window was labeled *lapse* if the start date/hour of any drinking episode fell within that window.  A window was labeled *no lapse* if no alcohol use occurred within that window +/- 6 hours.  If no alcohol use occurred within the window but did occur within 6 hours of the start or end of the window, the window was excluded. We had previously used a more conservative fence around lapse exclusions (24 hours vs. 6 hours), however, after re-evaluation we deemed this to be too conservative. 
-
+A prediction window was labeled *lapse* if the start date/hour of any drinking episode fell within that window. A window was labeled *no lapse* if no alcohol use occurred within that window +/- 6 hours. If no alcohol use occurred within the window but did occur within 6 hours of the start or end of the window, the window was excluded. We had previously used a more conservative fence around lapse exclusions (24 hours vs. 6 hours), however, after re-evaluation we deemed this to be too conservative.
 
 ### Feature Engineering
-Features were calculated using only data collected before the start of each prediction window. For our no lag models this included all data prior to the hour of the start of the prediction window. For our lagged models, the last EMA data used for feature engineering were collected up to one day, three days, one week, or two weeks prior to the start of the prediction window.   
 
-Following our previous work, features were derived from three data sources:    
+Features were calculated using only data collected before the start of each prediction window. For our no lag models this included all data prior to the hour of the start of the prediction window. For our lagged models, the last EMA data used for feature engineering were collected up to one day, three days, one week, or two weeks prior to the start of the prediction window.
 
-- *Demographics*: We created quantitative features for age and personal income, and dummy-coded features for sex, race/ethnicity, marital status, education, and employment.    
+Following our previous work, features were derived from three data sources:
 
-- *Day and time of prediction window onset*: We created dummy-coded features to indicate time of day and day of week that the prediction window began.    
+-   *Demographics*: We created quantitative features for age and personal income, and dummy-coded features for sex, race/ethnicity, marital status, education, and employment.
 
-- *Previous EMA responses*: We created raw EMA and change features for varying scoring epochs before the start of the prediction window for all EMA items (i.e., 12, 24, 48, 72, and 168 hours). Raw features included min, max, and median scores for each EMA question across all EMAs in each epoch for that participant. We calculated change features by subtracting the participant's mean score for each EMA question (using all EMAs collected before the start of the prediction window) from the associated raw feature. We also created raw and change features based on the most recent response for each EMA question and raw and change rate features from previously reported lapses.
+-   *Day and time of prediction window onset*: We created dummy-coded features to indicate time of day and day of week that the prediction window began.
+
+-   *Previous EMA responses*: We created raw EMA and change features for varying scoring epochs before the start of the prediction window for all EMA items (i.e., 12, 24, 48, 72, and 168 hours). Raw features included min, max, and median scores for each EMA question across all EMAs in each epoch for that participant. We calculated change features by subtracting the participant's mean score for each EMA question (using all EMAs collected before the start of the prediction window) from the associated raw feature. We also created raw and change features based on the most recent response for each EMA question and raw and change rate features from previously reported lapses.
 
 ### Modeling Decisions
-Our primary performance metric for model selection and evaluation will be auROC.   
 
-We will consider four candidate statistical algorithms including elastic net, XGBoost, regularized discriminant analysis (rda), and single layer neural networks. This will ensure we are considering algorithms that differ in terms of bias-variance tradeoff (e.g., parametric vs non-parametric) to select the model configuration that most closely represents the true data generating process.   
+Our primary performance metric for model selection and evaluation will be auROC.
 
-We will use participant-grouped, nested cross-validation for model training, selection, and evaluation with auROC. We will use 1 repeat of 10-fold cross-validation for the inner loops (i.e., *validation* sets) and 3 repeats of 10-fold cross-validation for the outer loop (i.e., *test* sets).    
+We will consider four candidate statistical algorithms including elastic net, XGBoost, regularized discriminant analysis (rda), and single layer neural networks. This will ensure we are considering algorithms that differ in terms of bias-variance tradeoff (e.g., parametric vs non-parametric) to select the model configuration that most closely represents the true data generating process.
 
-Best model configurations will be selected using median auROC across the 10 validation sets.  Final performance evaluation of those best model configurations used median auROC across the 30 test sets.     
+We will use participant-grouped, nested cross-validation for model training, selection, and evaluation with auROC. We will use 1 repeat of 10-fold cross-validation for the inner loops (i.e., *validation* sets) and 3 repeats of 10-fold cross-validation for the outer loop (i.e., *test* sets).
 
+Best model configurations will be selected using median auROC across the 10 validation sets. Final performance evaluation of those best model configurations used median auROC across the 30 test sets.
 
 ## Results
-
 
 ## Discussion
 
