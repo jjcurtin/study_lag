@@ -44,13 +44,14 @@ Results - auROC (overall and by protected group) and calibrated probabilities --
 
 ## Introduction
 
-### Precision medicine has long been a goal in healthcare.
+### Precision medicine has been a goal in healthcare for over half a century [@derubeisHistoryCurrentStatus2019a].
 
-It has more recently expanded to chronic mental health conditions, such as substance use disorders (SUDs). Precision mental health for SUDs includes initial treatment matching and continuing adaptive care over time. Precision mental health involves tailoring an intervention to an individuals current needs and preferences so that they receive the right type and amount of support for that moment. Essentially it identifies both *when* and *how* to intervene.
+Today, it is also applied to chronic mental health conditions (precision mental health) like substance use disorders (SUDs). Precision mental health uses individual characteristics to guide initial treatment matching and adaptive continuing care over time. It requires dense and long term monitoring of symptoms and related states so that interventions can be tailored to an individual's current needs and preferences in that moment [@bickmanAchievingPrecisionMental2016]. Essentially it aims to identify both *when* and *how* to intervene.
+
 
 ### Using algorithms to both time and select personalized interventions for substance use may now be possible given the use of personal sensing and high dimensional machine learning algorithms.
 
-Personal sensing allows for dense longitudinal monitoring of individuals affect, behavior, and cognitions in their day to day lives. These data can then serve as inputs into machine learning algorithms to predict the probability of a specific outcome (e.g., lapse risk).
+Personal sensing allows for frequent longitudinal monitoring of individuals affect, behavior, and cognitions in their day to day lives. These data can then serve as inputs into machine learning algorithms to predict the probability of a specific outcome (e.g., lapse risk).
 
 ### Ecological momentary assessment (EMA) may be particularly well suited to do this.
 
@@ -58,13 +59,13 @@ It offers momentary subjective insight into constructs easily mapped onto modula
 
 ### Preliminary promising work suggests it is possible to build models that predict immediate lapses back to substance use.
 
-In previous work from our group, we have shown that we can do this very well. We demonstrated that it was possible to predict immediate alcohol lapses in the next week, day, and hour with clinically meaningful accuracy using EMA (area under the receiver operating curves \[auROCs\] of 0.89, 0.90, and 0.93 respectively) [@wyantMachineLearningModels2023]. We also characterized the relative important features to these risk probabilities for specific individuals at specific moments in time. These models are well suited for just in time adaptive interventions (JITAIs) situated within an app to address these immediate risks.
+In previous work from our group, we have shown that we can do this very well. We demonstrated that it was possible to predict immediate alcohol lapses in the next week, day, and hour with clinically meaningful accuracy using EMA (area under the receiver operating curves [auROCs] of 0.89, 0.90, and 0.93 respectively) [@wyantMachineLearningModels2023]. We also characterized the relative important features to these risk probabilities for specific individuals at specific moments in time. These models are well suited for just in time adaptive interventions (JITAIs) situated within an app to address these immediate risks.
 
 ### However, some interventions take time to set up.
 
 For example, someone who has reported recent past use and low abstinence self-efficacy might be encouraged to attend a self-help meeting, plan an outing with important people in their life, or schedule an appointment with a therapist. These multimodal interventions (i.e., combined human and digital intervention) are not available 24/7. A "time-lagged" model with predictions shifted further into the future, could provide patients with increased lead time to implement supports that might not be immediately available to them.
 
-### This study, takes one of our models from our previous work and tests its performance across increasing  time-lagged models.
+### This study, takes one of our models from our previous work and tests its performance across increasing time-lagged models.
 
 Specifically, we use the same EMA features in our immediate model and train new models that predict the probability of a lapse beginning one day (24 hours), three days (72 hours), one week (168 hours), or two weeks (336 hours) into the future. Our primary goal is to assess whether and by how much model performance decreases as lag time increases.
 
@@ -110,6 +111,8 @@ We will use participant-grouped, nested cross-validation for model training, sel
 Best model configurations will be selected using median auROC across the 10 validation sets. Final performance evaluation of those best model configurations used median auROC across the 30 test sets.
 
 ## Results
+
+
 
 ## Discussion
 
