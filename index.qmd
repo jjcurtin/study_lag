@@ -9,7 +9,7 @@ author:
     corresponding: false
     affiliations:
       - Department of Psychology, University of Wisconsin-Madison
-  - name: Gaylen Fronk 
+  - name: Gaylen E. Fronk 
     corresponding: false
     affiliations:
       - Department of Psychology, University of Wisconsin-Madison
@@ -30,45 +30,53 @@ citation:
 number-sections: false 
 ---
 
-```{=html}
+
 <!--Notes:
 Target journal: Clinical Psychological Science 
 Format: Brief empirical report (5,000 words)
 
 Brief Empirical Reports. Brief empirical reports will have a 5,000-word limit, inclusive of front (title page) and back matter (references, footnotes). Articles are limited to a total combination of 4 tables and figures (e.g., 2 tables and 2 figures) that are not part of the word limit. Each table or figure should occupy no more than one printed page. An abstract (maximum of 150 words) is included in the word limit.
 
-Empirical Articles. Empirical Articles should aim for a 12,000-word maximum, inclusive of front (title page) and back matter (references, footnotes, appendices). Articles are limited to a total combination of 6 tables and figures (e.g., 4 tables and 2 figures) that are not part of the word limit. Each table or figure should occupy no more than one printed page. Reporting of multiple investigations within a single manuscript is encouraged, and length adjustments can be discussed if and as needed. An abstract (maximum of 150 words) is included in the word limit.
+Empirical Articles. Empirical Articles should aim for a 12,000-word maximum, inclusive of front (title page) and back matter (references, footnotes, appendices). Articles are limited to a total combination of 6 tables and figures (e.g., 4 tables and 2 figures) that are not part of the word limit. Each table or figure should occupy no more than one printed page. Reporting of multiple investigations within a single manuscript is encouraged, and length adjustments can be discussed if and as needed. An abstract (maximum of 150 words) is included in the word limit. -->
 
-Results - auROC (overall and by protected group) and calibrated probabilities -->
-```
+
+
+<!-- Results figs/tables (4 total):
+
+1. Demographics table
+2. figure with auroc and confidence interval by lag 
+3. figure with auroc and confidence interval by protected group and lag 
+4. figure for Shapley values
+
+Distributions of posterior probabilities in supplemental 
+Histograms of predicted probabilities in supplemental-->
+
 
 ## Introduction
 
-### Precision medicine has been a goal in healthcare for over half a century [@derubeisHistoryCurrentStatus2019a].
+### Precision Medicine
 
-Today, it is also applied to chronic mental health conditions (precision mental health) like substance use disorders (SUDs). Precision mental health uses individual characteristics to guide initial treatment matching and adaptive continuing care over time. It requires dense and long term monitoring of symptoms and related states so that interventions can be tailored to an individual's current needs and preferences in that moment [@bickmanAchievingPrecisionMental2016]. Essentially it aims to identify both *when* and *how* to intervene.
+Precision medicine has been a goal in healthcare for over half a century [@derubeisHistoryCurrentStatus2019]. Today, this approach is also applied to chronic mental health conditions, like substance use disorders (SUDs), under the term *precision mental health*. Precision mental health uses individual characteristics to guide initial treatment matching and adaptive continuing care over time. It requires dense, long-term monitoring of symptoms and related states, for interventions to be tailored to an individual's needs and preferences at any given moment [@bickmanAchievingPrecisionMental2016]. Essentially, it aims to identify both *when* and *how* to intervene.
 
+### Personal Sensing and Machine Learning
 
-### Using algorithms to both time and select personalized interventions for substance use may now be possible given the use of personal sensing and high dimensional machine learning algorithms.
+Using algorithms to time (*when*) and select personalized interventions (*how*) for substance use may now be possible, thanks to personal sensing and high-dimensional machine learning algorithms. Personal sensing allows for frequent, longitudinal monitoring of individuals' affect, behavior, and cognitions in their day-to-day lives [@mohrPersonalSensingUnderstanding2017]. These data can then be used as inputs for machine learning algorithms to predict the probability of specific outcomes (e.g., lapse risk) and identify the top features contributing to those predictions.
 
-Personal sensing allows for frequent longitudinal monitoring of individuals affect, behavior, and cognitions in their day to day lives. These data can then serve as inputs into machine learning algorithms to predict the probability of a specific outcome (e.g., lapse risk).
+### EMA
 
-### Ecological momentary assessment (EMA) may be particularly well suited to do this.
+Ecological momentary assessment (EMA) may be particularly well-suited for these algorithms. It offers momentary subjective insight into constructs that can be easily mapped onto modular forms of treatment, such as the relapse prevention model [@marlattRelapsePreventionMaintenance1985; @witkiewitzRelapsePreventionAlcohol2004]. EMA also appears to be well tolerated by individuals with substance use disorders [@wyantAcceptabilityPersonalSensing2023]. Thus, it can serve as an important signal for predicting substance use outcomes and interpreting clinically relevant features over a sustained period.
 
-It offers momentary subjective insight into constructs easily mapped onto modular forms of treatment, like the relapse prevention model [@marlattRelapsePreventionMaintenance1985; @witkiewitzRelapsePreventionAlcohol2004]. EMA appears to also be well tolerated by individuals with substance use disorders [@wyantAcceptabilityPersonalSensing2023]. Thus, it can be an important signal for predicting substance use outcomes and interpreting clinically relevant features for a sustained amount of time.
+### Preliminary Promising Work
 
-### Preliminary promising work suggests it is possible to build models that predict immediate lapses back to substance use.
+Preliminary promising work suggests it is possible to build EMA models that predict immediate lapses back to substance use [@waltersUsingMachineLearning2021; @baeMobilePhoneSensors2018; @soysterPooledPersonspecificMachine2022; @chihPredictiveModelingAddiction2014]. In a previous study from our group, we demonstrated that we can do this very well. Model features were engineered from raw scores and longitudinal change in responses to 4X daily EMAs. EMA questions were designed to measure theoretically-implicated risk factors including past use, craving, past pleasant events, past and future risky situations, past and future stressful events, emotional valence and arousal, and self-efficacy [for reviews, see @marlattRelapsePreventionMaintenance1985; @fronkStressAllostasisSubstance2020; @witkiewitzModelingComplexityPosttreatment2007]. We showed that it was possible to predict immediate alcohol lapses within the next week, day, and hour with clinically meaningful accuracy, area under the receiver operating curves (auROCs) of 0.89, 0.90, and 0.93, respectively [@wyantMachineLearningModels2023]. We also characterized the relative importance of features contributing to these risk probabilities for specific individuals at specific moments in time. These models are well-suited for just-in-time adaptive interventions (JITAIs) integrated within an app to address these immediate risks.
 
-In previous work from our group, we have shown that we can do this very well. We demonstrated that it was possible to predict immediate alcohol lapses in the next week, day, and hour with clinically meaningful accuracy using EMA (area under the receiver operating curves [auROCs] of 0.89, 0.90, and 0.93 respectively) [@wyantMachineLearningModels2023]. We also characterized the relative important features to these risk probabilities for specific individuals at specific moments in time. These models are well suited for just in time adaptive interventions (JITAIs) situated within an app to address these immediate risks.
+### Many Interventions Happen Outside of an App
 
-### However, some interventions take time to set up.
+However, some interventions take time to set up. For example, someone who has reported recent past alcohol use and low abstinence self-efficacy might be encouraged to attend a self-help meeting, plan an outing with important people in their life, or schedule an appointment with a therapist. These multimodal interventions (i.e., combined human and digital interventions) are not available 24/7. A "time-lagged" model with predictions shifted further into the future  could provide patients with increased lead time to implement supports that might not be immediately available to them.
 
-For example, someone who has reported recent past use and low abstinence self-efficacy might be encouraged to attend a self-help meeting, plan an outing with important people in their life, or schedule an appointment with a therapist. These multimodal interventions (i.e., combined human and digital intervention) are not available 24/7. A "time-lagged" model with predictions shifted further into the future, could provide patients with increased lead time to implement supports that might not be immediately available to them.
+### Current Study
 
-### This study, takes one of our models from our previous work and tests its performance across increasing time-lagged models.
-
-Specifically, we use the same EMA features in our immediate model and train new models that predict the probability of a lapse beginning one day (24 hours), three days (72 hours), one week (168 hours), or two weeks (336 hours) into the future. Our primary goal is to assess whether and by how much model performance decreases as lag time increases.
-
+In this study, we compare the performance of one of our models from a previous study with models featuring increased lag time between predictions and outcomes. Specifically, we use the same EMA features as our immediate model and train new models to predict the probability of a lapse beginning one day (24 hours), three days (72 hours), one week (168 hours), or two weeks (336 hours) into the future. Our primary objective is to assess how model performance degrades with increasing lag time."
 
 
 
