@@ -76,7 +76,7 @@ However, some interventions take time to set up. For example, someone who has re
 
 ### Current Study
 
-In this study, we compare the performance of one of our models from a previous study with models featuring increased lag time between predictions and outcomes. Specifically, we use the same EMA features as our immediate model and train new models to predict the probability of a lapse beginning one day (24 hours), three days (72 hours), one week (168 hours), or two weeks (336 hours) into the future. Our primary objective is to assess how model performance degrades with increasing lag time."
+In this study, we compare the performance of one of our models from a previous study with models featuring increased lag time between predictions and outcomes. Specifically, we use the same EMA features as our immediate model and train new models to predict the probability of a lapse beginning one day (24 hours), three days (72 hours), one week (168 hours), or two weeks (336 hours) into the future. Our primary objective is to assess how model performance degrades with increasing lag time.
 
 
 
