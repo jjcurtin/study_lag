@@ -282,8 +282,6 @@ test_metrics_all_pp_perf |>
 ```
 
 
-### Fairness of Models
-
 
 ### Model Comparisons
 
@@ -361,6 +359,11 @@ ci_lag |>
 
 The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprintf("%1.3f", ci_lag |> filter(contrast == "24 vs. 72") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_lag |> filter(contrast == "24 vs. 72") |> pull(lower))`-`r sprintf("%1.3f", ci_lag |> filter(contrast == "24 vs. 72") |> pull(upper))`]), yielding a non-significant probability of `r sprintf("%1.3f", ci_lag |> filter(contrast == "24 vs. 72") |> pull(probability))` that the 72 hour lag model had worse performance than the 24 hour lag model. The median decrease in auROC for the 72 hour vs. 168 hour lag model was `r sprintf("%1.3f", ci_lag |> filter(contrast == "72 vs. 168") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_lag |> filter(contrast == "72 vs. 168") |> pull(lower))`-`r sprintf("%1.3f", ci_lag |> filter(contrast == "72 vs. 168") |> pull(upper))`]), yielding a non-significant probability of `r sprintf("%1.3f", ci_lag |> filter(contrast == "72 vs. 168") |> pull(probability))` that the 168 hour lag model had worse performance than the 72 hour lag model. The median decrease in auROC for the 168 hour vs. 336 hour lag model was `r sprintf("%1.3f", ci_lag |> filter(contrast == "168 vs. 336") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_lag |> filter(contrast == "168 vs. 336") |> pull(lower))`-`r sprintf("%1.3f", ci_lag |> filter(contrast == "168 vs. 336") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_lag |> filter(contrast == "168 vs. 336") |> pull(probability))` that the 336 hour lag model had worse performance than the 168 hour lag model. 
 
+### Fairness Evaluation
+
+- Calculate auROCs by protected class majority-minority from predictions  
+- plot auROCs
+- statistical analysis
 
 
 ### Shapley

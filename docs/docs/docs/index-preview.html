@@ -484,8 +484,8 @@ Distributions of posterior probabilities in supplemental -->
 <pre><code>
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 5.8e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.58 seconds.
+Chain 1: Gradient evaluation took 5.9e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.59 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -502,15 +502,15 @@ Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 1.348 seconds (Warm-up)
-Chain 1:                0.517 seconds (Sampling)
-Chain 1:                1.865 seconds (Total)
+Chain 1:  Elapsed Time: 1.325 seconds (Warm-up)
+Chain 1:                0.506 seconds (Sampling)
+Chain 1:                1.831 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 2).
 Chain 2: 
-Chain 2: Gradient evaluation took 2.5e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
+Chain 2: Gradient evaluation took 3.7e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.37 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
@@ -527,15 +527,15 @@ Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 1.685 seconds (Warm-up)
-Chain 2:                0.518 seconds (Sampling)
-Chain 2:                2.203 seconds (Total)
+Chain 2:  Elapsed Time: 1.689 seconds (Warm-up)
+Chain 2:                0.508 seconds (Sampling)
+Chain 2:                2.197 seconds (Total)
 Chain 2: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 3).
 Chain 3: 
-Chain 3: Gradient evaluation took 2.6e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.26 seconds.
+Chain 3: Gradient evaluation took 2.4e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
@@ -552,15 +552,15 @@ Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 3: 
-Chain 3:  Elapsed Time: 1.612 seconds (Warm-up)
-Chain 3:                0.911 seconds (Sampling)
-Chain 3:                2.523 seconds (Total)
+Chain 3:  Elapsed Time: 1.64 seconds (Warm-up)
+Chain 3:                0.914 seconds (Sampling)
+Chain 3:                2.554 seconds (Total)
 Chain 3: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 4).
 Chain 4: 
-Chain 4: Gradient evaluation took 2.7e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.27 seconds.
+Chain 4: Gradient evaluation took 2.6e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.26 seconds.
 Chain 4: Adjust your expectations accordingly!
 Chain 4: 
 Chain 4: 
@@ -577,9 +577,9 @@ Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 1.507 seconds (Warm-up)
-Chain 4:                0.993 seconds (Sampling)
-Chain 4:                2.5 seconds (Total)
+Chain 4:  Elapsed Time: 1.495 seconds (Warm-up)
+Chain 4:                0.994 seconds (Sampling)
+Chain 4:                2.489 seconds (Total)
 Chain 4: </code></pre>
 </div>
 </div></div>
@@ -608,7 +608,7 @@ $ lag336_median &lt;dbl&gt; 0.8349715
 $ lag336_IQR    &lt;dbl&gt; 0.05917301</code></pre>
 </div>
 </div></div>
-<p>The median auROC across the 30 test sets for our baseline model was high (median=0.876, IQR=0.057, consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=0.877, IQR=0.049, 72 hour lag (median=0.876, IQR=0.053, and 168 hour lag (median=0.868, IQR=0.063, and moderate for the 336 hour lag (median=0.835, IQR=0.059.</p>
+<p>The median auROC across the 30 test sets for our baseline model was high (median=0.876, IQR=0.057), consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=0.877, IQR=0.049), 72 hour lag (median=0.876, IQR=0.053), and 168 hour lag (median=0.868, IQR=0.063), and moderate for the 336 hour lag (median=0.835, IQR=0.059).</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
@@ -710,7 +710,7 @@ $ lag336_IQR    &lt;dbl&gt; 0.05917301</code></pre>
 4 0 vs. 336       0.963  0.0231   0.00195 0.0436</code></pre>
 </div>
 </div></div>
-<p>The median decrease in auROC for the baseline vs.&nbsp;24 hour lag model was -0.008 (95% CI=[-0.028-0.012]), yielding a non-significant probability of 0.254 that the lagged model had worse performance. The median decrease in auROC for the baseline vs.&nbsp;72 hour model was 0.002 (95% CI=[-0.018-0.021]), yielding a non-significant probability of 0.556 that the lagged model had worse performance. The median increase in auROC for the baseline vs.&nbsp;168 hour lag model was 0.002 (95% CI=[-0.018-0.022]), yielding a non-significant probability of0.585 that the lagged model had worse performance. The median increase in auROC for the baseline vs.&nbsp;336 hour lag model was 0.023 (95% CI=[0.002-0.044]), yielding a significant probability of 0.963 that the lagged model had worse performance.</p>
+<p>The median decrease in auROC for the baseline vs.&nbsp;24 hour lag model was -0.008 (95% CI=[-0.028-0.012]), yielding a non-significant probability of 0.254 that the lagged model had worse performance. The median decrease in auROC for the baseline vs.&nbsp;72 hour model was 0.002 (95% CI=[-0.018-0.021]), yielding a non-significant probability of 0.556 that the lagged model had worse performance. The median increase in auROC for the baseline vs.&nbsp;168 hour lag model was 0.002 (95% CI=[-0.018-0.022]), yielding a non-significant probability of 0.585 that the lagged model had worse performance. The median increase in auROC for the baseline vs.&nbsp;336 hour lag model was 0.023 (95% CI=[0.002-0.044]), yielding a significant probability of 0.963 that the lagged model had worse performance.</p>
 </section>
 <section id="adjacent-contrasts" class="level4">
 <h4 class="anchored" data-anchor-id="adjacent-contrasts">Adjacent Contrasts</h4>
@@ -1152,7 +1152,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"loop":false,"closeEffect":"zoom","openEffect":"zoom","selector":".lightbox","descPosition":"bottom"});
+</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","loop":false,"descPosition":"bottom","openEffect":"zoom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
