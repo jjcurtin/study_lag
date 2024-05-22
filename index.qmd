@@ -55,8 +55,13 @@ Distributions of posterior probabilities in supplemental -->
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
 suppressPackageStartupMessages(library(tidyposterior))
+library(kableExtra)
 
 path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
+path_shared <- format_path("studydata/risk/data_processed/shared")
+path_processed <- format_path("studydata/risk/data_processed/lag")
+
+options(knitr.kable.NA = '')
 ```
 
 
@@ -103,32 +108,338 @@ test_metrics_all <- test_metrics_0 |>
 
 
 
+```{r table_1_calcs}
+disposition <- read_csv(file.path(path_processed, "disposition.csv"), 
+                        col_types = "ccDDcccccccccc")
+
+screen <- read_csv(file.path(path_shared, "screen.csv"), 
+                   col_types = cols()) |>
+  filter(subid %in% subset(disposition, analysis == "yes")$subid) |> 
+  mutate(across(dsm5_1:dsm5_11, ~ recode(., "No" = 0, "Yes" = 1))) |>  
+  rowwise() |>  
+  mutate(dsm5_total = sum(c(dsm5_1, dsm5_2, dsm5_3, dsm5_4, dsm5_5, dsm5_6, dsm5_7, 
+                              dsm5_8, dsm5_9, dsm5_10, dsm5_11))) |>  
+  ungroup()
+
+lapses <- read_csv(file.path(path_shared, "lapses.csv"), col_types = cols()) |>
+  filter(exclude == FALSE)
+
+# Calcs to make df for table 1 (demographics and clinical characteristics)
+n_total <- 151
+
+dem <- screen |>
+  summarise(mean = as.character(round(mean(dem_1, na.rm = TRUE), 1)),
+            SD = as.character(round(sd(dem_1, na.rm = TRUE), 1)),
+            min = as.character(min(dem_1, na.rm = TRUE)),
+            max = as.character(max(dem_1, na.rm = TRUE))) |>
+  mutate(var = "Age",
+         n = as.numeric(""),
+         perc = as.numeric("")) |>
+  select(var, n, perc, everything()) |>
+  full_join(screen |>
+  select(var = dem_2) |>
+  group_by(var) |>
+  summarise(n = n()) |>
+  mutate(perc = (n / sum(n)) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = dem_3) |>
+  mutate(var = fct_relevel(factor(var,
+                         c("American Indian/Alaska Native", "Asian", "Black/African American",
+                           "White/Caucasian", "Other/Multiracial")))) |>
+  group_by(var) |>
+  summarise(n = n()) |>
+  mutate(perc = (n / sum(n)) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = dem_4) |>
+  mutate(var = case_when(var == "No, I am not of Hispanic, Latino, or Spanish origin" ~ "No",
+                         TRUE ~ "Yes"),
+         var = fct_relevel(factor(var, c("Yes", "No")))) |>
+  group_by(var) |>
+  summarise(n = n()) |>
+  mutate(perc = (n / sum(n)) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = dem_5) |>
+  mutate(var = fct_relevel(factor(var,
+                         c("Less than high school or GED degree", "High school or GED",
+                           "Some college", "2-Year degree", "College degree", "Advanced degree")))) |>
+  group_by(var) |>
+  summarise(n = n()) |>
+  mutate(perc = (n / sum(n)) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = dem_6, dem_6_1) |>
+  mutate(var = case_when(dem_6_1 == "Full-time" ~ "Employed full-time",
+                         dem_6_1 == "Part-time" ~ "Employed part-time",
+                         TRUE ~ var)) |>
+  mutate(var = fct_relevel(factor(var,
+                         c("Employed full-time", "Employed part-time", "Full-time student",
+                           "Homemaker", "Disabled", "Retired", "Unemployed",
+                           "Temporarily laid off, sick leave, or maternity leave",
+                           "Other, not otherwise specified")))) |>
+  group_by(var) |>
+  summarise(n = n()) |>
+  mutate(perc = (n / sum(n)) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  summarise(mean = format(round(mean(dem_7, na.rm = TRUE), 0), big.mark = ","),
+            SD = format(round(sd(dem_7, na.rm = TRUE), 0), big.mark = ","),
+            min =format(round(min(dem_7, na.rm = TRUE), 0), big.mark = ","),
+            max = format(round(max(dem_7, na.rm = TRUE), 0), scientific = FALSE, big.mark = ",")) |>
+  mutate(var = "Personal Income",
+        n = as.numeric(""),
+        perc = as.numeric(""),
+        mean = str_c("$", as.character(mean)),
+        SD = str_c("$", as.character(SD)),
+        min = str_c("$", as.character(min)),
+        max = as.character(max)) |>
+  select(var, n, perc, everything()), by = c("var", "n", "perc", "mean", "SD", "min", "max")) |>
+  full_join(screen |>
+  select(var = dem_8) |>
+  mutate(var = case_when(var == "Never Married" ~ "Never married",
+                         TRUE ~ var)) |>
+  mutate(var = fct_relevel(factor(var,
+                         c("Never married", "Married", "Divorced", "Separated",
+                           "Widowed")))) |>
+  group_by(var) |>
+  summarise(n = n()) |>
+  mutate(perc = (n / sum(n)) * 100), by = c("var", "n", "perc"))
+
+auh <- screen |>
+  summarise(mean = mean(auh_1, na.rm = TRUE),
+            SD = sd(auh_1, na.rm = TRUE),
+            min = min(auh_1, na.rm = TRUE),
+            max = max(auh_1, na.rm = TRUE)) |>
+  mutate(var = "Age of first drink",
+        n = as.numeric(""),
+        perc = as.numeric("")) |>
+  select(var, n, perc, everything()) |>
+  full_join(screen |>
+  summarise(mean = mean(auh_2, na.rm = TRUE),
+            SD = sd(auh_2, na.rm = TRUE),
+            min = min(auh_2, na.rm = TRUE),
+            max = max(auh_2, na.rm = TRUE)) |>
+  mutate(var = "Age of regular drinking",
+        n = as.numeric(""),
+        perc = as.numeric("")) |>
+  select(var, n, perc, everything()), by = c("var", "n", "perc", "mean", "SD",
+                                             "min", "max")) |>
+  full_join(screen |>
+  summarise(mean = mean(auh_3, na.rm = TRUE),
+            SD = sd(auh_3, na.rm = TRUE),
+            min = min(auh_3, na.rm = TRUE),
+            max = max(auh_3, na.rm = TRUE)) |>
+  mutate(var = "Age at which drinking became problematic",
+        n = as.numeric(""),
+        perc = as.numeric("")) |>
+  select(var, n, perc, everything()), by = c("var", "n", "perc", "mean", "SD",
+                                             "min", "max")) |>
+  full_join(screen |>
+  summarise(mean = mean(auh_4, na.rm = TRUE),
+            SD = sd(auh_4, na.rm = TRUE),
+            min = min(auh_4, na.rm = TRUE),
+            max = max(auh_4, na.rm = TRUE)) |>
+  mutate(var = "Age of first quit attempt",
+        n = as.numeric(""),
+        perc = as.numeric("")) |>
+  select(var, n, perc, everything()), by = c("var", "n", "perc", "mean", "SD",
+                                             "min", "max")) |>
+  full_join(screen |>
+  # filter out 2 people with 100 and 365 reported quit attempts - will make footnote in table
+  filter(auh_5 < 100) |>
+  summarise(mean = mean(auh_5, na.rm = TRUE),
+            SD = sd(auh_5, na.rm = TRUE),
+            min = min(auh_5, na.rm = TRUE),
+            max = max(auh_5, na.rm = TRUE)) |>
+  mutate(var = "Number of Quit Attempts*",
+        n = as.numeric(""),
+        perc = as.numeric("")) |>
+  select(var, n, perc, everything()), by = c("var", "n", "perc", "mean", "SD",
+                                             "min", "max")) |>
+  full_join(screen |>
+  select(var = auh_6_1) |>
+  mutate(var = case_when(var == "Long-Term Residential Treatment (more than 6 months)" ~ "Long-term residential (6+ months)",
+                         TRUE ~ var)) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_6_2) |>
+  mutate(var = case_when(var == "Short-Term Residential Treatment (less than 6 months)" ~ "Short-term residential (< 6 months)",
+                         TRUE ~ var)) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_6_3) |>
+  mutate(var = case_when(var == "Outpatient Treatment" ~ "Outpatient",
+                         TRUE ~ var)) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_6_4) |>
+  mutate(var = case_when(var == "Individual Counseling" ~ "Individual counseling",
+                         TRUE ~ var)) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_6_5) |>
+  mutate(var = case_when(var == "Group Counseling" ~ "Group counseling",
+                         TRUE ~ var)) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_6_6) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_6_7) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_7) |>
+  mutate(var = fct_relevel(factor(var, c("Yes", "No")))) |>
+  group_by(var) |>
+  summarise(n = n()) |>
+  mutate(perc = (n / sum(n)) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  summarise(mean = mean(dsm5_total),
+            SD = sd(dsm5_total),
+            min = min(dsm5_total, na.rm = TRUE),
+            max = max(dsm5_total, na.rm = TRUE)) |>
+  mutate(var = "DSM-5 Alcohol Use Disorder Symptom Count",
+        n = as.numeric(""),
+        perc = as.numeric("")) |>
+  select(var, n, perc, everything()), by = c("var", "n", "perc", "mean", "SD",
+                                             "min", "max")) |>
+  full_join(screen |>
+  select(var = assist_2_1) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Tobacco products (cigarettes, chewing tobacco, cigars, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_2) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Cannabis (marijuana, pot, grass, hash, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_3) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Cocaine (coke, crack, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_4) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Amphetamine type stimulants (speed, diet pills, ecstasy, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_5) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Inhalants (nitrous, glue, petrol, paint thinner, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_6) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Sedatives or sleeping pills (Valium, Serepax, Rohypnol, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_7) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Hallucinogens (LSD, acid, mushrooms, PCP, Special K, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_8) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Opioids (heroin, morphine, methadone, codeine, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc"))
+
+lapses_per_subid <- screen |>
+  select(subid) |>
+  left_join(lapses |>
+  janitor::tabyl(subid) |>
+  select(-percent), by = "subid") |>
+  mutate(n = if_else(is.na(n), 0, n),
+         lapse = if_else(n > 0, "yes", "no"))
+
+lapse_info <- lapses_per_subid |>
+  group_by(lapse) |>
+  rename(var = lapse) |>
+  mutate(var = factor(var, levels = c("yes", "no"), labels = c("Yes", "No"))) |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100,
+         mean = NA_real_,
+         SD = NA_real_,
+         min = NA_real_,
+         max = NA_real_) |>
+  full_join(lapses_per_subid |>
+  summarise(mean = mean(n),
+            SD = sd(n),
+            min = min(n),
+            max = max(n)) |>
+  mutate(var = "Number of reported lapses"),
+  by = c("var", "mean", "SD", "min", "max"))
+```
+
+
 
 
 
 ## Introduction
 
-### Precision Medicine
+<!-- Precision Medicine -->
 
 Precision medicine has been a goal in healthcare for over half a century [@derubeisHistoryCurrentStatus2019]. Today, this approach is also applied to chronic mental health conditions, like substance use disorders (i.e., precision mental health). Precision mental health uses individual characteristics to guide initial treatment matching and adaptive continuing care over time. It requires dense, long-term monitoring of symptoms and related states, for interventions to be tailored to an individual's needs and preferences at any given moment [@bickmanAchievingPrecisionMental2016a]. Essentially, it aims to identify both *when* and *how* to intervene.
 
-### Personal Sensing and Machine Learning
+<!-- Personal Sensing and Machine Learning -->
 
 Using algorithms to time (*when*) and select personalized interventions (*how*) for substance use may now be possible, thanks to personal sensing and high-dimensional machine learning algorithms. Personal sensing allows for frequent, longitudinal monitoring of individuals' affect, behavior, and cognitions in their day-to-day lives [@mohrPersonalSensingUnderstanding2017]. These data can then be used as inputs for machine learning algorithms to predict the probability of specific outcomes (e.g., lapse risk) and identify the top features contributing to those predictions.
 
-### EMA
+<!-- EMA -->
 
 Ecological momentary assessment (EMA) may be particularly well-suited for these algorithms. It offers momentary subjective insight into constructs that can be easily mapped onto modular forms of treatment, such as the relapse prevention model [@marlattRelapsePreventionMaintenance1985; @witkiewitzRelapsePreventionAlcohol2004]. EMA also appears to be well tolerated by individuals with substance use disorders [@wyantAcceptabilityPersonalSensing2023]. Thus, it can serve as an important signal for predicting substance use outcomes and interpreting clinically relevant features over a sustained period.
 
-### Promising Preliminary Work
+<!-- Promising Preliminary Work -->
 
 Promising preliminary work suggests it is possible to build EMA models that predict immediate lapses back to substance use [@waltersUsingMachineLearning2021; @baeMobilePhoneSensors2018; @soysterPooledPersonspecificMachine2022; @chihPredictiveModelingAddiction2014]. In a previous study from our group, we demonstrated that we can do this very well. Model features were engineered from raw scores and longitudinal change in responses to 4X daily EMAs. EMA questions were designed to measure theoretically-implicated risk factors including past use, craving, past pleasant events, past and future risky situations, past and future stressful events, emotional valence and arousal, and self-efficacy [for reviews, see @marlattRelapsePreventionMaintenance1985; @fronkStressAllostasisSubstance2020; @witkiewitzModelingComplexityPosttreatment2007]. We showed that it was possible to predict immediate alcohol lapses within the next week, day, and hour with clinically meaningful accuracy - area under the receiver operating curves (auROCs) of 0.89, 0.90, and 0.93, respectively [@wyantMachineLearningModels2023]. We also characterized the relative importance of features contributing to these risk probabilities for specific individuals at specific moments in time. These models are well-suited for just-in-time adaptive interventions (JITAIs) integrated within an app to address these immediate risks.
 
-### Many Interventions Happen Outside of an App
+<!-- Many Interventions Happen Outside of an App -->
 
 However, some interventions take time to set up. For example, someone who has reported recent past alcohol use and low abstinence self-efficacy might be encouraged to attend a self-help meeting, plan an outing with important people in their life, or schedule an appointment with a therapist. These multimodal interventions (i.e., combined human and digital interventions) are not available 24/7. A *time-lagged* model with predictions shifted further into the future  could provide patients with increased lead time to implement supports that might not be immediately available to them.
 
-### Current Study
+<!-- Current Study -->
 
 In this study, we compare the performance of one of our models from a previous study with models using increased lag time between predictions and outcomes. Specifically, we use the same EMA features as our immediate model and train new models to predict the probability of a lapse beginning one day (24 hours), three days (72 hours), one week (168 hours), or two weeks (336 hours) into the future. Our primary objective is to assess how model performance degrades with increasing lag time.
 
@@ -142,7 +453,7 @@ In this study, we compare the performance of one of our models from a previous s
 
 ### Participants
 
-We recruited participants in early recovery (1-8 weeks of abstinence) from moderate to severe alcohol use disorder in Madison, Wisconsin, US for a three month longitudinal study. We used data from all participants included in our previous study (N = 151; see [@wyantMachineLearningModels2023] for enrollment, disposition, and demographic information).
+We recruited participants in early recovery (1-8 weeks of abstinence) from moderate to severe alcohol use disorder in Madison, Wisconsin, US for a three month longitudinal study. 
 
 ### Lapse Labels
 
@@ -202,11 +513,56 @@ For both sets of model comparisons we will determine the probability that the mo
 #### Fairness Evaluation
 
 
-#### Shapley values?
+#### Feature Importance
 
 ## Results
 
-### Participant Characteristics
+### Demographic and Clinical Characteristics
+One hundred fifty one participants were included in our analyses. We used data from all participants included in our previous study (see [@wyantMachineLearningModels2023] for enrollment and disposition information).
+
+There were approximately equal numbers of men (N=`r nrow(subset(screen, dem_2 == "Male"))`; `r sprintf("%1.1f", nrow(subset(screen, dem_2 == "Male"))/nrow(screen)*100)`%) and women (N=`r nrow(subset(screen, dem_2 == "Female"))`; `r sprintf("%1.1f", nrow(subset(screen, dem_2 == "Female"))/nrow(screen)*100)`%) who ranged in age from `r screen |> pull(dem_1) |> min()` - `r screen |> pull(dem_1) |> max()` years old.  The sample was majority White (N=`r nrow(subset(screen, dem_3 == "White/Caucasian"))`; `r  sprintf("%1.1f", nrow(subset(screen, dem_3 == "White/Caucasian"))/nrow(screen)*100)`%) and non-Hispanic (N=`r nrow(subset(screen, dem_4 == "No, I am not of Hispanic, Latino, or Spanish origin"))`; `r  sprintf("%1.1f", nrow(subset(screen, dem_4 == "No, I am not of Hispanic, Latino, or Spanish origin"))/nrow(screen)*100)`%).  Participants self-reported a median of `r sprintf("%1.1f",screen |> pull(dsm5_total) |> median())` DSM-5 symptoms of AUD (mean=`r sprintf("%1.1f",screen |> pull(dsm5_total) |> mean())`; SD=`r sprintf("%1.1f",screen |> pull(dsm5_total) |> sd())`; range=`r sprintf("%1.1f",screen |> pull(dsm5_total) |> min())`-`r sprintf("%1.1f",screen |> pull(dsm5_total) |> max())`) and a median of `r sprintf("%1.1f", subset(screen, auh_5 < 100) |> pull(auh_5) |> median())` previous quit attempts (mean=`r sprintf("%1.1f", subset(screen, auh_5 < 100) |> pull(auh_5) |> mean())`; SD=`r sprintf("%1.1f", subset(screen, auh_5 < 100) |> pull(auh_5) |> sd())`; range=`r sprintf("%1.1f", subset(screen, auh_5 < 100) |> pull(auh_5) |> min())`-`r sprintf("%1.1f", subset(screen, auh_5 < 100) |> pull(auh_5) |> max())`).  Most participants (N=`r nrow(subset(lapses_per_subid, n >0))`; `r sprintf("%1.1f", nrow(subset(lapses_per_subid, n >0))/nrow(lapses_per_subid)*100)`%) reported one or more lapses during participation.  The median number of lapses per participant while on-study was `r sprintf("%1.1f",lapses_per_subid |> pull(n) |> median())` (mean=`r sprintf("%1.1f",lapses_per_subid |> pull(n) |> mean())`; SD = `r sprintf("%1.1f",lapses_per_subid |> pull(n) |> sd())`; range=`r sprintf("%1.1f",lapses_per_subid |> pull(n) |> min())`-`r sprintf("%1.1f",lapses_per_subid |> pull(n) |> max())`).  Table 1 provides more detail on demographic and clinical characteristics of the sample.
+
+<!-- Table 1: Demographics and clinical characteristics-->
+```{r table_1}
+#| output: true
+
+footnote_table_dem_a <- "N = 151"
+
+footnote_table_dem_b <- "Two participants reported 100 or more quit attempts. We removed these outliers prior"
+
+footnote_table_dem_c <- "to calculating the mean (M), standard deviation (SD), and range."
+
+dem  |>  
+  bind_rows(auh |>  
+              mutate(across(mean:max, ~round(.x, 1))) |>  
+              mutate(across(mean:max, ~as.character(.x)))) |>  
+  bind_rows(lapse_info |>  
+              mutate(across(mean:max, ~round(.x, 1))) |>  
+              mutate(across(mean:max, ~as.character(.x)))) |>  
+  mutate(range = str_c(min, "-", max)) |> 
+  select(-c(min, max)) |>  
+  kbl(longtable = TRUE,
+      booktabs = TRUE,
+      col.names = c("", "N", "%", "M", "SD", "Range"),
+      align = c("l", "c", "c", "c", "c", "c"),
+      digits = 1,
+      caption = "Demographics and clinical characteristics") |> 
+  kable_styling(position = "l") |>  
+  row_spec(row = 0, align = "c", italic = TRUE) |>  
+  column_spec(column = 1, width = "18em") |> 
+  pack_rows("Sex", 2, 3, bold = FALSE) |>  
+  pack_rows("Race", 4, 8, bold = FALSE) |>  
+  pack_rows("Hispanic, Latino, or Spanish Origin", 9, 10, bold = FALSE) |>  
+  pack_rows("Education", 11, 16, bold = FALSE) |>  
+  pack_rows("Employment", 17, 25, bold = FALSE) |>  
+  pack_rows("Marital Status", 27, 31, bold = FALSE) |>  
+  pack_rows("Alcohol Use Disorder Milestones", 32, 35, bold = FALSE) |>  
+  pack_rows("Lifetime History of Treatment (Can choose more than 1)", 37, 43, bold = FALSE) |>  
+  pack_rows("Received Medication for Alcohol Use Disorder", 44, 45, bold = FALSE) |>  
+  pack_rows("Current (Past 3 Month) Drug Use", 47, 54, bold = FALSE) |>  
+  pack_rows("Reported 1 or More Lapse During Study Period", 55, 56, bold = FALSE) |> 
+  kableExtra::footnote(general = c(footnote_table_dem_a, footnote_table_dem_b, footnote_table_dem_c), escape=FALSE)
+```
 
 
 ### Model Evaluation
@@ -366,9 +722,11 @@ The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprint
 - statistical analysis
 
 
-### Shapley
+### Feature Importance
 
 
 ## Discussion
 
 ## References
+::: {#refs}
+:::

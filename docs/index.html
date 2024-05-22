@@ -10,7 +10,7 @@
 <meta name="author" content="Jiachen (Coco) Yu">
 <meta name="author" content="Gaylen E. Fronk">
 <meta name="author" content="John J. Curtin">
-<meta name="dcterms.date" content="2024-05-20">
+<meta name="dcterms.date" content="2024-05-22">
 <meta name="keywords" content="Substance use disorders, Precision mental health">
 
 <title>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</title>
@@ -26,7 +26,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/clipboard/clipboard.min.js"></script>
@@ -48,6 +67,8 @@ ul.task-list li input[type="checkbox"] {
     document.body.classList.add('hypothesis-enabled');
   });
 </script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
 
 <meta name="citation_title" content="Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support">
@@ -58,10 +79,10 @@ ul.task-list li input[type="checkbox"] {
 <meta name="citation_author" content="Jiachen (Coco) Yu">
 <meta name="citation_author" content="Gaylen E. Fronk">
 <meta name="citation_author" content="John J. Curtin">
-<meta name="citation_publication_date" content="2024-05-20">
-<meta name="citation_cover_date" content="2024-05-20">
+<meta name="citation_publication_date" content="2024-05-22">
+<meta name="citation_cover_date" content="2024-05-22">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-05-20">
+<meta name="citation_online_date" content="2024-05-22">
 <meta name="citation_language" content="en">
 <meta name="citation_journal_title" content="Journal of Important Findings">
 </head>
@@ -121,7 +142,7 @@ ul.task-list li input[type="checkbox"] {
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">May 20, 2024</p>
+              <p class="date">May 22, 2024</p>
             </div>
           </div>
           
@@ -173,16 +194,16 @@ ul.task-list li input[type="checkbox"] {
   </ul></li>
   <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a>
   <ul class="collapse">
-  <li><a href="#participant-characteristics" id="toc-participant-characteristics" class="nav-link" data-scroll-target="#participant-characteristics">Participant Characteristics</a></li>
+  <li><a href="#demographic-and-clinical-characteristics" id="toc-demographic-and-clinical-characteristics" class="nav-link" data-scroll-target="#demographic-and-clinical-characteristics">Demographic and Clinical Characteristics</a></li>
   <li><a href="#model-evaluation-1" id="toc-model-evaluation-1" class="nav-link" data-scroll-target="#model-evaluation-1">Model Evaluation</a></li>
-  <li><a href="#fairness-of-models" id="toc-fairness-of-models" class="nav-link" data-scroll-target="#fairness-of-models">Fairness of Models</a></li>
   <li><a href="#model-comparisons-1" id="toc-model-comparisons-1" class="nav-link" data-scroll-target="#model-comparisons-1">Model Comparisons</a></li>
+  <li><a href="#fairness-evaluation-1" id="toc-fairness-evaluation-1" class="nav-link" data-scroll-target="#fairness-evaluation-1">Fairness Evaluation</a></li>
   <li><a href="#shapley" id="toc-shapley" class="nav-link" data-scroll-target="#shapley">Shapley</a></li>
   </ul></li>
   <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion">Discussion</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
-<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="index-preview.html"><i class="bi bi-journal-code"></i>Article Notebook</a></li><li><a href="docs\docs\index-preview.html"><i class="bi bi-journal-code"></i>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</a></li><li><a href="docs\index-preview.html"><i class="bi bi-journal-code"></i>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</a></li></ul></div></nav>
+<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="index-preview.html"><i class="bi bi-journal-code"></i>Article Notebook</a></li><li><a href="docs\docs\index-preview.html"><i class="bi bi-journal-code"></i>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</a></li><li><a href="docs\index.embed-preview.html"><i class="bi bi-journal-code"></i>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</a></li></ul></div></nav>
 </div>
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
 </div>
@@ -240,7 +261,7 @@ Distributions of posterior probabilities in supplemental -->
 <!--info moved from preregistration-->
 <section id="participants" class="level3">
 <h3 class="anchored" data-anchor-id="participants">Participants</h3>
-<p>We recruited participants in early recovery (1-8 weeks of abstinence) from moderate to severe alcohol use disorder in Madison, Wisconsin, US for a three month longitudinal study. We used data from all participants included in our previous study (N = 151; see <span class="citation" data-cites="wyantMachineLearningModels2023">[@wyantMachineLearningModels2023]</span> for enrollment, disposition, and demographic information).</p>
+<p>We recruited participants in early recovery (1-8 weeks of abstinence) from moderate to severe alcohol use disorder in Madison, Wisconsin, US for a three month longitudinal study.</p>
 </section>
 <section id="lapse-labels" class="level3">
 <h3 class="anchored" data-anchor-id="lapse-labels">Lapse Labels</h3>
@@ -304,8 +325,555 @@ Distributions of posterior probabilities in supplemental -->
 </section>
 <section id="results" class="level2">
 <h2 class="anchored" data-anchor-id="results">Results</h2>
-<section id="participant-characteristics" class="level3">
-<h3 class="anchored" data-anchor-id="participant-characteristics">Participant Characteristics</h3>
+<section id="demographic-and-clinical-characteristics" class="level3">
+<h3 class="anchored" data-anchor-id="demographic-and-clinical-characteristics">Demographic and Clinical Characteristics</h3>
+<p>One hundred fifty one participants were included in our analyses. We used data from all participants included in our previous study (see <span class="citation" data-cites="wyantMachineLearningModels2023">[@wyantMachineLearningModels2023]</span> for enrollment and disposition information).</p>
+<p>There were approximately equal numbers of men (N=77; 51.0%) and women (N=74; 49.0%) who ranged in age from 21 - 72 years old. The sample was majority White (N=131; 86.8%) and non-Hispanic (N=147; 97.4%). Participants self-reported a median of 9.0 DSM-5 symptoms of AUD (mean=8.9; SD=1.9; range=4.0-11.0) and a median of 4.0 previous quit attempts (mean=5.5; SD=5.8; range=0.0-30.0). Most participants (N=84; 55.6%) reported one or more lapses during participation. The median number of lapses per participant while on-study was 1.0 (mean=6.8; SD = 12.0; range=0.0-75.0). Table 1 provides more detail on demographic and clinical characteristics of the sample.</p>
+<!-- Table 1: Demographics and clinical characteristics-->
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Demographics and clinical characteristics</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-style: italic;"></th>
+<th data-quarto-table-cell-role="th" style="text-align: center; font-style: italic;">N</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; font-style: italic;">%</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; font-style: italic;">M</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; font-style: italic;">SD</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; font-style: italic;">Range</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 18em;">Age</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">41</td>
+<td style="text-align: center;">11.9</td>
+<td style="text-align: center;">21-72</td>
+</tr>
+<tr class="even" data-grouplength="2">
+<td colspan="6" style="text-align: left; border-bottom: 1px solid;">Sex</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Female</td>
+<td style="text-align: center;">74</td>
+<td style="text-align: center;">49.0</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Male</td>
+<td style="text-align: center;">77</td>
+<td style="text-align: center;">51.0</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd" data-grouplength="5">
+<td colspan="6" style="text-align: left; border-bottom: 1px solid;">Race</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">American Indian/Alaska Native</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2.0</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Asian</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1.3</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Black/African American</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">5.3</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">White/Caucasian</td>
+<td style="text-align: center;">131</td>
+<td style="text-align: center;">86.8</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Other/Multiracial</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">4.6</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd" data-grouplength="2">
+<td colspan="6" style="text-align: left; border-bottom: 1px solid;">Hispanic, Latino, or Spanish Origin</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Yes</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2.6</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">No</td>
+<td style="text-align: center;">147</td>
+<td style="text-align: center;">97.4</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even" data-grouplength="6">
+<td colspan="6" style="text-align: left; border-bottom: 1px solid;">Education</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Less than high school or GED degree</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">High school or GED</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">9.3</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Some college</td>
+<td style="text-align: center;">41</td>
+<td style="text-align: center;">27.2</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">2-Year degree</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">9.3</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">College degree</td>
+<td style="text-align: center;">58</td>
+<td style="text-align: center;">38.4</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Advanced degree</td>
+<td style="text-align: center;">23</td>
+<td style="text-align: center;">15.2</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd" data-grouplength="9">
+<td colspan="6" style="text-align: left; border-bottom: 1px solid;">Employment</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Employed full-time</td>
+<td style="text-align: center;">72</td>
+<td style="text-align: center;">47.7</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Employed part-time</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">17.2</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Full-time student</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">4.6</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Homemaker</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Disabled</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">4.6</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Retired</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">5.3</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Unemployed</td>
+<td style="text-align: center;">18</td>
+<td style="text-align: center;">11.9</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Temporarily laid off, sick leave, or maternity leave</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2.0</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Other, not otherwise specified</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">6.0</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em;">Personal Income</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">$34,298</td>
+<td style="text-align: center;">$31,807</td>
+<td style="text-align: center;">$0-200,000</td>
+</tr>
+<tr class="even" data-grouplength="5">
+<td colspan="6" style="text-align: left; border-bottom: 1px solid;">Marital Status</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Never married</td>
+<td style="text-align: center;">67</td>
+<td style="text-align: center;">44.4</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Married</td>
+<td style="text-align: center;">32</td>
+<td style="text-align: center;">21.2</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Divorced</td>
+<td style="text-align: center;">45</td>
+<td style="text-align: center;">29.8</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Separated</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">3.3</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Widowed</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1.3</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even" data-grouplength="4">
+<td colspan="6" style="text-align: left; border-bottom: 1px solid;">Alcohol Use Disorder Milestones</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Age of first drink</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">14.6</td>
+<td style="text-align: center;">2.9</td>
+<td style="text-align: center;">6-24</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Age of regular drinking</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">19.5</td>
+<td style="text-align: center;">6.6</td>
+<td style="text-align: center;">11-56</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Age at which drinking became problematic</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">27.8</td>
+<td style="text-align: center;">9.6</td>
+<td style="text-align: center;">15-60</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Age of first quit attempt</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">31.5</td>
+<td style="text-align: center;">10.4</td>
+<td style="text-align: center;">15-65</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em;">Number of Quit Attempts*</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">5.5</td>
+<td style="text-align: center;">5.8</td>
+<td style="text-align: center;">0-30</td>
+</tr>
+<tr class="even" data-grouplength="7">
+<td colspan="6" style="text-align: left; border-bottom: 1px solid;">Lifetime History of Treatment (Can choose more than 1)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Long-term residential (6+ months)</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">5.3</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Short-term residential (&lt; 6 months)</td>
+<td style="text-align: center;">49</td>
+<td style="text-align: center;">32.5</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Outpatient</td>
+<td style="text-align: center;">74</td>
+<td style="text-align: center;">49.0</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Individual counseling</td>
+<td style="text-align: center;">97</td>
+<td style="text-align: center;">64.2</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Group counseling</td>
+<td style="text-align: center;">62</td>
+<td style="text-align: center;">41.1</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Alcoholics Anonymous/Narcotics Anonymous</td>
+<td style="text-align: center;">93</td>
+<td style="text-align: center;">61.6</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Other</td>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">26.5</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even" data-grouplength="2">
+<td colspan="6" style="text-align: left; border-bottom: 1px solid;">Received Medication for Alcohol Use Disorder</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Yes</td>
+<td style="text-align: center;">59</td>
+<td style="text-align: center;">39.1</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">No</td>
+<td style="text-align: center;">92</td>
+<td style="text-align: center;">60.9</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em;">DSM-5 Alcohol Use Disorder Symptom Count</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">8.9</td>
+<td style="text-align: center;">1.9</td>
+<td style="text-align: center;">4-11</td>
+</tr>
+<tr class="even" data-grouplength="8">
+<td colspan="6" style="text-align: left; border-bottom: 1px solid;">Current (Past 3 Month) Drug Use</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Tobacco products (cigarettes, chewing tobacco, cigars, etc.)</td>
+<td style="text-align: center;">84</td>
+<td style="text-align: center;">55.6</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Cannabis (marijuana, pot, grass, hash, etc.)</td>
+<td style="text-align: center;">66</td>
+<td style="text-align: center;">43.7</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Cocaine (coke, crack, etc.)</td>
+<td style="text-align: center;">18</td>
+<td style="text-align: center;">11.9</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Amphetamine type stimulants (speed, diet pills, ecstasy, etc.)</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">9.9</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Inhalants (nitrous, glue, petrol, paint thinner, etc.)</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2.0</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Sedatives or sleeping pills (Valium, Serepax, Rohypnol, etc.)</td>
+<td style="text-align: center;">22</td>
+<td style="text-align: center;">14.6</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Hallucinogens (LSD, acid, mushrooms, PCP, Special K, etc.)</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">9.3</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Opioids (heroin, morphine, methadone, codeine, etc.)</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">10.6</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd" data-grouplength="2">
+<td colspan="6" style="text-align: left; border-bottom: 1px solid;">Reported 1 or More Lapse During Study Period</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">Yes</td>
+<td style="text-align: center;">84</td>
+<td style="text-align: center;">55.6</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; padding-left: 2em;" data-indentlevel="1">No</td>
+<td style="text-align: center;">67</td>
+<td style="text-align: center;">44.4</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em;">Number of reported lapses</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">6.8</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">0-75</td>
+</tr>
+</tbody><tfoot>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><span style="font-style: italic;">Note: </span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> N = 151</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> Two participants reported 100 or more quit attempts. We removed these outliers prior</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> to calculating the mean (M), standard deviation (SD), and range.</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tfoot>
+
+</table>
+
+
+</div>
+<a class="quarto-notebook-link" id="nblink-1" href="index-preview.html">Source: Article Notebook</a></div>
 </section>
 <section id="model-evaluation-1" class="level3">
 <h3 class="anchored" data-anchor-id="model-evaluation-1">Model Evaluation</h3>
@@ -319,10 +887,7 @@ Distributions of posterior probabilities in supplemental -->
 </figure>
 </div>
 </div>
-<a class="quarto-notebook-link" id="nblink-1" href="index-preview.html">Source: Article Notebook</a></div>
-</section>
-<section id="fairness-of-models" class="level3">
-<h3 class="anchored" data-anchor-id="fairness-of-models">Fairness of Models</h3>
+<a class="quarto-notebook-link" id="nblink-2" href="index-preview.html">Source: Article Notebook</a></div>
 </section>
 <section id="model-comparisons-1" class="level3">
 <h3 class="anchored" data-anchor-id="model-comparisons-1">Model Comparisons</h3>
@@ -335,6 +900,15 @@ Distributions of posterior probabilities in supplemental -->
 <p>The median decrease in auROC for the 24 hour vs.&nbsp;72 hour lag model was 0.009 (95% CI=[-0.010-0.029]), yielding a non-significant probability of 0.784 that the 72 hour lag model had worse performance than the 24 hour lag model. The median decrease in auROC for the 72 hour vs.&nbsp;168 hour lag model was 0.001 (95% CI=[-0.019-0.021]), yielding a non-significant probability of 0.532 that the 168 hour lag model had worse performance than the 72 hour lag model. The median decrease in auROC for the 168 hour vs.&nbsp;336 hour lag model was 0.020 (95% CI=[0.000-0.042]), yielding a significant probability of 0.950 that the 336 hour lag model had worse performance than the 168 hour lag model.</p>
 </section>
 </section>
+<section id="fairness-evaluation-1" class="level3">
+<h3 class="anchored" data-anchor-id="fairness-evaluation-1">Fairness Evaluation</h3>
+<ul>
+<li>Calculate auROCs by protected class majority-minority from predictions<br>
+</li>
+<li>plot auROCs</li>
+<li>statistical analysis</li>
+</ul>
+</section>
 <section id="shapley" class="level3">
 <h3 class="anchored" data-anchor-id="shapley">Shapley</h3>
 </section>
@@ -344,6 +918,9 @@ Distributions of posterior probabilities in supplemental -->
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
+<div id="refs" role="list">
+
+</div>
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{wyant2024,
@@ -351,7 +928,7 @@ Distributions of posterior probabilities in supplemental -->
     and J. Curtin, John},
   title = {Lagged {Predictions} of {Next} {Week} {Alcohol} {Use} for
     {Precision} {Mental} {Health} {Support}},
-  date = {2024-05-20},
+  date = {2024-05-22},
   langid = {en},
   abstract = {This study found some pretty cool results that have both
     high impact and important clinical implications. For example ...}
@@ -359,7 +936,7 @@ Distributions of posterior probabilities in supplemental -->
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-wyant2024" class="csl-entry quarto-appendix-citeas" role="listitem">
 Wyant, Kendra, Jiachen (Coco) Yu, Gaylen E. Fronk, and John J. Curtin.
 2024. <span>“Lagged Predictions of Next Week Alcohol Use for Precision
-Mental Health Support.”</span> Journal of Important Findings. May 20,
+Mental Health Support.”</span> Journal of Important Findings. May 22,
 2024.
 </div></div></section></div></main>
 <!-- /main column -->
@@ -751,7 +1328,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","loop":false,"openEffect":"zoom","closeEffect":"zoom","selector":".lightbox"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","openEffect":"zoom","loop":false,"descPosition":"bottom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
