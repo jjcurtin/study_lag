@@ -496,15 +496,15 @@ The start and end date/time of past drinking episodes were reported on the first
 
 Features were calculated using only data collected before the start of each prediction window to ensure our models were making true future predictions. For our no lag models this included all data prior to the hour of the start of the prediction window. For our lagged models, the last EMA data used for feature engineering were collected up to one day, three days, one week, or two weeks prior to the start of the prediction window.
 
-Following our previous work, features were derived from three data sources:
+Features were derived from three data sources:
 
--   *Demographics*: We created quantitative features for age and personal income, and dummy-coded features for sex, race/ethnicity, marital status, education, and employment.
+1. *Demographics*: We created quantitative features for age and personal income, and dummy-coded features for sex, race/ethnicity, marital status, education, and employment.
 
--   *Day and time of prediction window onset*: We created dummy-coded features to indicate time of day and day of week that the prediction window began.
+2. *Day and time of prediction window onset*: We created dummy-coded features to indicate time of day and day of week that the prediction window began.
 
--   *Previous EMA responses*: We created raw EMA and change features for varying scoring epochs before the start of the prediction window for all EMA items (i.e., 12, 24, 48, 72, and 168 hours). Raw features included min, max, and median scores for each EMA question across all EMAs in each epoch for that participant. We calculated change features by subtracting the participant's mean score for each EMA question (using all EMAs collected before the start of the prediction window) from the associated raw feature. We also created raw and change features based on the most recent response for each EMA question and raw and change rate features from previously reported lapses and number of completed EMAs.
+3. *Previous EMA responses*: We created raw EMA and change features for varying scoring epochs (i.e., 12, 24, 48, 72, and 168 hours) before the start of the prediction window for all EMA items. Raw features included min, max, and median scores for each EMA item across all EMAs in each epoch for that participant. We calculated change features by subtracting the participants' overall mean score for each EMA item (using all EMAs collected before the start of the prediction window) from the associated raw feature. We also created raw and change features based on the most recent response for each EMA question and raw and change rate features from previously reported lapses and number of completed EMAs. <!--More information on this process can be found in the supplement?-->
 
-Other generic feature engineering steps included imputing missing data (median imputation for numeric features, mode imputation for nominal features) and removing near-zero variance features. These steps were derived from held-in (training) data and applied to held-out (validation and test) data (see Cross-validation section below). A sample feature engineering script (i.e., tidymodels recipe) containing all feature engineering steps is available on our OSF study page. 
+Other generic feature engineering steps included imputing missing data (median imputation for numeric features, mode imputation for nominal features) and removing zero and near-zero variance features as determined from held-in data (see Cross-validation section below). 
 
 ### Model Training and Evaluation
 #### Model Configurations
@@ -529,7 +529,9 @@ Second, we compared each adjacent lagged model (i.e., 24 hours vs 72 hours, 72 h
 For both sets of model comparisons determined the probability that the models' performances differed systematically from each other by regressing the auROCs (logit transformed) from the 30 test sets as a function of the contrast. We set two random intercepts: one for the repeat, and another for the fold within repeat. We also report the precise posterior probability for the difference in auROCs and the 95% Bayesian CIs. If there was a probability > 0.95 that the more lagged model's performance was worse, we labeled the model contrast as significant.
 
 #### Fairness Benchmarks
-We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we report the median posterior probability and 95% Bayesian CI for auROC for each model separately for four demographic groups with known disparities in access to substance use treatment. Specifically, we report model performance for privileged and unprivileged groups across race and ethnicity (non-Hispanic white vs. non-white) [@pinedoCurrentReexaminationRacial2019], income (above poverty vs. at or below poverty), sex (male vs. female), and age (younger vs. older) [@kilaruIncidenceTreatmentOpioid2020].
+We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we report the median posterior probability and 95% Bayesian CI for auROC for each model separately for four demographic groups with known disparities in access to substance use treatment. Specifically, we report model performance for privileged and unprivileged groups across race and ethnicity (non-Hispanic white vs. non-white) [@pinedoCurrentReexaminationRacial2019; @kilaruIncidenceTreatmentOpioid2020], income (above poverty vs. at or below poverty) [@olfsonHealthcareCoverageService2022], sex (male vs. female) [@greenfieldSubstanceAbuseTreatment2007; @kilaruIncidenceTreatmentOpioid2020], and age (younger vs. older) [@kilaruIncidenceTreatmentOpioid2020].
+
+
 
 <!--https://doi.org/10.1001/jamanetworkopen.2020.5852
 
@@ -540,7 +542,7 @@ In adjusted analysis of patients who did not receive treatment before the overdo
 - For each additional year of age, patients were 0.2% less likely to obtain follow-up (95% CI, −0.3% to −0.1%).
 -->
 
-<!--Add citation for income-->
+
 
 We also acknowledge that models that perform better for privileged, if implemented, could widen existing treatment disparities. We conducted Bayesian group comparisons to assess the likelihood that the model performs better in the privileged class compared to the unprivileged class. We report the precise posterior probability for the difference in auROCs between privileged and unprivileged classes and the 95% Bayesian CIs. 
 
