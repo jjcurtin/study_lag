@@ -493,11 +493,12 @@ The first prediction window for each participant began 24 hours from midnight on
 
 The start and end date/time of past drinking episodes were reported on the first EMA item. A prediction window was labeled *lapse* if the start date/hour of any drinking episode fell within that window. A window was labeled *no lapse* if no alcohol use occurred within that window +/- 6 hours. If no alcohol use occurred within the window but did occur within 6 hours of the start or end of the window, the window was excluded. 
 
+We ended up with a total of 265,107 labels for our baseline (no lag) model, 272,230 labels for our 24 hour lagged model, 265,107 labels for our 72 hour lagged model, 250,858 labels for our 168 hour lagged model, and 225,823 labels for our 336 hour lagged model.
+
 ### Feature Engineering
-<!-- add total number of features-->
 Features were calculated using only data collected before the start of each prediction window to ensure our models were making true future predictions. For our no lag models this included all data prior to the hour of the start of the prediction window. For our lagged models, the last EMA data used for feature engineering were collected up to one day, three days, one week, or two weeks prior to the start of the prediction window.
 
-Features were derived from three data sources:
+A total of 281 features were derived from three data sources:
 
 1. *Demographics*: We created quantitative features for age and personal income, and dummy-coded features for sex, race/ethnicity, marital status, education, and employment.
 
@@ -530,26 +531,7 @@ Second, we compared each adjacent lagged model (i.e., 24 hours vs 72 hours, 72 h
 For both sets of model comparisons determined the probability that the models' performances differed systematically from each other by regressing the auROCs (logit transformed) from the 30 test sets as a function of the contrast. We set two random intercepts: one for the repeat, and another for the fold within repeat. We also report the precise posterior probability for the difference in auROCs and the 95% Bayesian CIs. If there was a probability > 0.95 that the more lagged model's performance was worse, we labeled the model contrast as significant.
 
 #### Fairness Benchmarks
-We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we report the median posterior probability and 95% Bayesian CI for auROC for each model separately for four demographic groups with known disparities in access to substance use treatment. Specifically, we report model performance for privileged and unprivileged groups across race and ethnicity (non-Hispanic white vs. non-white) [@pinedoCurrentReexaminationRacial2019; @kilaruIncidenceTreatmentOpioid2020], income (above poverty vs. at or below poverty) [@olfsonHealthcareCoverageService2022], sex (male vs. female) [@greenfieldSubstanceAbuseTreatment2007; @kilaruIncidenceTreatmentOpioid2020], and age (younger vs. older) [@kilaruIncidenceTreatmentOpioid2020].<!--And substance use severity - moderate vs. severe. This is odd framing though because the "privileged group" is actually the severe SUD group.
-
-
-
-<!--@kilaruIncidenceTreatmentOpioid2020
-
-In adjusted analysis of patients who did not receive treatment before the overdose: 
-- Black patients were half as likely to obtain follow-up compared with non-Hispanic white patients (ARD, −5.9%; 95% CI, −8.6% to −3.6%)
-- Hispanic patients (ARD, −3.5%; 95% CI, −6.1% to −0.9%) were also less likely to obtain follow-up
-- Women (ARD, −1.7%; 95% CI, −3.3% to −0.5%) were less likely to obtain follow-up  
-- For each additional year of age, patients were 0.2% less likely to obtain follow-up (95% CI, −0.3% to −0.1%).
--->
-
-<!-- @johnsonReceivingAddictionTreatment2020 
-
-Provides some discrepant findings for income (people below 20000 more likely to get tx)
-Suggests people with severe SUD more likely to receive tx than moderate or mild
--->
-
-
+We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we report the median posterior probability and 95% Bayesian CI for auROC for each model separately for four demographic groups with known disparities in access to substance use treatment. Specifically, we report model performance for privileged and unprivileged groups across race and ethnicity (non-Hispanic white vs. non-white) [@pinedoCurrentReexaminationRacial2019; @kilaruIncidenceTreatmentOpioid2020], income (above poverty vs. at or below poverty) [@olfsonHealthcareCoverageService2022], sex (male vs. female) [@greenfieldSubstanceAbuseTreatment2007; @kilaruIncidenceTreatmentOpioid2020], and age (younger vs. older) [@kilaruIncidenceTreatmentOpioid2020].<!--And substance use severity - moderate vs. severe. This is odd framing though because the "privileged group" is actually the severe SUD group.-->
 
 We also acknowledge that models that perform better for privileged, if implemented, could widen existing treatment disparities. We conducted Bayesian group comparisons to assess the likelihood that the model performs better in the privileged class compared to the unprivileged class. We report the precise posterior probability for the difference in auROCs between privileged and unprivileged classes and the 95% Bayesian CIs. 
 
