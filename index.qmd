@@ -491,14 +491,14 @@ We predicted lapses occurring in one week windows. Predictions were updated hour
 
 The first prediction window for each participant began 24 hours from midnight on their study start date + lag time. For example, the first prediction for the 24 hour lagged prediction model would be 48 hours after participants' start date. This ensured at least 24 hours of past EMAs for future lapse prediction in these first windows. Subsequent windows for each participant were created by repeatedly rolling the window start time forward one hour until the end of their study participation (i.e., each participant's last prediction window started one week before their last recorded EMA).
 
-The start and end date/time of past drinking episodes were reported on the first EMA item. A prediction window was labeled *lapse* if the start date/hour of any drinking episode fell within that window. A window was labeled *no lapse* if no alcohol use occurred within that window +/- 6 hours. If no alcohol use occurred within the window but did occur within 6 hours of the start or end of the window, the window was excluded. 
+The start and end date/time of past drinking episodes were reported on the first EMA item. A prediction window was labeled *lapse* if the start date/hour of any drinking episode fell within that window. A window was labeled *no lapse* if no alcohol use occurred within that window +/- 24 hours. If no alcohol use occurred within the window but did occur within 24 hours of the start or end of the window, the window was excluded. 
 
-We ended up with a total of 265,107 labels for our baseline (no lag) model, 272,230 labels for our 24 hour lagged model, 265,107 labels for our 72 hour lagged model, 250,858 labels for our 168 hour lagged model, and 225,823 labels for our 336 hour lagged model.
+We ended up with a total of 270,081 labels for our baseline (no lag) model, 266,599 labels for our 24 hour lagged model, 259,643 labels for our 72 hour lagged model, 245,707 labels for our 168 hour lagged model, and 221,206 labels for our 336 hour lagged model.
 
 ### Feature Engineering
 Features were calculated using only data collected before the start of each prediction window to ensure our models were making true future predictions. For our no lag models this included all data prior to the hour of the start of the prediction window. For our lagged models, the last EMA data used for feature engineering were collected up to one day, three days, one week, or two weeks prior to the start of the prediction window.
 
-A total of 281 features were derived from three data sources:
+A total of 286 features were derived from three data sources:
 
 1. *Demographics*: We created quantitative features for age and personal income, and dummy-coded features for sex, race/ethnicity, marital status, education, and employment.
 

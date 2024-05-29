@@ -54,161 +54,6 @@ Black patients were half as likely to obtain follow-up treatment compared with n
 ## SUD severity
 People with severe SUD are more likely to seek and receive treatment compares to those with mild or moderate SUDs [@johnsonReceivingAddictionTreatment2020]. However, those with severe SUDs may face additional barriers to completing treatment.
 
-# SAMHSA data
-
-```{r}
-#| message: false
-
-load("../NSDUH_2022.Rdata")
-
-d <- NSDUH_2022 |> 
-  select(QUESTID2, NEWRACE2, irsex, IRPINC3, POVERTY3, AGE3, IRPYUD5ALC, 
-         IRPYSEV5ALC, sutoutalc, sutrtalcpy, sutrtdralpy) |> 
-  mutate(subid = QUESTID2,
-         race = if_else(NEWRACE2 == 1, "Non-Hispanic White", "Other"),
-         sex = if_else(irsex == 1, "man", "woman"),
-         age = case_when(AGE3 == 1 | AGE3 == 2 | AGE3 == 3 ~ "12-17",
-                         AGE3 == 4 ~ "18-20",
-                         AGE3 == 5 | AGE3 == 6 ~ "21-25",
-                         AGE3 == 7 ~ "26-29",
-                         AGE3 == 8 ~ "30-34",
-                         AGE3 == 9 ~ "35-49",
-                         AGE3 == 10 ~ "50-64",
-                         AGE3 == 11 ~ "65+"),
-         age_65 = if_else(AGE3 == 11, "65+ years", "younger"),
-         age_50 = if_else(AGE3 == 11 | AGE3 == 10, "50+ years", "younger"),
-         income = factor(IRPINC3, 
-                         levels = 1:7, 
-                         labels = c("< 10,000", "10,000 - 19,999", "20,000 - 29,999",
-                                    "30,000 - 39,999", "40,000 - 49,999", "50,000 - 74,999",
-                                    "75,000+") ),
-         poverty = if_else(POVERTY3 == 1, "in poverty", "not in poverty"),
-         aud_past_year = if_else(IRPYUD5ALC == 1, "yes", "no"),
-         aud_sev_past_year = factor(IRPYSEV5ALC, levels = c(1,2,3,9),
-         labels = c("mild", "moderate", "severe", "none")),
-         aud_tx_past_year = if_else(sutrtalcpy == 1 | sutrtdralpy == 1 | sutoutalc == 1, 
-                                    "yes", "no")) |> 
-  select(-c(QUESTID2, NEWRACE2, irsex, IRPINC3, POVERTY3, AGE3, IRPYUD5ALC, 
-         IRPYSEV5ALC, sutrtalcpy, sutrtdralpy) )
-```
-
-## prevalance and Treatment need
-Treatment refers to outpatient or inpatient alcohol or alcohol and drug treatment or tx given in jail/prison   
-
-10% of individuals in data set met criteria for AUD
-```{r}
-janitor::tabyl(d$aud_past_year)
-```
-
-Going to filter out those without AUD
-```{r}
-d <- d |> 
-  filter(aud_past_year == "yes")
-```
-
-Treatment for AUD   
-About 8% received treatment   
-15% receive tx if we exclude mild AUD
-```{r}
-janitor::tabyl(d$aud_tx_past_year)
-
-d |> 
-  filter(aud_sev_past_year != "mild") |> 
-  janitor::tabyl(aud_tx_past_year)
-```
-
-## Next I will look at treatment rates by our classes of interest
-
-### Race and ethnicity
-
-Non-Hispanic Whites receive treatment more than other races as an aggregate other category
-```{r}
-janitor::tabyl(d, race, aud_tx_past_year) 
-
-janitor::tabyl(d, race, aud_tx_past_year) |> 
-  janitor::adorn_percentages("row")
-```
-
-
-### Sex (male vs. female)   
-
-Gender access to tx appears equal
-```{r} 
-janitor::tabyl(d, sex, aud_tx_past_year) 
-
-janitor::tabyl(d, sex, aud_tx_past_year) |> 
-  janitor::adorn_percentages("row")
-```
-
-
-
-### Income 
-
-
-Interesting - this is consistent with a review paper that suggested those in poverty received tx at high rates than those not in poverty   
-
-```{r}
-janitor::tabyl(d, poverty, aud_tx_past_year) 
-
-janitor::tabyl(d, poverty, aud_tx_past_year) |> 
-  janitor::adorn_percentages("row")
-```
-
-Checking with another variable that reports total personal income
-```{r}
-janitor::tabyl(d, income, aud_tx_past_year) 
-
-janitor::tabyl(d, income, aud_tx_past_year) |> 
-  janitor::adorn_percentages("row")
-```
-
-
-
-### Age (younger vs. older)
-3% 65+  
-Additional 8% between 50 - 64 (can't make this age category more granular though)    
-
-65+
-```{r}
-janitor::tabyl(d, age_65, aud_tx_past_year) 
-
-janitor::tabyl(d, age_65, aud_tx_past_year) |> 
-  janitor::adorn_percentages("row")
-```
-
-50+  
-**When expanding the older age category we see a shift in direction of treatment access. This is consistent with the literature, suggesting older adults should be defined at 65+**
-```{r}
-janitor::tabyl(d, age_50, aud_tx_past_year) 
-
-janitor::tabyl(d, age_50, aud_tx_past_year) |> 
-  janitor::adorn_percentages("row")
-```
-
-More granular age categories
-```{r}
-janitor::tabyl(d, age, aud_tx_past_year) 
-
-janitor::tabyl(d, age, aud_tx_past_year) |> 
-  janitor::adorn_percentages("row") |> 
-  arrange(age)
-```
-
-
-
-### SUD severity
-
-**Supports literature that people with severe AUD more likely to get tx compared to those with moderate (or mild) AUD**
-```{r}
-janitor::tabyl(d, aud_sev_past_year, aud_tx_past_year) 
-
-janitor::tabyl(d, aud_sev_past_year, aud_tx_past_year) |> 
-  janitor::adorn_percentages("row")
-```
-
-
-
-
 
 # Representation in our data
 
@@ -262,6 +107,26 @@ screen <- screen |>
 janitor::tabyl(screen$race)
 ```
 
+### Marital status
+
+```{r}
+janitor::tabyl(screen$dem_8)
+```
+
+### Education
+
+```{r}
+janitor::tabyl(screen$dem_5)
+```
+
+### Employment
+
+```{r}
+janitor::tabyl(screen$dem_6)
+
+janitor::tabyl(screen$dem_6_1)
+
+```
 
 ### SUD severity
 Only 7 participants have moderate AUD (6+ = severe)
