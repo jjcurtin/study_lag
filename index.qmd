@@ -105,6 +105,32 @@ test_metrics_all <- test_metrics_0 |>
   mutate(fold_num = rep(1:10, 3),
          repeat_num = c(rep(1, 10), rep(2, 10), rep(3, 10))) |> 
   select(-outer_split_num)
+
+pp_dem <- read_csv(file.path(path_models_lag, "pp_dem_0.csv"), col_types = cols()) |> 
+  mutate(lag = 0) |> 
+  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_24.csv"), col_types = cols()) |> 
+  mutate(lag = 24)) |> 
+  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_72.csv"), col_types = cols()) |> 
+  mutate(lag = 72)) |> 
+  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_168.csv"), col_types = cols()) |> 
+  mutate(lag = 168)) |> 
+  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_336.csv"), col_types = cols()) |> 
+  mutate(lag = 336))
+
+pp_dem_contrast <- read_csv(file.path(path_models_lag, "pp_dem_contrast_0.csv"), col_types = cols()) |> 
+  mutate(lag = 0) |> 
+  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_24.csv"), col_types = cols()) |> 
+  mutate(lag = 24)) |> 
+  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_72.csv"), col_types = cols()) |> 
+  mutate(lag = 72)) |> 
+  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_168.csv"), col_types = cols()) |> 
+  mutate(lag = 168)) |> 
+  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_336.csv"), col_types = cols()) |> 
+  mutate(lag = 336))
+
+pp_dem_contrast <- pp_dem_contrast |> 
+  group_by(contrast) |> 
+  summarise(across(probability:upper, median))
 ```
 
 
@@ -531,9 +557,9 @@ Second, we compared each adjacent lagged model (i.e., 24 hours vs 72 hours, 72 h
 For both sets of model comparisons determined the probability that the models' performances differed systematically from each other by regressing the auROCs (logit transformed) from the 30 test sets as a function of the contrast. We set two random intercepts: one for the repeat, and another for the fold within repeat. We also report the precise posterior probability for the difference in auROCs and the 95% Bayesian CIs. If there was a probability > 0.95 that the more lagged model's performance was worse, we labeled the model contrast as significant.
 
 #### Fairness Benchmarks
-We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we report the median posterior probability and 95% Bayesian CI for auROC for each model separately for four demographic groups with known disparities in access to substance use treatment. Specifically, we report model performance for privileged and unprivileged groups across race and ethnicity (non-Hispanic white vs. non-white) [@pinedoCurrentReexaminationRacial2019; @kilaruIncidenceTreatmentOpioid2020], income (above poverty vs. at or below poverty) [@olfsonHealthcareCoverageService2022], sex (male vs. female) [@greenfieldSubstanceAbuseTreatment2007; @kilaruIncidenceTreatmentOpioid2020], and age (younger vs. older) [@kilaruIncidenceTreatmentOpioid2020].<!--And substance use severity - moderate vs. severe. This is odd framing though because the "privileged group" is actually the severe SUD group.-->
+We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we report the median posterior probability and 95% Bayesian CI for auROC for each model separately for four demographic groups with known disparities in access to substance use treatment. Specifically, we report model performance for privileged and unprivileged groups across race and ethnicity (non-Hispanic white vs. non-white) [@pinedoCurrentReexaminationRacial2019; @kilaruIncidenceTreatmentOpioid2020], income (above poverty vs. at or below poverty) [@olfsonHealthcareCoverageService2022], sex (male vs. female) [@greenfieldSubstanceAbuseTreatment2007; @kilaruIncidenceTreatmentOpioid2020], and age (younger vs. older) [@kilaruIncidenceTreatmentOpioid2020].
 
-We also acknowledge that models that perform better for privileged, if implemented, could widen existing treatment disparities. We conducted Bayesian group comparisons to assess the likelihood that the model performs better in the privileged class compared to the unprivileged class. We report the precise posterior probability for the difference in auROCs between privileged and unprivileged classes and the 95% Bayesian CIs. 
+We also acknowledge that models that perform better for privileged, if implemented, could widen existing treatment disparities. We conducted Bayesian group comparisons to assess the likelihood that the model performs better in the privileged class compared to the unprivileged class. We report median differences in posterior probabilities for privileged and unprivileged classes and the 95% Bayesian CIs. 
 
 #### Feature Importance
 We calculated Shapley values [@lundbergUnifiedApproachInterpreting2017] from the 30 test sets to provide a description of the importance of categories of features across our five models. We used the SHAPforxgboost package that provides Shapley values in log-odds units for binary classification models. We averaged the three Shapley values for each observation for each feature (i.e., across the three repeats) to increase their stability. An inherent property of Shapley values is their additivity, allowing us to combine features into feature categories. We created separate feature categories for each of the nine EMA questions, the rates of past alcohol use and missing surveys, the time of day and day of the week of the start of the prediction window, and the seven demographic variables included in the models. We calculated the local (i.e., for each observation) importance for each category of features by adding Shapley values across all features in a category, separately for each observation.  We calculated global importance for each feature category by averaging the absolute value of the Shapley values of all features in the category across all observations. These local and global importance scores based on Shapley values allow us to contextualize relative feature importance.  
@@ -742,6 +768,49 @@ The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprint
 ### Fairness Benchmarks
 
 
+Across our baseline and lagged models, performance was significantly better for privileged groups compared to unprivileged groups. On average the median increase in auROC for white participants compared to participants who were not white was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(upper))`]). On average the median increase in auROC for male participants compared to female participants was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(upper))`]). On average the median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(upper))`]). On average the median increase in auROC for younger participants compared to older participants was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "younger vs. older") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "younger vs. older") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "younger vs. older") |> pull(upper))`]). <!-- Currently averaging across median and CIs for each lag but dont know if this is allowed. Put more information in supplement?-->
+
+
+```{r}
+#| echo: false
+
+pp_dem |>
+  mutate(lag = factor(lag, levels = c(0, 24, 72, 168, 336), 
+                        labels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag" )),
+         model = factor(model, levels = c("not white", "white",
+                                        "female", "male",
+                                        "below poverty", "above poverty",
+                                        "older", "younger" )),
+         comparison = factor(model,
+                             levels = c("not white", "white",
+                                        "female", "male",
+                                        "below poverty", "above poverty",
+                                        "older", "younger" ),
+                             labels = c("race", "race",
+                                        "sex", "sex",
+                                        "income", "income",
+                                        "age", "age"))) |> 
+  ggplot() + 
+  geom_point(aes(x = pp_median, y = model), color = "black") +
+  geom_segment(mapping = aes(y = model, x = pp_lower, xend = pp_upper),
+                data = pp_dem |> 
+                 mutate(lag = factor(lag, levels = c(0, 24, 72, 168, 336), 
+                        labels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag" )),
+                        comparison = factor(model,
+                             levels = c("not white", "white",
+                                        "female", "male",
+                                        "below poverty", "above poverty",
+                                        "older", "younger" ),
+                             labels = c("race", "race",
+                                        "sex", "sex",
+                                        "income", "income",
+                                        "age", "age")))) +
+  facet_grid(comparison~lag, scales = "free_y") +
+  scale_x_continuous("Area Under ROC Curve", limits = c(.45, 1), breaks = c(.5, .6, .7, .8, .9, 1.0)) +
+  ylab("") +
+  theme_classic() +
+  theme(legend.position = "none")
+```
 
 ### Feature Importance
 

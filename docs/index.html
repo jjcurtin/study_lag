@@ -10,7 +10,7 @@
 <meta name="author" content="Jiachen (Coco) Yu">
 <meta name="author" content="Gaylen E. Fronk">
 <meta name="author" content="John J. Curtin">
-<meta name="dcterms.date" content="2024-05-23">
+<meta name="dcterms.date" content="2024-05-31">
 <meta name="keywords" content="Substance use disorders, Precision mental health">
 
 <title>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</title>
@@ -79,10 +79,10 @@ div.csl-indent {
 <meta name="citation_author" content="Jiachen (Coco) Yu">
 <meta name="citation_author" content="Gaylen E. Fronk">
 <meta name="citation_author" content="John J. Curtin">
-<meta name="citation_publication_date" content="2024-05-23">
-<meta name="citation_cover_date" content="2024-05-23">
+<meta name="citation_publication_date" content="2024-05-31">
+<meta name="citation_cover_date" content="2024-05-31">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-05-23">
+<meta name="citation_online_date" content="2024-05-31">
 <meta name="citation_language" content="en">
 <meta name="citation_journal_title" content="Journal of Important Findings">
 </head>
@@ -142,7 +142,7 @@ div.csl-indent {
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">May 23, 2024</p>
+              <p class="date">May 31, 2024</p>
             </div>
           </div>
           
@@ -289,18 +289,19 @@ Note to include transparency report in supplement-->
 <h3 class="anchored" data-anchor-id="lapse-labels">Lapse Labels</h3>
 <p>We predicted lapses occurring in one week windows. Predictions were updated hourly. Therefore our models provided hour-by-hour predictions of future probability of an alcohol lapse within a one week window shifted at various time points (i.e., lags) into the future (no lag and 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions).</p>
 <p>The first prediction window for each participant began 24 hours from midnight on their study start date + lag time. For example, the first prediction for the 24 hour lagged prediction model would be 48 hours after participants’ start date. This ensured at least 24 hours of past EMAs for future lapse prediction in these first windows. Subsequent windows for each participant were created by repeatedly rolling the window start time forward one hour until the end of their study participation (i.e., each participant’s last prediction window started one week before their last recorded EMA).</p>
-<p>The start and end date/time of past drinking episodes were reported on the first EMA item. A prediction window was labeled <em>lapse</em> if the start date/hour of any drinking episode fell within that window. A window was labeled <em>no lapse</em> if no alcohol use occurred within that window +/- 6 hours. If no alcohol use occurred within the window but did occur within 6 hours of the start or end of the window, the window was excluded.</p>
+<p>The start and end date/time of past drinking episodes were reported on the first EMA item. A prediction window was labeled <em>lapse</em> if the start date/hour of any drinking episode fell within that window. A window was labeled <em>no lapse</em> if no alcohol use occurred within that window +/- 24 hours. If no alcohol use occurred within the window but did occur within 24 hours of the start or end of the window, the window was excluded.</p>
+<p>We ended up with a total of 270,081 labels for our baseline (no lag) model, 266,599 labels for our 24 hour lagged model, 259,643 labels for our 72 hour lagged model, 245,707 labels for our 168 hour lagged model, and 221,206 labels for our 336 hour lagged model.</p>
 </section>
 <section id="feature-engineering" class="level3">
 <h3 class="anchored" data-anchor-id="feature-engineering">Feature Engineering</h3>
 <p>Features were calculated using only data collected before the start of each prediction window to ensure our models were making true future predictions. For our no lag models this included all data prior to the hour of the start of the prediction window. For our lagged models, the last EMA data used for feature engineering were collected up to one day, three days, one week, or two weeks prior to the start of the prediction window.</p>
-<p>Following our previous work, features were derived from three data sources:</p>
-<ul>
+<p>A total of 286 features were derived from three data sources:</p>
+<ol type="1">
 <li><p><em>Demographics</em>: We created quantitative features for age and personal income, and dummy-coded features for sex, race/ethnicity, marital status, education, and employment.</p></li>
 <li><p><em>Day and time of prediction window onset</em>: We created dummy-coded features to indicate time of day and day of week that the prediction window began.</p></li>
-<li><p><em>Previous EMA responses</em>: We created raw EMA and change features for varying scoring epochs before the start of the prediction window for all EMA items (i.e., 12, 24, 48, 72, and 168 hours). Raw features included min, max, and median scores for each EMA question across all EMAs in each epoch for that participant. We calculated change features by subtracting the participant’s mean score for each EMA question (using all EMAs collected before the start of the prediction window) from the associated raw feature. We also created raw and change features based on the most recent response for each EMA question and raw and change rate features from previously reported lapses.</p></li>
-</ul>
-<p>Other generic feature engineering steps included imputing missing data (median imputation for numeric features, mode imputation for nominal features) and removing near-zero variance features. These steps were derived from held-in (training) data and applied to held-out (validation and test) data (see Cross-validation section below). A sample feature engineering script (i.e., tidymodels recipe) containing all feature engineering steps is available on our OSF study page.</p>
+<li><p><em>Previous EMA responses</em>: We created raw EMA and change features for varying scoring epochs (i.e., 12, 24, 48, 72, and 168 hours) before the start of the prediction window for all EMA items. Raw features included min, max, and median scores for each EMA item across all EMAs in each epoch for that participant. We calculated change features by subtracting the participants’ overall mean score for each EMA item (using all EMAs collected before the start of the prediction window) from the associated raw feature. We also created raw and change features based on the most recent response for each EMA question and raw and change rate features from previously reported lapses and number of completed EMAs. <!--More information on this process can be found in the supplement?--></p></li>
+</ol>
+<p>Other generic feature engineering steps included imputing missing data (median imputation for numeric features, mode imputation for nominal features) and removing zero and near-zero variance features as determined from held-in data (see Cross-validation section below).</p>
 </section>
 <section id="model-training-and-evaluation" class="level3">
 <h3 class="anchored" data-anchor-id="model-training-and-evaluation">Model Training and Evaluation</h3>
@@ -326,17 +327,8 @@ Note to include transparency report in supplement-->
 </section>
 <section id="fairness-benchmarks" class="level4">
 <h4 class="anchored" data-anchor-id="fairness-benchmarks">Fairness Benchmarks</h4>
-<p>We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we report the median posterior probability and 95% Bayesian CI for auROC for each model separately for four demographic groups with known disparities in access to substance use treatment. Specifically, we report model performance for privileged and unprivileged groups across race and ethnicity (non-Hispanic white vs.&nbsp;non-white) <span class="citation" data-cites="pinedoCurrentReexaminationRacial2019">[@pinedoCurrentReexaminationRacial2019]</span>, income (above poverty vs.&nbsp;at or below poverty), sex (male vs.&nbsp;female), and age (younger vs.&nbsp;older) <span class="citation" data-cites="kilaruIncidenceTreatmentOpioid2020">[@kilaruIncidenceTreatmentOpioid2020]</span>.</p>
-<!--https://doi.org/10.1001/jamanetworkopen.2020.5852
-
-In adjusted analysis of patients who did not receive treatment before the overdose: 
-- Black patients were half as likely to obtain follow-up compared with non-Hispanic white patients (ARD, −5.9%; 95% CI, −8.6% to −3.6%)
-- Hispanic patients (ARD, −3.5%; 95% CI, −6.1% to −0.9%) were also less likely to obtain follow-up
-- Women (ARD, −1.7%; 95% CI, −3.3% to −0.5%) were less likely to obtain follow-up  
-- For each additional year of age, patients were 0.2% less likely to obtain follow-up (95% CI, −0.3% to −0.1%).
--->
-<!--Add citation for income-->
-<p>We also acknowledge that models that perform better for privileged, if implemented, could widen existing treatment disparities. We conducted Bayesian group comparisons to assess the likelihood that the model performs better in the privileged class compared to the unprivileged class. We report the precise posterior probability for the difference in auROCs between privileged and unprivileged classes and the 95% Bayesian CIs.</p>
+<p>We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we report the median posterior probability and 95% Bayesian CI for auROC for each model separately for four demographic groups with known disparities in access to substance use treatment. Specifically, we report model performance for privileged and unprivileged groups across race and ethnicity (non-Hispanic white vs.&nbsp;non-white) <span class="citation" data-cites="pinedoCurrentReexaminationRacial2019 kilaruIncidenceTreatmentOpioid2020">[@pinedoCurrentReexaminationRacial2019; @kilaruIncidenceTreatmentOpioid2020]</span>, income (above poverty vs.&nbsp;at or below poverty) <span class="citation" data-cites="olfsonHealthcareCoverageService2022">[@olfsonHealthcareCoverageService2022]</span>, sex (male vs.&nbsp;female) <span class="citation" data-cites="greenfieldSubstanceAbuseTreatment2007 kilaruIncidenceTreatmentOpioid2020">[@greenfieldSubstanceAbuseTreatment2007; @kilaruIncidenceTreatmentOpioid2020]</span>, and age (younger vs.&nbsp;older) <span class="citation" data-cites="kilaruIncidenceTreatmentOpioid2020">[@kilaruIncidenceTreatmentOpioid2020]</span>.</p>
+<p>We also acknowledge that models that perform better for privileged, if implemented, could widen existing treatment disparities. We conducted Bayesian group comparisons to assess the likelihood that the model performs better in the privileged class compared to the unprivileged class. We report median differences in posterior probabilities for privileged and unprivileged classes and the 95% Bayesian CIs.</p>
 </section>
 <section id="feature-importance" class="level4">
 <h4 class="anchored" data-anchor-id="feature-importance">Feature Importance</h4>
@@ -898,8 +890,8 @@ In adjusted analysis of patients who did not receive treatment before the overdo
 </section>
 <section id="model-evaluation-1" class="level3">
 <h3 class="anchored" data-anchor-id="model-evaluation-1">Model Evaluation</h3>
-<p>The median auROC across the 30 test sets for our baseline model was high (median=0.858, IQR=0.054), consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=0.877, IQR=0.049), 72 hour lag (median=0.876, IQR=0.053), and 168 hour lag (median=0.868, IQR=0.063), and moderate for the 336 hour lag (median=0.835, IQR=0.059).</p>
-<p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.866 (baseline), 0.877 (24 hour lag), 0.868 (72 hour lag), 0.867 (168 hour lag), and 0.847 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline[0.847-0.882], 24 hour lag[0.859-0.892], 72 hour lag[0.849-0.885], 168 hour lag[0.848-0.884], 336 hour lag[0.825-0.866]. Below we display these median auROCs and 95% Bayesian CIs by model.</p>
+<p>The median auROC across the 30 test sets for our baseline model was high (median=0.857, IQR=0.054), consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=0.877, IQR=0.049), 72 hour lag (median=0.876, IQR=0.053), and 168 hour lag (median=0.868, IQR=0.063), and moderate for the 336 hour lag (median=0.835, IQR=0.059).</p>
+<p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.868 (baseline), 0.877 (24 hour lag), 0.868 (72 hour lag), 0.867 (168 hour lag), and 0.846 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline[0.849-0.884], 24 hour lag[0.858-0.892], 72 hour lag[0.849-0.884], 168 hour lag[0.849-0.883], 336 hour lag[0.826-0.865]. Below we display these median auROCs and 95% Bayesian CIs by model.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -914,15 +906,25 @@ In adjusted analysis of patients who did not receive treatment before the overdo
 <h3 class="anchored" data-anchor-id="model-comparisons-1">Model Comparisons</h3>
 <section id="baseline-contrasts" class="level4">
 <h4 class="anchored" data-anchor-id="baseline-contrasts">Baseline Contrasts</h4>
-<p>The median decrease in auROC for the baseline vs.&nbsp;24 hour lag model was -0.011 (95% CI=[-0.030-0.009]), yielding a non-significant probability of 0.183 that the lagged model had worse performance. The median decrease in auROC for the baseline vs.&nbsp;72 hour model was -0.002 (95% CI=[-0.022-0.018]), yielding a non-significant probability of 0.431 that the lagged model had worse performance. The median increase in auROC for the baseline vs.&nbsp;168 hour lag model was -0.001 (95% CI=[-0.021-0.019]), yielding a non-significant probability of 0.472 that the lagged model had worse performance. The median increase in auROC for the baseline vs.&nbsp;336 hour lag model was 0.019 (95% CI=[-0.002-0.040]), yielding a significant probability of 0.929 that the lagged model had worse performance.</p>
+<p>The median decrease in auROC for the baseline vs.&nbsp;24 hour lag model was -0.009 (95% CI=[-0.029-0.011]), yielding a non-significant probability of 0.235 that the lagged model had worse performance. The median decrease in auROC for the baseline vs.&nbsp;72 hour model was 0.000 (95% CI=[-0.020-0.020]), yielding a non-significant probability of 0.513 that the lagged model had worse performance. The median increase in auROC for the baseline vs.&nbsp;168 hour lag model was 0.001 (95% CI=[-0.019-0.021]), yielding a non-significant probability of 0.528 that the lagged model had worse performance. The median increase in auROC for the baseline vs.&nbsp;336 hour lag model was 0.022 (95% CI=[-0.000-0.043]), yielding a significant probability of 0.948 that the lagged model had worse performance.</p>
 </section>
 <section id="adjacent-contrasts" class="level4">
 <h4 class="anchored" data-anchor-id="adjacent-contrasts">Adjacent Contrasts</h4>
-<p>The median decrease in auROC for the 24 hour vs.&nbsp;72 hour lag model was 0.009 (95% CI=[-0.011-0.029]), yielding a non-significant probability of 0.779 that the 72 hour lag model had worse performance than the 24 hour lag model. The median decrease in auROC for the 72 hour vs.&nbsp;168 hour lag model was 0.001 (95% CI=[-0.019-0.021]), yielding a non-significant probability of 0.530 that the 168 hour lag model had worse performance than the 72 hour lag model. The median decrease in auROC for the 168 hour vs.&nbsp;336 hour lag model was 0.020 (95% CI=[-0.002-0.042]), yielding a significant probability of 0.937 that the 336 hour lag model had worse performance than the 168 hour lag model.</p>
+<p>The median decrease in auROC for the 24 hour vs.&nbsp;72 hour lag model was 0.009 (95% CI=[-0.011-0.029]), yielding a non-significant probability of 0.778 that the 72 hour lag model had worse performance than the 24 hour lag model. The median decrease in auROC for the 72 hour vs.&nbsp;168 hour lag model was 0.001 (95% CI=[-0.019-0.021]), yielding a non-significant probability of 0.522 that the 168 hour lag model had worse performance than the 72 hour lag model. The median decrease in auROC for the 168 hour vs.&nbsp;336 hour lag model was 0.021 (95% CI=[-0.001-0.042]), yielding a significant probability of 0.940 that the 336 hour lag model had worse performance than the 168 hour lag model.</p>
 </section>
 </section>
 <section id="fairness-benchmarks-1" class="level3">
 <h3 class="anchored" data-anchor-id="fairness-benchmarks-1">Fairness Benchmarks</h3>
+<p>Across our baseline and lagged models, performance was significantly better for privileged groups compared to unprivileged groups. On average the median increase in auROC for white participants compared to participants who were not white was 0.226 (95% CI=[0.156-0.301]). On average the median increase in auROC for male participants compared to female participants was 0.095 (95% CI=[0.055-0.139]). On average the median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line was 0.174 (95% CI=[0.105-0.249]). On average the median increase in auROC for younger participants compared to older participants was 0.071 (95% CI=[0.021-0.133]). <!-- Currently averaging across median and CIs for each lag but dont know if this is allowed. Put more information in supplement?--></p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/unnamed-chunk-9-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-3" href="index-preview.html">Source: Article Notebook</a></div>
 </section>
 <section id="feature-importance-1" class="level3">
 <h3 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h3>
@@ -947,7 +949,7 @@ In adjusted analysis of patients who did not receive treatment before the overdo
     and J. Curtin, John},
   title = {Lagged {Predictions} of {Next} {Week} {Alcohol} {Use} for
     {Precision} {Mental} {Health} {Support}},
-  date = {2024-05-23},
+  date = {2024-05-31},
   langid = {en},
   abstract = {This study found some pretty cool results that have both
     high impact and important clinical implications. For example ...}
@@ -955,7 +957,7 @@ In adjusted analysis of patients who did not receive treatment before the overdo
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-wyant2024" class="csl-entry quarto-appendix-citeas" role="listitem">
 Wyant, Kendra, Jiachen (Coco) Yu, Gaylen E. Fronk, and John J. Curtin.
 2024. <span>“Lagged Predictions of Next Week Alcohol Use for Precision
-Mental Health Support.”</span> Journal of Important Findings. May 23,
+Mental Health Support.”</span> Journal of Important Findings. May 31,
 2024.
 </div></div></section></div></main>
 <!-- /main column -->
@@ -1347,7 +1349,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","openEffect":"zoom","loop":false,"closeEffect":"zoom","selector":".lightbox"});
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","selector":".lightbox","closeEffect":"zoom","loop":false,"descPosition":"bottom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
