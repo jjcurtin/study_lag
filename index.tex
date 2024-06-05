@@ -225,59 +225,53 @@ Notebook}}
 \section{Introduction}\label{introduction}
 
 Precision medicine has been a goal in healthcare for over half a century
-{[}@derubeisHistoryCurrentStatus2019{]}. Today, this approach is also
-applied to chronic mental health conditions, like substance use
-disorders (i.e., precision mental health). Precision mental health uses
-individual characteristics to guide initial treatment matching and
-adaptive continuing care over time. It requires dense, long-term
-monitoring of symptoms and related states, for interventions to be
-tailored to an individual's needs and preferences at any given moment
-{[}@bickmanAchievingPrecisionMental2016a{]}. Essentially, it aims to
-identify both \emph{when} and \emph{how} to intervene.
+(DeRubeis, 2019). Today, this approach is also applied to chronic mental
+health conditions, like substance use disorders (i.e., precision mental
+health). Precision mental health uses individual characteristics to
+guide initial treatment matching and adaptive continuing care over time.
+It requires dense, long-term monitoring of symptoms and related states,
+for interventions to be tailored to an individual's needs and
+preferences at any given moment (Bickman et al., 2016). Essentially, it
+aims to identify both \emph{when} and \emph{how} to intervene.
 
 Using algorithms to time (\emph{when}) and select personalized
 interventions (\emph{how}) for substance use may now be possible, thanks
 to personal sensing and high-dimensional machine learning algorithms.
 Personal sensing allows for frequent, longitudinal monitoring of
 individuals' affect, behavior, and cognitions in their day-to-day lives
-{[}@mohrPersonalSensingUnderstanding2017{]}. These data can then be used
-as inputs for machine learning algorithms to predict the probability of
-specific outcomes (e.g., lapse risk) and identify the top features
-contributing to those predictions.
+(Mohr et al., 2017). These data can then be used as inputs for machine
+learning algorithms to predict the probability of specific outcomes
+(e.g., lapse risk) and identify the top features contributing to those
+predictions.
 
 Ecological momentary assessment (EMA) may be particularly well-suited
 for these algorithms. It offers momentary subjective insight into
 constructs that can be easily mapped onto modular forms of treatment,
-such as the relapse prevention model
-{[}@marlattRelapsePreventionMaintenance1985;
-@witkiewitzRelapsePreventionAlcohol2004{]}. EMA also appears to be well
-tolerated by individuals with substance use disorders
-{[}@wyantAcceptabilityPersonalSensing2023{]}. Thus, it can serve as an
-important signal for predicting substance use outcomes and interpreting
-clinically relevant features over a sustained period.
+such as the relapse prevention model (Marlatt \& Gordon, 1985;
+Witkiewitz \& Marlatt, 2004). EMA also appears to be well tolerated by
+individuals with substance use disorders (Wyant et al., 2023). Thus, it
+can serve as an important signal for predicting substance use outcomes
+and interpreting clinically relevant features over a sustained period.
 
 Promising preliminary work suggests it is possible to build EMA models
-that predict immediate lapses back to substance use
-{[}@waltersUsingMachineLearning2021; @baeMobilePhoneSensors2018;
-@soysterPooledPersonspecificMachine2022;
-@chihPredictiveModelingAddiction2014{]}. In a previous study from our
-group, we demonstrated that we can do this very well. Model features
-were engineered from raw scores and longitudinal change in responses to
-4X daily EMAs. EMA questions were designed to measure
-theoretically-implicated risk factors including past use, craving, past
-pleasant events, past and future risky situations, past and future
-stressful events, emotional valence and arousal, and self-efficacy
-{[}for reviews, see @marlattRelapsePreventionMaintenance1985;
-@fronkStressAllostasisSubstance2020;
-@witkiewitzModelingComplexityPosttreatment2007{]}. We showed that it was
-possible to predict immediate alcohol lapses within the next week, day,
-and hour with clinically meaningful accuracy - area under the receiver
-operating curves (auROCs) of 0.89, 0.90, and 0.93, respectively
-{[}@wyantMachineLearningModels2023{]}. We also characterized the
-relative importance of features contributing to these risk probabilities
-for specific individuals at specific moments in time. These models are
-well-suited for just-in-time adaptive interventions (JITAIs) integrated
-within an app to address these immediate risks.
+that predict immediate lapses back to substance use (Bae et al., 2018;
+Chih et al., 2014; Soyster et al., 2022; Walters et al., 2021). In a
+previous study from our group, we demonstrated that we can do this very
+well. Model features were engineered from raw scores and longitudinal
+change in responses to 4X daily EMAs. EMA questions were designed to
+measure theoretically-implicated risk factors including past use,
+craving, past pleasant events, past and future risky situations, past
+and future stressful events, emotional valence and arousal, and
+self-efficacy (Fronk et al., 2020; for reviews, see Marlatt \& Gordon,
+1985; Witkiewitz \& Marlatt, 2007). We showed that it was possible to
+predict immediate alcohol lapses within the next week, day, and hour
+with clinically meaningful accuracy - area under the receiver operating
+curves (auROCs) of 0.89, 0.90, and 0.93, respectively (Wyant et al., in
+press). We also characterized the relative importance of features
+contributing to these risk probabilities for specific individuals at
+specific moments in time. These models are well-suited for just-in-time
+adaptive interventions (JITAIs) integrated within an app to address
+these immediate risks.
 
 However, some interventions take time to set up. For example, someone
 who has reported recent past alcohol use and low abstinence
@@ -315,7 +309,7 @@ We recruited 151 participants in early recovery (1-8 weeks of
 abstinence) from moderate to severe alcohol use disorder in Madison,
 Wisconsin, US for a three month longitudinal study. This sample size was
 determined based on traditional power analysis methods for logistic
-regression {[}@hsiehSampleSizeTables1989{]} because comparable
+regression (\textbf{hsiehSampleSizeTables1989?}) because comparable
 approaches for machine learning models have not yet been validated.
 Participants were recruited through print and targeted digital
 advertisements and partnerships with treatment centers. We required
@@ -386,17 +380,18 @@ ethnicity, education, marital status, employment, and income) and
 clinical characteristics (AUD milestones, number of quit attempts,
 lifetime AUD treatment history, lifetime receipt of AUD medication,
 DSM-5 AUD symptom count, and current drug use
-{[}@whoassistworkinggroupAlcoholSmokingSubstance2002{]}). This
+(\textbf{whoassistworkinggroupAlcoholSmokingSubstance2002?})). This
 information was collected primarily to characterize the sample and to
 evaluate the diversity of the training data.
 
 \subsection{Data Analytic Strategy}\label{data-analytic-strategy}
 
 Data preprocessing, modeling, and Bayesian analyses were done in R using
-the tidymodels ecosystem {[}@kuhnTidymodelsCollectionPackages2020{]}.
-Models were trained and evaluated using high-throughput computing
-resources provided by the University of Wisconsin Center for High
-Throughput Computing {[}@chtc{]}.
+the tidymodels ecosystem
+(\textbf{kuhnTidymodelsCollectionPackages2020?}). Models were trained
+and evaluated using high-throughput computing resources provided by the
+University of Wisconsin Center for High Throughput Computing
+(\textbf{chtc?}).
 
 \subsubsection{Lapse Labels}\label{lapse-labels}
 
@@ -420,9 +415,14 @@ The start and end date/time of past drinking episodes were reported on
 the first EMA item. A prediction window was labeled \emph{lapse} if the
 start date/hour of any drinking episode fell within that window. A
 window was labeled \emph{no lapse} if no alcohol use occurred within
-that window +/- 6 hours. If no alcohol use occurred within the window
-but did occur within 6 hours of the start or end of the window, the
+that window +/- 24 hours. If no alcohol use occurred within the window
+but did occur within 24 hours of the start or end of the window, the
 window was excluded.
+
+We ended up with a total of 270,081 labels for our baseline (no lag)
+model, 266,599 labels for our 24 hour lagged model, 259,643 labels for
+our 72 hour lagged model, 245,707 labels for our 168 hour lagged model,
+and 221,206 labels for our 336 hour lagged model.
 
 \subsubsection{Feature Engineering}\label{feature-engineering}
 
@@ -434,10 +434,10 @@ last EMA data used for feature engineering were collected up to one day,
 three days, one week, or two weeks prior to the start of the prediction
 window.
 
-Following our previous work, features were derived from three data
-sources:
+A total of 286 features were derived from three data sources:
 
-\begin{itemize}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
 \item
   \emph{Demographics}: We created quantitative features for age and
   personal income, and dummy-coded features for sex, race/ethnicity,
@@ -448,24 +448,22 @@ sources:
   window began.
 \item
   \emph{Previous EMA responses}: We created raw EMA and change features
-  for varying scoring epochs before the start of the prediction window
-  for all EMA items (i.e., 12, 24, 48, 72, and 168 hours). Raw features
-  included min, max, and median scores for each EMA question across all
-  EMAs in each epoch for that participant. We calculated change features
-  by subtracting the participant's mean score for each EMA question
-  (using all EMAs collected before the start of the prediction window)
-  from the associated raw feature. We also created raw and change
-  features based on the most recent response for each EMA question and
-  raw and change rate features from previously reported lapses.
-\end{itemize}
+  for varying scoring epochs (i.e., 12, 24, 48, 72, and 168 hours)
+  before the start of the prediction window for all EMA items. Raw
+  features included min, max, and median scores for each EMA item across
+  all EMAs in each epoch for that participant. We calculated change
+  features by subtracting the participants' overall mean score for each
+  EMA item (using all EMAs collected before the start of the prediction
+  window) from the associated raw feature. We also created raw and
+  change features based on the most recent response for each EMA
+  question and raw and change rate features from previously reported
+  lapses and number of completed EMAs.
+\end{enumerate}
 
 Other generic feature engineering steps included imputing missing data
 (median imputation for numeric features, mode imputation for nominal
-features) and removing near-zero variance features. These steps were
-derived from held-in (training) data and applied to held-out (validation
-and test) data (see Cross-validation section below). A sample feature
-engineering script (i.e., tidymodels recipe) containing all feature
-engineering steps is available on our OSF study page.
+features) and removing zero and near-zero variance features as
+determined from held-in data (see Cross-validation section below).
 
 \subsubsection{Model Training and
 Evaluation}\label{model-training-and-evaluation}
@@ -479,7 +477,7 @@ statistical algorithms (elastic net, XGBoost, regularized discriminant
 analysis, and single layer neural networks) that vary across
 characteristics expected to affect model performance (e.g., flexibility,
 complexity, handling higher-order interactions natively)
-{[}@kuhnAppliedPredictiveModeling2018{]}.
+(\textbf{kuhnAppliedPredictiveModeling2018?}).
 
 Candidate model configurations differed across sensible values for key
 hyperparameters. They also differed on outcome resampling method (i.e.,
@@ -487,7 +485,7 @@ no resampling and up-sampling and down-sampling of the outcome using
 majority/no lapse to minority/lapse ratios ranging from 1:1 to 2:1). We
 calibrated predicted probabilities using the beta distribution to
 support optimal decision-making under variable outcome distributions
-{[}@kullSigmoidsHowObtain2017{]}.
+(\textbf{kullSigmoidsHowObtain2017?}).
 
 \paragraph{Cross-validation}\label{cross-validation}
 
@@ -544,43 +542,46 @@ as significant.
 
 We aim for the responsible and transparent reporting of model
 performance and clinical utility. In these efforts, we report the median
-posterior probability and 95\% credible intervals (CI) for auROC for
-each model separately for four demographic groups with known disparities
-in access to substance use treatment. Specifically, we report model
-performance for privileged and unprivileged groups across race and
-ethnicity (white vs.~non-white), income (above poverty vs.~at or below
-poverty), sex (male vs.~female), and age (younger vs.~older).
+posterior probability and 95\% Bayesian CI for auROC for each model
+separately for four demographic groups with potential disparities in
+access to substance use treatment. Specifically, we report model
+performance for dichotomized groups of race and ethnicity (non-Hispanic
+white vs.~non-white) (\textbf{pinedoCurrentReexaminationRacial2019?};
+\textbf{kilaruIncidenceTreatmentOpioid2020?}), income (above poverty
+vs.~at or below poverty)
+(\textbf{olfsonHealthcareCoverageService2022?}), sex (male vs.~female)
+(\textbf{greenfieldSubstanceAbuseTreatment2007?};
+\textbf{kilaruIncidenceTreatmentOpioid2020?}), and age (younger
+vs.~older) (\textbf{kilaruIncidenceTreatmentOpioid2020?}).
 
-We also acknowledge that models that perform better for privileged
-classes could be harmful if implemented as they could widen existing
-treatment disparities. We conducted Bayesian group comparisons to assess
-the likelihood that the model performs better in the privileged class
-compared to the unprivileged class. We report the precise posterior
-probability for the difference in auROCs between privileged and
-unprivileged classes and the 95\% Bayesian CIs.
+We also acknowledge that models that work for only a subset of people,
+if implemented, could widen existing treatment disparities. We conducted
+Bayesian group comparisons to assess the likelihood that the model
+performs differently by group. We report median differences in posterior
+probabilities and the 95\% Bayesian CIs.
 
 \paragraph{Feature Importance}\label{feature-importance}
 
 We calculated Shapley values
-{[}@lundbergUnifiedApproachInterpreting2017{]} from the 30 test sets to
-provide a description of the importance of categories of features across
-our five models. We used the SHAPforxgboost package that provides
-Shapley values in log-odds units for binary classification models. We
-averaged the three Shapley values for each observation for each feature
-(i.e., across the three repeats) to increase their stability. An
-inherent property of Shapley values is their additivity, allowing us to
-combine features into feature categories. We created separate feature
-categories for each of the nine EMA questions, the rates of past alcohol
-use and missing surveys, the time of day and day of the week of the
-start of the prediction window, and the seven demographic variables
-included in the models. We calculated the local (i.e., for each
-observation) importance for each category of features by adding Shapley
-values across all features in a category, separately for each
-observation. We calculated global importance for each feature category
-by averaging the absolute value of the Shapley values of all features in
-the category across all observations. These local and global importance
-scores based on Shapley values allow us to contextualize relative
-feature importance.
+(\textbf{lundbergUnifiedApproachInterpreting2017?}) from the 30 test
+sets to provide a description of the importance of categories of
+features across our five models. We used the SHAPforxgboost package that
+provides Shapley values in log-odds units for binary classification
+models. We averaged the three Shapley values for each observation for
+each feature (i.e., across the three repeats) to increase their
+stability. An inherent property of Shapley values is their additivity,
+allowing us to combine features into feature categories. We created
+separate feature categories for each of the nine EMA questions, the
+rates of past alcohol use and missing surveys, the time of day and day
+of the week of the start of the prediction window, and the seven
+demographic variables included in the models. We calculated the local
+(i.e., for each observation) importance for each category of features by
+adding Shapley values across all features in a category, separately for
+each observation. We calculated global importance for each feature
+category by averaging the absolute value of the Shapley values of all
+features in the category across all observations. These local and global
+importance scores based on Shapley values allow us to contextualize
+relative feature importance.
 
 \subsection{Results}\label{results}
 
@@ -589,8 +590,7 @@ Characteristics}\label{demographic-and-clinical-characteristics}
 
 One hundred fifty one participants were included in our analyses. We
 used data from all participants included in our previous study (see
-{[}@wyantMachineLearningModels2023{]} for enrollment and disposition
-information).
+(Wyant et al., in press) for enrollment and disposition information).
 
 There were approximately equal numbers of men (N=77; 51.0\%) and women
 (N=74; 49.0\%) who ranged in age from 21 - 72 years old. The sample was
@@ -709,7 +709,7 @@ Notebook}}
 Notebook}}
 
 The median auROC across the 30 test sets for our baseline model was high
-(median=0.858, IQR=0.054), consistent with our previous study.
+(median=0.857, IQR=0.054), consistent with our previous study.
 Performance across our lagged models was also high for the 24 hour lag
 (median=0.877, IQR=0.049), 72 hour lag (median=0.876, IQR=0.053), and
 168 hour lag (median=0.868, IQR=0.063), and moderate for the 336 hour
@@ -721,14 +721,14 @@ Notebook}}
 
 Histograms of the full posterior probability distributions for auROC for
 each model are available in the supplement. The median auROCs from these
-posterior distributions were 0.866 (baseline), 0.877 (24 hour lag),
-0.868 (72 hour lag), 0.867 (168 hour lag), and 0.847 (336 hour lag).
+posterior distributions were 0.868 (baseline), 0.877 (24 hour lag),
+0.868 (72 hour lag), 0.867 (168 hour lag), and 0.846 (336 hour lag).
 These values represent our best estimates for the magnitude of the auROC
 parameter for each model. The 95\% Bayesian CI for the auROCs for these
 models were relatively narrow and did not contain 0.5:
-baseline{[}0.847-0.882{]}, 24 hour lag{[}0.859-0.892{]}, 72 hour
-lag{[}0.849-0.885{]}, 168 hour lag{[}0.848-0.884{]}, 336 hour
-lag{[}0.825-0.866{]}. Below we display these median auROCs and 95\%
+baseline{[}0.849-0.884{]}, 24 hour lag{[}0.858-0.892{]}, 72 hour
+lag{[}0.849-0.884{]}, 168 hour lag{[}0.849-0.883{]}, 336 hour
+lag{[}0.826-0.865{]}. Figure 1 displays these median auROCs and 95\%
 Bayesian CIs by model.
 
 \includegraphics{index_files/figure-pdf/unnamed-chunk-6-1.pdf}
@@ -746,16 +746,16 @@ Notebook}}
 Notebook}}
 
 The median decrease in auROC for the baseline vs.~24 hour lag model was
--0.011 (95\% CI={[}-0.030-0.009{]}), yielding a non-significant
-probability of 0.183 that the lagged model had worse performance. The
-median decrease in auROC for the baseline vs.~72 hour model was -0.002
-(95\% CI={[}-0.022-0.018{]}), yielding a non-significant probability of
-0.431 that the lagged model had worse performance. The median increase
-in auROC for the baseline vs.~168 hour lag model was -0.001 (95\%
-CI={[}-0.021-0.019{]}), yielding a non-significant probability of 0.472
+-0.009 (95\% CI={[}-0.029-0.011{]}), yielding a non-significant
+probability of 0.235 that the lagged model had worse performance. The
+median decrease in auROC for the baseline vs.~72 hour model was 0.000
+(95\% CI={[}-0.020-0.020{]}), yielding a non-significant probability of
+0.513 that the lagged model had worse performance. The median increase
+in auROC for the baseline vs.~168 hour lag model was 0.001 (95\%
+CI={[}-0.019-0.021{]}), yielding a non-significant probability of 0.528
 that the lagged model had worse performance. The median increase in
-auROC for the baseline vs.~336 hour lag model was 0.019 (95\%
-CI={[}-0.002-0.040{]}), yielding a significant probability of 0.929 that
+auROC for the baseline vs.~336 hour lag model was 0.022 (95\%
+CI={[}-0.000-0.043{]}), yielding a significant probability of 0.948 that
 the lagged model had worse performance.
 
 \paragraph{Adjacent Contrasts}\label{adjacent-contrasts}
@@ -766,27 +766,166 @@ Notebook}}
 
 The median decrease in auROC for the 24 hour vs.~72 hour lag model was
 0.009 (95\% CI={[}-0.011-0.029{]}), yielding a non-significant
-probability of 0.779 that the 72 hour lag model had worse performance
+probability of 0.778 that the 72 hour lag model had worse performance
 than the 24 hour lag model. The median decrease in auROC for the 72 hour
 vs.~168 hour lag model was 0.001 (95\% CI={[}-0.019-0.021{]}), yielding
-a non-significant probability of 0.530 that the 168 hour lag model had
+a non-significant probability of 0.522 that the 168 hour lag model had
 worse performance than the 72 hour lag model. The median decrease in
-auROC for the 168 hour vs.~336 hour lag model was 0.020 (95\%
-CI={[}-0.002-0.042{]}), yielding a significant probability of 0.937 that
+auROC for the 168 hour vs.~336 hour lag model was 0.021 (95\%
+CI={[}-0.001-0.042{]}), yielding a significant probability of 0.940 that
 the 336 hour lag model had worse performance than the 168 hour lag
 model.
 
 \subsubsection{Fairness Benchmarks}\label{fairness-benchmarks-1}
 
+Table 2 shows the performance of each model by demographic group. All
+group comparisons across lags were significantly different. On average
+there was a median increase in auROC for white participants compared to
+participants who were not white was 0.226 (95\% CI={[}0.156-0.301{]}).
+On average there was a median increase in auROC for male participants
+compared to female participants was 0.095 (95\% CI={[}0.055-0.139{]}).
+On average there was a median increase in auROC for participants above
+the federal poverty line compared to participants below the federal
+poverty line was 0.174 (95\% CI={[}0.105-0.249{]}). On average there was
+a median increase in auROC for younger participants compared to older
+participants was 0.071 (95\% CI={[}0.021-0.133{]}).
+
+\begin{table}
+\centering
+\begin{tabular}[t]{lrlrlrlrlrl}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{0 Lag} & \multicolumn{2}{c}{24 Lag} & \multicolumn{2}{c}{72 Lag} & \multicolumn{2}{c}{168 Lag} & \multicolumn{2}{c}{336 Lag} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9} \cmidrule(l{3pt}r{3pt}){10-11}
+Group & median PP for auROC & Bayesian CI & median PP for auROC & Bayesian CI & median PP for auROC & Bayesian CI & median PP for auROC & Bayesian CI & median PP for auROC & Bayesian CI\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{11}{l}{\textbf{Race/Ethnicity}}\\
+\hspace{1em}not white & 0.660 & 0.573-0.737 & 0.657 & 0.565-0.735 & 0.648 & 0.559-0.729 & 0.647 & 0.552-0.731 & 0.564 & 0.458-0.663\\
+\hspace{1em}white & 0.875 & 0.835-0.905 & 0.883 & 0.846-0.912 & 0.876 & 0.838-0.908 & 0.866 & 0.823-0.899 & 0.849 & 0.795-0.889\\
+\addlinespace[0.3em]
+\multicolumn{11}{l}{\textbf{Sex}}\\
+\hspace{1em}female & 0.810 & 0.755-0.854 & 0.823 & 0.771-0.866 & 0.809 & 0.756-0.854 & 0.792 & 0.735-0.84 & 0.768 & 0.698-0.825\\
+\hspace{1em}male & 0.904 & 0.872-0.929 & 0.907 & 0.876-0.93 & 0.905 & 0.874-0.929 & 0.902 & 0.869-0.927 & 0.888 & 0.848-0.919\\
+\addlinespace[0.3em]
+\multicolumn{11}{l}{\textbf{Income}}\\
+\hspace{1em}below poverty & 0.706 & 0.616-0.78 & 0.712 & 0.621-0.787 & 0.697 & 0.61-0.776 & 0.649 & 0.552-0.736 & 0.635 & 0.529-0.727\\
+\hspace{1em}above poverty & 0.871 & 0.832-0.903 & 0.877 & 0.838-0.907 & 0.871 & 0.832-0.902 & 0.863 & 0.82-0.898 & 0.849 & 0.794-0.889\\
+\addlinespace[0.3em]
+\multicolumn{11}{l}{\textbf{Age}}\\
+\hspace{1em}older & 0.813 & 0.754-0.863 & 0.817 & 0.756-0.867 & 0.799 & 0.737-0.852 & 0.787 & 0.713-0.847 & 0.784 & 0.704-0.848\\
+\hspace{1em}younger & 0.878 & 0.84-0.909 & 0.885 & 0.85-0.916 & 0.878 & 0.841-0.908 & 0.867 & 0.824-0.901 & 0.856 & 0.807-0.893\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textsubscript{Source:
+\href{https://jjcurtin.github.io/study_lag/index.qmd.html}{Article
+Notebook}}
+
+\textsubscript{Source:
+\href{https://jjcurtin.github.io/study_lag/index.qmd.html}{Article
+Notebook}}
+
 \subsubsection{Feature Importance}\label{feature-importance-1}
 
 \subsection{Discussion}\label{discussion}
 
+\begin{itemize}
+\tightlist
+\item
+  Improving model performance for unprivileged classes. Considering
+  other important classes for SUD, such as geographic location,
+  Improving diversity of training data
+\end{itemize}
+
 \subsection{References}\label{references}
 
 \phantomsection\label{refs}
-\begin{CSLReferences}{0}{1}
+\begin{CSLReferences}{1}{0}
 \vspace{1em}
+
+\bibitem[\citeproctext]{ref-baeMobilePhoneSensors2018}
+Bae, S., Chung, T., Ferreira, D., Dey, A. K., \& Suffoletto, B. (2018).
+Mobile phone sensors and supervised machine learning to identify alcohol
+use events in young adults: {Implications} for just-in-time adaptive
+interventions. \emph{Addictive Behaviors}, \emph{83}, 42--47.
+\url{https://doi.org/10.1016/j.addbeh.2017.11.039}
+
+\bibitem[\citeproctext]{ref-bickmanAchievingPrecisionMental2016a}
+Bickman, L., Lyon, A. R., \& Wolpert, M. (2016). Achieving {Precision
+Mental Health} through {Effective Assessment}, {Monitoring}, and
+{Feedback Processes}. \emph{Administration and Policy in Mental Health
+and Mental Health Services Research}, \emph{43}(3), 271--276.
+\url{https://doi.org/10.1007/s10488-016-0718-5}
+
+\bibitem[\citeproctext]{ref-chihPredictiveModelingAddiction2014}
+Chih, M.-Y., Patton, T., McTavish, F. M., Isham, A. J., Judkins-Fisher,
+C. L., Atwood, A. K., \& Gustafson, D. H. (2014). Predictive modeling of
+addiction lapses in a mobile health application. \emph{Journal of
+Substance Abuse Treatment}, \emph{46}(1), 29--35.
+\url{https://doi.org/10.1016/j.jsat.2013.08.004}
+
+\bibitem[\citeproctext]{ref-derubeisHistoryCurrentStatus2019}
+DeRubeis, R. J. (2019). The history, current status, and possible future
+of precision mental health. \emph{Behaviour Research and Therapy},
+\emph{123}, 103506. \url{https://doi.org/10.1016/j.brat.2019.103506}
+
+\bibitem[\citeproctext]{ref-fronkStressAllostasisSubstance2020}
+Fronk, G. E., Sant'Ana, S. J., Kaye, J. T., \& Curtin, J. J. (2020).
+Stress {Allostasis} in {Substance Use Disorders}: {Promise}, {Progress},
+and {Emerging Priorities} in {Clinical Research}. \emph{Annual Review of
+Clinical Psychology}, \emph{16}(1), 401--430.
+\url{https://doi.org/10.1146/annurev-clinpsy-102419-125016}
+
+\bibitem[\citeproctext]{ref-marlattRelapsePreventionMaintenance1985}
+Marlatt, G. A., \& Gordon, J. R. (Eds.). (1985). \emph{Relapse
+{Prevention}: {Maintenance Strategies} in the {Treatment} of {Addictive
+Behaviors}} (First edition). New York: The Guilford Press.
+
+\bibitem[\citeproctext]{ref-mohrPersonalSensingUnderstanding2017}
+Mohr, D. C., Zhang, M., \& Schueller, S. M. (2017). Personal {Sensing}:
+{Understanding Mental Health Using Ubiquitous Sensors} and {Machine
+Learning}. \emph{Annual Review of Clinical Psychology}, \emph{13}(1),
+23--47. \url{https://doi.org/10.1146/annurev-clinpsy-032816-044949}
+
+\bibitem[\citeproctext]{ref-soysterPooledPersonspecificMachine2022}
+Soyster, P. D., Ashlock, L., \& Fisher, A. J. (2022). Pooled and
+person-specific machine learning models for predicting future alcohol
+consumption, craving, and wanting to drink: {A} demonstration of
+parallel utility. \emph{Psychology of Addictive Behaviors: Journal of
+the Society of Psychologists in Addictive Behaviors}, \emph{36}(3),
+296--306. \url{https://doi.org/10.1037/adb0000666}
+
+\bibitem[\citeproctext]{ref-waltersUsingMachineLearning2021}
+Walters, S. T., Businelle, M. S., Suchting, R., Li, X., Hébert, E. T.,
+\& Mun, E.-Y. (2021). Using machine learning to identify predictors of
+imminent drinking and create tailored messages for at-risk drinkers
+experiencing homelessness. \emph{Journal of Substance Abuse Treatment},
+\emph{127}, 108417. \url{https://doi.org/10.1016/j.jsat.2021.108417}
+
+\bibitem[\citeproctext]{ref-witkiewitzRelapsePreventionAlcohol2004}
+Witkiewitz, K., \& Marlatt, G. A. (2004). Relapse prevention for alcohol
+and drug problems: {That} was zen, this is tao. \emph{American
+Psychologist}, \emph{59}(4), 224--235.
+\url{https://doi.org/10.1037/0003-066X.59.4.224}
+
+\bibitem[\citeproctext]{ref-witkiewitzModelingComplexityPosttreatment2007}
+Witkiewitz, K., \& Marlatt, G. A. (2007). Modeling the complexity of
+post-treatment drinking: {It}'s a rocky road to relapse. \emph{Clinical
+Psychology Review}, \emph{27}(6), 724--738.
+\url{https://doi.org/10.1016/j.cpr.2007.01.002}
+
+\bibitem[\citeproctext]{ref-wyantAcceptabilityPersonalSensing2023}
+Wyant, K., Moshontz, H., Ward, S. B., Fronk, G. E., \& Curtin, J. J.
+(2023). Acceptability of {Personal Sensing Among People With Alcohol Use
+Disorder}: {Observational Study}. \emph{JMIR mHealth and uHealth},
+\emph{11}(1), e41833. \url{https://doi.org/10.2196/41833}
+
+\bibitem[\citeproctext]{ref-wyantMachineLearningModels2023}
+Wyant, K., Sant'Ana, S. J. K., Fronk, G., \& Curtin, J. J. (in press).
+Machine learning models for temporally precise lapse prediction in
+alcohol use disorder. \emph{Psychopathology and Clinical Science}.
+\url{https://doi.org/10.31234/osf.io/cgsf7}
 
 \end{CSLReferences}
 
