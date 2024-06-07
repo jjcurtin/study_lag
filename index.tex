@@ -187,7 +187,6 @@
   urlcolor={Blue},
   pdfcreator={LaTeX via pandoc}}
 
-\journalname{Journal of Important Findings}
 
 \draftfalse
 
@@ -266,8 +265,8 @@ self-efficacy (Fronk et al., 2020; for reviews, see Marlatt \& Gordon,
 1985; Witkiewitz \& Marlatt, 2007). We showed that it was possible to
 predict immediate alcohol lapses within the next week, day, and hour
 with clinically meaningful accuracy - area under the receiver operating
-curves (auROCs) of 0.89, 0.90, and 0.93, respectively (Wyant et al., in
-press). We also characterized the relative importance of features
+curves (auROCs) of 0.89, 0.90, and 0.93, respectively (Wyant et al.,
+n.d.). We also characterized the relative importance of features
 contributing to these risk probabilities for specific individuals at
 specific moments in time. These models are well-suited for just-in-time
 adaptive interventions (JITAIs) integrated within an app to address
@@ -309,11 +308,10 @@ We recruited 151 participants in early recovery (1-8 weeks of
 abstinence) from moderate to severe alcohol use disorder in Madison,
 Wisconsin, US for a three month longitudinal study. This sample size was
 determined based on traditional power analysis methods for logistic
-regression (\textbf{hsiehSampleSizeTables1989?}) because comparable
-approaches for machine learning models have not yet been validated.
-Participants were recruited through print and targeted digital
-advertisements and partnerships with treatment centers. We required
-participants:
+regression (Hsieh, 1989) because comparable approaches for machine
+learning models have not yet been validated. Participants were recruited
+through print and targeted digital advertisements and partnerships with
+treatment centers. We required participants:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -376,22 +374,18 @@ abstinence self-efficacy).
 \subsubsection{Individual Differences}\label{individual-differences}
 
 We collected self-report information about demographics (age, sex, race,
-ethnicity, education, marital status, employment, and income) and
-clinical characteristics (AUD milestones, number of quit attempts,
-lifetime AUD treatment history, lifetime receipt of AUD medication,
-DSM-5 AUD symptom count, and current drug use
-(\textbf{whoassistworkinggroupAlcoholSmokingSubstance2002?})). This
-information was collected primarily to characterize the sample and to
-evaluate the diversity of the training data.
+ethnicity, education, marital status, employment, and income) and AUD
+symptom count. This information was collected primarily to characterize
+the sample and to evaluate the diversity of the training data. We also
+used the demographic information in our models.
 
 \subsection{Data Analytic Strategy}\label{data-analytic-strategy}
 
 Data preprocessing, modeling, and Bayesian analyses were done in R using
-the tidymodels ecosystem
-(\textbf{kuhnTidymodelsCollectionPackages2020?}). Models were trained
+the tidymodels ecosystem (Kuhn \& Wickham, 2020). Models were trained
 and evaluated using high-throughput computing resources provided by the
-University of Wisconsin Center for High Throughput Computing
-(\textbf{chtc?}).
+University of Wisconsin Center for High Throughput Computing (Center for
+High Throughput Computing, 2006).
 
 \subsubsection{Lapse Labels}\label{lapse-labels}
 
@@ -476,8 +470,8 @@ and 336 hour lagged predictions. We considered four well-established
 statistical algorithms (elastic net, XGBoost, regularized discriminant
 analysis, and single layer neural networks) that vary across
 characteristics expected to affect model performance (e.g., flexibility,
-complexity, handling higher-order interactions natively)
-(\textbf{kuhnAppliedPredictiveModeling2018?}).
+complexity, handling higher-order interactions natively) (Kuhn \&
+Johnson, 2018).
 
 Candidate model configurations differed across sensible values for key
 hyperparameters. They also differed on outcome resampling method (i.e.,
@@ -485,7 +479,7 @@ no resampling and up-sampling and down-sampling of the outcome using
 majority/no lapse to minority/lapse ratios ranging from 1:1 to 2:1). We
 calibrated predicted probabilities using the beta distribution to
 support optimal decision-making under variable outcome distributions
-(\textbf{kullSigmoidsHowObtain2017?}).
+(Kull et al., 2017).
 
 \paragraph{Cross-validation}\label{cross-validation}
 
@@ -546,13 +540,10 @@ posterior probability and 95\% Bayesian CI for auROC for each model
 separately for four demographic groups with potential disparities in
 access to substance use treatment. Specifically, we report model
 performance for dichotomized groups of race and ethnicity (non-Hispanic
-white vs.~non-white) (\textbf{pinedoCurrentReexaminationRacial2019?};
-\textbf{kilaruIncidenceTreatmentOpioid2020?}), income (above poverty
-vs.~at or below poverty)
-(\textbf{olfsonHealthcareCoverageService2022?}), sex (male vs.~female)
-(\textbf{greenfieldSubstanceAbuseTreatment2007?};
-\textbf{kilaruIncidenceTreatmentOpioid2020?}), and age (younger
-vs.~older) (\textbf{kilaruIncidenceTreatmentOpioid2020?}).
+white vs.~non-white) (Kilaru et al., 2020; Pinedo, 2019), income (above
+poverty vs.~at or below poverty) (Olfson et al., 2022), sex (male
+vs.~female) (Greenfield et al., 2007; Kilaru et al., 2020), and age
+(younger vs.~older) (Kilaru et al., 2020).
 
 We also acknowledge that models that work for only a subset of people,
 if implemented, could widen existing treatment disparities. We conducted
@@ -562,8 +553,7 @@ probabilities and the 95\% Bayesian CIs.
 
 \paragraph{Feature Importance}\label{feature-importance}
 
-We calculated Shapley values
-(\textbf{lundbergUnifiedApproachInterpreting2017?}) from the 30 test
+We calculated Shapley values (Lundberg \& Lee, 2017) from the 30 test
 sets to provide a description of the importance of categories of
 features across our five models. We used the SHAPforxgboost package that
 provides Shapley values in log-odds units for binary classification
@@ -590,7 +580,7 @@ Characteristics}\label{demographic-and-clinical-characteristics}
 
 One hundred fifty one participants were included in our analyses. We
 used data from all participants included in our previous study (see
-(Wyant et al., in press) for enrollment and disposition information).
+(Wyant et al., n.d.) for enrollment and disposition information).
 
 There were approximately equal numbers of men (N=77; 51.0\%) and women
 (N=74; 49.0\%) who ranged in age from 21 - 72 years old. The sample was
@@ -600,120 +590,136 @@ Participants self-reported a median of 9.0 DSM-5 symptoms of AUD
 attempts (mean=5.5; SD=5.8; range=0.0-30.0). Most participants (N=84;
 55.6\%) reported one or more lapses during participation. The median
 number of lapses per participant while on-study was 1.0 (mean=6.8; SD =
-12.0; range=0.0-75.0). Table 1 provides more detail on demographic and
-clinical characteristics of the sample.
+12.0; range=0.0-75.0). {Table~\ref{tbl-demopdf}} provides more detail on
+demographic and clinical characteristics of the sample.
 
-\begin{longtable}[l]{>{\raggedright\arraybackslash}p{18em}ccccc}
-\caption{\label{tab:table_1}Demographics and clinical characteristics}\\
-\toprule
-\multicolumn{1}{c}{\em{}} & \multicolumn{1}{c}{\em{N}} & \multicolumn{1}{c}{\em{\%}} & \multicolumn{1}{c}{\em{M}} & \multicolumn{1}{c}{\em{SD}} & \multicolumn{1}{c}{\em{Range}}\\
-\midrule
-Age &  &  & 41 & 11.9 & 21-72\\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{Sex}\\
-\hspace{1em}Female & 74 & 49.0 &  &  & \\
-\hspace{1em}Male & 77 & 51.0 &  &  & \\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{Race}\\
-\hspace{1em}American Indian/Alaska Native & 3 & 2.0 &  &  & \\
-\hspace{1em}Asian & 2 & 1.3 &  &  & \\
-\hspace{1em}Black/African American & 8 & 5.3 &  &  & \\
-\hspace{1em}White/Caucasian & 131 & 86.8 &  &  & \\
-\hspace{1em}Other/Multiracial & 7 & 4.6 &  &  & \\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{Hispanic, Latino, or Spanish Origin}\\
-\hspace{1em}Yes & 4 & 2.6 &  &  & \\
-\hspace{1em}No & 147 & 97.4 &  &  & \\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{Education}\\
-\hspace{1em}Less than high school or GED degree & 1 & 0.7 &  &  & \\
-\hspace{1em}High school or GED & 14 & 9.3 &  &  & \\
-\hspace{1em}Some college & 41 & 27.2 &  &  & \\
-\hspace{1em}2-Year degree & 14 & 9.3 &  &  & \\
-\hspace{1em}College degree & 58 & 38.4 &  &  & \\
-\hspace{1em}Advanced degree & 23 & 15.2 &  &  & \\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{Employment}\\
-\hspace{1em}Employed full-time & 72 & 47.7 &  &  & \\
-\hspace{1em}Employed part-time & 26 & 17.2 &  &  & \\
-\hspace{1em}Full-time student & 7 & 4.6 &  &  & \\
-\hspace{1em}Homemaker & 1 & 0.7 &  &  & \\
-\hspace{1em}Disabled & 7 & 4.6 &  &  & \\
-\hspace{1em}Retired & 8 & 5.3 &  &  & \\
-\hspace{1em}Unemployed & 18 & 11.9 &  &  & \\
-\hspace{1em}Temporarily laid off, sick leave, or maternity leave & 3 & 2.0 &  &  & \\
-\hspace{1em}Other, not otherwise specified & 9 & 6.0 &  &  & \\
-Personal Income &  &  & \$34,298 & \$31,807 & \$0-200,000\\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{Marital Status}\\
-\hspace{1em}Never married & 67 & 44.4 &  &  & \\
-\hspace{1em}Married & 32 & 21.2 &  &  & \\
-\hspace{1em}Divorced & 45 & 29.8 &  &  & \\
-\hspace{1em}Separated & 5 & 3.3 &  &  & \\
-\hspace{1em}Widowed & 2 & 1.3 &  &  & \\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{Alcohol Use Disorder Milestones}\\
-\hspace{1em}Age of first drink &  &  & 14.6 & 2.9 & 6-24\\
-\hspace{1em}Age of regular drinking &  &  & 19.5 & 6.6 & 11-56\\
-\hspace{1em}Age at which drinking became problematic &  &  & 27.8 & 9.6 & 15-60\\
-\hspace{1em}Age of first quit attempt &  &  & 31.5 & 10.4 & 15-65\\
-Number of Quit Attempts* &  &  & 5.5 & 5.8 & 0-30\\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{Lifetime History of Treatment (Can choose more than 1)}\\
-\hspace{1em}Long-term residential (6+ months) & 8 & 5.3 &  &  & \\
-\hspace{1em}Short-term residential (< 6 months) & 49 & 32.5 &  &  & \\
-\hspace{1em}Outpatient & 74 & 49.0 &  &  & \\
-\hspace{1em}Individual counseling & 97 & 64.2 &  &  & \\
-\hspace{1em}Group counseling & 62 & 41.1 &  &  & \\
-\hspace{1em}Alcoholics Anonymous/Narcotics Anonymous & 93 & 61.6 &  &  & \\
-\hspace{1em}Other & 40 & 26.5 &  &  & \\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{Received Medication for Alcohol Use Disorder}\\
-\hspace{1em}Yes & 59 & 39.1 &  &  & \\
-\hspace{1em}No & 92 & 60.9 &  &  & \\
-DSM-5 Alcohol Use Disorder Symptom Count &  &  & 8.9 & 1.9 & 4-11\\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{Current (Past 3 Month) Drug Use}\\
-\hspace{1em}Tobacco products (cigarettes, chewing tobacco, cigars, etc.) & 84 & 55.6 &  &  & \\
-\hspace{1em}Cannabis (marijuana, pot, grass, hash, etc.) & 66 & 43.7 &  &  & \\
-\hspace{1em}Cocaine (coke, crack, etc.) & 18 & 11.9 &  &  & \\
-\hspace{1em}Amphetamine type stimulants (speed, diet pills, ecstasy, etc.) & 15 & 9.9 &  &  & \\
-\hspace{1em}Inhalants (nitrous, glue, petrol, paint thinner, etc.) & 3 & 2.0 &  &  & \\
-\hspace{1em}Sedatives or sleeping pills (Valium, Serepax, Rohypnol, etc.) & 22 & 14.6 &  &  & \\
-\hspace{1em}Hallucinogens (LSD, acid, mushrooms, PCP, Special K, etc.) & 14 & 9.3 &  &  & \\
-\hspace{1em}Opioids (heroin, morphine, methadone, codeine, etc.) & 16 & 10.6 &  &  & \\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{Reported 1 or More Lapse During Study Period}\\
-\hspace{1em}Yes & 84 & 55.6 &  &  & \\
-\hspace{1em}No & 67 & 44.4 &  &  & \\
-Number of reported lapses &  &  & 6.8 & 12 & 0-75\\
-\bottomrule
-\multicolumn{6}{l}{\rule{0pt}{1em}\textit{Note: }}\\
-\multicolumn{6}{l}{\rule{0pt}{1em}N = 151}\\
-\multicolumn{6}{l}{\rule{0pt}{1em}Two participants reported 100 or more quit attempts. We removed these outliers prior}\\
-\multicolumn{6}{l}{\rule{0pt}{1em}to calculating the mean (M), standard deviation (SD), and range.}\\
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.4574}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0638}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0745}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1170}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1170}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1489}}@{}}
+
+\caption{\label{tbl-demopdf}Demographic and Lapse Characteristics}
+
+\tabularnewline
+
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+var
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+N
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\%
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+M
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+SD
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Range
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Age & & & 41 & 11.9 & 21-72 \\
+Sex & & & & & \\
+Female & 74 & 49.0 & & & \\
+Male & 77 & 51.0 & & & \\
+Race & & & & & \\
+American Indian/Alaska Native & 3 & 2.0 & & & \\
+Asian & 2 & 1.3 & & & \\
+Black/African American & 8 & 5.3 & & & \\
+White/Caucasian & 131 & 86.8 & & & \\
+Other/Multiracial & 7 & 4.6 & & & \\
+Hispanic, Latino, or Spanish origin & & & & & \\
+Yes & 4 & 2.6 & & & \\
+No & 147 & 97.4 & & & \\
+Education & & & & & \\
+Less than high school or GED degree & 1 & 0.7 & & & \\
+High school or GED & 14 & 9.3 & & & \\
+Some college & 41 & 27.2 & & & \\
+2-Year degree & 14 & 9.3 & & & \\
+College degree & 58 & 38.4 & & & \\
+Advanced degree & 23 & 15.2 & & & \\
+Employment & & & & & \\
+Employed full-time & 72 & 47.7 & & & \\
+Employed part-time & 26 & 17.2 & & & \\
+Full-time student & 7 & 4.6 & & & \\
+Homemaker & 1 & 0.7 & & & \\
+Disabled & 7 & 4.6 & & & \\
+Retired & 8 & 5.3 & & & \\
+Unemployed & 18 & 11.9 & & & \\
+Temporarily laid off, sick leave, or maternity leave & 3 & 2.0 & & & \\
+Other, not otherwise specified & 9 & 6.0 & & & \\
+Personal Income & & & \$34,298 & \$31,807 & \$0-200,000 \\
+Marital Status & & & & & \\
+Never married & 67 & 44.4 & & & \\
+
 \end{longtable}
 
 \textsubscript{Source:
-\href{https://jjcurtin.github.io/study_lag/index.qmd.html}{Article
-Notebook}}
+\href{https://jjcurtin.github.io/study_lag/notebooks/mak_tables.qmd.html\#cell-tbl-demopdf}{Make
+All Tables for Main Manuscript}}
+
+\newpage{}
+
+{Table 2: Demographic and Lapse Characteristics (Continued)}
+
+\phantomsection\label{demopdf}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.5854}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0610}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0854}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0732}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0732}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0976}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+var
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+N
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\%
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+M
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+SD
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Range
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Married & 32 & 21.2 & & & \\
+Divorced & 45 & 29.8 & & & \\
+Separated & 5 & 3.3 & & & \\
+Widowed & 2 & 1.3 & & & \\
+DSM-5 AUD Symptom Count & & & 8.9 & 1.9 & 4-11 \\
+Reported 1 or More Lapse During Study Period & & & & & \\
+Yes & 84 & 55.6 & & & \\
+No & 67 & 44.4 & & & \\
+Number of reported lapses & & & 6.8 & 12 & 0-75 \\
+\end{longtable}
+
+\textsubscript{Source:
+\href{https://jjcurtin.github.io/study_lag/notebooks/mak_tables.qmd.html\#cell-demopdf}{Make
+All Tables for Main Manuscript}}
 
 \subsubsection{Model Evaluation}\label{model-evaluation-1}
 
-\textsubscript{Source:
-\href{https://jjcurtin.github.io/study_lag/index.qmd.html}{Article
-Notebook}}
-
-\textsubscript{Source:
-\href{https://jjcurtin.github.io/study_lag/index.qmd.html}{Article
-Notebook}}
-
 The median auROC across the 30 test sets for our baseline model was high
-(median=0.857, IQR=0.054), consistent with our previous study.
+(median=0.892, IQR=0.046), consistent with our previous study.
 Performance across our lagged models was also high for the 24 hour lag
-(median=0.877, IQR=0.049), 72 hour lag (median=0.876, IQR=0.053), and
-168 hour lag (median=0.868, IQR=0.063), and moderate for the 336 hour
-lag (median=0.835, IQR=0.059).
+(median=0.882, IQR=0.042), 72 hour lag (median=0.873, IQR=0.057), and
+168 hour lag (median=0.857, IQR=0.061), and moderate for the 336 hour
+lag (median=0.857, IQR=0.064).
+
+\textsubscript{Source:
+\href{https://jjcurtin.github.io/study_lag/index.qmd.html}{Article
+Notebook}}
 
 \textsubscript{Source:
 \href{https://jjcurtin.github.io/study_lag/index.qmd.html}{Article
@@ -721,17 +727,28 @@ Notebook}}
 
 Histograms of the full posterior probability distributions for auROC for
 each model are available in the supplement. The median auROCs from these
-posterior distributions were 0.868 (baseline), 0.877 (24 hour lag),
-0.868 (72 hour lag), 0.867 (168 hour lag), and 0.846 (336 hour lag).
+posterior distributions were 0.893 (baseline), 0.887 (24 hour lag),
+0.875 (72 hour lag), 0.871 (168 hour lag), and 0.850 (336 hour lag).
 These values represent our best estimates for the magnitude of the auROC
 parameter for each model. The 95\% Bayesian CI for the auROCs for these
 models were relatively narrow and did not contain 0.5:
-baseline{[}0.849-0.884{]}, 24 hour lag{[}0.858-0.892{]}, 72 hour
-lag{[}0.849-0.884{]}, 168 hour lag{[}0.849-0.883{]}, 336 hour
-lag{[}0.826-0.865{]}. Figure 1 displays these median auROCs and 95\%
-Bayesian CIs by model.
+baseline{[}0.876-0.908{]}, 24 hour lag{[}0.869-0.902{]}, 72 hour
+lag{[}0.856-0.892{]}, 168 hour lag{[}0.852-0.889{]}, 336 hour
+lag{[}0.828-0.870{]}. Figure~\ref{fig-roc} displays these median auROCs
+and 95\% Bayesian CIs by model.
 
-\includegraphics{index_files/figure-pdf/unnamed-chunk-6-1.pdf}
+\phantomsection\label{cell-fig-roc}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-roc-1.pdf}
+
+}
+
+\caption{\label{fig-roc}Posterior Probabilities for auROC by Model}
+
+\end{figure}%
 
 \textsubscript{Source:
 \href{https://jjcurtin.github.io/study_lag/index.qmd.html}{Article
@@ -746,16 +763,16 @@ Notebook}}
 Notebook}}
 
 The median decrease in auROC for the baseline vs.~24 hour lag model was
--0.009 (95\% CI={[}-0.029-0.011{]}), yielding a non-significant
-probability of 0.235 that the lagged model had worse performance. The
-median decrease in auROC for the baseline vs.~72 hour model was 0.000
-(95\% CI={[}-0.020-0.020{]}), yielding a non-significant probability of
-0.513 that the lagged model had worse performance. The median increase
-in auROC for the baseline vs.~168 hour lag model was 0.001 (95\%
-CI={[}-0.019-0.021{]}), yielding a non-significant probability of 0.528
-that the lagged model had worse performance. The median increase in
-auROC for the baseline vs.~336 hour lag model was 0.022 (95\%
-CI={[}-0.000-0.043{]}), yielding a significant probability of 0.948 that
+0.007 (95\% CI={[}0.001-0.012{]}), yielding a significant probability of
+0.977 that the lagged model had worse performance. The median decrease
+in auROC for the baseline vs.~72 hour model was 0.018 (95\%
+CI={[}0.013-0.025{]}), yielding a significant probability of 1.000 that
+the lagged model had worse performance. The median increase in auROC for
+the baseline vs.~168 hour lag model was 0.022 (95\%
+CI={[}0.016-0.028{]}), yielding a significant probability of 1.000 that
+the lagged model had worse performance. The median increase in auROC for
+the baseline vs.~336 hour lag model was 0.043 (95\%
+CI={[}0.036-0.051{]}), yielding a significant probability of 1.000 that
 the lagged model had worse performance.
 
 \paragraph{Adjacent Contrasts}\label{adjacent-contrasts}
@@ -765,66 +782,108 @@ the lagged model had worse performance.
 Notebook}}
 
 The median decrease in auROC for the 24 hour vs.~72 hour lag model was
-0.009 (95\% CI={[}-0.011-0.029{]}), yielding a non-significant
-probability of 0.778 that the 72 hour lag model had worse performance
-than the 24 hour lag model. The median decrease in auROC for the 72 hour
-vs.~168 hour lag model was 0.001 (95\% CI={[}-0.019-0.021{]}), yielding
-a non-significant probability of 0.522 that the 168 hour lag model had
-worse performance than the 72 hour lag model. The median decrease in
-auROC for the 168 hour vs.~336 hour lag model was 0.021 (95\%
-CI={[}-0.001-0.042{]}), yielding a significant probability of 0.940 that
-the 336 hour lag model had worse performance than the 168 hour lag
-model.
+0.012 (95\% CI={[}0.006-0.018{]}), yielding a significant probability of
+0.999 that the 72 hour lag model had worse performance than the 24 hour
+lag model. The median decrease in auROC for the 72 hour vs.~168 hour lag
+model was 0.003 (95\% CI={[}-0.002-0.010{]}), yielding a non-significant
+probability of 0.836 that the 168 hour lag model had worse performance
+than the 72 hour lag model. The median decrease in auROC for the 168
+hour vs.~336 hour lag model was 0.021 (95\% CI={[}0.014-0.028{]}),
+yielding a significant probability of 1.000 that the 336 hour lag model
+had worse performance than the 168 hour lag model.
 
 \subsubsection{Fairness Benchmarks}\label{fairness-benchmarks-1}
 
-Table 2 shows the performance of each model by demographic group. All
-group comparisons across lags were significantly different. On average
-there was a median increase in auROC for white participants compared to
-participants who were not white was 0.226 (95\% CI={[}0.156-0.301{]}).
-On average there was a median increase in auROC for male participants
-compared to female participants was 0.095 (95\% CI={[}0.055-0.139{]}).
-On average there was a median increase in auROC for participants above
-the federal poverty line compared to participants below the federal
-poverty line was 0.174 (95\% CI={[}0.105-0.249{]}). On average there was
-a median increase in auROC for younger participants compared to older
-participants was 0.071 (95\% CI={[}0.021-0.133{]}).
+Table~\ref{tbl-fairness} shows the performance of each model by
+demographic group. All group comparisons for race, sex, and income were
+significant across models. On average there was a median increase in
+auROC for white participants compared to participants who were not white
+was 0.235 (95\% CI={[}0.104-0.385{]}). On average there was a median
+increase in auROC for male participants compared to female participants
+was 0.090 (95\% CI={[}0.030-0.177{]}). On average there was a median
+increase in auROC for participants above the federal poverty line
+compared to participants below the federal poverty line was 0.171 (95\%
+CI={[}0.072-0.316{]}).
 
-\begin{table}
-\centering
-\begin{tabular}[t]{lrlrlrlrlrl}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{0 Lag} & \multicolumn{2}{c}{24 Lag} & \multicolumn{2}{c}{72 Lag} & \multicolumn{2}{c}{168 Lag} & \multicolumn{2}{c}{336 Lag} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9} \cmidrule(l{3pt}r{3pt}){10-11}
-Group & median PP for auROC & Bayesian CI & median PP for auROC & Bayesian CI & median PP for auROC & Bayesian CI & median PP for auROC & Bayesian CI & median PP for auROC & Bayesian CI\\
-\midrule
-\addlinespace[0.3em]
-\multicolumn{11}{l}{\textbf{Race/Ethnicity}}\\
-\hspace{1em}not white & 0.660 & 0.573-0.737 & 0.657 & 0.565-0.735 & 0.648 & 0.559-0.729 & 0.647 & 0.552-0.731 & 0.564 & 0.458-0.663\\
-\hspace{1em}white & 0.875 & 0.835-0.905 & 0.883 & 0.846-0.912 & 0.876 & 0.838-0.908 & 0.866 & 0.823-0.899 & 0.849 & 0.795-0.889\\
-\addlinespace[0.3em]
-\multicolumn{11}{l}{\textbf{Sex}}\\
-\hspace{1em}female & 0.810 & 0.755-0.854 & 0.823 & 0.771-0.866 & 0.809 & 0.756-0.854 & 0.792 & 0.735-0.84 & 0.768 & 0.698-0.825\\
-\hspace{1em}male & 0.904 & 0.872-0.929 & 0.907 & 0.876-0.93 & 0.905 & 0.874-0.929 & 0.902 & 0.869-0.927 & 0.888 & 0.848-0.919\\
-\addlinespace[0.3em]
-\multicolumn{11}{l}{\textbf{Income}}\\
-\hspace{1em}below poverty & 0.706 & 0.616-0.78 & 0.712 & 0.621-0.787 & 0.697 & 0.61-0.776 & 0.649 & 0.552-0.736 & 0.635 & 0.529-0.727\\
-\hspace{1em}above poverty & 0.871 & 0.832-0.903 & 0.877 & 0.838-0.907 & 0.871 & 0.832-0.902 & 0.863 & 0.82-0.898 & 0.849 & 0.794-0.889\\
-\addlinespace[0.3em]
-\multicolumn{11}{l}{\textbf{Age}}\\
-\hspace{1em}older & 0.813 & 0.754-0.863 & 0.817 & 0.756-0.867 & 0.799 & 0.737-0.852 & 0.787 & 0.713-0.847 & 0.784 & 0.704-0.848\\
-\hspace{1em}younger & 0.878 & 0.84-0.909 & 0.885 & 0.85-0.916 & 0.878 & 0.841-0.908 & 0.867 & 0.824-0.901 & 0.856 & 0.807-0.893\\
-\bottomrule
-\end{tabular}
-\end{table}
+Notably, the Bayesian CIs were wide and included chance performance as
+lag increased (i.e., 72 hours, 168 hours, and 336 hours) for individuals
+who were not white and with an income below the federal poverty line.
+
+Comparisons were inconsistent across models for age. For the baseline
+(no lag), 72 hour lag, and 168 hour lag models there were no significant
+differences in performance. In the 24 hour lag model, there was a
+significant increase in performance for younger adults. However, in the
+336 hour lag model, there was a significant increase in performance for
+older adults.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.1269}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0672}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.1045}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0672}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.1045}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0672}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.1045}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0672}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.1045}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.0672}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 20\tabcolsep) * \real{0.1045}}@{}}
+
+\caption{\label{tbl-fairness}Model Performance by Demographic Group}
+
+\tabularnewline
+
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0 Lag
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+24 Lag
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+72 Lag
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+168 Lag
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+336 Lag
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Group & Median auROC & Bayesian CI & Median auROC & Bayesian CI & Median
+auROC & Bayesian CI & Median auROC & Bayesian CI & Median auROC &
+Bayesian CI \\
+Race/Ethnicity & & & & & & & & & & \\
+not white & 0.736 & 0.635-0.815 & 0.696 & 0.608-0.773 & 0.645 &
+0.469-0.79 & 0.635 & 0.467-0.784 & 0.589 & 0.367-0.783 \\
+white & 0.901 & 0.857-0.931 & 0.894 & 0.855-0.922 & 0.884 & 0.808-0.932
+& 0.876 & 0.795-0.927 & 0.854 & 0.734-0.927 \\
+Sex & & & & & & & & & & \\
+female & 0.85 & 0.793-0.893 & 0.838 & 0.783-0.88 & 0.817 & 0.71-0.891 &
+0.808 & 0.694-0.883 & 0.775 & 0.613-0.878 \\
+male & 0.921 & 0.886-0.945 & 0.917 & 0.887-0.94 & 0.909 & 0.848-0.946 &
+0.917 & 0.86-0.953 & 0.9 & 0.804-0.951 \\
+Income & & & & & & & & & & \\
+below poverty & 0.75 & 0.651-0.833 & 0.728 & 0.635-0.804 & 0.705 &
+0.526-0.835 & 0.663 & 0.478-0.815 & 0.607 & 0.366-0.801 \\
+above poverty & 0.896 & 0.854-0.929 & 0.888 & 0.848-0.918 & 0.878 &
+0.798-0.929 & 0.878 & 0.795-0.93 & 0.861 & 0.738-0.931 \\
+Age & & & & & & & & & & \\
+older & 0.89 & 0.838-0.928 & 0.84 & 0.779-0.886 & 0.902 & 0.823-0.949 &
+0.886 & 0.792-0.941 & 0.951 & 0.884-0.981 \\
+younger & 0.903 & 0.862-0.932 & 0.897 & 0.86-0.925 & 0.886 & 0.809-0.933
+& 0.881 & 0.801-0.931 & 0.859 & 0.735-0.932 \\
+
+\end{longtable}
 
 \textsubscript{Source:
-\href{https://jjcurtin.github.io/study_lag/index.qmd.html}{Article
-Notebook}}
-
-\textsubscript{Source:
-\href{https://jjcurtin.github.io/study_lag/index.qmd.html}{Article
-Notebook}}
+\href{https://jjcurtin.github.io/study_lag/notebooks/mak_tables.qmd.html\#cell-tbl-fairness}{Make
+All Tables for Main Manuscript}}
 
 \subsubsection{Feature Importance}\label{feature-importance-1}
 
@@ -858,6 +917,11 @@ Mental Health} through {Effective Assessment}, {Monitoring}, and
 and Mental Health Services Research}, \emph{43}(3), 271--276.
 \url{https://doi.org/10.1007/s10488-016-0718-5}
 
+\bibitem[\citeproctext]{ref-chtc}
+Center for High Throughput Computing. (2006). Center for high throughput
+computing. Center for High Throughput Computing.
+\url{https://doi.org/10.21231/GNT1-HW21}
+
 \bibitem[\citeproctext]{ref-chihPredictiveModelingAddiction2014}
 Chih, M.-Y., Patton, T., McTavish, F. M., Isham, A. J., Judkins-Fisher,
 C. L., Atwood, A. K., \& Gustafson, D. H. (2014). Predictive modeling of
@@ -877,6 +941,45 @@ and {Emerging Priorities} in {Clinical Research}. \emph{Annual Review of
 Clinical Psychology}, \emph{16}(1), 401--430.
 \url{https://doi.org/10.1146/annurev-clinpsy-102419-125016}
 
+\bibitem[\citeproctext]{ref-greenfieldSubstanceAbuseTreatment2007}
+Greenfield, S. F., Brooks, A. J., Gordon, S. M., Green, C. A., Kropp,
+F., McHugh, R. K., et al. (2007). Substance abuse treatment entry,
+retention, and outcome in women: {A} review of the literature.
+\emph{Drug and Alcohol Dependence}, \emph{86}(1), 1--21.
+\url{https://doi.org/10.1016/j.drugalcdep.2006.05.012}
+
+\bibitem[\citeproctext]{ref-hsiehSampleSizeTables1989}
+Hsieh, F. (1989). Sample size tables for logistic regression.
+\emph{Statistics in Medicine}, \emph{8}, 795--802.
+
+\bibitem[\citeproctext]{ref-kilaruIncidenceTreatmentOpioid2020}
+Kilaru, A. S., Xiong, A., Lowenstein, M., Meisel, Z. F., Perrone, J.,
+Khatri, U., et al. (2020). Incidence of {Treatment} for {Opioid Use
+Disorder Following Nonfatal Overdose} in {Commercially Insured
+Patients}. \emph{JAMA Network Open}, \emph{3}(5), e205852.
+\url{https://doi.org/10.1001/jamanetworkopen.2020.5852}
+
+\bibitem[\citeproctext]{ref-kuhnAppliedPredictiveModeling2018}
+Kuhn, M., \& Johnson, K. (2018). \emph{Applied {Predictive Modeling}}
+(1st ed. 2013, Corr. 2nd printing 2018 edition). New York: Springer.
+\url{https://doi.org/10.1007/978-1-4614-6849-3}
+
+\bibitem[\citeproctext]{ref-kuhnTidymodelsCollectionPackages2020}
+Kuhn, M., \& Wickham, H. (2020). Tidymodels: A collection of packages
+for modeling and machine learning using tidyverse principles.
+
+\bibitem[\citeproctext]{ref-kullSigmoidsHowObtain2017}
+Kull, M., Filho, T. M. S., \& Flach, P. (2017). Beyond sigmoids: {How}
+to obtain well-calibrated probabilities from binary classifiers with
+beta calibration. \emph{Electronic Journal of Statistics}, \emph{11}(2),
+5052--5080. \url{https://doi.org/10.1214/17-EJS1338SI}
+
+\bibitem[\citeproctext]{ref-lundbergUnifiedApproachInterpreting2017}
+Lundberg, S. M., \& Lee, S.-I. (2017). A unified approach to
+interpreting model predictions. In \emph{Proceedings of the 31st
+{International Conference} on {Neural Information Processing Systems}}
+(pp. 4768--4777). Red Hook, NY, USA: Curran Associates Inc.
+
 \bibitem[\citeproctext]{ref-marlattRelapsePreventionMaintenance1985}
 Marlatt, G. A., \& Gordon, J. R. (Eds.). (1985). \emph{Relapse
 {Prevention}: {Maintenance Strategies} in the {Treatment} of {Addictive
@@ -887,6 +990,19 @@ Mohr, D. C., Zhang, M., \& Schueller, S. M. (2017). Personal {Sensing}:
 {Understanding Mental Health Using Ubiquitous Sensors} and {Machine
 Learning}. \emph{Annual Review of Clinical Psychology}, \emph{13}(1),
 23--47. \url{https://doi.org/10.1146/annurev-clinpsy-032816-044949}
+
+\bibitem[\citeproctext]{ref-olfsonHealthcareCoverageService2022}
+Olfson, M., Mauro, C., Wall, M. M., Choi, C. J., Barry, C. L., \&
+Mojtabai, R. (2022). Healthcare coverage and service access for
+low-income adults with substance use disorders. \emph{Journal of
+Substance Abuse Treatment}, \emph{137}, 108710.
+\url{https://doi.org/10.1016/j.jsat.2021.108710}
+
+\bibitem[\citeproctext]{ref-pinedoCurrentReexaminationRacial2019}
+Pinedo, M. (2019). A current re-examination of racial/ethnic disparities
+in the use of substance abuse treatment: {Do} disparities persist?
+\emph{Drug and Alcohol Dependence}, \emph{202}, 162--167.
+\url{https://doi.org/10.1016/j.drugalcdep.2019.05.017}
 
 \bibitem[\citeproctext]{ref-soysterPooledPersonspecificMachine2022}
 Soyster, P. D., Ashlock, L., \& Fisher, A. J. (2022). Pooled and
@@ -915,17 +1031,17 @@ post-treatment drinking: {It}'s a rocky road to relapse. \emph{Clinical
 Psychology Review}, \emph{27}(6), 724--738.
 \url{https://doi.org/10.1016/j.cpr.2007.01.002}
 
+\bibitem[\citeproctext]{ref-wyantMachineLearningModels2023}
+Wyant, K., Sant'Ana, S. J. K., Fronk, G., \& Curtin, J. J. (n.d.).
+Machine learning models for temporally precise lapse prediction in
+alcohol use disorder. \emph{Psychopathology and Clinical Science}.
+\url{https://doi.org/10.31234/osf.io/cgsf7}
+
 \bibitem[\citeproctext]{ref-wyantAcceptabilityPersonalSensing2023}
 Wyant, K., Moshontz, H., Ward, S. B., Fronk, G. E., \& Curtin, J. J.
 (2023). Acceptability of {Personal Sensing Among People With Alcohol Use
 Disorder}: {Observational Study}. \emph{JMIR mHealth and uHealth},
 \emph{11}(1), e41833. \url{https://doi.org/10.2196/41833}
-
-\bibitem[\citeproctext]{ref-wyantMachineLearningModels2023}
-Wyant, K., Sant'Ana, S. J. K., Fronk, G., \& Curtin, J. J. (in press).
-Machine learning models for temporally precise lapse prediction in
-alcohol use disorder. \emph{Psychopathology and Clinical Science}.
-\url{https://doi.org/10.31234/osf.io/cgsf7}
 
 \end{CSLReferences}
 
