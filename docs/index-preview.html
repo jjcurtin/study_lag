@@ -370,7 +370,7 @@
   </ul></li>
   <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a>
   <ul class="collapse">
-  <li><a href="#demographic-and-clinical-characteristics" id="toc-demographic-and-clinical-characteristics" class="nav-link" data-scroll-target="#demographic-and-clinical-characteristics">Demographic and Clinical Characteristics</a></li>
+  <li><a href="#demographic-and-lapse-characteristics" id="toc-demographic-and-lapse-characteristics" class="nav-link" data-scroll-target="#demographic-and-lapse-characteristics">Demographic and Lapse Characteristics</a></li>
   <li><a href="#model-evaluation-1" id="toc-model-evaluation-1" class="nav-link" data-scroll-target="#model-evaluation-1">Model Evaluation</a></li>
   <li><a href="#model-comparisons-1" id="toc-model-comparisons-1" class="nav-link" data-scroll-target="#model-comparisons-1">Model Comparisons</a></li>
   <li><a href="#fairness-benchmarks-1" id="toc-fairness-benchmarks-1" class="nav-link" data-scroll-target="#fairness-benchmarks-1">Fairness Benchmarks</a></li>
@@ -641,10 +641,10 @@ Note to include transparency report in supplement-->
 </section>
 <section id="results" class="level2">
 <h2 class="anchored" data-anchor-id="results">Results</h2>
-<section id="demographic-and-clinical-characteristics" class="level3">
-<h3 class="anchored" data-anchor-id="demographic-and-clinical-characteristics">Demographic and Clinical Characteristics</h3>
+<section id="demographic-and-lapse-characteristics" class="level3">
+<h3 class="anchored" data-anchor-id="demographic-and-lapse-characteristics">Demographic and Lapse Characteristics</h3>
 <p>One hundred fifty one participants were included in our analyses. We used data from all participants included in our previous study (see <span class="citation" data-cites="wyantMachineLearningModels2023">(<a href="#ref-wyantMachineLearningModels2023" role="doc-biblioref">Wyant et al. n.d.</a>)</span> for enrollment and disposition information).</p>
-<p>There were approximately equal numbers of men (N=77; 51.0%) and women (N=74; 49.0%) who ranged in age from 21 - 72 years old. The sample was majority White (N=131; 86.8%) and non-Hispanic (N=147; 97.4%). Participants self-reported a median of 9.0 DSM-5 symptoms of AUD (mean=8.9; SD=1.9; range=4.0-11.0) and a median of 4.0 previous quit attempts (mean=5.5; SD=5.8; range=0.0-30.0). Most participants (N=84; 55.6%) reported one or more lapses during participation. The median number of lapses per participant while on-study was 1.0 (mean=6.8; SD = 12.0; range=0.0-75.0). <span><a href="#tbl-demohtml" class="quarto-xref">Table&nbsp;1</a></span> provides more detail on demographic and clinical characteristics of the sample.</p>
+<p>There were approximately equal numbers of men (N=77; 51.0%) and women (N=74; 49.0%) who ranged in age from 21 - 72 years old. The sample was majority White (N=131; 86.8%) and non-Hispanic (N=147; 97.4%). Participants self-reported a median of 9.0 DSM-5 symptoms of AUD (mean=8.9; SD=1.9; range=4.0-11.0) and a median of 4.0 previous quit attempts (mean=5.5; SD=5.8; range=0.0-30.0). Most participants (N=84; 55.6%) reported one or more lapses during participation. The median number of lapses per participant while on-study was 1.0 (mean=6.8; SD = 12.0; range=0.0-75.0). <span><a href="#tbl-demohtml" class="quarto-xref">Table&nbsp;1</a></span> provides more detail on demographic and lapse characteristics of the sample.</p>
 <div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_tables.qmd" data-notebook-title="Make All Tables for Main Manuscript" data-notebook-cellid="cell-tbl-demohtml">
 <div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
 
@@ -1023,7 +1023,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 </section>
 <section id="model-evaluation-1" class="level3">
 <h3 class="anchored" data-anchor-id="model-evaluation-1">Model Evaluation</h3>
-<p>The median auROC across the 30 test sets for our baseline model was high (median=0.892, IQR=0.046), consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=0.882, IQR=0.042), 72 hour lag (median=0.873, IQR=0.057), and 168 hour lag (median=0.857, IQR=0.061), and moderate for the 336 hour lag (median=0.857, IQR=0.064).</p>
+<p>The median auROC across the 30 test sets for our baseline model was high (median=0.892, IQR=0.046), consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=0.882, IQR=0.042), 72 hour lag (median=0.873, IQR=0.057), 168 hour lag (median=0.857, IQR=0.061), and 336 hour lag (median=0.857, IQR=0.064).</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeated CV (id = repeat, id2 = fold within repeat)</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># with a common variance:  statistic ~ model + (model | id2/id)</span></span>
@@ -1040,8 +1040,8 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <pre><code>
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 7.8e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.78 seconds.
+Chain 1: Gradient evaluation took 7e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.7 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -1058,9 +1058,9 @@ Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 4.583 seconds (Warm-up)
-Chain 1:                4.274 seconds (Sampling)
-Chain 1:                8.857 seconds (Total)
+Chain 1:  Elapsed Time: 4.49 seconds (Warm-up)
+Chain 1:                4.217 seconds (Sampling)
+Chain 1:                8.707 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 2).
@@ -1083,15 +1083,15 @@ Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 4.948 seconds (Warm-up)
-Chain 2:                2.302 seconds (Sampling)
-Chain 2:                7.25 seconds (Total)
+Chain 2:  Elapsed Time: 4.869 seconds (Warm-up)
+Chain 2:                2.214 seconds (Sampling)
+Chain 2:                7.083 seconds (Total)
 Chain 2: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 3).
 Chain 3: 
-Chain 3: Gradient evaluation took 4.1e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.41 seconds.
+Chain 3: Gradient evaluation took 3.1e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.31 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
@@ -1108,15 +1108,15 @@ Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 3: 
-Chain 3:  Elapsed Time: 4.934 seconds (Warm-up)
-Chain 3:                2.619 seconds (Sampling)
-Chain 3:                7.553 seconds (Total)
+Chain 3:  Elapsed Time: 4.985 seconds (Warm-up)
+Chain 3:                2.696 seconds (Sampling)
+Chain 3:                7.681 seconds (Total)
 Chain 3: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 4).
 Chain 4: 
-Chain 4: Gradient evaluation took 4.4e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.44 seconds.
+Chain 4: Gradient evaluation took 7.8e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.78 seconds.
 Chain 4: Adjust your expectations accordingly!
 Chain 4: 
 Chain 4: 
@@ -1133,9 +1133,9 @@ Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 3.713 seconds (Warm-up)
-Chain 4:                2.161 seconds (Sampling)
-Chain 4:                5.874 seconds (Total)
+Chain 4:  Elapsed Time: 3.846 seconds (Warm-up)
+Chain 4:                2.224 seconds (Sampling)
+Chain 4:                6.07 seconds (Total)
 Chain 4: </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
@@ -2002,7 +2002,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox","closeEffect":"zoom"});
+</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"openEffect":"zoom","descPosition":"bottom","closeEffect":"zoom","loop":false,"selector":".lightbox"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

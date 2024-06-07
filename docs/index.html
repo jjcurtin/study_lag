@@ -242,7 +242,7 @@ div.csl-indent {
   </ul></li>
   <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a>
   <ul class="collapse">
-  <li><a href="#demographic-and-clinical-characteristics" id="toc-demographic-and-clinical-characteristics" class="nav-link" data-scroll-target="#demographic-and-clinical-characteristics">Demographic and Clinical Characteristics</a></li>
+  <li><a href="#demographic-and-lapse-characteristics" id="toc-demographic-and-lapse-characteristics" class="nav-link" data-scroll-target="#demographic-and-lapse-characteristics">Demographic and Lapse Characteristics</a></li>
   <li><a href="#model-evaluation-1" id="toc-model-evaluation-1" class="nav-link" data-scroll-target="#model-evaluation-1">Model Evaluation</a></li>
   <li><a href="#model-comparisons-1" id="toc-model-comparisons-1" class="nav-link" data-scroll-target="#model-comparisons-1">Model Comparisons</a></li>
   <li><a href="#fairness-benchmarks-1" id="toc-fairness-benchmarks-1" class="nav-link" data-scroll-target="#fairness-benchmarks-1">Fairness Benchmarks</a></li>
@@ -252,7 +252,7 @@ div.csl-indent {
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
   </ul>
-<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="index-preview.html"><i class="bi bi-journal-code"></i>Article Notebook</a></li><li><a href="notebooks\mak_tables.embed-preview.html"><i class="bi bi-journal-code"></i>Make All Tables for Main Manuscript</a></li><li><a href="notebooks\supplemental-preview.html"><i class="bi bi-journal-code"></i>Supplemental Figures</a></li></ul></div></nav>
+<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="index-preview.html"><i class="bi bi-journal-code"></i>Article Notebook</a></li><li><a href="docs\notebooks\mak_tables-preview.html"><i class="bi bi-journal-code"></i>Make All Tables for Main Manuscript</a></li><li><a href="notebooks\mak_tables-preview.html"><i class="bi bi-journal-code"></i>Make All Tables for Main Manuscript</a></li><li><a href="notebooks\supplemental-preview.html"><i class="bi bi-journal-code"></i>Supplemental Figures</a></li></ul></div></nav>
 </div>
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
 </div>
@@ -386,10 +386,10 @@ Note to include transparency report in supplement-->
 </section>
 <section id="results" class="level2">
 <h2 class="anchored" data-anchor-id="results">Results</h2>
-<section id="demographic-and-clinical-characteristics" class="level3">
-<h3 class="anchored" data-anchor-id="demographic-and-clinical-characteristics">Demographic and Clinical Characteristics</h3>
+<section id="demographic-and-lapse-characteristics" class="level3">
+<h3 class="anchored" data-anchor-id="demographic-and-lapse-characteristics">Demographic and Lapse Characteristics</h3>
 <p>One hundred fifty one participants were included in our analyses. We used data from all participants included in our previous study (see <span class="citation" data-cites="wyantMachineLearningModels2023">(<a href="#ref-wyantMachineLearningModels2023" role="doc-biblioref">Wyant et al. n.d.</a>)</span> for enrollment and disposition information).</p>
-<p>There were approximately equal numbers of men (N=77; 51.0%) and women (N=74; 49.0%) who ranged in age from 21 - 72 years old. The sample was majority White (N=131; 86.8%) and non-Hispanic (N=147; 97.4%). Participants self-reported a median of 9.0 DSM-5 symptoms of AUD (mean=8.9; SD=1.9; range=4.0-11.0) and a median of 4.0 previous quit attempts (mean=5.5; SD=5.8; range=0.0-30.0). Most participants (N=84; 55.6%) reported one or more lapses during participation. The median number of lapses per participant while on-study was 1.0 (mean=6.8; SD = 12.0; range=0.0-75.0). <span><a href="#tbl-demohtml" class="quarto-xref">Table&nbsp;1</a></span> provides more detail on demographic and clinical characteristics of the sample.</p>
+<p>There were approximately equal numbers of men (N=77; 51.0%) and women (N=74; 49.0%) who ranged in age from 21 - 72 years old. The sample was majority White (N=131; 86.8%) and non-Hispanic (N=147; 97.4%). Participants self-reported a median of 9.0 DSM-5 symptoms of AUD (mean=8.9; SD=1.9; range=4.0-11.0) and a median of 4.0 previous quit attempts (mean=5.5; SD=5.8; range=0.0-30.0). Most participants (N=84; 55.6%) reported one or more lapses during participation. The median number of lapses per participant while on-study was 1.0 (mean=6.8; SD = 12.0; range=0.0-75.0). <span><a href="#tbl-demohtml" class="quarto-xref">Table&nbsp;1</a></span> provides more detail on demographic and lapse characteristics of the sample.</p>
 <div class="quarto-embed-nb-cell">
 <div class="cell">
 <div id="tbl-demohtml" class="cell quarto-float anchored">
@@ -762,11 +762,11 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 </figure>
 <a class="quarto-notebook-link" id="nblink-1" href="index-preview.html#tbl-demohtml">Source: Article Notebook</a></div>
 </div>
-<a class="quarto-notebook-link" id="nblink-4" href="notebooks\mak_tables.embed-preview.html#cell-tbl-demohtml">Source: Make All Tables for Main Manuscript</a></div>
+<a class="quarto-notebook-link" id="nblink-4" href="notebooks\mak_tables-preview.html#cell-tbl-demohtml">Source: Make All Tables for Main Manuscript</a></div>
 </section>
 <section id="model-evaluation-1" class="level3">
 <h3 class="anchored" data-anchor-id="model-evaluation-1">Model Evaluation</h3>
-<p>The median auROC across the 30 test sets for our baseline model was high (median=0.892, IQR=0.046), consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=0.882, IQR=0.042), 72 hour lag (median=0.873, IQR=0.057), and 168 hour lag (median=0.857, IQR=0.061), and moderate for the 336 hour lag (median=0.857, IQR=0.064).</p>
+<p>The median auROC across the 30 test sets for our baseline model was high (median=0.892, IQR=0.046), consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=0.882, IQR=0.042), 72 hour lag (median=0.873, IQR=0.057), 168 hour lag (median=0.857, IQR=0.061), and 336 hour lag (median=0.857, IQR=0.064).</p>
 <p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.893 (baseline), 0.887 (24 hour lag), 0.875 (72 hour lag), 0.871 (168 hour lag), and 0.850 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline[0.876-0.908], 24 hour lag[0.869-0.902], 72 hour lag[0.856-0.892], 168 hour lag[0.852-0.889], 336 hour lag[0.828-0.870]. <a href="#fig-roc" class="quarto-xref">Figure&nbsp;1</a> displays these median auROCs and 95% Bayesian CIs by model.</p>
 <div id="cell-fig-roc" class="cell">
 <div class="cell-output-display">
@@ -1014,7 +1014,7 @@ Table&nbsp;2: Model Performance by Demographic Group
 </figure>
 <a class="quarto-notebook-link" id="nblink-3" href="index-preview.html#tbl-fairness">Source: Article Notebook</a></div>
 </div>
-<a class="quarto-notebook-link" id="nblink-5" href="notebooks\mak_tables.embed-preview.html#cell-tbl-fairness">Source: Make All Tables for Main Manuscript</a></div>
+<a class="quarto-notebook-link" id="nblink-5" href="notebooks\mak_tables-preview.html#cell-tbl-fairness">Source: Make All Tables for Main Manuscript</a></div>
 </section>
 <section id="feature-importance-1" class="level3">
 <h3 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h3>
@@ -1495,7 +1495,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","descPosition":"bottom","loop":false,"openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","openEffect":"zoom","loop":false,"descPosition":"bottom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
