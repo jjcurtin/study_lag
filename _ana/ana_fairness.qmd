@@ -1,0 +1,428 @@
+---
+title: "Fairness analyses"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+
+### Set Up Environment
+
+
+```{r, packages_workflow}
+#| message: false
+#| warning: false
+
+# handle conflicts
+options(conflicts.policy = "depends.ok")
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_ml.R?raw=true")
+tidymodels_conflictRules()
+```
+
+
+```{r, packages_script}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(tidymodels)
+library(tidyposterior)
+library(kableExtra, exclude = "group_rows")
+
+
+theme_set(theme_classic()) 
+```
+
+
+```{r source_functions}
+#| output: false
+
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
+# CHTC support functions
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/chtc/static_files/fun_chtc.R?raw=true")
+```
+
+```{r, absolute_paths}
+path_processed <- format_path(str_c("studydata/risk/data_processed/lag"))
+path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
+```
+
+
+### Read in Model Performance Metrics
+
+```{r}
+auroc_dem_0 <- read_csv(here::here(path_models_lag, "test_auroc_dem_1week_0_v1_nested.csv"),
+                      col_types = cols()) |> 
+  mutate(fold_num = rep(1:10, 3),
+         repeat_num = c(rep(1, 10), rep(2, 10), rep(3, 10))) |> 
+  select(-outer_split_num)
+
+
+auroc_dem_24 <- read_csv(here::here(path_models_lag, "test_auroc_dem_1week_24_v1_nested.csv"),
+                      col_types = cols()) |> 
+  mutate(fold_num = rep(1:10, 3),
+         repeat_num = c(rep(1, 10), rep(2, 10), rep(3, 10))) |> 
+  select(-outer_split_num)
+
+auroc_dem_72 <- read_csv(here::here(path_models_lag, "test_auroc_dem_1week_72_v1_nested.csv"),
+                      col_types = cols()) |> 
+  mutate(fold_num = rep(1:10, 3),
+         repeat_num = c(rep(1, 10), rep(2, 10), rep(3, 10))) |> 
+  select(-outer_split_num)
+
+auroc_dem_168 <- read_csv(here::here(path_models_lag, "test_auroc_dem_1week_168_v1_nested.csv"),
+                      col_types = cols()) |> 
+  mutate(fold_num = rep(1:10, 3),
+         repeat_num = c(rep(1, 10), rep(2, 10), rep(3, 10))) |> 
+  select(-outer_split_num)
+
+auroc_dem_336 <- read_csv(here::here(path_models_lag, "test_auroc_dem_1week_336_v1_nested.csv"),
+                      col_types = cols()) |> 
+  mutate(fold_num = rep(1:10, 3),
+         repeat_num = c(rep(1, 10), rep(2, 10), rep(3, 10))) |> 
+  select(-outer_split_num)
+```
+
+### Look at missing values
+```{r}
+auroc_dem_0 |> 
+  naniar::miss_var_summary()
+
+auroc_dem_24 |> 
+  naniar::miss_var_summary()
+
+auroc_dem_72 |> 
+  naniar::miss_var_summary()
+
+auroc_dem_168 |> 
+  naniar::miss_var_summary()
+
+auroc_dem_336 |> 
+  naniar::miss_var_summary()
+```
+
+
+
+### Get Median Posterior Probabilities and CIs
+
+Sex
+```{r}
+#| output: false
+
+for (lead in c(0,24,72,168,336)) {
+  data_name <- str_c("auroc_dem_", lead)
+  set.seed(101)
+  pp <- get(data_name) |> 
+    select(repeat_num, fold_num, female, male) |> 
+    rename(id = repeat_num,
+           id2 = fold_num) |> 
+    perf_mod(formula = statistic ~ model + (1 | id2/id),
+             transform = tidyposterior::logit_trans,  
+             iter = 2000, chains = 4,  
+             adapt_delta = .99,
+             family = gaussian) 
+
+  pp_tidy <- pp |> 
+    tidy(seed = 123)
+
+  q = c(.025, .5, .975)
+  ci <- pp_tidy |> 
+    group_by(model) |> 
+    summarize(pp_median = quantile(posterior, probs = q[2]),
+              pp_lower = quantile(posterior, probs = q[1]), 
+              pp_upper = quantile(posterior, probs = q[3]))  |> 
+    arrange(model)
+
+  ci |> 
+    write_csv(file.path(path_models_lag, str_c("pp_dem_sex_", lead, ".csv")))
+  
+  
+  # contrasts
+  ci_contrast <- pp |>
+    contrast_models(list("male"), 
+                    list("female")) |> 
+  summary(size = 0) 
+  
+ci_median_contrast <- pp |> 
+   contrast_models(list("male"), 
+                  list("female")) |>  
+  group_by(contrast) |> 
+  summarize(median = quantile(difference, .5)) 
+
+
+ci_contrast <- ci_contrast |> 
+  mutate(contrast = "male vs. female") |> 
+  left_join(ci_median_contrast, by = c("contrast")) |> 
+  select(contrast, probability, median, lower, upper) 
+
+ci_contrast |> 
+  write_csv(file.path(path_models_lag, str_c("pp_dem_contrast_sex_", lead, ".csv")))
+  }
+```
+
+
+Race/Ethnicity
+```{r}
+#| output: false
+
+for (lead in c(0,24,72,168,336)) {
+  data_name <- str_c("auroc_dem_", lead)
+  set.seed(101)
+  pp <- get(data_name) |> 
+    select(repeat_num, fold_num, `not white`, white) |> 
+    rename(id = repeat_num,
+           id2 = fold_num,
+           `non-hispanic white` = white) |> 
+    perf_mod(formula = statistic ~ model + (1 | id2/id),
+             transform = tidyposterior::logit_trans,  
+             iter = 2000, chains = 4,  
+             adapt_delta = .99,
+             family = gaussian) 
+
+  pp_tidy <- pp |> 
+    tidy(seed = 123)
+
+  q = c(.025, .5, .975)
+  ci <- pp_tidy |> 
+    group_by(model) |> 
+    summarize(pp_median = quantile(posterior, probs = q[2]),
+              pp_lower = quantile(posterior, probs = q[1]), 
+              pp_upper = quantile(posterior, probs = q[3]))  |> 
+    arrange(model)
+
+  ci |> 
+    write_csv(file.path(path_models_lag, str_c("pp_dem_race_", lead, ".csv")))
+  
+  
+  # contrasts
+  ci_contrast <- pp |>
+    contrast_models(list("non-hispanic white"), 
+                    list("not white")) |> 
+  summary(size = 0) 
+  
+ci_median_contrast <- pp |> 
+   contrast_models(list("non-hispanic white"), 
+                  list("not white")) |>  
+  group_by(contrast) |> 
+  summarize(median = quantile(difference, .5)) 
+
+
+ci_contrast <- ci_contrast |> 
+  mutate(contrast = "non-hispanic white vs. not white") |> 
+  left_join(ci_median_contrast, by = c("contrast")) |> 
+  select(contrast, probability, median, lower, upper) 
+
+ci_contrast |> 
+  write_csv(file.path(path_models_lag, str_c("pp_dem_contrast_race_", lead, ".csv")))
+  }
+```
+
+Income
+```{r}
+#| output: false
+
+for (lead in c(0,24,72,168,336)) {
+  data_name <- str_c("auroc_dem_", lead)
+  set.seed(101)
+  pp <- get(data_name) |> 
+    select(repeat_num, fold_num, `below poverty`,`above poverty`) |> 
+    rename(id = repeat_num,
+           id2 = fold_num) |> 
+    perf_mod(formula = statistic ~ model + (1 | id2/id),
+             transform = tidyposterior::logit_trans,  
+             iter = 2000, chains = 4,  
+             adapt_delta = .99,
+             family = gaussian) 
+
+  pp_tidy <- pp |> 
+    tidy(seed = 123)
+
+  q = c(.025, .5, .975)
+  ci <- pp_tidy |> 
+    group_by(model) |> 
+    summarize(pp_median = quantile(posterior, probs = q[2]),
+              pp_lower = quantile(posterior, probs = q[1]), 
+              pp_upper = quantile(posterior, probs = q[3]))  |> 
+    arrange(model)
+
+  ci |> 
+    write_csv(file.path(path_models_lag, str_c("pp_dem_income_", lead, ".csv")))
+  
+  
+  # contrasts
+  ci_contrast <- pp |>
+    contrast_models(list("above poverty"), 
+                    list("below poverty")) |> 
+  summary(size = 0) 
+  
+ci_median_contrast <- pp |> 
+   contrast_models(list("above poverty"), 
+                  list("below poverty")) |>  
+  group_by(contrast) |> 
+  summarize(median = quantile(difference, .5)) 
+
+
+ci_contrast <- ci_contrast |> 
+  mutate(contrast = "above poverty vs. below poverty") |> 
+  left_join(ci_median_contrast, by = c("contrast")) |> 
+  select(contrast, probability, median, lower, upper) 
+
+ci_contrast |> 
+  write_csv(file.path(path_models_lag, str_c("pp_dem_contrast_income_", lead, ".csv")))
+  }
+```
+
+
+
+### Group comparisons
+
+
+```{r}
+#| echo: false
+
+(contrast_0 <- read_csv(file.path(path_models_lag, "pp_dem_contrast_sex_0.csv"), col_types = cols()) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_race_0.csv"), col_types = cols())) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_income_0.csv"), col_types = cols())) |> 
+  mutate(lag = "0 lag"))
+
+(contrast_24 <- read_csv(file.path(path_models_lag, "pp_dem_contrast_sex_24.csv"), col_types = cols()) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_race_24.csv"), col_types = cols())) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_income_24.csv"), col_types = cols())) |> 
+  mutate(lag = "24 lag"))
+
+(contrast_72 <- read_csv(file.path(path_models_lag, "pp_dem_contrast_sex_72.csv"), col_types = cols()) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_race_72.csv"), col_types = cols())) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_income_72.csv"), col_types = cols())) |> 
+  mutate(lag = "72 lag"))
+
+(contrast_168 <- read_csv(file.path(path_models_lag, "pp_dem_contrast_sex_168.csv"), col_types = cols()) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_race_168.csv"), col_types = cols())) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_income_168.csv"), col_types = cols())) |> 
+  mutate(lag = "168 lag"))
+
+(contrast_336 <- read_csv(file.path(path_models_lag, "pp_dem_contrast_sex_336.csv"), col_types = cols()) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_race_336.csv"), col_types = cols())) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_income_336.csv"), col_types = cols())) |> 
+  mutate(lag = "336 lag"))
+
+pp_dem_contrast <- contrast_0 |>
+  bind_rows(contrast_24) |>
+  bind_rows(contrast_72) |>
+  bind_rows(contrast_168) |>
+  bind_rows(contrast_336) |> 
+  write_csv(file.path(path_models_lag, str_c("pp_dem_contrast_all", ".csv")))
+```
+
+```{r}
+#| echo: false
+
+pp_dem_contrast |>
+  mutate(lag = factor(lag, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" )),
+         contrast = factor(contrast, levels = c("non-hispanic white vs. not white",
+                                                "male vs. female",
+                                                "above poverty vs. below poverty"),
+                           labels = c("Non-Hispanic White vs. Not White",
+                                                "Male vs. Female",
+                                                "Above Poverty vs. At or Below Poverty"))) |> 
+  ggplot() + 
+  geom_point(aes(x = median, y = lag), color = "black") +
+  geom_segment(mapping = aes(y = lag, x = lower, xend = upper),
+                data = pp_dem_contrast |>
+                 mutate(lag = factor(lag, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" )),
+                 contrast = factor(contrast, levels = c("non-hispanic white vs. not white",
+                                                "male vs. female",
+                                                "above poverty vs. below poverty"),
+                                    labels = c("Non-Hispanic White vs. Not White",
+                                                "Male vs. Female",
+                                                "Above Poverty vs. At or Below Poverty")))) +
+  facet_grid(~contrast) +
+  scale_x_continuous("Difference in Area Under ROC Curve", limits = c(0, .4), breaks = c(0, .1, .2, .3, .4)) +
+  ylab("") +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+
+### Results 
+
+All group comparisons for race, sex, and income were significant across models. On average there was a median increase in auROC for white participants compared to participants who were not white was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(upper))`]). On average there was a median increase in auROC for male participants compared to female participants was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(upper))`]). On average there was a median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(upper))`]).  <!-- Currently averaging across median auROC differences for each model. Also averaging lower and upper CI bounds - is this okay? Should I realculate CI based on average of averages?-->
+
+Notably, the Bayesian CIs were wide and included chance performance as lag increased (i.e., 72 hours, 168 hours, and 336 hours) for individuals who were not white and with an income below the federal poverty line. 
+
+```{r}
+#| echo: false
+
+(pp_dem_0 <- read_csv(file.path(path_models_lag, "pp_dem_sex_0.csv"), col_types = cols()) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_race_0.csv"), col_types = cols())) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_income_0.csv"), col_types = cols())) |> 
+  mutate(lag = "0 lag"))
+
+(pp_dem_24 <- read_csv(file.path(path_models_lag, "pp_dem_sex_24.csv"), col_types = cols()) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_race_24.csv"), col_types = cols())) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_income_24.csv"), col_types = cols())) |> 
+  mutate(lag = "24 lag"))
+
+(pp_dem_72 <- read_csv(file.path(path_models_lag, "pp_dem_sex_72.csv"), col_types = cols()) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_race_72.csv"), col_types = cols())) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_income_72.csv"), col_types = cols())) |> 
+  mutate(lag = "72 lag"))
+
+(pp_dem_168 <- read_csv(file.path(path_models_lag, "pp_dem_sex_168.csv"), col_types = cols()) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_race_168.csv"), col_types = cols())) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_income_168.csv"), col_types = cols())) |> 
+  mutate(lag = "168 lag"))
+
+(pp_dem_336 <- read_csv(file.path(path_models_lag, "pp_dem_sex_336.csv"), col_types = cols()) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_race_336.csv"), col_types = cols())) |> 
+    bind_rows(read_csv(file.path(path_models_lag, "pp_dem_income_336.csv"), col_types = cols())) |> 
+  mutate(lag = "336 lag"))
+
+pp_dem <- pp_dem_0 |>
+  bind_rows(pp_dem_24) |>
+  bind_rows(pp_dem_72) |>
+  bind_rows(pp_dem_168) |>
+  bind_rows(pp_dem_336) |> 
+  write_csv(file.path(path_models_lag, str_c("pp_dem_all", ".csv")))
+```
+
+
+Delete individual files
+```{r}
+file.remove(c(file.path(path_models_lag, "pp_dem_sex_336.csv"),
+                 file.path(path_models_lag, "pp_dem_race_336.csv"),
+                 file.path(path_models_lag, "pp_dem_income_336.csv"),
+                 file.path(path_models_lag, "pp_dem_sex_168.csv"),
+                 file.path(path_models_lag, "pp_dem_race_168.csv"),
+                 file.path(path_models_lag, "pp_dem_income_168.csv"),
+                 file.path(path_models_lag, "pp_dem_sex_72.csv"),
+                 file.path(path_models_lag, "pp_dem_race_72.csv"),
+                 file.path(path_models_lag, "pp_dem_income_72.csv")),
+                 file.path(path_models_lag, "pp_dem_sex_24.csv"),
+                 file.path(path_models_lag, "pp_dem_race_24.csv"),
+                 file.path(path_models_lag, "pp_dem_income_24.csv"),
+                 file.path(path_models_lag, "pp_dem_sex_0.csv"),
+                 file.path(path_models_lag, "pp_dem_race_0.csv"),
+                 file.path(path_models_lag, "pp_dem_income_0.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_sex_336.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_race_336.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_income_336.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_sex_168.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_race_168.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_income_168.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_sex_72.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_race_72.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_income_72.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_sex_24.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_race_24.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_income_24.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_sex_0.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_race_0.csv"),
+                 file.path(path_models_lag, "pp_dem_contrast_income_0.csv"))
+```
+

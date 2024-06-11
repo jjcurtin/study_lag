@@ -1,0 +1,65 @@
+---
+title: "Make combined EMA for LAG study"
+author: "John Curtin"
+date: "`r lubridate::today()`"
+editor_options: 
+  chunk_output_type: console
+format:
+  html:
+    embed-resources: true
+---
+
+### Code Status
+
+Complete.  Combines the morning and later ema files from shared folder and saves in processed data for lag study.  This is essentially the same code as for the ema study with minor updates for new lab conventions (including change to qmd)
+
+### Setup
+
+Absolute paths
+```{r, absolute paths}
+switch (Sys.info()[['sysname']],
+        # PC paths
+        Windows = {
+          path_shared <- "P:/studydata/risk/data_processed/shared"
+          path_lag <- "P:/studydata/risk/data_processed/lag"},
+
+        # IOS paths
+        Darwin = {
+          path_shared <- "/Volumes/private/studydata/risk/data_processed/shared"
+          path_lag <- "/Volumes/private/studydata/risk/data_processed/lag"},
+        
+        # IOS paths
+        Linux = {
+          path_shared <- "~/mnt/private/studydata/risk/data_processed/shared"
+          path_lag <- "~/mnt/private/studydata/risk/data_processed/lag"}
+        )
+```
+
+Load packages
+```{r, packages_script}
+options(conflicts.policy = "depends.ok")
+library(tidyverse)
+```
+
+### Process and save ema
+```{r}
+ema_morning <- read_csv(file.path(path_shared, "ema_morning.csv"), show_col_types = FALSE)  |> 
+  glimpse()
+
+ema_later <- read_csv(file.path(path_shared, "ema_later.csv"), show_col_types = FALSE) |> 
+  glimpse()
+```
+
+```{r}
+ema <- ema_morning |> 
+  bind_rows(ema_later) |> 
+  mutate(subid = as.numeric(subid)) |> 
+  select(-response_id, -start_date, -finished, -status, -utc, -send_date, -send_time) |> 
+  rename(dttm_obs = end_date) |>   # use end_date for timestamp to be certain features occur before labels
+  glimpse()
+```
+
+```{r}
+ema |> 
+  write_csv(file.path(path_lag, "ema.csv"))
+```

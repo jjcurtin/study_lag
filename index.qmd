@@ -111,27 +111,9 @@ test_metrics_all_perf <- test_metrics_all |>
                    list(median = median,  
                         IQR = IQR)))
 
-pp_dem <- read_csv(file.path(path_models_lag, "pp_dem_0.csv"), col_types = cols()) |> 
-  mutate(lag = 0) |> 
-  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_24.csv"), col_types = cols()) |> 
-  mutate(lag = 24)) |> 
-  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_72.csv"), col_types = cols()) |> 
-  mutate(lag = 72)) |> 
-  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_168.csv"), col_types = cols()) |> 
-  mutate(lag = 168)) |> 
-  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_336.csv"), col_types = cols()) |> 
-  mutate(lag = 336))
+pp_dem <- read_csv(file.path(path_models_lag, "pp_dem_all.csv"), col_types = cols())
 
-pp_dem_contrast <- read_csv(file.path(path_models_lag, "pp_dem_contrast_0.csv"), col_types = cols()) |> 
-  mutate(lag = 0) |> 
-  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_24.csv"), col_types = cols()) |> 
-  mutate(lag = 24)) |> 
-  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_72.csv"), col_types = cols()) |> 
-  mutate(lag = 72)) |> 
-  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_168.csv"), col_types = cols()) |> 
-  mutate(lag = 168)) |> 
-  bind_rows(read_csv(file.path(path_models_lag, "pp_dem_contrast_336.csv"), col_types = cols()) |> 
-  mutate(lag = 336))
+pp_dem_contrast <- read_csv(file.path(path_models_lag, "pp_dem_contrast_all.csv"), col_types = cols())
 
 pp_dem_contrast <- pp_dem_contrast |> 
   group_by(contrast) |> 
@@ -314,7 +296,7 @@ Second, we compared each adjacent lagged model (i.e., 24 hours vs 72 hours, 72 h
 For both sets of model comparisons determined the probability that the models' performances differed systematically from each other by regressing the auROCs (logit transformed) from the 30 test sets as a function of the contrast. We set two random intercepts: one for the repeat, and another for the fold within repeat. We also report the precise posterior probability for the difference in auROCs and the 95% Bayesian CIs. If there was a probability > 0.95 that the more lagged model's performance was worse, we labeled the model contrast as significant.
 
 #### Fairness Benchmarks
-We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we report the median posterior probability and 95% Bayesian CI for auROC for each model separately for four demographic groups with potential disparities in access to substance use treatment. Specifically, we report model performance for dichotomized groups of race and ethnicity (non-Hispanic white vs. non-white) [@pinedoCurrentReexaminationRacial2019; @kilaruIncidenceTreatmentOpioid2020], income (above poverty vs. at or below poverty) [@olfsonHealthcareCoverageService2022], sex (male vs. female) [@greenfieldSubstanceAbuseTreatment2007; @kilaruIncidenceTreatmentOpioid2020], and age (younger vs. older) [@kilaruIncidenceTreatmentOpioid2020].
+We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we calculated the median posterior probability and 95% Bayesian CI for auROC for each model separately for three dichotomized demographic groups with potential disparities in access to substance use treatment - race and ethnicity (non-Hispanic white vs. non-white) [@pinedoCurrentReexaminationRacial2019; @kilaruIncidenceTreatmentOpioid2020], income (above poverty vs. at or below poverty) [@olfsonHealthcareCoverageService2022], and sex (male vs. female) [@greenfieldSubstanceAbuseTreatment2007; @kilaruIncidenceTreatmentOpioid2020].
 
 We also acknowledge that models that work for only a subset of people, if implemented, could widen existing treatment disparities. We conducted Bayesian group comparisons to assess the likelihood that the model performs differently by group. We report median differences in posterior probabilities and the 95% Bayesian CIs. 
 
@@ -485,13 +467,12 @@ The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprint
 
 ### Fairness Benchmarks
 
-@tbl-fairness shows the performance of each model by demographic group. All group comparisons for race, sex, and income were significant across models. On average there was a median increase in auROC for white participants compared to participants who were not white was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(upper))`]). On average there was a median increase in auROC for male participants compared to female participants was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(upper))`]). On average there was a median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(upper))`]).  <!-- Currently averaging across median auROC differences for each model. Also averaging lower and upper CI bounds - is this okay? Should I realculate CI based on average of averages?-->
+@fig-fairness shows the difference in performance of each model by demographic group. All group comparisons for race, sex, and income were significant across models. On average there was a median increase in auROC for white participants compared to participants who were not white was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(upper))`]). On average there was a median increase in auROC for male participants compared to female participants was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(upper))`]). On average there was a median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(upper))`]).  <!-- Currently averaging across median auROC differences for each model. Also averaging lower and upper CI bounds - is this okay? Should I realculate CI based on average of averages?-->
 
 Notably, the Bayesian CIs were wide and included chance performance as lag increased (i.e., 72 hours, 168 hours, and 336 hours) for individuals who were not white and with an income below the federal poverty line. 
 
-Comparisons were inconsistent across models for age. For the baseline (no lag), 72 hour lag, and 168 hour lag models there were no significant differences in performance. In the 24 hour lag model, there was a significant increase in performance for younger adults. However, in the 336 hour lag model, there was a significant increase in performance for older adults.
 
-{{< embed notebooks/mak_tables.qmd#tbl-fairness >}}
+{{< embed notebooks/mak_figs.qmd#fig-fairness >}}
 
 
 
