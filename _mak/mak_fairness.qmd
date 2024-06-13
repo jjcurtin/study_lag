@@ -15,6 +15,7 @@ params:
   window: "1week"
   model: "main" 
   lead: 336
+  
   version: "v1"
 editor_options: 
   chunk_output_type: console
@@ -60,7 +61,7 @@ path_models <- format_path(str_c("studydata/risk/models/", study))
 ### Load model predictions
 
 ```{r}
-preds_out <- read_rds(here::here(path_models, str_c("outer_preds_", window, "_", 
+preds_out <- read_rds(here::here(path_models, str_c("outer_preds_dem_6_x_5_", window, "_", 
                                                     lead, "_", version, "_", 
                                                     cv, "_", model, ".rds")))
 ```
@@ -97,8 +98,7 @@ Income, Gender, Race, Age
 feat_preds <- feat_preds |> 
   mutate(demo_sex = if_else(demo_sex == "Female", "female", "male"),
          demo_race = if_else(demo_race == "White/Caucasian", "white", "not white"),
-         demo_income = if_else(demo_income < 1560, "below poverty", "above poverty"),
-         demo_age = if_else(demo_age >= 55, "older", "younger"))
+         demo_income = if_else(demo_income < 1560, "below poverty", "above poverty"))
 ```
 
 
@@ -148,14 +148,13 @@ get auROCs
 ```{r}
 auroc_dem <- get_auroc_by_dem(df = feat_preds, var = "demo_sex") |> 
   left_join(get_auroc_by_dem(df = feat_preds, var = "demo_race"), by = "outer_split_num") |> 
-  left_join(get_auroc_by_dem(df = feat_preds, var = "demo_income"), by = "outer_split_num") |> 
-  left_join(get_auroc_by_dem(df = feat_preds, var = "demo_age"), by = "outer_split_num") 
+  left_join(get_auroc_by_dem(df = feat_preds, var = "demo_income"), by = "outer_split_num")
 ```
 
 
 Save auroc_dem
 ```{r}
 auroc_dem |> 
-  write_csv(here::here(path_models, str_c("test_auroc_dem_", window, "_", lead, 
+  write_csv(here::here(path_models, str_c("test_auroc_dem_6_x_5_", window, "_", lead, 
                                           "_", version, "_", cv, ".csv")))  
 ```
