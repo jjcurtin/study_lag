@@ -97,6 +97,9 @@ test_metrics_all_perf <- test_metrics_all |>
                         IQR = IQR)))
 
 glimpse(test_metrics_all_perf)
+
+test_metrics_all_perf |> 
+  write_csv(file.path(path_models_lag, "test_metrics_all.csv"))
 ```
 
 
@@ -118,7 +121,8 @@ test_metrics_all_pp_perf <- pp_tidy |>
                         labels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"))) |> 
   arrange(model)
 
-test_metrics_all_pp_perf
+test_metrics_all_pp_perf |> 
+  write_csv(file.path(path_models_lag, "test_metrics_all_pp_perf.csv"))
 ```
 
 
@@ -174,8 +178,8 @@ ci_baseline <- ci_baseline |>
   left_join(ci_median_baseline, by = c("contrast")) 
 
 ci_baseline |> 
-  select(contrast, probability, median, lower, upper) |> 
-  arrange(contrast)
+  write_csv(file.path(path_models_lag, "ci_baseline.csv"))
+
 ```
 
 The median decrease in auROC for the baseline vs. 24 hour lag model was `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 24") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 24") |> pull(lower))`-`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 24") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 24") |> pull(probability))` that the lagged model had worse performance. The median decrease in auROC for the baseline vs. 72 hour model was `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 72") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 72") |> pull(lower))`-`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 72") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 72") |> pull(probability))` that the lagged model had worse performance. The median increase in auROC for the baseline vs. 168 hour lag model was `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 168") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 168") |> pull(lower))`-`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 168") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 168") |> pull(probability))` that the lagged model had worse performance. The median increase in auROC for the baseline vs. 336 hour lag model was `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 336") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 336") |> pull(lower))`-`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 336") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 336") |> pull(probability))` that the lagged model had worse performance. 
@@ -183,10 +187,6 @@ The median decrease in auROC for the baseline vs. 24 hour lag model was `r sprin
 #### Adjacent Contrasts
 
 ```{r}
-
-
-
-
 ci_lag <- pp |>
   contrast_models(list("lag24", "lag72", "lag168"), 
                   list("lag72", "lag168", "lag336")) |> 
@@ -210,8 +210,7 @@ ci_lag <- ci_lag |>
   left_join(ci_median_lag, by = c("contrast")) 
 
 ci_lag |> 
-  select(contrast, probability, median, lower, upper) |> 
-  arrange(contrast)
+  write_csv(file.path(path_models_lag, "ci_lag.csv"))
 ```
 
 
