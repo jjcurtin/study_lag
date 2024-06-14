@@ -58,36 +58,8 @@ path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
 ### Read in Data
 
 ```{r}
-auroc_dem_0 <- read_csv(here::here(path_models_lag, "test_auroc_dem_1week_0_v1_nested.csv"),
-                      col_types = cols()) |> 
-  mutate(fold_num = rep(1:10, 3),
-         repeat_num = c(rep(1, 10), rep(2, 10), rep(3, 10))) |> 
-  select(-outer_split_num)
-
-
-auroc_dem_24 <- read_csv(here::here(path_models_lag, "test_auroc_dem_1week_24_v1_nested.csv"),
-                      col_types = cols()) |> 
-  mutate(fold_num = rep(1:10, 3),
-         repeat_num = c(rep(1, 10), rep(2, 10), rep(3, 10))) |> 
-  select(-outer_split_num)
-
-auroc_dem_72 <- read_csv(here::here(path_models_lag, "test_auroc_dem_1week_72_v1_nested.csv"),
-                      col_types = cols()) |> 
-  mutate(fold_num = rep(1:10, 3),
-         repeat_num = c(rep(1, 10), rep(2, 10), rep(3, 10))) |> 
-  select(-outer_split_num)
-
-auroc_dem_168 <- read_csv(here::here(path_models_lag, "test_auroc_dem_1week_168_v1_nested.csv"),
-                      col_types = cols()) |> 
-  mutate(fold_num = rep(1:10, 3),
-         repeat_num = c(rep(1, 10), rep(2, 10), rep(3, 10))) |> 
-  select(-outer_split_num)
-
-auroc_dem_336 <- read_csv(here::here(path_models_lag, "test_auroc_dem_1week_336_v1_nested.csv"),
-                      col_types = cols()) |> 
-  mutate(fold_num = rep(1:10, 3),
-         repeat_num = c(rep(1, 10), rep(2, 10), rep(3, 10))) |> 
-  select(-outer_split_num)
+test_metrics_all_perf <- read_csv(file.path(path_models_lag, "test_metrics_all.csv"), 
+                                  show_col_types = FALSE)
 ```
 
 ```{r}
@@ -95,6 +67,22 @@ pp_dem_contrast <- read_csv(file.path(path_models_lag, str_c("pp_dem_contrast_al
                             show_col_types = FALSE)
 ```
 
+Figure 1: auROCs
+```{r}
+#| label: fig-auroc
+#| fig-cap: "Posterior probability for auROC and Bayesian credible intervals by model"
+
+test_metrics_all_pp_perf |>
+  mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ))) |> 
+  ggplot() + 
+  geom_point(aes(x = pp_median, y = model), color = "black") +
+  geom_segment(mapping = aes(y = model, x = pp_lower, xend = pp_upper),
+                data = test_metrics_all_pp_perf) +
+  scale_x_continuous("Area Under ROC Curve", limits = c(.80, .925)) +
+  ylab("Model") +
+  theme_classic() +
+  theme(legend.position = "none")
+```
 
 Figure 2: Fairness Benchmarks
 

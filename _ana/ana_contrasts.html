@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kendra Wyant">
-<meta name="dcterms.date" content="2024-06-12">
+<meta name="dcterms.date" content="2024-06-14">
 
 <title>Model analyses</title>
 <style>
@@ -3094,7 +3094,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 12, 2024</p>
+      <p class="date">June 14, 2024</p>
     </div>
   </div>
   
@@ -3195,33 +3195,26 @@ $ lag168_IQR    &lt;dbl&gt; 0.0612952
 $ lag336_median &lt;dbl&gt; 0.8565456
 $ lag336_IQR    &lt;dbl&gt; 0.06393667</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>test_metrics_all_perf <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">&quot;test_metrics_all.csv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The median auROC across the 30 test sets for our baseline model was high (median=0.892, IQR=0.046), consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=0.882, IQR=0.042), 72 hour lag (median=0.873, IQR=0.057), and 168 hour lag (median=0.857, IQR=0.061), and moderate for the 336 hour lag (median=0.857, IQR=0.064).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>(<span class="at">seed =</span> <span class="dv">123</span>) </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>q <span class="ot">=</span> <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf <span class="ot">&lt;-</span> pp_tidy <span class="sc">|&gt;</span> </span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(model) <span class="sc">|&gt;</span> </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">pp_median =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">2</span>]),</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_lower =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">1</span>]), </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_upper =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">3</span>])) <span class="sc">|&gt;</span> </span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>),</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;0 lag&quot;</span>, <span class="st">&quot;24 lag&quot;</span>, <span class="st">&quot;72 lag&quot;</span>, <span class="st">&quot;168 lag&quot;</span>, <span class="st">&quot;336 lag&quot;</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(model)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 4
-  model   pp_median pp_lower pp_upper
-  &lt;fct&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1 0 lag       0.893    0.876    0.908
-2 24 lag      0.887    0.869    0.902
-3 72 lag      0.875    0.856    0.892
-4 168 lag     0.871    0.852    0.889
-5 336 lag     0.850    0.828    0.870</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>(<span class="at">seed =</span> <span class="dv">123</span>) </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>q <span class="ot">=</span> <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf <span class="ot">&lt;-</span> pp_tidy <span class="sc">|&gt;</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(model) <span class="sc">|&gt;</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">pp_median =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">2</span>]),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_lower =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">1</span>]), </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_upper =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">3</span>])) <span class="sc">|&gt;</span> </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>),</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;0 lag&quot;</span>, <span class="st">&quot;24 lag&quot;</span>, <span class="st">&quot;72 lag&quot;</span>, <span class="st">&quot;168 lag&quot;</span>, <span class="st">&quot;336 lag&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(model)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf <span class="sc">|&gt;</span> </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">&quot;test_metrics_all_pp_perf.csv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.893 (baseline), 0.887 (24 hour lag), 0.875 (72 hour lag), 0.871 (168 hour lag), and 0.850 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline[0.876-0.908], 24 hour lag[0.869-0.902], 72 hour lag[0.856-0.892], 168 hour lag[0.852-0.889], 336 hour lag[0.828-0.870]. Figure 1 displays these median auROCs and 95% Bayesian CIs by model.</p>
 <div class="cell">
@@ -3276,56 +3269,37 @@ $ lag336_IQR    &lt;dbl&gt; 0.06393667</code></pre>
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ci_median_baseline, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;contrast&quot;</span>)) </span>
 <span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>ci_baseline <span class="sc">|&gt;</span> </span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(contrast, probability, median, lower, upper) <span class="sc">|&gt;</span> </span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(contrast)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 5
-  contrast  probability  median   lower  upper
-  &lt;fct&gt;           &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
-1 0 vs. 24        0.977 0.00669 0.00129 0.0123
-2 0 vs. 72        1     0.0184  0.0126  0.0247
-3 0 vs. 168       1     0.0219  0.0160  0.0282
-4 0 vs. 336       1     0.0431  0.0361  0.0509</code></pre>
-</div>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">&quot;ci_baseline.csv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The median decrease in auROC for the baseline vs. 24 hour lag model was 0.007 (95% CI=[0.001-0.012]), yielding a significant probability of 0.977 that the lagged model had worse performance. The median decrease in auROC for the baseline vs. 72 hour model was 0.018 (95% CI=[0.013-0.025]), yielding a significant probability of 1.000 that the lagged model had worse performance. The median increase in auROC for the baseline vs. 168 hour lag model was 0.022 (95% CI=[0.016-0.028]), yielding a significant probability of 1.000 that the lagged model had worse performance. The median increase in auROC for the baseline vs. 336 hour lag model was 0.043 (95% CI=[0.036-0.051]), yielding a significant probability of 1.000 that the lagged model had worse performance.</p>
 </section>
 <section id="adjacent-contrasts" class="level4">
 <h4 class="anchored" data-anchor-id="adjacent-contrasts">Adjacent Contrasts</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>), </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(<span class="at">size =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, </span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag24 vs lag72&quot;</span>, <span class="st">&quot;lag72 vs lag168&quot;</span>, </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag168 vs lag336&quot;</span>),</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;24 vs. 72&quot;</span>, <span class="st">&quot;72 vs. 168&quot;</span>, <span class="st">&quot;168 vs. 336&quot;</span>)))</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>ci_median_lag <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>), </span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>)) <span class="sc">|&gt;</span>  </span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contrast) <span class="sc">|&gt;</span> </span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">median =</span> <span class="fu">quantile</span>(difference, .<span class="dv">5</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, </span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag24 vs. lag72&quot;</span>, <span class="st">&quot;lag72 vs. lag168&quot;</span>, </span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag168 vs. lag336&quot;</span>),</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;24 vs. 72&quot;</span>, <span class="st">&quot;72 vs. 168&quot;</span>, <span class="st">&quot;168 vs. 336&quot;</span>)))</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="ot">&lt;-</span> ci_lag <span class="sc">|&gt;</span> </span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ci_median_lag, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;contrast&quot;</span>)) </span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="sc">|&gt;</span> </span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(contrast, probability, median, lower, upper) <span class="sc">|&gt;</span> </span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(contrast)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 5
-  contrast    probability  median    lower   upper
-  &lt;fct&gt;             &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-1 24 vs. 72         0.999 0.0117   0.00586 0.0175 
-2 72 vs. 168        0.836 0.00349 -0.00237 0.00968
-3 168 vs. 336       1     0.0212   0.0143  0.0280 </code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>), </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(<span class="at">size =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag24 vs lag72&quot;</span>, <span class="st">&quot;lag72 vs lag168&quot;</span>, </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag168 vs lag336&quot;</span>),</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;24 vs. 72&quot;</span>, <span class="st">&quot;72 vs. 168&quot;</span>, <span class="st">&quot;168 vs. 336&quot;</span>)))</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>ci_median_lag <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>), </span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>)) <span class="sc">|&gt;</span>  </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contrast) <span class="sc">|&gt;</span> </span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">median =</span> <span class="fu">quantile</span>(difference, .<span class="dv">5</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag24 vs. lag72&quot;</span>, <span class="st">&quot;lag72 vs. lag168&quot;</span>, </span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag168 vs. lag336&quot;</span>),</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;24 vs. 72&quot;</span>, <span class="st">&quot;72 vs. 168&quot;</span>, <span class="st">&quot;168 vs. 336&quot;</span>)))</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="ot">&lt;-</span> ci_lag <span class="sc">|&gt;</span> </span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ci_median_lag, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;contrast&quot;</span>)) </span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="sc">|&gt;</span> </span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">&quot;ci_lag.csv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The median decrease in auROC for the 24 hour vs. 72 hour lag model was 0.012 (95% CI=[0.006-0.018]), yielding a significant probability of 0.999 that the 72 hour lag model had worse performance than the 24 hour lag model. The median decrease in auROC for the 72 hour vs. 168 hour lag model was 0.003 (95% CI=[-0.002-0.010]), yielding a non-significant probability of 0.836 that the 168 hour lag model had worse performance than the 72 hour lag model. The median decrease in auROC for the 168 hour vs. 336 hour lag model was 0.021 (95% CI=[0.014-0.028]), yielding a significant probability of 1.000 that the 336 hour lag model had worse performance than the 168 hour lag model.</p>
 </section>
