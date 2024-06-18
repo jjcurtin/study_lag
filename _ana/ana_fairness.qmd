@@ -344,7 +344,6 @@ pp_dem_contrast |>
                                                 "Above Poverty vs. At or Below Poverty")))) +
   facet_grid(~contrast) +
   scale_x_continuous("Difference in Area Under ROC Curve", limits = c(0, .3), breaks = c(0, .1, .2, .3)) +
-  geom_vline(xintercept = 0, linetype = "dashed") +
   ylab("") +
   theme_classic() +
   theme(legend.position = "none")
@@ -352,7 +351,7 @@ pp_dem_contrast |>
 
 ### Results 
 
-All group comparisons for race, sex, and income were significant across models. On average there was a median increase in auROC for white participants compared to participants who were not white was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "white vs. not white") |> pull(upper))`]). On average there was a median increase in auROC for male participants compared to female participants was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(upper))`]). On average there was a median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line was `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median))` (95% CI=[`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(lower))`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(upper))`]).  <!-- Currently averaging across median auROC differences for each model. Also averaging lower and upper CI bounds - is this okay? Should I realculate CI based on average of averages?-->
+All group comparisons for race, sex, and income were significant (probability > .95) across models. On average there was a median increase in auROC for white participants compared to participants who were not white of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs. not white") |> pull(median)) |> median()`. On average there was a median increase in auROC for male participants compared to female participants of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(median)) |> median()`. On average there was a median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median)) |> median()`.  
 
 
 ```{r}
@@ -392,8 +391,10 @@ pp_dem <- pp_dem_0 |>
 ```
 
 
-Delete individual files
 ```{r}
+#| echo: false
+#| output: false 
+
 file.remove(c(file.path(path_models_lag, "pp_dem_sex_336.csv"),
                  file.path(path_models_lag, "pp_dem_race_336.csv"),
                  file.path(path_models_lag, "pp_dem_income_336.csv"),

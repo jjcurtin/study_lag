@@ -58,7 +58,7 @@ path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
 ### Read in Data
 
 ```{r}
-test_metrics_all_perf <- read_csv(file.path(path_models_lag, "test_metrics_all.csv"), 
+test_metrics_all_pp_perf <- read_csv(file.path(path_models_lag, "test_metrics_all_pp_perf.csv"), 
                                   show_col_types = FALSE)
 ```
 

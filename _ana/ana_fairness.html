@@ -9,7 +9,7 @@
 <meta name="author" content="Kendra Wyant">
 <meta name="dcterms.date" content="2024-06-18">
 
-<title>Model analyses</title>
+<title>Fairness analyses</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3077,7 +3077,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Model analyses</h1>
+<h1 class="title">Fairness analyses</h1>
 </div>
 
 
@@ -3109,248 +3109,419 @@ vertical-align: -.125em;
 <section id="set-up-environment" class="level3">
 <h3 class="anchored" data-anchor-id="set-up-environment">Set Up Environment</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">source</span>(<span class="st">&quot;https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true&quot;</span>))</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyposterior))</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>path_models_lag <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="fu">str_c</span>(<span class="st">&quot;studydata/risk/models/lag&quot;</span>))</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>path_shared <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="st">&quot;studydata/risk/data_processed/shared&quot;</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>path_processed <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="st">&quot;studydata/risk/data_processed/lag&quot;</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">knitr.kable.NA =</span> <span class="st">&#39;&#39;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># handle conflicts</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">conflicts.policy =</span> <span class="st">&quot;depends.ok&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">source_url</span>(<span class="st">&quot;https://github.com/jjcurtin/lab_support/blob/main/fun_ml.R?raw=true&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidymodels_conflictRules</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>test_metrics_0 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">&quot;test_metrics_1week_0_v1_nested.csv&quot;</span>), </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">&quot;roc_auc&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(outer_split_num, <span class="st">&quot;lag0&quot;</span> <span class="ot">=</span> .estimate)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyposterior)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra, <span class="at">exclude =</span> <span class="st">&quot;group_rows&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>test_metrics_24 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, </span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">&quot;test_metrics_1week_24_v1_nested.csv&quot;</span>),</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">&quot;roc_auc&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(outer_split_num, <span class="st">&quot;lag24&quot;</span> <span class="ot">=</span> .estimate)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>test_metrics_72 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, </span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">&quot;test_metrics_1week_72_v1_nested.csv&quot;</span>),</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                              <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">&quot;roc_auc&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(outer_split_num, <span class="st">&quot;lag72&quot;</span> <span class="ot">=</span> .estimate)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>test_metrics_168 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, </span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">&quot;test_metrics_1week_168_v1_nested.csv&quot;</span>), </span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                              <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">&quot;roc_auc&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(outer_split_num, <span class="st">&quot;lag168&quot;</span> <span class="ot">=</span> .estimate)</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>test_metrics_336 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, </span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">&quot;test_metrics_1week_336_v1_nested.csv&quot;</span>),</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>                             <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">&quot;roc_auc&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(outer_split_num, <span class="st">&quot;lag336&quot;</span> <span class="ot">=</span> .estimate)</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>test_metrics_all <span class="ot">&lt;-</span> test_metrics_0 <span class="sc">|&gt;</span> </span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(test_metrics_24, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;outer_split_num&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(test_metrics_72, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;outer_split_num&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(test_metrics_168, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;outer_split_num&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(test_metrics_336, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;outer_split_num&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>),</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">10</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num) <span class="sc">|&gt;</span> </span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_classic</span>()) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">source_url</span>(<span class="st">&quot;https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># CHTC support functions</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">source_url</span>(<span class="st">&quot;https://github.com/jjcurtin/lab_support/blob/main/chtc/static_files/fun_chtc.R?raw=true&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>path_processed <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="fu">str_c</span>(<span class="st">&quot;studydata/risk/data_processed/lag&quot;</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>path_models_lag <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="fu">str_c</span>(<span class="st">&quot;studydata/risk/models/lag&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="read-in-model-performance-metrics" class="level3">
+<h3 class="anchored" data-anchor-id="read-in-model-performance-metrics">Read in Model Performance Metrics</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>auroc_dem_0 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;test_auroc_dem_6_x_5_1week_0_v1_nested.csv&quot;</span>),</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">10</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>auroc_dem_24 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;test_auroc_dem_6_x_5_1week_24_v1_nested.csv&quot;</span>),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>),</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">10</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>auroc_dem_72 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;test_auroc_dem_6_x_5_1week_72_v1_nested.csv&quot;</span>),</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>),</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">10</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>auroc_dem_168 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;test_auroc_dem_6_x_5_1week_168_v1_nested.csv&quot;</span>),</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>),</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">10</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>auroc_dem_336 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;test_auroc_dem_6_x_5_1week_336_v1_nested.csv&quot;</span>),</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>),</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">10</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="look-at-missing-values" class="level3">
+<h3 class="anchored" data-anchor-id="look-at-missing-values">Look at missing values</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>auroc_dem_0 <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  naniar<span class="sc">::</span><span class="fu">miss_var_summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 30
-Columns: 7
-$ lag0       &lt;dbl&gt; 0.8742342, 0.8926746, 0.8922634, 0.9127436, 0.9109679, 0.94…
-$ lag24      &lt;dbl&gt; 0.8616597, 0.8912348, 0.8914050, 0.9188976, 0.8855889, 0.93…
-$ lag72      &lt;dbl&gt; 0.8513110, 0.8878029, 0.8726079, 0.9084157, 0.8750066, 0.92…
-$ lag168     &lt;dbl&gt; 0.8477526, 0.8869090, 0.8368953, 0.9230897, 0.8456439, 0.91…
-$ lag336     &lt;dbl&gt; 0.8152639, 0.8669348, 0.7851519, 0.8662670, 0.8401197, 0.89…
-$ fold_num   &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1…
-$ repeat_num &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,…</code></pre>
+<pre><code># A tibble: 8 × 3
+  variable      n_miss pct_miss
+  &lt;chr&gt;          &lt;int&gt;    &lt;num&gt;
+1 below poverty      4     13.3
+2 not white          3     10  
+3 female             0      0  
+4 male               0      0  
+5 white              0      0  
+6 above poverty      0      0  
+7 fold_num           0      0  
+8 repeat_num         0      0  </code></pre>
 </div>
-</div>
-<section id="model-evaluation" class="level4">
-<h4 class="anchored" data-anchor-id="model-evaluation">Model evaluation</h4>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeated CV (id = repeat, id2 = fold within repeat)</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># with a common variance:  statistic ~ model + (model | id2/id)</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>pp <span class="ot">&lt;-</span> test_metrics_all <span class="sc">|&gt;</span> </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">id =</span> repeat_num,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">id2 =</span> fold_num) <span class="sc">|&gt;</span> </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">perf_mod</span>(<span class="at">formula =</span> statistic <span class="sc">~</span> model <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id2<span class="sc">/</span>id),</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">transform =</span> tidyposterior<span class="sc">::</span>logit_trans,  <span class="co"># for skewed &amp; bounded AUC</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">iter =</span> <span class="dv">3000</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">adapt_delta =</span> .<span class="dv">99</span>, <span class="co"># increased iteration from 2000 to fix divergence issues</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">family =</span> gaussian, </span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>test_metrics_all_perf <span class="ot">&lt;-</span> test_metrics_all <span class="sc">|&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="st">`</span><span class="at">lag0</span><span class="st">`</span><span class="sc">:</span><span class="st">`</span><span class="at">lag336</span><span class="st">`</span>, </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="at">median =</span> median,  </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">IQR =</span> IQR)))</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(test_metrics_all_perf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>auroc_dem_24 <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  naniar<span class="sc">::</span><span class="fu">miss_var_summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 1
-Columns: 10
-$ lag0_median   &lt;dbl&gt; 0.892469
-$ lag0_IQR      &lt;dbl&gt; 0.046472
-$ lag24_median  &lt;dbl&gt; 0.8821946
-$ lag24_IQR     &lt;dbl&gt; 0.04206236
-$ lag72_median  &lt;dbl&gt; 0.8729964
-$ lag72_IQR     &lt;dbl&gt; 0.05728212
-$ lag168_median &lt;dbl&gt; 0.8574596
-$ lag168_IQR    &lt;dbl&gt; 0.0612952
-$ lag336_median &lt;dbl&gt; 0.8565456
-$ lag336_IQR    &lt;dbl&gt; 0.06393667</code></pre>
+<pre><code># A tibble: 8 × 3
+  variable      n_miss pct_miss
+  &lt;chr&gt;          &lt;int&gt;    &lt;num&gt;
+1 below poverty      4     13.3
+2 not white          3     10  
+3 female             0      0  
+4 male               0      0  
+5 white              0      0  
+6 above poverty      0      0  
+7 fold_num           0      0  
+8 repeat_num         0      0  </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>test_metrics_all_perf <span class="sc">|&gt;</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">&quot;test_metrics_all.csv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>The median auROC across the 30 test sets for our baseline model was high (median=0.892, IQR=0.046), consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=0.882, IQR=0.042), 72 hour lag (median=0.873, IQR=0.057), 168 hour lag (median=0.857, IQR=0.061), and 336 hour lag (median=0.857, IQR=0.064).</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>(<span class="at">seed =</span> <span class="dv">123</span>) </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>q <span class="ot">=</span> <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf <span class="ot">&lt;-</span> pp_tidy <span class="sc">|&gt;</span> </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(model) <span class="sc">|&gt;</span> </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">pp_median =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">2</span>]),</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_lower =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">1</span>]), </span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_upper =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">3</span>])) <span class="sc">|&gt;</span> </span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>),</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;0 lag&quot;</span>, <span class="st">&quot;24 lag&quot;</span>, <span class="st">&quot;72 lag&quot;</span>, <span class="st">&quot;168 lag&quot;</span>, <span class="st">&quot;336 lag&quot;</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(model)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf <span class="sc">|&gt;</span> </span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">&quot;test_metrics_all_pp_perf.csv&quot;</span>))</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>auroc_dem_72 <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  naniar<span class="sc">::</span><span class="fu">miss_var_summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 4
-  model   pp_median pp_lower pp_upper
-  &lt;fct&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1 0 lag       0.894    0.877    0.908
-2 24 lag      0.887    0.869    0.902
-3 72 lag      0.875    0.856    0.892
-4 168 lag     0.872    0.852    0.888
-5 336 lag     0.850    0.828    0.870</code></pre>
+<pre><code># A tibble: 8 × 3
+  variable      n_miss pct_miss
+  &lt;chr&gt;          &lt;int&gt;    &lt;num&gt;
+1 below poverty      4     13.3
+2 not white          3     10  
+3 female             0      0  
+4 male               0      0  
+5 white              0      0  
+6 above poverty      0      0  
+7 fold_num           0      0  
+8 repeat_num         0      0  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>auroc_dem_168 <span class="sc">|&gt;</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  naniar<span class="sc">::</span><span class="fu">miss_var_summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 3
+  variable      n_miss pct_miss
+  &lt;chr&gt;          &lt;int&gt;    &lt;num&gt;
+1 below poverty      4     13.3
+2 not white          3     10  
+3 female             0      0  
+4 male               0      0  
+5 white              0      0  
+6 above poverty      0      0  
+7 fold_num           0      0  
+8 repeat_num         0      0  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>auroc_dem_336 <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  naniar<span class="sc">::</span><span class="fu">miss_var_summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 3
+  variable      n_miss pct_miss
+  &lt;chr&gt;          &lt;int&gt;    &lt;num&gt;
+1 not white          5     16.7
+2 below poverty      4     13.3
+3 female             0      0  
+4 male               0      0  
+5 white              0      0  
+6 above poverty      0      0  
+7 fold_num           0      0  
+8 repeat_num         0      0  </code></pre>
 </div>
 </div>
-<p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.894 (baseline), 0.887 (24 hour lag), 0.875 (72 hour lag), 0.872 (168 hour lag), and 0.850 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline[0.877-0.908], 24 hour lag[0.869-0.902], 72 hour lag[0.856-0.892], 168 hour lag[0.852-0.888], 336 hour lag[0.828-0.870]. Figure 1 displays these median auROCs and 95% Bayesian CIs by model.</p>
+</section>
+<section id="get-median-posterior-probabilities-and-cis" class="level3">
+<h3 class="anchored" data-anchor-id="get-median-posterior-probabilities-and-cis">Get Median Posterior Probabilities and CIs</h3>
+<p>Sex</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;336 lag&quot;</span>, <span class="st">&quot;168 lag&quot;</span>, <span class="st">&quot;72 lag&quot;</span>, <span class="st">&quot;24 lag&quot;</span>, <span class="st">&quot;0 lag&quot;</span> ))) <span class="sc">|&gt;</span> </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> pp_median, <span class="at">y =</span> model), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">y =</span> model, <span class="at">x =</span> pp_lower, <span class="at">xend =</span> pp_upper),</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> test_metrics_all_pp_perf) <span class="sc">+</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="st">&quot;Area Under ROC Curve&quot;</span>, <span class="at">limits =</span> <span class="fu">c</span>(.<span class="dv">80</span>, .<span class="dv">925</span>)) <span class="sc">+</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Model&quot;</span>) <span class="sc">+</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (lead <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">24</span>,<span class="dv">72</span>,<span class="dv">168</span>,<span class="dv">336</span>)) {</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  data_name <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">&quot;auroc_dem_&quot;</span>, lead)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  pp <span class="ot">&lt;-</span> <span class="fu">get</span>(data_name) <span class="sc">|&gt;</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(repeat_num, fold_num, female, male) <span class="sc">|&gt;</span> </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">id =</span> repeat_num,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">id2 =</span> fold_num) <span class="sc">|&gt;</span> </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">perf_mod</span>(<span class="at">formula =</span> statistic <span class="sc">~</span> model <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id2<span class="sc">/</span>id),</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">transform =</span> tidyposterior<span class="sc">::</span>logit_trans,  </span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">iter =</span> <span class="dv">2000</span>, <span class="at">chains =</span> <span class="dv">4</span>,  </span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">adapt_delta =</span> .<span class="dv">99</span>,</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> gaussian) </span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  pp_tidy <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tidy</span>(<span class="at">seed =</span> <span class="dv">123</span>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  q <span class="ot">=</span> <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>)</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  ci <span class="ot">&lt;-</span> pp_tidy <span class="sc">|&gt;</span> </span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(model) <span class="sc">|&gt;</span> </span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">pp_median =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">2</span>]),</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>              <span class="at">pp_lower =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">1</span>]), </span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>              <span class="at">pp_upper =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">3</span>]))  <span class="sc">|&gt;</span> </span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(model)</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  ci <span class="sc">|&gt;</span> </span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="fu">str_c</span>(<span class="st">&quot;pp_dem_sex_&quot;</span>, lead, <span class="st">&quot;.csv&quot;</span>)))</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># contrasts</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>  ci_contrast <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;male&quot;</span>), </span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">list</span>(<span class="st">&quot;female&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(<span class="at">size =</span> <span class="dv">0</span>) </span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>ci_median_contrast <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>   <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;male&quot;</span>), </span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;female&quot;</span>)) <span class="sc">|&gt;</span>  </span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contrast) <span class="sc">|&gt;</span> </span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">median =</span> <span class="fu">quantile</span>(difference, .<span class="dv">5</span>)) </span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>ci_contrast <span class="ot">&lt;-</span> ci_contrast <span class="sc">|&gt;</span> </span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="st">&quot;male vs. female&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ci_median_contrast, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;contrast&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(contrast, probability, median, lower, upper) </span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>ci_contrast <span class="sc">|&gt;</span> </span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="fu">str_c</span>(<span class="st">&quot;pp_dem_contrast_sex_&quot;</span>, lead, <span class="st">&quot;.csv&quot;</span>)))</span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>  }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Race/Ethnicity</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (lead <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">24</span>,<span class="dv">72</span>,<span class="dv">168</span>,<span class="dv">336</span>)) {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  data_name <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">&quot;auroc_dem_&quot;</span>, lead)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  pp <span class="ot">&lt;-</span> <span class="fu">get</span>(data_name) <span class="sc">|&gt;</span> </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(repeat_num, fold_num, <span class="st">`</span><span class="at">not white</span><span class="st">`</span>, white) <span class="sc">|&gt;</span> </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">id =</span> repeat_num,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">id2 =</span> fold_num,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>           <span class="st">`</span><span class="at">non-hispanic white</span><span class="st">`</span> <span class="ot">=</span> white) <span class="sc">|&gt;</span> </span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">perf_mod</span>(<span class="at">formula =</span> statistic <span class="sc">~</span> model <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id2<span class="sc">/</span>id),</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">transform =</span> tidyposterior<span class="sc">::</span>logit_trans,  </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">iter =</span> <span class="dv">2000</span>, <span class="at">chains =</span> <span class="dv">4</span>,  </span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">adapt_delta =</span> .<span class="dv">99</span>,</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> gaussian) </span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  pp_tidy <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tidy</span>(<span class="at">seed =</span> <span class="dv">123</span>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  q <span class="ot">=</span> <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>)</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>  ci <span class="ot">&lt;-</span> pp_tidy <span class="sc">|&gt;</span> </span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(model) <span class="sc">|&gt;</span> </span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">pp_median =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">2</span>]),</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>              <span class="at">pp_lower =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">1</span>]), </span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>              <span class="at">pp_upper =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">3</span>]))  <span class="sc">|&gt;</span> </span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(model)</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>  ci <span class="sc">|&gt;</span> </span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="fu">str_c</span>(<span class="st">&quot;pp_dem_race_&quot;</span>, lead, <span class="st">&quot;.csv&quot;</span>)))</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># contrasts</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>  ci_contrast <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;non-hispanic white&quot;</span>), </span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">list</span>(<span class="st">&quot;not white&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(<span class="at">size =</span> <span class="dv">0</span>) </span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>ci_median_contrast <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>   <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;non-hispanic white&quot;</span>), </span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;not white&quot;</span>)) <span class="sc">|&gt;</span>  </span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contrast) <span class="sc">|&gt;</span> </span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">median =</span> <span class="fu">quantile</span>(difference, .<span class="dv">5</span>)) </span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>ci_contrast <span class="ot">&lt;-</span> ci_contrast <span class="sc">|&gt;</span> </span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="st">&quot;non-hispanic white vs. not white&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ci_median_contrast, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;contrast&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(contrast, probability, median, lower, upper) </span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a>ci_contrast <span class="sc">|&gt;</span> </span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="fu">str_c</span>(<span class="st">&quot;pp_dem_contrast_race_&quot;</span>, lead, <span class="st">&quot;.csv&quot;</span>)))</span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a>  }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Income</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (lead <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">24</span>,<span class="dv">72</span>,<span class="dv">168</span>,<span class="dv">336</span>)) {</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  data_name <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">&quot;auroc_dem_&quot;</span>, lead)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  pp <span class="ot">&lt;-</span> <span class="fu">get</span>(data_name) <span class="sc">|&gt;</span> </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(repeat_num, fold_num, <span class="st">`</span><span class="at">below poverty</span><span class="st">`</span>,<span class="st">`</span><span class="at">above poverty</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">id =</span> repeat_num,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">id2 =</span> fold_num) <span class="sc">|&gt;</span> </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">perf_mod</span>(<span class="at">formula =</span> statistic <span class="sc">~</span> model <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id2<span class="sc">/</span>id),</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">transform =</span> tidyposterior<span class="sc">::</span>logit_trans,  </span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">iter =</span> <span class="dv">2000</span>, <span class="at">chains =</span> <span class="dv">4</span>,  </span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">adapt_delta =</span> .<span class="dv">99</span>,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> gaussian) </span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  pp_tidy <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tidy</span>(<span class="at">seed =</span> <span class="dv">123</span>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  q <span class="ot">=</span> <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>)</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>  ci <span class="ot">&lt;-</span> pp_tidy <span class="sc">|&gt;</span> </span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(model) <span class="sc">|&gt;</span> </span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">pp_median =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">2</span>]),</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>              <span class="at">pp_lower =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">1</span>]), </span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>              <span class="at">pp_upper =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">3</span>]))  <span class="sc">|&gt;</span> </span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(model)</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>  ci <span class="sc">|&gt;</span> </span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="fu">str_c</span>(<span class="st">&quot;pp_dem_income_&quot;</span>, lead, <span class="st">&quot;.csv&quot;</span>)))</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># contrasts</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>  ci_contrast <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span></span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;above poverty&quot;</span>), </span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">list</span>(<span class="st">&quot;below poverty&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(<span class="at">size =</span> <span class="dv">0</span>) </span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>ci_median_contrast <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>   <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;above poverty&quot;</span>), </span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;below poverty&quot;</span>)) <span class="sc">|&gt;</span>  </span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contrast) <span class="sc">|&gt;</span> </span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">median =</span> <span class="fu">quantile</span>(difference, .<span class="dv">5</span>)) </span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>ci_contrast <span class="ot">&lt;-</span> ci_contrast <span class="sc">|&gt;</span> </span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="st">&quot;above poverty vs. below poverty&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ci_median_contrast, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;contrast&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(contrast, probability, median, lower, upper) </span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>ci_contrast <span class="sc">|&gt;</span> </span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="fu">str_c</span>(<span class="st">&quot;pp_dem_contrast_income_&quot;</span>, lead, <span class="st">&quot;.csv&quot;</span>)))</span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a>  }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="group-comparisons" class="level3">
+<h3 class="anchored" data-anchor-id="group-comparisons">Group comparisons</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 6
+  contrast                         probability median  lower  upper lag  
+  &lt;chr&gt;                                  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;
+1 male vs. female                            1 0.0589 0.0433 0.0747 0 lag
+2 non-hispanic white vs. not white           1 0.168  0.0933 0.257  0 lag
+3 above poverty vs. below poverty            1 0.0908 0.0509 0.135  0 lag</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 6
+  contrast                         probability median  lower  upper lag   
+  &lt;chr&gt;                                  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt; 
+1 male vs. female                         1    0.0714 0.0536 0.0901 24 lag
+2 non-hispanic white vs. not white        1.00 0.179  0.0901 0.283  24 lag
+3 above poverty vs. below poverty         1    0.0864 0.0504 0.125  24 lag</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 6
+  contrast                         probability median  lower upper lag   
+  &lt;chr&gt;                                  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; 
+1 male vs. female                            1 0.0802 0.0621 0.100 72 lag
+2 non-hispanic white vs. not white           1 0.159  0.100  0.227 72 lag
+3 above poverty vs. below poverty            1 0.0919 0.0540 0.133 72 lag</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 6
+  contrast                         probability median  lower upper lag    
+  &lt;chr&gt;                                  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  
+1 male vs. female                            1 0.0962 0.0774 0.116 168 lag
+2 non-hispanic white vs. not white           1 0.148  0.0995 0.201 168 lag
+3 above poverty vs. below poverty            1 0.133  0.0925 0.175 168 lag</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 6
+  contrast                         probability median  lower upper lag    
+  &lt;chr&gt;                                  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  
+1 male vs. female                            1  0.116 0.0936 0.140 336 lag
+2 non-hispanic white vs. not white           1  0.107 0.0643 0.152 336 lag
+3 above poverty vs. below poverty            1  0.131 0.0929 0.172 336 lag</code></pre>
+</div>
+</div>
+<div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="data:image/png;base64,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" class="img-fluid figure-img" width="672"></p>
+<p><img src="data:image/png;base64,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S1Svhe74NPess0qnvonUfY3Zk0irTXMrZgL6DybvxZfLD3r7Xq7mrPs26ayUObM/vXG4yjPbpLRvwKKT/YOrJ43Czal5772T+99E6gd0fOS0vrR9Mk+90alnvvjp+nDVnEvxz2Np8wa0WP/1X3vfhV/5GGj1NdfJV94faL/h3nzZfeaQ6oLvwo96v9Fw/LsJZp/553UG6m/XfmLq+c3sduZpfkDnLXP7yuc0Nx1BAtosUbMWOuPTXti0xiqd/1346jVmA7raNLdiegT+zj+abEVWC12/l+9p3qHdt0lnpczO/sze9QrPHGetfQPe7O8LnTQK3WOM9Y/23sm978LPDejbPvHc1DyNR2cy8827p/fdmvNc2mwB3YQ1f4PNpXfhAWVa6N9Iv/0vZl2kZmkFVEAXEdBwIge0e6Xl5dcurYAK6CICGk7kgH5t6hzR5dYurYAK6CICGk7cgN64cmWHNkAnSyugArqIgIYTN6CfG5+52gWTpRVQFhHQcOIGdFcJKIsIaDgCGo2AsoiAhiOg0QgoiwhoOAIajYCyiICGI6DRCCiLCGg4AhpN7IBywYxIOEYkmqkPyYazuLqLXi8IaEBGJJqpD8mGs7iyi14tDAQ0ICMSzdSHZMNdXJmjO0A2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA2YbIloEA255yt40/tD4fvfWZ8++7Vd35hxRkRUCCZ883W3avD0iSaAgpcXuebrYPhw8+M7lwfPvxic8euB3QwuJzLtT5rJCXDtsC5rpXb+1Uu717d+2xzz44HdDDwxuuzRlIybIuc60o5HD7S/Pn+5p4moC98qNixf/Cj1Xbp8VPD4UPPTH6knZFLODyDgTdenzWSkmFb6FzXycHwWvXnURPSNqBPDWvlvcfXy7/tfXgHAjoYeOP1WSMpGbbFznOVHF9vdt1v77cHQauAHg33PlP8/flh+fBheePOY8NxQO9vXPDgDJK72LW3UOZ5v+w2/I7cjYHdRkAP6lgW257X6v8rf0JAz9fFrr2FMs/7Zbfhd+RuDOyGAtqeOhqfRPr2Nz5dbHVeG7f1wC78DrJGUjJsi21jC7TaY69cGx8edRJpJ1kjKRm2hbYR0GJ/fbj3no98/vquBdTVHzOskZQM2yJbOAt/fH34SNnT4zqgdVt3I6CuP55hjaRk2BY45+tA39/7sw5oe1393as7dgwUuOS28E2k9uZReelScxa+iKmAAsmda7aKOj40+134ehf++Olhde3nYXk1aPc60HZGBBRI5nyzdWfub2M6qk/BP/x0eWh0h76JBFxy55ytO58q6vjeF8e368uYXig2OB98vDmBVH8X3jFQIL2LylZ7wn5MQIFstp2t2fNM7YwIKJDMtrN192p1Rulgcp6pnREBBZLZeraer88oTW+ACiiQzvazVf5y5b3Of3eunREBBZIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbIJky0BBbI5e7Ze+NBwuPfeZyZ33N5/+MX273evvvMLK86IgALJnDlbTw0re59t7zi+PhRQYBecNVtHw73HR6M714fjUB4OBXSuweDyL+NpWSfxGaNlzrhqis3Na+Wfd6/Wf5Y78AI612DgnTjNOonPGC11xjUzDuTB8P3Vn0VRPzJ7DLQ8Tjp88KPV3cfFTv9Dzxw2Pz+ZkUs+RoOBd+I06yQ+Y7Tcea2YNqAHw0dmTyI1x0mHj4yqwpaHTD+8YwEdDLwTp1kn8RmjE5zTerl7tT6LdFTsvs8E9Gi495ni789XZ5oOyxt3HhuOA3p/4wJHaHD5XdzKnUg2u5fdZX6rbc85Le5htXVZd3QmoM3WaXW8tDloentfQLfq4lbuRLLZvewu81tte85ncY+ay5iqVM69DvTb3/h0sdV5bfzggV34nWedxGeMTnAu6+Vof686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" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-</section>
-<section id="model-comparisons" class="level3">
-<h3 class="anchored" data-anchor-id="model-comparisons">Model Comparisons</h3>
-<section id="baseline-contrasts" class="level4">
-<h4 class="anchored" data-anchor-id="baseline-contrasts">Baseline Contrasts</h4>
+<section id="results" class="level3">
+<h3 class="anchored" data-anchor-id="results">Results</h3>
+<p>All group comparisons for race, sex, and income were significant (probability &gt; .95) across models. On average there was a median increase in auROC for white participants compared to participants who were not white of 0.159. On average there was a median increase in auROC for male participants compared to female participants of 0.080. On average there was a median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line of 0.092.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ci_baseline <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>), </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(<span class="at">size =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, </span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag0 vs lag24&quot;</span>, <span class="st">&quot;lag0 vs lag72&quot;</span>, <span class="st">&quot;lag0 vs lag168&quot;</span>, </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag0 vs lag336&quot;</span>),</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;0 vs. 24&quot;</span>, <span class="st">&quot;0 vs. 72&quot;</span>, </span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;0 vs. 168&quot;</span>, <span class="st">&quot;0 vs. 336&quot;</span>)))</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>ci_median_baseline <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>), </span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>)) <span class="sc">|&gt;</span>  </span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contrast) <span class="sc">|&gt;</span> </span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">median =</span> <span class="fu">quantile</span>(difference, .<span class="dv">5</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, </span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag0 vs. lag24&quot;</span>, <span class="st">&quot;lag0 vs. lag72&quot;</span>, <span class="st">&quot;lag0 vs. lag168&quot;</span>, </span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag0 vs. lag336&quot;</span>),</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;0 vs. 24&quot;</span>, <span class="st">&quot;0 vs. 72&quot;</span>, </span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;0 vs. 168&quot;</span>, <span class="st">&quot;0 vs. 336&quot;</span>)))</span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>ci_baseline <span class="ot">&lt;-</span> ci_baseline <span class="sc">|&gt;</span> </span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ci_median_baseline, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;contrast&quot;</span>)) </span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>ci_baseline <span class="sc">|&gt;</span> </span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">&quot;ci_baseline.csv&quot;</span>))</span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>ci_baseline</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 10
-  contrast  probability    mean   lower  upper  size pract_neg pract_equiv
-  &lt;fct&gt;           &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
-1 0 vs. 168       1     0.0219  0.0158  0.0281     0        NA          NA
-2 0 vs. 24        0.977 0.00656 0.00117 0.0120     0        NA          NA
-3 0 vs. 336       1     0.0430  0.0356  0.0509     0        NA          NA
-4 0 vs. 72        1     0.0182  0.0123  0.0242     0        NA          NA
-# ℹ 2 more variables: pract_pos &lt;dbl&gt;, median &lt;dbl&gt;</code></pre>
+<pre><code># A tibble: 6 × 5
+  model              pp_median pp_lower pp_upper lag  
+  &lt;chr&gt;                  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;
+1 female                 0.867    0.847    0.885 0 lag
+2 male                   0.926    0.914    0.936 0 lag
+3 non-hispanic white     0.905    0.857    0.938 0 lag
+4 not white              0.736    0.622    0.822 0 lag
+5 above poverty          0.903    0.874    0.926 0 lag
+6 below poverty          0.812    0.757    0.856 0 lag</code></pre>
 </div>
-</div>
-<p>The median decrease in auROC for the baseline vs. 24 hour lag model was 0.007 (95% CI=[0.001-0.012]), yielding a significant probability of 0.977 that the lagged model had worse performance. The median decrease in auROC for the baseline vs. 72 hour model was 0.018 (95% CI=[0.012-0.024]), yielding a significant probability of 1.000 that the lagged model had worse performance. The median increase in auROC for the baseline vs. 168 hour lag model was 0.022 (95% CI=[0.016-0.028]), yielding a significant probability of 1.000 that the lagged model had worse performance. The median increase in auROC for the baseline vs. 336 hour lag model was 0.043 (95% CI=[0.036-0.051]), yielding a significant probability of 1.000 that the lagged model had worse performance.</p>
-</section>
-<section id="adjacent-contrasts" class="level4">
-<h4 class="anchored" data-anchor-id="adjacent-contrasts">Adjacent Contrasts</h4>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>), </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(<span class="at">size =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, </span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag24 vs lag72&quot;</span>, <span class="st">&quot;lag72 vs lag168&quot;</span>, </span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag168 vs lag336&quot;</span>),</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;24 vs. 72&quot;</span>, <span class="st">&quot;72 vs. 168&quot;</span>, <span class="st">&quot;168 vs. 336&quot;</span>)))</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>ci_median_lag <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>), </span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>)) <span class="sc">|&gt;</span>  </span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contrast) <span class="sc">|&gt;</span> </span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">median =</span> <span class="fu">quantile</span>(difference, .<span class="dv">5</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, </span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag24 vs. lag72&quot;</span>, <span class="st">&quot;lag72 vs. lag168&quot;</span>, </span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag168 vs. lag336&quot;</span>),</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;24 vs. 72&quot;</span>, <span class="st">&quot;72 vs. 168&quot;</span>, <span class="st">&quot;168 vs. 336&quot;</span>)))</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="ot">&lt;-</span> ci_lag <span class="sc">|&gt;</span> </span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ci_median_lag, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;contrast&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(contrast)</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="sc">|&gt;</span> </span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">&quot;ci_lag.csv&quot;</span>))</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>ci_lag</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 10
-  contrast    probability    mean    lower   upper  size pract_neg pract_equiv
-  &lt;fct&gt;             &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
-1 24 vs. 72         1.00  0.0117   0.00572 0.0177      0        NA          NA
-2 72 vs. 168        0.840 0.00363 -0.00238 0.00960     0        NA          NA
-3 168 vs. 336       1     0.0211   0.0142  0.0283      0        NA          NA
-# ℹ 2 more variables: pract_pos &lt;dbl&gt;, median &lt;dbl&gt;</code></pre>
+<pre><code># A tibble: 6 × 5
+  model              pp_median pp_lower pp_upper lag   
+  &lt;chr&gt;                  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt; 
+1 female                 0.849    0.827    0.869 24 lag
+2 male                   0.921    0.908    0.932 24 lag
+3 non-hispanic white     0.894    0.829    0.938 24 lag
+4 not white              0.713    0.580    0.815 24 lag
+5 above poverty          0.892    0.864    0.913 24 lag
+6 below poverty          0.805    0.759    0.843 24 lag</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  model              pp_median pp_lower pp_upper lag   
+  &lt;chr&gt;                  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt; 
+1 female                 0.836    0.813    0.856 72 lag
+2 male                   0.916    0.903    0.927 72 lag
+3 non-hispanic white     0.886    0.843    0.918 72 lag
+4 not white              0.727    0.644    0.792 72 lag
+5 above poverty          0.884    0.856    0.908 72 lag
+6 below poverty          0.792    0.744    0.834 72 lag</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  model              pp_median pp_lower pp_upper lag    
+  &lt;chr&gt;                  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;  
+1 female                 0.823    0.801    0.845 168 lag
+2 male                   0.920    0.907    0.930 168 lag
+3 non-hispanic white     0.881    0.847    0.908 168 lag
+4 not white              0.733    0.668    0.786 168 lag
+5 above poverty          0.882    0.856    0.904 168 lag
+6 below poverty          0.749    0.700    0.794 168 lag</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  model              pp_median pp_lower pp_upper lag    
+  &lt;chr&gt;                  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;  
+1 female                 0.788    0.760    0.815 336 lag
+2 male                   0.905    0.890    0.918 336 lag
+3 non-hispanic white     0.857    0.819    0.888 336 lag
+4 not white              0.749    0.691    0.802 336 lag
+5 above poverty          0.860    0.831    0.884 336 lag
+6 below poverty          0.729    0.680    0.770 336 lag</code></pre>
 </div>
 </div>
-<p>The median decrease in auROC for the 24 hour vs. 72 hour lag model was 0.012 (95% CI=[0.006-0.018]), yielding a significant probability of 1.000 that the 72 hour lag model had worse performance than the 24 hour lag model. The median decrease in auROC for the 72 hour vs. 168 hour lag model was 0.004 (95% CI=[-0.002-0.010]), yielding a non-significant probability of 0.840 that the 168 hour lag model had worse performance than the 72 hour lag model. The median decrease in auROC for the 168 hour vs. 336 hour lag model was 0.021 (95% CI=[0.014-0.028]), yielding a significant probability of 1.000 that the 336 hour lag model had worse performance than the 168 hour lag model.</p>
-</section>
 </section>
 
 </main>
