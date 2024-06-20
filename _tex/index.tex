@@ -234,24 +234,51 @@ Notebook}}
 \section{Introduction}\label{introduction}
 
 Precision medicine has been a goal in healthcare for over half a century
-(DeRubeis, 2019). Today, this approach is also applied to chronic mental
-health conditions, like substance use disorders (i.e., precision mental
-health). Precision mental health uses individual characteristics to
-guide initial treatment matching and adaptive continuing care over time.
-It requires dense, long-term monitoring of symptoms and related states,
-for interventions to be tailored to an individual's needs and
-preferences at any given moment (Bickman et al., 2016). Essentially, it
-aims to identify both \emph{when} and \emph{how} to intervene.
+(DeRubeis, 2019). Traditionally, precision medicine seeks to answer
+\emph{how} do we best treat a specific individual (e.g., which
+medication will work best for an individual given their unique
+background, preferences, and medical history).
+
+Today, this approach is also applied to chronic mental health conditions
+(i.e., precision mental health), like depression, substance use
+disorders, and suicide {[}{]}. However, mental health conditions are
+complex fluctuating processes. Unlike medical conditions that have clear
+biological precursors, mental health conditions are products of lots of
+psychosocial factors. These factors differ between individuals and
+within an individual over time. Additionally, there are a wide array of
+psychosocial supports available for clinicians to select from. Thus,
+precision mental health must consider both the \emph{when} and the
+\emph{how}.
+
+There has been long-standing interest in precision mental health and
+substance use disorders. In an early example, The Project MATCH research
+group attempted to match individuals with alcohol use disorder to their
+optimal treatment based on baseline measures of individual differences
+(\textbf{projectmatchresearchgroupMatchingAlcoholismTreatments1997?}).
+The study failed to find any differences in treatment success. This can
+likely be attributed to low dimensional analyses that failed to capture
+to the complex and heterogeneous nature of substance use disorders and
+their use of static distal features to predict a non-linear time-varying
+course of recovery, lapse, and relapse (Witkiewitz \& Marlatt, 2007).
+
+Take the example of lapses, discrete instances of goal inconsistent
+substance use. Lapses are a clinically important target for substance
+use treatment. They are often an early warning sign of relapse,
+maladaptive responses to lapses can undermine recovery, and for some
+substances a single lapse can result in an overdose and/or death. It
+would be unreasonable to expect that we could predict a lapse with any
+temporal precision using only features that become more distal as time
+progresses. Lapse prediction requires dense, long-term monitoring of
+symptoms and related states proximal to the outcome.
 
 Recent advances in both personal sensing and machine learning may
 address both of these barriers to successful precision mental health.
-
-Personal sensing allows for frequent, longitudinal monitoring of
-individuals' affect, behavior, and cognitions in their day-to-day lives
-(Mohr et al., 2017). These data can then be used as inputs for machine
-learning algorithms to predict the probability of specific outcomes
-(e.g., lapse risk) and identify the top features contributing to those
-predictions.
+Personal sensing allows for frequent, longitudinal measurement of
+changes in proximal risk (e.g., lapse) with high temporal precision.
+Machine learning allows for high dimensional inputs. Moreover, tools
+from machine learning can be applied to models to understand which
+factors are specific to a specific individual at a specific moment in
+time.
 
 Ecological momentary assessment (EMA) may be particularly well-suited
 for these algorithms. It offers momentary subjective insight into
@@ -553,8 +580,8 @@ model separately for three dichotomized demographic groups with
 potential disparities in access to substance use treatment - race and
 ethnicity (non-Hispanic white vs.~non-white) (Kilaru et al., 2020;
 Pinedo, 2019), income (above poverty vs.~at or below poverty) (Olfson et
-al., 2022), and sex (male vs.~female) (Greenfield et al., 2007; Kilaru
-et al., 2020).
+al., 2022), and sex at birth (male vs.~female) (Greenfield et al., 2007;
+Kilaru et al., 2020).
 
 We also acknowledge that models that work for only a subset of people,
 if implemented, could widen existing treatment disparities. We conducted
@@ -743,7 +770,7 @@ auROCs and 95\% Bayesian CIs by model.
 
 \centering{
 
-\includegraphics{index_files/figure-latex/notebooks-mak_figs-fig-auroc-output-1.png}
+\includegraphics{index_files/figure-latex/notebooks-model_evaluation-fig-auroc-output-1.png}
 
 }
 
@@ -753,8 +780,8 @@ credible intervals by model}
 \end{figure}%
 
 \textsubscript{Source:
-\href{https://jjcurtin.github.io/study_lag/notebooks/mak_figs-preview.html\#cell-fig-auroc}{Make
-Figures}}
+\href{https://jjcurtin.github.io/study_lag/notebooks/model_evaluation-preview.html\#cell-fig-auroc}{Model
+evaluation}}
 
 \subsubsection{Model Comparisons}\label{model-comparisons-1}
 
@@ -792,11 +819,12 @@ Figure~\ref{fig-fairness} shows the difference in performance of each
 model by demographic group. All group comparisons for race, sex, and
 income were significant (probability \textgreater{} .95) across models.
 On average there was a median increase in auROC for white participants
-compared to participants who were not white of 0.159. On average there
-was a median increase in auROC for male participants compared to female
-participants of 0.080. On average there was a median increase in auROC
-for participants above the federal poverty line compared to participants
-below the federal poverty line of 0.092.
+compared to participants who were not white of 0.159 (range
+0.107-0.179). On average there was a median increase in auROC for male
+participants compared to female participants of (range 0.059-0.116). On
+average there was a median increase in auROC for participants above the
+federal poverty line compared to participants below the federal poverty
+line of 0.092 (range 0.086-0.133).
 
 \begin{figure}[H]
 
@@ -819,7 +847,12 @@ Figures}}
 \subsection{Discussion}\label{discussion}
 
 \begin{itemize}
-\tightlist
+\item
+  Model degrades, but perhaps not meaningfully even down to two weeks
+  out.
+\item
+  All models were worse for women and people were not white and below
+  poverty line.
 \item
   Improving model performance for unprivileged classes. Considering
   other important classes for SUD, such as geographic location,
@@ -838,13 +871,6 @@ Mobile phone sensors and supervised machine learning to identify alcohol
 use events in young adults: {Implications} for just-in-time adaptive
 interventions. \emph{Addictive Behaviors}, \emph{83}, 42--47.
 \url{https://doi.org/10.1016/j.addbeh.2017.11.039}
-
-\bibitem[\citeproctext]{ref-bickmanAchievingPrecisionMental2016a}
-Bickman, L., Lyon, A. R., \& Wolpert, M. (2016). Achieving {Precision
-Mental Health} through {Effective Assessment}, {Monitoring}, and
-{Feedback Processes}. \emph{Administration and Policy in Mental Health
-and Mental Health Services Research}, \emph{43}(3), 271--276.
-\url{https://doi.org/10.1007/s10488-016-0718-5}
 
 \bibitem[\citeproctext]{ref-chtc}
 Center for High Throughput Computing. (2006). Center for high throughput
@@ -907,12 +933,6 @@ Marlatt, G. A., \& Gordon, J. R. (Eds.). (1985). \emph{Relapse
 {Prevention}: {Maintenance Strategies} in the {Treatment} of {Addictive
 Behaviors}} (First edition). New York: The Guilford Press.
 
-\bibitem[\citeproctext]{ref-mohrPersonalSensingUnderstanding2017}
-Mohr, D. C., Zhang, M., \& Schueller, S. M. (2017). Personal {Sensing}:
-{Understanding Mental Health Using Ubiquitous Sensors} and {Machine
-Learning}. \emph{Annual Review of Clinical Psychology}, \emph{13}(1),
-23--47. \url{https://doi.org/10.1146/annurev-clinpsy-032816-044949}
-
 \bibitem[\citeproctext]{ref-olfsonHealthcareCoverageService2022}
 Olfson, M., Mauro, C., Wall, M. M., Choi, C. J., Barry, C. L., \&
 Mojtabai, R. (2022). Healthcare coverage and service access for
@@ -946,6 +966,12 @@ Witkiewitz, K., \& Marlatt, G. A. (2004). Relapse prevention for alcohol
 and drug problems: {That} was zen, this is tao. \emph{American
 Psychologist}, \emph{59}(4), 224--235.
 \url{https://doi.org/10.1037/0003-066X.59.4.224}
+
+\bibitem[\citeproctext]{ref-witkiewitzModelingComplexityPosttreatment2007}
+Witkiewitz, K., \& Marlatt, G. A. (2007). Modeling the complexity of
+post-treatment drinking: {It}'s a rocky road to relapse. \emph{Clinical
+Psychology Review}, \emph{27}(6), 724--738.
+\url{https://doi.org/10.1016/j.cpr.2007.01.002}
 
 \bibitem[\citeproctext]{ref-wyantMachineLearningModels2023}
 Wyant, K., Sant'Ana, S. J. K., Fronk, G., \& Curtin, J. J. (n.d.).
