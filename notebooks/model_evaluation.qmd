@@ -1,5 +1,5 @@
 ---
-title: "Model analyses"
+title: "Model evaluation"
 author: "Kendra Wyant"
 date: "`r lubridate::today()`"
 output: 
@@ -104,8 +104,6 @@ test_metrics_all_perf |>
 ```
 
 
-The median auROC across the 30 test sets for our baseline model was high (median=`r sprintf("%1.3f", test_metrics_all_perf$lag0_median)`, IQR=`r sprintf("%1.3f", test_metrics_all_perf$lag0_IQR)`), consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=`r sprintf("%1.3f", test_metrics_all_perf$lag24_median)`, IQR=`r sprintf("%1.3f", test_metrics_all_perf$lag24_IQR)`), 72 hour lag (median=`r sprintf("%1.3f", test_metrics_all_perf$lag72_median)`, IQR=`r sprintf("%1.3f", test_metrics_all_perf$lag72_IQR)`), 168 hour lag (median=`r sprintf("%1.3f", test_metrics_all_perf$lag168_median)`, IQR=`r sprintf("%1.3f", test_metrics_all_perf$lag168_IQR)`), and 336 hour lag (median=`r sprintf("%1.3f", test_metrics_all_perf$lag336_median)`, IQR=`r sprintf("%1.3f", test_metrics_all_perf$lag336_IQR)`). 
-
 ```{r}
 
 
@@ -129,10 +127,10 @@ test_metrics_all_pp_perf
 ```
 
 
-Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_median))` (baseline), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_median))` (24 hour lag), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_median))` (72 hour lag), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_median))` (168 hour lag), and `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_median))` (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_upper))`], 24 hour lag[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_upper))`], 72 hour lag[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_upper))`], 168 hour lag[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_upper))`], 336 hour lag[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_upper))`]. Figure 1 displays these median auROCs and 95% Bayesian CIs by model.
 
 ```{r}
-
+#| label: fig-auroc
+#| fig-cap: "Posterior probability for auROC and Bayesian credible intervals by model"
 
 test_metrics_all_pp_perf |>
   mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ))) |> 
@@ -140,7 +138,7 @@ test_metrics_all_pp_perf |>
   geom_point(aes(x = pp_median, y = model), color = "black") +
   geom_segment(mapping = aes(y = model, x = pp_lower, xend = pp_upper),
                 data = test_metrics_all_pp_perf) +
-  scale_x_continuous("Area Under ROC Curve", limits = c(.80, .925)) +
+  scale_x_continuous("Area Under ROC Curve", limits = c(.50, 1.0)) +
   ylab("Model") +
   theme_classic() +
   theme(legend.position = "none")
@@ -187,7 +185,6 @@ ci_baseline
 
 ```
 
-The median decrease in auROC for the baseline vs. 24 hour lag model was `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 24") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 24") |> pull(lower))`-`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 24") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 24") |> pull(probability))` that the lagged model had worse performance. The median decrease in auROC for the baseline vs. 72 hour model was `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 72") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 72") |> pull(lower))`-`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 72") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 72") |> pull(probability))` that the lagged model had worse performance. The median increase in auROC for the baseline vs. 168 hour lag model was `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 168") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 168") |> pull(lower))`-`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 168") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 168") |> pull(probability))` that the lagged model had worse performance. The median increase in auROC for the baseline vs. 336 hour lag model was `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 336") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 336") |> pull(lower))`-`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 336") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 336") |> pull(probability))` that the lagged model had worse performance. 
 
 #### Adjacent Contrasts
 
@@ -222,4 +219,3 @@ ci_lag
 ```
 
 
-The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprintf("%1.3f", ci_lag |> filter(contrast == "24 vs. 72") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_lag |> filter(contrast == "24 vs. 72") |> pull(lower))`-`r sprintf("%1.3f", ci_lag |> filter(contrast == "24 vs. 72") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_lag |> filter(contrast == "24 vs. 72") |> pull(probability))` that the 72 hour lag model had worse performance than the 24 hour lag model. The median decrease in auROC for the 72 hour vs. 168 hour lag model was `r sprintf("%1.3f", ci_lag |> filter(contrast == "72 vs. 168") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_lag |> filter(contrast == "72 vs. 168") |> pull(lower))`-`r sprintf("%1.3f", ci_lag |> filter(contrast == "72 vs. 168") |> pull(upper))`]), yielding a non-significant probability of `r sprintf("%1.3f", ci_lag |> filter(contrast == "72 vs. 168") |> pull(probability))` that the 168 hour lag model had worse performance than the 72 hour lag model. The median decrease in auROC for the 168 hour vs. 336 hour lag model was `r sprintf("%1.3f", ci_lag |> filter(contrast == "168 vs. 336") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_lag |> filter(contrast == "168 vs. 336") |> pull(lower))`-`r sprintf("%1.3f", ci_lag |> filter(contrast == "168 vs. 336") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_lag |> filter(contrast == "168 vs. 336") |> pull(probability))` that the 336 hour lag model had worse performance than the 168 hour lag model. 

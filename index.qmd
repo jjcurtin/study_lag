@@ -81,10 +81,6 @@ pp_dem <- read_csv(file.path(path_models_lag, "pp_dem_all.csv"), col_types = col
 
 pp_dem_contrast <- read_csv(file.path(path_models_lag, "pp_dem_contrast_all.csv"), col_types = cols())
 
-pp_dem_contrast <- pp_dem_contrast |> 
-  group_by(contrast) |> 
-  summarise(across(probability:upper, median))
-
 screen <- read_csv(file.path(path_processed, "dem_tibble.csv"),
                    col_types = cols())
 
@@ -205,7 +201,7 @@ Second, we compared each adjacent lagged model (i.e., 24 hours vs 72 hours, 72 h
 For both sets of model comparisons determined the probability that the models' performances differed systematically from each other by regressing the auROCs (logit transformed) from the 30 test sets as a function of the contrast. We set two random intercepts: one for the repeat, and another for the fold within repeat. We also report the precise posterior probability for the difference in auROCs and the 95% Bayesian CIs. If there was a probability > 0.95 that the more lagged model's performance was worse, we labeled the model contrast as significant.
 
 #### Fairness Benchmarks
-We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we calculated the median posterior probability and 95% Bayesian CI for auROC for each model separately for three dichotomized demographic groups with potential disparities in access to substance use treatment - race and ethnicity (non-Hispanic white vs. non-white) [@pinedoCurrentReexaminationRacial2019; @kilaruIncidenceTreatmentOpioid2020], income (above poverty vs. at or below poverty) [@olfsonHealthcareCoverageService2022], and sex (male vs. female) [@greenfieldSubstanceAbuseTreatment2007; @kilaruIncidenceTreatmentOpioid2020].
+We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we calculated the median posterior probability and 95% Bayesian CI for auROC for each model separately for three dichotomized demographic groups with potential disparities in access to substance use treatment - race and ethnicity (non-Hispanic white vs. non-white) [@pinedoCurrentReexaminationRacial2019; @kilaruIncidenceTreatmentOpioid2020], income (above poverty vs. at or below poverty) [@olfsonHealthcareCoverageService2022], and sex at birth (male vs. female) [@greenfieldSubstanceAbuseTreatment2007; @kilaruIncidenceTreatmentOpioid2020].
 
 We also acknowledge that models that work for only a subset of people, if implemented, could widen existing treatment disparities. We conducted Bayesian group comparisons to assess the likelihood that the model performs differently by group. We report median differences in posterior probabilities and the 95% Bayesian CIs. <!--KW: add footnote about different resampling method - 6 x 5 outer cv-->
 
@@ -242,7 +238,7 @@ The median auROC across the 30 test sets for our baseline model was high (median
 
 Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_median))` (baseline), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_median))` (24 hour lag), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_median))` (72 hour lag), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_median))` (168 hour lag), and `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_median))` (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_upper))`], 24 hour lag[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_upper))`], 72 hour lag[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_upper))`], 168 hour lag[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_upper))`], 336 hour lag[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_upper))`]. @fig-auroc displays these median auROCs and 95% Bayesian CIs by model.
 
-{{< embed notebooks/mak_figs.qmd#fig-auroc >}}
+{{< embed notebooks/model_evaluation.qmd#fig-auroc >}}
 
 
 
@@ -258,10 +254,10 @@ The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprint
 
 ### Fairness Benchmarks
 
-@fig-fairness shows the difference in performance of each model by demographic group. All group comparisons for race, sex, and income were significant (probability > .95) across models. On average there was a median increase in auROC for white participants compared to participants who were not white of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs. not white") |> pull(median)) |> median()`. On average there was a median increase in auROC for male participants compared to female participants of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(median)) |> median()`. On average there was a median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median)) |> median()`.  
+@fig-fairness shows the difference in performance of each model by demographic group. All group comparisons for race, sex, and income were significant (probability > .95) across models. On average there was a median increase in auROC for white participants compared to participants who were not white of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs. not white") |> pull(median)) |> median()` (range `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs. not white") |> pull(median)) |> min()`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs. not white") |> pull(median)) |> max()`). On average there was a median increase in auROC for male participants compared to female participants of (range `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(median)) |> min()`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(median)) |> max()`). On average there was a median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median)) |> median()` (range `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median)) |> min()`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median)) |> max()`).  
 
 
-{{< embed notebooks/mak_figs.qmd#fig-fairness >}}
+{{< embed notebooks/fairness.qmd#fig-fairness >}}
 
 
 
@@ -269,6 +265,11 @@ The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprint
 
 
 ## Discussion
+
+
+- Model degrades, but perhaps not meaningfully even down to two weeks out.
+
+- All models were worse for women and people were not white and below poverty line. 
 
 - Improving model performance for unprivileged classes. Considering other important classes for SUD, such as geographic location, Improving diversity of training data
 

@@ -1,0 +1,78 @@
+---
+title: "Make All Figures for Main Manuscript"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+number-sections: true
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-depth: 4
+editor_options: 
+  chunk_output_type: console
+html-table-processing: none
+---
+
+```{r}
+#| message: false
+#| warning: false
+
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
+suppressPackageStartupMessages(library(tidyposterior))
+library(kableExtra, exclude = "group_rows")
+
+path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
+path_shared <- format_path("studydata/risk/data_processed/shared")
+path_processed <- format_path("studydata/risk/data_processed/lag")
+```
+
+Data for figures
+```{r}
+pp_dem_contrast <- read_csv(here::here(path_models_lag, "pp_dem_contrast_all.csv"),
+                            show_col_types = FALSE)
+```
+
+
+
+## Figure 2: auROC differences by demographic group
+```{r}
+#| label: fig-fairness
+#| fig-cap: "Difference in auROCs by demographic group"
+
+pp_dem_contrast |>
+  mutate(lag = factor(lag, 
+                      levels = c(336, 168, 72, 24, 0),
+                      labels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" )),
+         contrast = factor(contrast, levels = c("non-hispanic white vs not white",
+                                                "male vs female",
+                                                "above poverty vs below poverty"),
+                           labels = c("Non-Hispanic White vs. Not White",
+                                                "Male vs. Female",
+                                                "Above Poverty vs. Below Poverty"))) |> 
+  ggplot() + 
+  geom_point(aes(x = median, y = lag), color = "black") +
+  geom_segment(mapping = aes(y = lag, x = lower, xend = upper),
+                data = pp_dem_contrast |>
+                 mutate(lag = factor(lag, 
+                                     levels = c(336, 168, 72, 24, 0),
+                                     labels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" )),
+                 contrast = factor(contrast, levels = c("non-hispanic white vs not white",
+                                                "male vs female",
+                                                "above poverty vs below poverty"),
+                                    labels = c("Non-Hispanic White vs. Not White",
+                                                "Male vs. Female",
+                                                "Above Poverty vs. Below Poverty")))) +
+  facet_grid(~contrast) +
+  scale_x_continuous("Difference in Area Under ROC Curve", limits = c(0, .3), breaks = c(0, .1, .2, .3)) +
+  ylab("") +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+
+
+
