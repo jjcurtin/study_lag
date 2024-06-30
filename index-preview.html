@@ -405,44 +405,36 @@ Empirical Articles. Empirical Articles should aim for a 12,000-word maximum, inc
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">source</span>(<span class="st">"https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"</span>))</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyposterior))</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'kableExtra'</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following object is masked from 'package:dplyr':
-
-    group_rows</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>path_models_lag <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="fu">str_c</span>(<span class="st">"studydata/risk/models/lag"</span>))</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>path_processed <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="st">"studydata/risk/data_processed/lag"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">knitr.kable.NA =</span> <span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra, <span class="at">exclude =</span> <span class="st">"group_rows"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>path_models_lag <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="fu">str_c</span>(<span class="st">"studydata/risk/models/lag"</span>))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>path_processed <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="st">"studydata/risk/data_processed/lag"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">knitr.kable.NA =</span> <span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in tibbles for in-line code</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>test_metrics_all_perf <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">"test_metrics_all.csv"</span>), </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">"test_metrics_all_pp_perf.csv"</span>), </span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ci_baseline <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">"ci_baseline.csv"</span>), </span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">"ci_lag.csv"</span>), <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>pp_dem <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">"pp_dem_all.csv"</span>), <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>pp_dem_contrast <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">"pp_dem_contrast_all.csv"</span>), <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>screen <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_processed, <span class="st">"dem_tibble.csv"</span>),</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>                   <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>lapses_per_subid <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_processed, <span class="st">"lapse_tibble.csv"</span>),</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>                             <span class="at">col_types =</span> <span class="fu">cols</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in tibbles for in-line code</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>test_metrics_all_perf <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">"test_metrics_all.csv"</span>), </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">"test_metrics_all_pp_perf.csv"</span>), </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>ci_baseline <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">"ci_baseline.csv"</span>), </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">"ci_lag.csv"</span>), <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>pp_dem <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">"pp_dem_all.csv"</span>), <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>pp_dem_contrast <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_models_lag, <span class="st">"pp_dem_contrast_all.csv"</span>), <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>screen <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_processed, <span class="st">"dem_tibble.csv"</span>),</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                   <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>lapses_per_subid <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(path_processed, <span class="st">"lapse_tibble.csv"</span>),</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>                             <span class="at">col_types =</span> <span class="fu">cols</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
@@ -561,8 +553,8 @@ Note to include transparency report in supplement-->
 <div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_tables.qmd" data-notebook-title="Make All Tables for Main Manuscript" data-notebook-cellid="cell-tbl-demohtml">
 <div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
 
-<div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>table_dem <span class="op">|&gt;</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  knitr::kable()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>table_dem <span class="op">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  knitr::kable()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: Demographic and Lapse Characteristics
@@ -940,18 +932,18 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.894 (baseline), 0.887 (24 hour lag), 0.875 (72 hour lag), 0.872 (168 hour lag), and 0.850 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline[0.877-0.908], 24 hour lag[0.869-0.902], 72 hour lag[0.856-0.892], 168 hour lag[0.852-0.888], 336 hour lag[0.828-0.870]. <a href="#fig-auroc" class="quarto-xref">Figure&nbsp;1</a> displays these median auROCs and 95% Bayesian CIs by model.</p>
 <div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-auroc">
 <div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div id="cell-fig-auroc" class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf <span class="op">|&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  mutate(model <span class="op">=</span> factor(model, levels <span class="op">=</span> c(<span class="st">"336 lag"</span>, <span class="st">"168 lag"</span>, <span class="st">"72 lag"</span>, <span class="st">"24 lag"</span>, <span class="st">"0 lag"</span> ))) <span class="op">|&gt;</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  ggplot() <span class="op">+</span> </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  geom_point(aes(x <span class="op">=</span> pp_median, y <span class="op">=</span> model), color <span class="op">=</span> <span class="st">"black"</span>) <span class="op">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> model, x <span class="op">=</span> pp_lower, xend <span class="op">=</span> pp_upper),</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> test_metrics_all_pp_perf) <span class="op">+</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  scale_x_continuous(<span class="st">"Area Under ROC Curve"</span>, limits <span class="op">=</span> c(<span class="fl">.50</span>, <span class="fl">1.0</span>)) <span class="op">+</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">"Model"</span>) <span class="op">+</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  theme_classic() <span class="op">+</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  theme(legend.position <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        panel.border <span class="op">=</span> element_rect(colour <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> NA, linewidth <span class="op">=</span> <span class="dv">1</span>)) <span class="op">+</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  geom_vline(xintercept <span class="op">=</span> <span class="fl">0.5</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"black"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf <span class="op">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  mutate(model <span class="op">=</span> factor(model, levels <span class="op">=</span> c(<span class="st">"336 lag"</span>, <span class="st">"168 lag"</span>, <span class="st">"72 lag"</span>, <span class="st">"24 lag"</span>, <span class="st">"0 lag"</span> ))) <span class="op">|&gt;</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  ggplot() <span class="op">+</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  geom_point(aes(x <span class="op">=</span> pp_median, y <span class="op">=</span> model), color <span class="op">=</span> <span class="st">"black"</span>) <span class="op">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> model, x <span class="op">=</span> pp_lower, xend <span class="op">=</span> pp_upper),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> test_metrics_all_pp_perf) <span class="op">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  scale_x_continuous(<span class="st">"Area Under ROC Curve"</span>, limits <span class="op">=</span> c(<span class="fl">.50</span>, <span class="fl">1.0</span>)) <span class="op">+</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">"Model"</span>) <span class="op">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  theme_classic() <span class="op">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  theme(legend.position <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        panel.border <span class="op">=</span> element_rect(colour <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> NA, linewidth <span class="op">=</span> <span class="dv">1</span>)) <span class="op">+</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  geom_vline(xintercept <span class="op">=</span> <span class="fl">0.5</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"black"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-auroc" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -980,38 +972,38 @@ Figure&nbsp;1: Posterior probability for auROC and Bayesian credible intervals b
 </section>
 <section id="fairness-benchmarks-1" class="level3">
 <h3 class="anchored" data-anchor-id="fairness-benchmarks-1">Fairness Benchmarks</h3>
-<p><a href="#fig-fairness" class="quarto-xref">Figure&nbsp;2</a> shows the difference in performance of each model by demographic group. All group comparisons for race, sex, and income were significant (probability &gt; .95) across models. On average there was a median increase in auROC for white participants compared to participants who were not white of NA (range NA-NA). On average there was a median increase in auROC for male participants compared to female participants of (range NA-NA). On average there was a median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line of NA (range NA-NA).</p>
+<p><a href="#fig-fairness" class="quarto-xref">Figure&nbsp;2</a> shows the difference in performance of each model by demographic group. All group comparisons for race, sex, and income were significant (probability &gt; .95) across models. On average there was a median increase in auROC for white participants compared to participants who were not white of 0.159 (range 0.107-0.179). On average there was a median increase in auROC for male participants compared to female participants of 0.080 (range 0.059-0.116). On average there was a median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line of 0.092 (range 0.086-0.133).</p>
 <div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-fairness">
 <div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="cell-fig-fairness" class="cell" data-fig-width="8">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pp_dem_contrast <span class="op">|&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  mutate(lag <span class="op">=</span> factor(lag, </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                      levels <span class="op">=</span> c(<span class="dv">336</span>, <span class="dv">168</span>, <span class="dv">72</span>, <span class="dv">24</span>, <span class="dv">0</span>),</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                      labels <span class="op">=</span> c(<span class="st">"336 lag"</span>, <span class="st">"168 lag"</span>, <span class="st">"72 lag"</span>, <span class="st">"24 lag"</span>, <span class="st">"0 lag"</span> )),</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>         contrast <span class="op">=</span> factor(contrast, levels <span class="op">=</span> c(<span class="st">"non-hispanic white vs not white"</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"male vs female"</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"above poverty vs below poverty"</span>),</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                           labels <span class="op">=</span> c(<span class="st">"Non-Hispanic White vs. Not White"</span>,</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Male vs. Female"</span>,</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Above Poverty vs. Below Poverty"</span>))) <span class="op">|&gt;</span> </span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  ggplot() <span class="op">+</span> </span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  geom_point(aes(x <span class="op">=</span> median, y <span class="op">=</span> lag), color <span class="op">=</span> <span class="st">"black"</span>) <span class="op">+</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> lag, x <span class="op">=</span> lower, xend <span class="op">=</span> upper),</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> pp_dem_contrast <span class="op">|&gt;</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                 mutate(lag <span class="op">=</span> factor(lag, </span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>                                     levels <span class="op">=</span> c(<span class="dv">336</span>, <span class="dv">168</span>, <span class="dv">72</span>, <span class="dv">24</span>, <span class="dv">0</span>),</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>                                     labels <span class="op">=</span> c(<span class="st">"336 lag"</span>, <span class="st">"168 lag"</span>, <span class="st">"72 lag"</span>, <span class="st">"24 lag"</span>, <span class="st">"0 lag"</span> )),</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                 contrast <span class="op">=</span> factor(contrast, levels <span class="op">=</span> c(<span class="st">"non-hispanic white vs not white"</span>,</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"male vs female"</span>,</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"above poverty vs below poverty"</span>),</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>                                    labels <span class="op">=</span> c(<span class="st">"Non-Hispanic White vs. Not White"</span>,</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Male vs. Female"</span>,</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Above Poverty vs. Below Poverty"</span>)))) <span class="op">+</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  facet_grid(<span class="op">~</span>contrast) <span class="op">+</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  scale_x_continuous(<span class="st">"Difference in Area Under ROC Curve"</span>, limits <span class="op">=</span> c(<span class="dv">0</span>, <span class="fl">.3</span>), breaks <span class="op">=</span> c(<span class="dv">0</span>, <span class="fl">.1</span>, <span class="fl">.2</span>, <span class="fl">.3</span>)) <span class="op">+</span></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">""</span>) <span class="op">+</span></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  theme_classic() <span class="op">+</span></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  theme(legend.position <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>        panel.border <span class="op">=</span> element_rect(colour <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> NA, linewidth <span class="op">=</span> <span class="dv">1</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pp_dem_contrast <span class="op">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  mutate(lag <span class="op">=</span> factor(lag, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                      levels <span class="op">=</span> c(<span class="dv">336</span>, <span class="dv">168</span>, <span class="dv">72</span>, <span class="dv">24</span>, <span class="dv">0</span>),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                      labels <span class="op">=</span> c(<span class="st">"336 lag"</span>, <span class="st">"168 lag"</span>, <span class="st">"72 lag"</span>, <span class="st">"24 lag"</span>, <span class="st">"0 lag"</span> )),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>         contrast <span class="op">=</span> factor(contrast, levels <span class="op">=</span> c(<span class="st">"non-hispanic white vs not white"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"male vs female"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"above poverty vs below poverty"</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                           labels <span class="op">=</span> c(<span class="st">"Non-Hispanic White vs. Not White"</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Male vs. Female"</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Above Poverty vs. Below Poverty"</span>))) <span class="op">|&gt;</span> </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  ggplot() <span class="op">+</span> </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  geom_point(aes(x <span class="op">=</span> median, y <span class="op">=</span> lag), color <span class="op">=</span> <span class="st">"black"</span>) <span class="op">+</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> lag, x <span class="op">=</span> lower, xend <span class="op">=</span> upper),</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> pp_dem_contrast <span class="op">|&gt;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>                 mutate(lag <span class="op">=</span> factor(lag, </span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>                                     levels <span class="op">=</span> c(<span class="dv">336</span>, <span class="dv">168</span>, <span class="dv">72</span>, <span class="dv">24</span>, <span class="dv">0</span>),</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>                                     labels <span class="op">=</span> c(<span class="st">"336 lag"</span>, <span class="st">"168 lag"</span>, <span class="st">"72 lag"</span>, <span class="st">"24 lag"</span>, <span class="st">"0 lag"</span> )),</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>                 contrast <span class="op">=</span> factor(contrast, levels <span class="op">=</span> c(<span class="st">"non-hispanic white vs not white"</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"male vs female"</span>,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"above poverty vs below poverty"</span>),</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>                                    labels <span class="op">=</span> c(<span class="st">"Non-Hispanic White vs. Not White"</span>,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Male vs. Female"</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Above Poverty vs. Below Poverty"</span>)))) <span class="op">+</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  facet_grid(<span class="op">~</span>contrast) <span class="op">+</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  scale_x_continuous(<span class="st">"Difference in Area Under ROC Curve"</span>, limits <span class="op">=</span> c(<span class="dv">0</span>, <span class="fl">.3</span>), breaks <span class="op">=</span> c(<span class="dv">0</span>, <span class="fl">.1</span>, <span class="fl">.2</span>, <span class="fl">.3</span>)) <span class="op">+</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">""</span>) <span class="op">+</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  theme_classic() <span class="op">+</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  theme(legend.position <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        panel.border <span class="op">=</span> element_rect(colour <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> NA, linewidth <span class="op">=</span> <span class="dv">1</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-fairness" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1528,7 +1520,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox","closeEffect":"zoom"});
+</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","openEffect":"zoom","loop":false,"selector":".lightbox"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
