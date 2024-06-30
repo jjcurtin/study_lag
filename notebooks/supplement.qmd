@@ -1,5 +1,5 @@
 ---
-title: "Supplemental Figures" 
+title: "Supplemental Figures and Tables" 
 author: "Kendra Wyant"
 date: "`r May 20, 2024"
 number-sections: true
