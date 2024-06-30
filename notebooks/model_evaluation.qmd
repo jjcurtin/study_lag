@@ -29,31 +29,31 @@ options(knitr.kable.NA = '')
 
 
 ```{r}
-test_metrics_0 <- read_csv(file.path(path_models_lag, 
+test_metrics_0 <- read_csv(here::here(path_models_lag, 
                                         "test_metrics_1week_0_v1_nested.csv"), 
                               col_types = cols()) |> 
   filter(.metric == "roc_auc") |> 
   select(outer_split_num, "lag0" = .estimate)
 
-test_metrics_24 <- read_csv(file.path(path_models_lag, 
+test_metrics_24 <- read_csv(here::here(path_models_lag, 
                                        "test_metrics_1week_24_v1_nested.csv"),
                              col_types = cols()) |> 
   filter(.metric == "roc_auc") |> 
   select(outer_split_num, "lag24" = .estimate)
 
-test_metrics_72 <- read_csv(file.path(path_models_lag, 
+test_metrics_72 <- read_csv(here::here(path_models_lag, 
                                         "test_metrics_1week_72_v1_nested.csv"),
                               col_types = cols()) |> 
   filter(.metric == "roc_auc") |> 
   select(outer_split_num, "lag72" = .estimate)
 
-test_metrics_168 <- read_csv(file.path(path_models_lag, 
+test_metrics_168 <- read_csv(here::here(path_models_lag, 
                                         "test_metrics_1week_168_v1_nested.csv"), 
                               col_types = cols()) |> 
   filter(.metric == "roc_auc") |> 
   select(outer_split_num, "lag168" = .estimate)
 
-test_metrics_336 <- read_csv(file.path(path_models_lag, 
+test_metrics_336 <- read_csv(here::here(path_models_lag, 
                                        "test_metrics_1week_336_v1_nested.csv"),
                              col_types = cols()) |> 
   filter(.metric == "roc_auc") |> 
@@ -100,7 +100,7 @@ test_metrics_all_perf <- test_metrics_all |>
 glimpse(test_metrics_all_perf)
 
 test_metrics_all_perf |> 
-  write_csv(file.path(path_models_lag, "test_metrics_all.csv"))
+  write_csv(here::here(path_models_lag, "test_metrics_all.csv"))
 ```
 
 
@@ -121,27 +121,9 @@ test_metrics_all_pp_perf <- pp_tidy |>
   arrange(model)
 
 test_metrics_all_pp_perf |> 
-  write_csv(file.path(path_models_lag, "test_metrics_all_pp_perf.csv"))
+  write_csv(here::here(path_models_lag, "test_metrics_all_pp_perf.csv"))
 
 test_metrics_all_pp_perf
-```
-
-
-
-```{r}
-#| label: fig-auroc
-#| fig-cap: "Posterior probability for auROC and Bayesian credible intervals by model"
-
-test_metrics_all_pp_perf |>
-  mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ))) |> 
-  ggplot() + 
-  geom_point(aes(x = pp_median, y = model), color = "black") +
-  geom_segment(mapping = aes(y = model, x = pp_lower, xend = pp_upper),
-                data = test_metrics_all_pp_perf) +
-  scale_x_continuous("Area Under ROC Curve", limits = c(.50, 1.0)) +
-  ylab("Model") +
-  theme_classic() +
-  theme(legend.position = "none")
 ```
 
 
@@ -179,7 +161,7 @@ ci_baseline <- ci_baseline |>
   left_join(ci_median_baseline, by = c("contrast")) 
 
 ci_baseline |> 
-  write_csv(file.path(path_models_lag, "ci_baseline.csv"))
+  write_csv(here::here(path_models_lag, "ci_baseline.csv"))
 
 ci_baseline
 
@@ -213,7 +195,7 @@ ci_lag <- ci_lag |>
   arrange(contrast)
 
 ci_lag |> 
-  write_csv(file.path(path_models_lag, "ci_lag.csv"))
+  write_csv(here::here(path_models_lag, "ci_lag.csv"))
 
 ci_lag
 ```

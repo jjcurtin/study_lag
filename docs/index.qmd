@@ -54,7 +54,7 @@ Empirical Articles. Empirical Articles should aim for a 12,000-word maximum, inc
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
 suppressPackageStartupMessages(library(tidyposterior))
-library(kableExtra)
+library(kableExtra, exclude = "group_rows")
 
 path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
 path_processed <- format_path("studydata/risk/data_processed/lag")
@@ -238,7 +238,7 @@ The median auROC across the 30 test sets for our baseline model was high (median
 
 Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_median))` (baseline), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_median))` (24 hour lag), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_median))` (72 hour lag), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_median))` (168 hour lag), and `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_median))` (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_upper))`], 24 hour lag[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_upper))`], 72 hour lag[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_upper))`], 168 hour lag[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_upper))`], 336 hour lag[`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_upper))`]. @fig-auroc displays these median auROCs and 95% Bayesian CIs by model.
 
-{{< embed notebooks/model_evaluation.qmd#fig-auroc >}}
+{{< embed notebooks/mak_figures.qmd#fig-auroc >}}
 
 
 
@@ -254,10 +254,10 @@ The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprint
 
 ### Fairness Benchmarks
 
-@fig-fairness shows the difference in performance of each model by demographic group. All group comparisons for race, sex, and income were significant (probability > .95) across models. On average there was a median increase in auROC for white participants compared to participants who were not white of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs. not white") |> pull(median)) |> median()` (range `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs. not white") |> pull(median)) |> min()`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs. not white") |> pull(median)) |> max()`). On average there was a median increase in auROC for male participants compared to female participants of (range `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(median)) |> min()`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs. female") |> pull(median)) |> max()`). On average there was a median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median)) |> median()` (range `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median)) |> min()`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs. below poverty") |> pull(median)) |> max()`).  
+@fig-fairness shows the difference in performance of each model by demographic group. All group comparisons for race, sex, and income were significant (probability > .95) across models. On average there was a median increase in auROC for white participants compared to participants who were not white of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median)) |> median()` (range `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median)) |> min()`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median)) |> max()`). On average there was a median increase in auROC for male participants compared to female participants of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> median()` (range `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> min()`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> max()`). On average there was a median increase in auROC for participants above the federal poverty line compared to participants below the federal poverty line of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> median()` (range `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> min()`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> max()`).  
 
 
-{{< embed notebooks/mak_figs.qmd#fig-fairness >}}
+{{< embed notebooks/mak_figures.qmd#fig-fairness >}}
 
 
 
