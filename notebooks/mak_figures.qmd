@@ -26,6 +26,8 @@ suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/b
 suppressPackageStartupMessages(library(tidyposterior))
 library(kableExtra, exclude = "group_rows")
 
+theme_set(theme_classic())
+
 path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
 path_shared <- format_path("studydata/risk/data_processed/shared")
 path_processed <- format_path("studydata/risk/data_processed/lag")
@@ -99,4 +101,97 @@ pp_dem_contrast |>
 ```
 
 
+## Figure 3: Shapley values 
+Read in data
+```{r}
+global_all <- read_rds(here::here(path_models_lag, "shap_global_all.rds"))
+local_0 <- read_rds(here::here(path_models_lag, 
+                               "outer_shaps_1week_0_v1_nested_main_downsized.rds"))
+local_24 <- read_rds(here::here(path_models_lag, 
+                               "outer_shaps_1week_24_v1_nested_main_downsized.rds"))
+local_72 <- read_rds(here::here(path_models_lag, 
+                               "outer_shaps_1week_72_v1_nested_main_downsized.rds"))
+local_168 <- read_rds(here::here(path_models_lag, 
+                               "outer_shaps_1week_168_v1_nested_main_downsized.rds"))
+local_336 <- read_rds(here::here(path_models_lag, 
+                               "outer_shaps_1week_336_v1_nested_main_downsized.rds"))
+```
 
+
+Global shapley pannel
+```{r}
+panel_shap_global <- shap_global_all |>
+  mutate(variable_grp = reorder(variable_grp, mean_value, sum)) |>
+  ggplot() +
+  geom_bar(aes(x = variable_grp, y = mean_value, fill = model), stat = "identity", alpha = .4) +
+  ylab("Mean(|Shapley Value|)") +
+  xlab("") +
+  theme(axis.text = element_text(size = 9.5)) +
+  coord_flip()
+```
+
+Local shapley pannels
+```{r}
+shap_levels <- shap_global_all |>
+  mutate(variable_grp = reorder(variable_grp, mean_value, sum)) |>
+  pull(variable_grp) |>
+  levels()
+  
+panel_shap_local_0 <- local_0 |>
+  mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
+  ggplot(mapping = aes(x = variable_grp, y = value)) +
+  ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4) +
+  geom_hline(yintercept = 0) +
+  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+  ylab("Shapley Value") +
+  xlab("") +
+  theme(axis.text = element_text(size = 9.5)) +
+  coord_flip()
+
+panel_shap_local_24 <- local_24 |>
+  mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
+  ggplot(mapping = aes(x = variable_grp, y = value)) +
+  ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4) +
+  geom_hline(yintercept = 0) +
+  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+  ylab("Shapley Value") +
+  xlab("") +
+  theme(axis.text = element_text(size = 9.5)) +
+  coord_flip()
+
+
+
+
+
+
+
+# hour panel
+panel_shap_local_hour <- shap_local_hour |>
+  filter(id_obs %in% ids_hour) |>
+  mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
+  ggplot(mapping = aes(x = variable_grp, y = value)) +
+  ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
+                     color = colors_hex[3]) +
+  geom_hline(yintercept = 0) +
+  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+  ylab("Shapley Value") +
+  xlab("") +
+  theme(axis.text = element_text(size = 9.5)) +
+  coord_flip()
+```
+
+
+```{r}
+#| label: fig-shap
+#| fig-cap: "Difference in auROCs by demographic group"
+#| out-width: "6in"
+#| out-height: "6in"
+#| fig-subcap: Feature importance (Shapley values) for Models by lag time. Panel A displays the global importance (mean |Shapley value|) for feature categories for each full model. Raw EMA features are grouped into categories by the original question from the EMA. Features based on the rates of previous lapses and previous missing surveys, as well as demographics, and the time of day and day of the week for the start of the prediction window are also included. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the three models.  The importance of each feature category for specific models is displayed separately by color. Panels B-F display local Shapley values that quantify the influence of feature categories on individual observations (i.e., a single prediction window for a specific participant) for each model.
+
+
+knitr::include_graphics(path = "figures/fig_3.jpeg")
+
+# panel_shap_global + panel_shap_local_week + panel_shap_local_day + panel_shap_local_hour +
+#   plot_annotation(tag_levels = 'A') +
+#   plot_layout (ncol = 2, guides = "collect", width = c(1,1))
+```
