@@ -65,7 +65,7 @@ test_metrics_all_pp_perf |>
 ```{r}
 #| label: fig-fairness
 #| fig-cap: "Difference in auROCs by demographic group"
-#| fig-width: 8
+#| fig-width: 7
 
 pp_dem_contrast |>
   mutate(lag = factor(lag, 

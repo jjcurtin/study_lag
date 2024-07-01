@@ -12,7 +12,7 @@ format:
 params:
   study: "lag"
   window: "1week"
-  lead: 72
+  lead: 168
   version: "v1"
   cv: "nested"
   model: "main" # "main" or "baseline"
@@ -545,11 +545,12 @@ shaps_v1 |>
 ```
 
 ```{r}
- shaps_batch1 <- read_rds(here::here(path_models, str_c("outer_shaps_",
+shaps_batch1 <- read_rds(here::here(path_models, str_c("outer_shaps_",
                                                   window, "_", lead, "_",
                                                   version, "_",
                                                   cv, "_", model, "_batch1.rds")))
- shaps_batch2 <- read_rds(here::here(path_models, str_c("outer_shaps_",
+
+shaps_batch2 <- read_rds(here::here(path_models, str_c("outer_shaps_",
                                                   window, "_", lead, "_",
                                                   version, "_",
                                                   cv, "_", model, "_batch2.rds")))
@@ -568,6 +569,9 @@ shaps_batch5 <- read_rds(here::here(path_models, str_c("outer_shaps_",
  
 shaps_out <- shaps_batch1 |> 
   bind_rows(shaps_batch2) |> 
+  bind_rows(shaps_batch3) |> 
+  bind_rows(shaps_batch4) |> 
+  bind_rows(shaps_batch5) |> 
   group_by(id_obs, variable) |>
    summarize(value = mean(value),
             # rfvalue is same across repeats but want included
