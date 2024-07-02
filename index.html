@@ -10,7 +10,7 @@
 <meta name="author" content="Jiachen (Coco) Yu">
 <meta name="author" content="Gaylen E. Fronk">
 <meta name="author" content="John J. Curtin">
-<meta name="dcterms.date" content="2024-06-29">
+<meta name="dcterms.date" content="2024-07-01">
 <meta name="keywords" content="Substance use disorders, Precision mental health">
 
 <title>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</title>
@@ -78,10 +78,10 @@ div.csl-indent {
 <meta name="citation_author" content="Jiachen (Coco) Yu">
 <meta name="citation_author" content="Gaylen E. Fronk">
 <meta name="citation_author" content="John J. Curtin">
-<meta name="citation_publication_date" content="2024-06-29">
-<meta name="citation_cover_date" content="2024-06-29">
+<meta name="citation_publication_date" content="2024-07-01">
+<meta name="citation_cover_date" content="2024-07-01">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-06-29">
+<meta name="citation_online_date" content="2024-07-01">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=2022 National Survey on Drug Use and Health. Public data set.;,citation_journal_title=Substance Abuse and Mental Health Services Administration;,citation_publisher=https://www.samhsa.gov/data/report/2022-nsduh-detailed-tables;">
 <meta name="citation_reference" content="citation_title=Disparities in the Treatment of Substance Use Disorders: Does Where You Live Matter?;,citation_abstract=This study focused on (1) whether disparities in timely receipt of substance use services can be explained in part by the characteristics of the community in which the clients reside and (2) whether the effect of community characteristics on timely receipt of services was similar across racial/ethnic groups. The sample was composed of adults receiving publicly funded outpatient treatment in Washington State. Treatment data were linked to data from the US census. The outcome studied was “Initiation and Engagement” in treatment (IET), a measure noting timely receipt of services at the beginning of treatment. Community characteristics studied included community level economic disadvantage and concentration of American Indian, Latino, and Black residents in the community. Black and American Indian clients were less likely to initiate or engage in treatment compared to non-Latino white clients, and American Indian clients living in economically disadvantaged communities were at even greater risk of not initiating treatment. Community economic disadvantage and racial/ethnic makeup of the community were associated with treatment initiation, but not engagement, although they did not entirely explain the disparities found in IET.;,citation_author=Andrea Acevedo;,citation_author=Lee Panas;,citation_author=Deborah Garnick;,citation_author=Dolores Acevedo-Garcia;,citation_author=Jennifer Miles;,citation_author=Grant Ritter;,citation_author=Kevin Campbell;,citation_publication_date=2018-10;,citation_cover_date=2018-10;,citation_year=2018;,citation_issue=4;,citation_doi=10.1007/s11414-018-9586-y;,citation_issn=1556-3308;,citation_volume=45;,citation_language=en-US;,citation_journal_title=The Journal of Behavioral Health Services &amp;amp;amp; Research;">
@@ -191,7 +191,7 @@ div.csl-indent {
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">June 29, 2024</p>
+              <p class="date">July 1, 2024</p>
             </div>
           </div>
           
@@ -264,6 +264,7 @@ div.csl-indent {
   
 
 
+<!--At 4295 words not including 150 word abstract, discussion, or Shapley results.-->
 <!--Notes:
 Target journal: Clinical Psychological Science 
 Format: Brief empirical report (5,000 words)
@@ -820,6 +821,23 @@ Figure&nbsp;2: Difference in auROCs by demographic group
 </section>
 <section id="feature-importance-1" class="level3">
 <h3 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h3>
+<div class="quarto-embed-nb-cell">
+<div id="cell-fig-shap" class="cell">
+<div class="cell-output cell-output-display">
+<div id="fig-shap" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-shap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Feature importance (Shapley values) for Models by lag time. Panel A displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panels B-F display local Shapley values that quantify the influence of feature categories on individual observations (i.e., a single prediction window for a specific participant) for each model."><img src="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" width="672" height="480" class="figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-shap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Feature importance (Shapley values) for Models by lag time. Panel A displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panels B-F display local Shapley values that quantify the influence of feature categories on individual observations (i.e., a single prediction window for a specific participant) for each model.
+</figcaption>
+</figure>
+</div>
+</div>
+<p>Global and Local Shapley values</p>
+</div>
+</div>
 </section>
 </section>
 <section id="discussion" class="level2">
@@ -1330,7 +1348,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"selector":".lightbox","loop":false,"descPosition":"bottom","closeEffect":"zoom","openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"loop":false,"closeEffect":"zoom","openEffect":"zoom","selector":".lightbox","descPosition":"bottom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
