@@ -221,10 +221,9 @@ panel_shap_local_336 <- local_336 |>
 
 ```{r}
 #| label: fig-shap
-#| fig-cap: "Global and Local Shapley values"
+#| fig-cap: "Feature importance (Shapley values) for Models by lag time. Panel A displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models.  The importance of each feature category for specific models is displayed separately by color. Panels B-F display local Shapley values that quantify the influence of feature categories on individual observations (i.e., a single prediction window for a specific participant) for each model."
 #| out-width: "7.5in"
 #| out-height: "6in"
-#| fig-subcap: Feature importance (Shapley values) for Models by lag time. Panel A displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models.  The importance of each feature category for specific models is displayed separately by color. Panels B-F display local Shapley values that quantify the influence of feature categories on individual observations (i.e., a single prediction window for a specific participant) for each model.
 
 
 panel_shap_global + panel_shap_local_0 + panel_shap_local_24 + 

@@ -100,15 +100,15 @@ Precision = approaches that are algorithmic, quantitative, and empirically deriv
 Personalized = umbrella term that describes any effort by the clinician to select, adapt, or adjust treatment to an individual with the goal of improving outcomes, including approaches that originate from and are driven by a holistic and person-centered approach-->
 
 
-Precision medicine has been a goal in healthcare for over half a century [@derubeisHistoryCurrentStatus2019]. Traditionally, precision medicine seeks to answer *how* do we best treat a specific individual (e.g., which medication will work best for an individual given their unique background, preferences, and medical history)? 
+Precision medicine has been a goal in healthcare for over half a century [@derubeisHistoryCurrentStatus2019]. Traditionally, precision medicine seeks to answer the question of *how* we best treat a specific individual, given their unique combination of genetic, lifestyle, and environmental characteristics (e.g., which medication is most effective for whom). 
 
-Today, this approach is also applied to chronic mental health conditions (i.e., precision mental health), like depression, substance use disorders, and suicide. However, mental health conditions are complex fluctuating processes. Unlike medical conditions that have clear biological precursors, mental health conditions are products of lots of psychosocial factors. These factors differ between individuals and within an individual over time. Additionally, there are a wide array of psychosocial supports available for clinicians to select from. Thus, precision mental health must consider both the *when* and the *how*.
+Today, this approach is also applied to chronic mental health conditions (i.e., precision mental health) such as depression, substance use disorders, and suicide. However, mental health conditions are complex, fluctuating processes. Unlike medical conditions that have clear biological precursors, mental health conditions are products of numerous psychosocial factors. These factors differ between individuals and can change within an individual over time. Additionally, there is a wide array of psychosocial supports available for clinicians to choose from. Thus, precision mental health must consider both the *how* and the *when* (e.g., which treatment is most effective for whom at what moment).
 
-There has been long-standing interest in precision mental health and substance use disorders. In an early example, The Project MATCH research group attempted to match individuals with alcohol use disorder to their optimal treatment based on baseline measures of individual differences [@projectmatchresearchgroupMatchingAlcoholismTreatments1997]. The study failed to find any differences in treatment success. This can likely be attributed to low dimensional analyses that failed to capture to the complex and heterogeneous nature of substance use disorders and their use of static distal features to predict a non-linear time-varying course of recovery, lapse, and relapse [@witkiewitzModelingComplexityPosttreatment2007]. 
+There has been long-standing interest in precision mental health and substance use disorders. An early example is the Project MATCH research group, which attempted to match individuals with alcohol use disorder to their optimal treatment based on baseline measures of individual characteristics [@projectmatchresearchgroupMatchingAlcoholismTreatments1997]. The study did not find any differences in treatment success. This can likely be attributed to low-dimensional analyses that failed to capture the complex and heterogeneous nature of substance use disorders and their use of static distal features to predict a non-linear, time-varying course of recovery, lapse, and relapse [@witkiewitzModelingComplexityPosttreatment2007]. In other words, they used overly simplistic models to address the question of *how* and did not consider the question of *when*.
 
 Take the example of lapses, discrete instances of goal inconsistent substance use. Lapses are a clinically important target for substance use treatment. They are often an early warning sign of relapse, maladaptive responses to lapses can undermine recovery, and for some substances a single lapse can result in an overdose and/or death. It would be unreasonable to expect that we could predict a lapse with any temporal precision using only features that become more distal as time progresses. On the contrary, lapse prediction requires dense, long-term monitoring of symptoms and related states proximal to the outcome.
 
-Recent advances in both personal sensing and machine learning may address both of these barriers to successful precision mental health. Personal sensing allows for frequent, longitudinal measurement of changes in proximal risk (e.g., lapse) with high temporal precision. Machine learning allows for high dimensional inputs. Moreover, tools from machine learning can be applied to models to understand which factors are specific to a specific individual at a specific moment in time. 
+Recent advances in both personal sensing and machine learning may address these barriers to successful precision mental health. Personal sensing allows for frequent, longitudinal measurement of changes in proximal risk (e.g., lapse) with high temporal precision. Machine learning allows for high dimensional inputs. Moreover, tools from machine learning can be applied to models to understand which factors are specific to a specific individual at a specific moment in time. 
 
 Ecological momentary assessment (EMA) may be particularly well-suited for these algorithms. It offers momentary subjective insight into constructs that can be easily mapped onto modular forms of treatment, such as the relapse prevention model [@marlattRelapsePreventionMaintenance1985; @witkiewitzRelapsePreventionAlcohol2004]. EMA also appears to be well tolerated by individuals with substance use disorders [@wyantAcceptabilityPersonalSensing2023]. Thus, it can serve as an important signal for predicting substance use outcomes and interpreting clinically relevant features over a sustained period.
 
@@ -151,8 +151,8 @@ On all EMAs, participants reported dates/times of any unreported past alcohol us
 On the first EMA each day, participants also rated the likelihood of encountering risky situations and stressful events in the next week and the likelihood that they would drink alcohol in the next week (i.e., abstinence self-efficacy).
 
 
-### Individual Differences
-We collected self-report information about demographics (age, sex, race, ethnicity, education, marital status, employment, and income) and AUD symptom count. This information was collected primarily to characterize the sample and to evaluate the diversity of the training data. We also used the demographic information in our models. 
+### Individual Characteristics
+We collected self-report information about demographics (age, sex, race, ethnicity, education, marital status, employment, and income) and AUD symptom count. 
 
 ## Data Analytic Strategy
 Data preprocessing, modeling, and Bayesian analyses were done in R using the tidymodels ecosystem [@kuhnTidymodelsCollectionPackages2020]. Models were trained and evaluated using high-throughput computing resources provided by the University of Wisconsin Center for High Throughput Computing [@chtc].
@@ -167,15 +167,13 @@ The start and end date/time of past drinking episodes were reported on the first
 We ended up with a total of 270,081 labels for our baseline (no lag) model, 266,599 labels for our 24 hour lagged model, 259,643 labels for our 72 hour lagged model, 245,707 labels for our 168 hour lagged model, and 221,206 labels for our 336 hour lagged model.
 
 ### Feature Engineering
-Features were calculated using only data collected before the start of each prediction window to ensure our models were making true future predictions. For our no lag models this included all data prior to the hour of the start of the prediction window. For our lagged models, the last EMA data used for feature engineering were collected up to one day, three days, one week, or two weeks prior to the start of the prediction window.
+Features were calculated using only data collected before the start of each prediction window to ensure our models were making true future predictions. For our no lag models this included all data prior to the hour of the start of the prediction window. For our lagged models, the last EMA data used for feature engineering were collected up to 24 hours, 72 hours, 168 hours, or 336 hours prior to the start of the prediction window.
 
-A total of 286 features were derived from three data sources:
+A total of 279 features were derived from two data sources: <!--286 if including time of day and day of week of start of prediction window-->
 
 1. *Demographics*: We created quantitative features for age and personal income, and dummy-coded features for sex, race/ethnicity, marital status, education, and employment.
 
-2. *Day and time of prediction window onset*: We created dummy-coded features to indicate time of day and day of week that the prediction window began.
-
-3. *Previous EMA responses*: We created raw EMA and change features for varying scoring epochs (i.e., 12, 24, 48, 72, and 168 hours) before the start of the prediction window for all EMA items. Raw features included min, max, and median scores for each EMA item across all EMAs in each epoch for that participant. We calculated change features by subtracting the participants' overall mean score for each EMA item (using all EMAs collected before the start of the prediction window) from the associated raw feature. We also created raw and change features based on the most recent response for each EMA question and raw and change rate features from previously reported lapses and number of completed EMAs. <!--More information on this process can be found in the supplement?-->
+2. *Previous EMA responses*: We created raw EMA and change features for varying scoring epochs (i.e., 12, 24, 48, 72, and 168 hours) before the start of the prediction window for all EMA items. Raw features included min, max, and median scores for each EMA item across all EMAs in each epoch for that participant. We calculated change features by subtracting the participants' overall mean score for each EMA item (using all EMAs collected before the start of the prediction window) from the associated raw feature. We also created raw and change features based on the most recent response for each EMA question and raw and change rate features from previously reported lapses and number of completed EMAs. 
 
 Other generic feature engineering steps included imputing missing data (median imputation for numeric features, mode imputation for nominal features) and removing zero and near-zero variance features as determined from held-in data (see Cross-validation section below). 
 
@@ -184,8 +182,6 @@ Other generic feature engineering steps included imputing missing data (median i
 We trained and evaluated five separate classification models: one baseline (no lag) model and one model for 24 hour, 72 hour, 168 hour, and 336 hour lagged predictions. We considered four well-established statistical algorithms (elastic net, XGBoost, regularized discriminant analysis, and single layer neural networks) that vary across characteristics expected to affect model performance (e.g., flexibility, complexity, handling higher-order interactions natively) [@kuhnAppliedPredictiveModeling2018]. 
 
 Candidate model configurations differed across sensible values for key hyperparameters. They also differed on outcome resampling method (i.e., no resampling and up-sampling and down-sampling of the outcome using majority/no lapse to minority/lapse ratios ranging from 1:1 to 2:1). We calibrated predicted probabilities using the beta distribution to support optimal decision-making under variable outcome distributions [@kullSigmoidsHowObtain2017].
-
-<!--Add note about how all possible configurations were trained on inner loop but only best XGBoost considered for outer loop? Feels weird to mention here before cv section. Maybe this goes in results? Or as footnote?-->
 
 #### Cross-validation
 We used participant-grouped, nested cross-validation for model training, selection, and evaluation with auROC. auROC indexes the probability that the model will predict a higher score for a randomly selected positive case (lapse) relative to a randomly selected negative case (no lapse). Grouped cross-validation assigns all data from a participant as either held-in or held-out to avoid bias introduced when predicting a participant's data from their own data. We used 1 repeat of 10-fold cross-validation for the inner loops (i.e., *validation* sets) and 3 repeats of 10-fold cross-validation for the outer loop (i.e., *test* sets). Best model configurations were selected using median auROC across the 10 validation sets. Final performance evaluation of those best model configurations used median auROC across the 30 test sets.
@@ -197,7 +193,7 @@ We used a Bayesian hierarchical generalized linear model to estimate the posteri
 #### Model Comparisons
 We performed two sets of Bayesian model comparisons. First, we compared each lagged model to our baseline model (no lag). We have demonstrated previously that our baseline model performs well. These comparisons show whether we can predict lapses with similar performance with varying lags (i.e., no lag vs. 24 hours, no lag vs. 72 hours, no lag vs. 168 hours, no lag vs. 336 hours). 
 
-Second, we compared each adjacent lagged model (i.e., 24 hours vs 72 hours, 72 hours vs. 168 hours, and 168 hours vs. 336 hours). These comparisons allow us to determine the probability that the lagged models systematically degrade as predictions are made further into the future.    
+Second, we compared each adjacent lagged model (i.e., 24 hours vs 72 hours, 72 hours vs. 168 hours, and 168 hours vs. 336 hours). These comparisons allow us to determine the probability that the lagged models systematically differed as predictions were made further into the future.    
 
 For both sets of model comparisons determined the probability that the models' performances differed systematically from each other by regressing the auROCs (logit transformed) from the 30 test sets as a function of the contrast. We set two random intercepts: one for the repeat, and another for the fold within repeat. We also report the precise posterior probability for the difference in auROCs and the 95% Bayesian CIs. If there was a probability > 0.95 that the more lagged model's performance was worse, we labeled the model contrast as significant.
 
@@ -252,6 +248,11 @@ The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprint
 
 
 ### Feature Importance
+
+Global importance (mean |Shapley value|) for feature categories for each model appears in Panel A of @fig-shap. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across window widths. 
+
+Sina plots of local Shapley values show the influence of feature categories on individual observations by model (@fig-shap, Panels B-D). The variance in feature importance for past use is widest in our immediate (no lag) model. Additionally, all EMA item categories appear to impact lapse probability for specific individuals at specific times even if they are not globally important across all observations.
+
 
 {{< embed notebooks/mak_figures.qmd#fig-shap >}}
 
