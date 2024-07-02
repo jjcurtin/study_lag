@@ -5,11 +5,11 @@ author:
     corresponding: false
     affiliations:
       - Department of Psychology, University of Wisconsin-Madison
-  - name: Jiachen (Coco) Yu 
+  - name: Gaylen E. Fronk 
     corresponding: false
     affiliations:
       - Department of Psychology, University of Wisconsin-Madison
-  - name: Gaylen E. Fronk 
+  - name: Jiachen (Coco) Yup 
     corresponding: false
     affiliations:
       - Department of Psychology, University of Wisconsin-Madison
