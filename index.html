@@ -8,7 +8,7 @@
 
 <meta name="author" content="Kendra Wyant">
 <meta name="author" content="Gaylen E. Fronk">
-<meta name="author" content="Jiachen (Coco) Yu">
+<meta name="author" content="Jiachen Yu">
 <meta name="author" content="John J. Curtin">
 <meta name="dcterms.date" content="2024-07-02">
 <meta name="keywords" content="Substance use disorders, Precision mental health">
@@ -76,7 +76,7 @@ div.csl-indent {
 <meta name="citation_keywords" content="Substance use disorders,Precision mental health">
 <meta name="citation_author" content="Kendra Wyant">
 <meta name="citation_author" content="Gaylen E. Fronk">
-<meta name="citation_author" content="Jiachen (Coco) Yu">
+<meta name="citation_author" content="Jiachen Yu">
 <meta name="citation_author" content="John J. Curtin">
 <meta name="citation_publication_date" content="2024-07-02">
 <meta name="citation_cover_date" content="2024-07-02">
@@ -168,7 +168,7 @@ div.csl-indent {
                       </p>
                   </div>
                       <div class="quarto-title-meta-contents">
-            <p class="author">Jiachen (Coco) Yu </p>
+            <p class="author">Jiachen Yu </p>
           </div>
                 <div class="quarto-title-meta-contents">
                     <p class="affiliation">
@@ -820,7 +820,7 @@ Figure&nbsp;2: Difference in auROCs by demographic group
 <section id="feature-importance-1" class="level3">
 <h3 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h3>
 <p>Global importance (mean |Shapley value|) for feature categories for each model appears <a href="#fig-shap" class="quarto-xref">Figure&nbsp;3</a>. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across window widths. The contribution of a feature category to model performance did not appear to differ across models.</p>
-<!--Will make note about demographics and reference supplement ALE plots-->
+<!--Will make note about demographics and reference supplement ALE plots to show direction and effect of feature on lapse prediction-->
 <div class="quarto-embed-nb-cell">
 <div id="cell-fig-shap" class="cell">
 <div class="cell-output cell-output-display">
@@ -842,7 +842,7 @@ Figure&nbsp;3: Feature importance (Shapley values) for Models by lag time. The p
 <section id="discussion" class="level2">
 <h2 class="anchored" data-anchor-id="discussion">Discussion</h2>
 <ul>
-<li><p>Model degrades, but perhaps not meaningfully even down to two weeks out.</p></li>
+<li><p>Model degrades but perhaps not meaningfully even down to two weeks out.</p></li>
 <li><p>All models were worse for women and people were not white and below poverty line.</p></li>
 <li><p>Improving model performance for unprivileged classes. Considering other important classes for SUD, such as geographic location, Improving diversity of training data</p></li>
 <li><p>Performance discrepancies sets up fairness methods paper. How can we improve these discrepancies? Mention in discussion as current future direction</p></li>
@@ -1347,7 +1347,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","closeEffect":"zoom","descPosition":"bottom","selector":".lightbox","loop":false});
+<script>var lightboxQuarto = GLightbox({"loop":false,"descPosition":"bottom","openEffect":"zoom","closeEffect":"zoom","selector":".lightbox"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

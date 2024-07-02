@@ -9,7 +9,7 @@ author:
     corresponding: false
     affiliations:
       - Department of Psychology, University of Wisconsin-Madison
-  - name: Jiachen (Coco) Yu
+  - name: Jiachen Yu
     corresponding: false
     affiliations:
       - Department of Psychology, University of Wisconsin-Madison
@@ -251,16 +251,16 @@ The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprint
 
 Global importance (mean |Shapley value|) for feature categories for each model appears @fig-shap. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across window widths. The contribution of a feature category to model performance did not appear to differ across models.
 
-<!--Will make note about demographics and reference supplement ALE plots-->
+<!--Will make note about demographics and reference supplement ALE plots to show direction and effect of feature on lapse prediction-->
 
 
 
 {{< embed notebooks/mak_figures.qmd#fig-shap >}}
 
+
 ## Discussion
 
-
-- Model degrades, but perhaps not meaningfully even down to two weeks out.
+- Model degrades but perhaps not meaningfully even down to two weeks out.
 
 - All models were worse for women and people were not white and below poverty line. 
 
