@@ -9,7 +9,7 @@ author:
     corresponding: false
     affiliations:
       - Department of Psychology, University of Wisconsin-Madison
-  - name: Jiachen (Coco) Yup 
+  - name: Jiachen (Coco) Yu
     corresponding: false
     affiliations:
       - Department of Psychology, University of Wisconsin-Madison
