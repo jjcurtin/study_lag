@@ -33,7 +33,7 @@ path_models <- format_path(str_c("studydata/risk/models/lag"))
 ```{r}
 shap_0 <- read_rds(here::here(path_models, 
                                      "outer_shaps_1week_0_v1_nested_main.rds")) |>
-    mutate(variable_grp = if_else(str_detect(variable, ".lapse"), 
+    mutate(variable_grp = if_else(str_detect(variable, "lapse."), 
                            "past use (EMA item)", 
                            variable),
            variable_grp = if_else(str_detect(variable_grp, "ema_2"), 
@@ -63,7 +63,7 @@ shap_0 <- read_rds(here::here(path_models,
            variable_grp = if_else(str_detect(variable_grp, "ema_10"), 
                            "future efficacy (EMA item)", 
                            variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, ".ema$"), 
+           variable_grp = if_else(str_detect(variable_grp, "missing."), 
                            "missing surveys (other)", 
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "day"), 
@@ -106,7 +106,7 @@ shap_0 |>
 
 shap_24 <- read_rds(here::here(path_models, 
                                       "outer_shaps_1week_24_v1_nested_main.rds")) |>
-    mutate(variable_grp = if_else(str_detect(variable, ".lapse"), 
+    mutate(variable_grp = if_else(str_detect(variable, "lapse."), 
                            "past use (EMA item)", 
                            variable),
            variable_grp = if_else(str_detect(variable_grp, "ema_2"), 
@@ -136,7 +136,7 @@ shap_24 <- read_rds(here::here(path_models,
            variable_grp = if_else(str_detect(variable_grp, "ema_10"), 
                            "future efficacy (EMA item)", 
                            variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, ".ema$"), 
+           variable_grp = if_else(str_detect(variable_grp, "missing."), 
                            "missing surveys (other)", 
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "day"), 
@@ -177,7 +177,7 @@ shap_24 |>
 
 shap_72 <- read_rds(here::here(path_models, 
                                       "outer_shaps_1week_72_v1_nested_main.rds")) |>
-    mutate(variable_grp = if_else(str_detect(variable, ".lapse"), 
+    mutate(variable_grp = if_else(str_detect(variable, "lapse."), 
                            "past use (EMA item)", 
                            variable),
            variable_grp = if_else(str_detect(variable_grp, "ema_2"), 
@@ -207,7 +207,7 @@ shap_72 <- read_rds(here::here(path_models,
            variable_grp = if_else(str_detect(variable_grp, "ema_10"), 
                            "future efficacy (EMA item)", 
                            variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, ".ema$"), 
+           variable_grp = if_else(str_detect(variable_grp, "missing."), 
                            "missing surveys (other)", 
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "day"), 
@@ -248,7 +248,7 @@ shap_72 |>
 
 shap_168 <- read_rds(here::here(path_models, 
                                       "outer_shaps_1week_168_v1_nested_main.rds")) |>
-    mutate(variable_grp = if_else(str_detect(variable, ".lapse"), 
+    mutate(variable_grp = if_else(str_detect(variable, "lapse."), 
                            "past use (EMA item)", 
                            variable),
            variable_grp = if_else(str_detect(variable_grp, "ema_2"), 
@@ -278,7 +278,7 @@ shap_168 <- read_rds(here::here(path_models,
            variable_grp = if_else(str_detect(variable_grp, "ema_10"), 
                            "future efficacy (EMA item)", 
                            variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, ".ema$"), 
+           variable_grp = if_else(str_detect(variable_grp, "missing."), 
                            "missing surveys (other)", 
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "day"), 
@@ -319,7 +319,7 @@ shap_168 |>
 
 shap_336 <- read_rds(here::here(path_models, 
                                       "outer_shaps_1week_336_v1_nested_main.rds")) |>
-    mutate(variable_grp = if_else(str_detect(variable, ".lapse"), 
+    mutate(variable_grp = if_else(str_detect(variable, "lapse."), 
                            "past use (EMA item)", 
                            variable),
            variable_grp = if_else(str_detect(variable_grp, "ema_2"), 
@@ -349,7 +349,7 @@ shap_336 <- read_rds(here::here(path_models,
            variable_grp = if_else(str_detect(variable_grp, "ema_10"), 
                            "future efficacy (EMA item)", 
                            variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, ".ema$"), 
+           variable_grp = if_else(str_detect(variable_grp, "missing."), 
                            "missing surveys (other)", 
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "day"), 
@@ -482,26 +482,7 @@ shap_global_all <- shap_global_0 |>
   bind_rows(shap_global_24) |>
   bind_rows(shap_global_72) |>
   bind_rows(shap_global_168) |>
-  bind_rows(shap_global_336) |>
-  mutate(model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"))) |>
-  mutate(variable_grp = factor(variable_grp, levels = c("past use (EMA item)",
-                                          "craving (EMA item)",
-                                          "past risky situation (EMA item)",
-                                          "past stressful event (EMA item)",
-                                          "past pleasant event (EMA item)",
-                                          "valence (EMA item)",
-                                          "arousal (EMA item)",
-                                          "future risky situation (EMA item)",
-                                          "future stressful event (EMA item)",
-                                          "future efficacy (EMA item)",
-                                          "day of week (other)",
-                                          "time of day (other)",
-                                          "missing surveys (other)",
-                                          "age (demographic)",
-                                          "sex (demographic)",
-                                          "race (demographic)",
-                                          "marital (demographic)",
-                                          "education (demographic)")))
+  bind_rows(shap_global_336) 
 ```
 
 Save out global tibble
