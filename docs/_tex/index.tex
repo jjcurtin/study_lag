@@ -605,14 +605,11 @@ allowing us to combine features into feature categories. We created
 separate feature categories for each of the nine EMA questions, the
 rates of past alcohol use and missing surveys, the time of day and day
 of the week of the start of the prediction window, and the seven
-demographic variables included in the models. We calculated the local
-(i.e., for each observation) importance for each category of features by
-adding Shapley values across all features in a category, separately for
-each observation. We calculated global importance for each feature
-category by averaging the absolute value of the Shapley values of all
-features in the category across all observations. These local and global
-importance scores based on Shapley values allow us to contextualize
-relative feature importance.
+demographic variables included in the models. We calculated global
+importance for each feature category by averaging the absolute value of
+the Shapley values of all features in the category across all
+observations. These global importance scores based on Shapley values
+allow us to contextualize relative feature importance for each model.
 
 \subsection{Results}\label{results}
 
@@ -815,18 +812,12 @@ All Figures for Main Manuscript}}
 \subsubsection{Feature Importance}\label{feature-importance-1}
 
 Global importance (mean \textbar Shapley value\textbar) for feature
-categories for each model appears in Panel A of Figure~\ref{fig-shap}.
-Consistent with previous models using similar features, past use was the
-most important feature category for lapse prediction across lagged
-models. Future abstinence efficacy was also globally important across
-window widths.
-
-Sina plots of local Shapley values show the influence of feature
-categories on individual observations by model (Figure~\ref{fig-shap},
-Panels B-D). The variance in feature importance for past use is widest
-in our immediate (no lag) model. Additionally, all EMA item categories
-appear to impact lapse probability for specific individuals at specific
-times even if they are not globally important across all observations.
+categories for each model appears Figure~\ref{fig-shap}. Consistent with
+previous models using similar features, past use was the most important
+feature category for lapse prediction across lagged models. Future
+abstinence efficacy was also globally important across window widths.
+The contribution of a feature category to model performance did not
+appear to differ across models.
 
 \begin{figure}[H]
 
@@ -837,14 +828,11 @@ times even if they are not globally important across all observations.
 }
 
 \caption{\label{fig-shap}Feature importance (Shapley values) for Models
-by lag time. Panel A displays the global importance (mean
+by lag time. The plot displays the global importance (mean
 \textbar Shapley value\textbar) for feature categories for each model.
 Feature categories are ordered by their aggregate global importance
 (i.e., total bar length) across the five models. The importance of each
-feature category for specific models is displayed separately by color.
-Panels B-F display local Shapley values that quantify the influence of
-feature categories on individual observations (i.e., a single prediction
-window for a specific participant) for each model.}
+feature category for specific models is displayed separately by color.}
 
 \end{figure}%
 

@@ -50,13 +50,16 @@ pp_dem_contrast <- read_csv(here::here(path_models_lag, "pp_dem_contrast_all.csv
 #| fig-cap: "Posterior probability for auROC and Bayesian credible intervals by model. Dashed line indicates a model performing at chance."
 
 test_metrics_all_pp_perf |>
-  mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ))) |> 
+  mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ),
+                        labels = c("336 hours", "168 hours", "72 hours", "24 hours", "0 hours" ))) |> 
   ggplot() + 
   geom_point(aes(x = pp_median, y = model), color = "black") +
   geom_segment(mapping = aes(y = model, x = pp_lower, xend = pp_upper),
-                data = test_metrics_all_pp_perf) +
+                data = test_metrics_all_pp_perf |> 
+                  mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ),
+                        labels = c("336 hours", "168 hours", "72 hours", "24 hours", "0 hours" )))) +
   scale_x_continuous("Area Under ROC Curve", limits = c(.50, 1.0)) +
-  ylab("Model") +
+  ylab("Model Lag") +
   theme_classic() +
   theme(legend.position = "none",
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
@@ -73,7 +76,7 @@ test_metrics_all_pp_perf |>
 pp_dem_contrast |>
   mutate(lag = factor(lag, 
                       levels = c(336, 168, 72, 24, 0),
-                      labels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" )),
+                      labels = c("336 hours", "168 hours", "72 hours", "24 hours", "0 hours" )),
          contrast = factor(contrast, levels = c("non-hispanic white vs not white",
                                                 "male vs female",
                                                 "above poverty vs below poverty"),
@@ -86,7 +89,7 @@ pp_dem_contrast |>
                 data = pp_dem_contrast |>
                  mutate(lag = factor(lag, 
                                      levels = c(336, 168, 72, 24, 0),
-                                     labels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" )),
+                                     labels = c("336 hours", "168 hours", "72 hours", "24 hours", "0 hours" )),
                  contrast = factor(contrast, levels = c("non-hispanic white vs not white",
                                                 "male vs female",
                                                 "above poverty vs below poverty"),
@@ -95,10 +98,11 @@ pp_dem_contrast |>
                                                 "Above Poverty vs. Below Poverty")))) +
   facet_grid(~contrast) +
   scale_x_continuous("Difference in Area Under ROC Curve", limits = c(0, .3), breaks = c(0, .1, .2, .3)) +
-  ylab("") +
+  ylab("Model Lag") +
   theme_classic() +
   theme(legend.position = "none",
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) 
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  geom_vline(xintercept = 0, linetype = "dashed")
 ```
 
 
@@ -110,30 +114,31 @@ global_all <- read_rds(here::here(path_models_lag, "shap_global_all.rds")) |>
    mutate(variable_grp = reorder(variable_grp, mean_value, sum),
           model = factor(model, c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag")))
 
-shap_levels <- global_all |>
-  mutate(variable_grp = reorder(variable_grp, mean_value, sum)) |>
-  pull(variable_grp) |>
-  levels()
-
-local_0 <- read_rds(here::here(path_models_lag, 
-                        "outer_shapsgrp_1week_0_v1_nested_main_downsized.rds")) |> 
-   mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
-   filter(!variable_grp %in% c("day of week (other)", "time of day (other)"))
-local_24 <- read_rds(here::here(path_models_lag,
-                      "outer_shapsgrp_1week_24_v1_nested_main_downsized.rds")) |> 
-   mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
-   filter(!variable_grp %in% c("day of week (other)", "time of day (other)"))
-local_72 <- read_rds(here::here(path_models_lag, 
-                        "outer_shapsgrp_1week_72_v1_nested_main_downsized.rds")) |>      mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
-   filter(!variable_grp %in% c("day of week (other)", "time of day (other)"))
-local_168 <- read_rds(here::here(path_models_lag, 
-                        "outer_shapsgrp_1week_168_v1_nested_main_downsized.rds")) |> 
-   mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
-   filter(!variable_grp %in% c("day of week (other)", "time of day (other)")) 
-local_336 <- read_rds(here::here(path_models_lag, 
-                          "outer_shapsgrp_1week_336_v1_nested_main_downsized.rds")) |>
-   mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
-   filter(!variable_grp %in% c("day of week (other)", "time of day (other)")) 
+# shap_levels <- global_all |>
+#   mutate(variable_grp = reorder(variable_grp, mean_value, sum)) |>
+#   pull(variable_grp) |>
+#   levels()
+# 
+# local_0 <- read_rds(here::here(path_models_lag, 
+#                         "outer_shapsgrp_1week_0_v1_nested_main_downsized.rds")) |> 
+#    mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
+#    filter(!variable_grp %in% c("day of week (other)", "time of day (other)"))
+# local_24 <- read_rds(here::here(path_models_lag,
+#                       "outer_shapsgrp_1week_24_v1_nested_main_downsized.rds")) |> 
+#    mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
+#    filter(!variable_grp %in% c("day of week (other)", "time of day (other)"))
+# local_72 <- read_rds(here::here(path_models_lag, 
+#                         "outer_shapsgrp_1week_72_v1_nested_main_downsized.rds")) |>      
+#    mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
+#    filter(!variable_grp %in% c("day of week (other)", "time of day (other)"))
+# local_168 <- read_rds(here::here(path_models_lag, 
+#                         "outer_shapsgrp_1week_168_v1_nested_main_downsized.rds")) |> 
+#    mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
+#    filter(!variable_grp %in% c("day of week (other)", "time of day (other)")) 
+# local_336 <- read_rds(here::here(path_models_lag, 
+#                           "outer_shapsgrp_1week_336_v1_nested_main_downsized.rds")) |>
+#    mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
+#    filter(!variable_grp %in% c("day of week (other)", "time of day (other)")) 
 ```
 
 
@@ -142,94 +147,92 @@ Global shapley pannel
 color_codes <- c("#240e31","#cb6bce", "#458892", "#75f3d3", "#751c6d")
 
 panel_shap_global <- global_all |>
+   mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ),
+                        labels = c("336 hours", "168 hours", "72 hours", "24 hours", "0 hours" ))) |> 
   ggplot() +
   geom_bar(aes(x = variable_grp, y = mean_value, fill = model), stat = "identity") +
   ylab("Mean(|Shapley Value|)") +
   xlab("") +
+  labs(fill = "Model Lag") +
   scale_color_manual(values = color_codes) +
   scale_fill_manual(values = color_codes) +
-  theme(axis.text = element_text(size = 9.5)) +
+  theme(axis.text = element_text(size = 9.5),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   coord_flip()
 ```
 
 Local shapley pannels
 ```{r}
-panel_shap_local_0 <- local_0 |>
-  ggplot(mapping = aes(x = variable_grp, y = value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
-                     color = color_codes[1]) +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value") +
-  xlab("") +
-  theme(axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.line.y = element_blank()) +
-  coord_flip()
-
-panel_shap_local_24 <- local_24 |>
-  ggplot(mapping = aes(x = variable_grp, y = value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4, 
-                     color = color_codes[2]) +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value") +
-  xlab("") +
-  theme(axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.line.y = element_blank()) +
-  coord_flip()
-
-panel_shap_local_72 <- local_72 |>
-  ggplot(mapping = aes(x = variable_grp, y = value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
-                     color = color_codes[3]) +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value") +
-  xlab("") +
-  theme(axis.text = element_text(size = 9.5)) +
-  coord_flip()
-
-panel_shap_local_168 <- local_168 |>
-  ggplot(mapping = aes(x = variable_grp, y = value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
-                     color = color_codes[4]) +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value") +
-  xlab("") +
-  theme(axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.line.y = element_blank()) +
-  coord_flip()
-
-panel_shap_local_336 <- local_336 |>
-  ggplot(mapping = aes(x = variable_grp, y = value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
-                     color = color_codes[5]) +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value") +
-  xlab("") +
-  theme(axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.line.y = element_blank()) +
-  coord_flip()
+# panel_shap_local_0 <- local_0 |>
+#   ggplot(mapping = aes(x = variable_grp, y = value)) +
+#   ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
+#                      color = color_codes[1]) +
+#   geom_hline(yintercept = 0) +
+#   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+#   ylab("Shapley Value") +
+#   xlab("") +
+#   theme(axis.text.y = element_blank(),
+#         axis.ticks.y = element_blank(),
+#         axis.line.y = element_blank()) +
+#   coord_flip()
+# 
+# panel_shap_local_24 <- local_24 |>
+#   ggplot(mapping = aes(x = variable_grp, y = value)) +
+#   ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4, 
+#                      color = color_codes[2]) +
+#   geom_hline(yintercept = 0) +
+#   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+#   ylab("Shapley Value") +
+#   xlab("") +
+#   theme(axis.text.y = element_blank(),
+#         axis.ticks.y = element_blank(),
+#         axis.line.y = element_blank()) +
+#   coord_flip()
+# 
+# panel_shap_local_72 <- local_72 |>
+#   ggplot(mapping = aes(x = variable_grp, y = value)) +
+#   ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
+#                      color = color_codes[3]) +
+#   geom_hline(yintercept = 0) +
+#   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+#   ylab("Shapley Value") +
+#   xlab("") +
+#   theme(axis.text = element_text(size = 9.5)) +
+#   coord_flip()
+# 
+# panel_shap_local_168 <- local_168 |>
+#   ggplot(mapping = aes(x = variable_grp, y = value)) +
+#   ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
+#                      color = color_codes[4]) +
+#   geom_hline(yintercept = 0) +
+#   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+#   ylab("Shapley Value") +
+#   xlab("") +
+#   theme(axis.text.y = element_blank(),
+#         axis.ticks.y = element_blank(),
+#         axis.line.y = element_blank()) +
+#   coord_flip()
+# 
+# panel_shap_local_336 <- local_336 |>
+#   ggplot(mapping = aes(x = variable_grp, y = value)) +
+#   ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
+#                      color = color_codes[5]) +
+#   geom_hline(yintercept = 0) +
+#   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+#   ylab("Shapley Value") +
+#   xlab("") +
+#   theme(axis.text.y = element_blank(),
+#         axis.ticks.y = element_blank(),
+#         axis.line.y = element_blank()) +
+#   coord_flip()
 ```
 
 
 ```{r}
 #| label: fig-shap
-#| fig-cap: "Feature importance (Shapley values) for Models by lag time. Panel A displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models.  The importance of each feature category for specific models is displayed separately by color. Panels B-F display local Shapley values that quantify the influence of feature categories on individual observations (i.e., a single prediction window for a specific participant) for each model."
-#| out-width: "7.5in"
-#| out-height: "6in"
+#| fig-cap: "Feature importance (Shapley values) for Models by lag time. The plot displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models.  The importance of each feature category for specific models is displayed separately by color. "
 
 
-panel_shap_global + panel_shap_local_0 + panel_shap_local_24 + 
-  panel_shap_local_72 + panel_shap_local_168 + panel_shap_local_336 +
-  plot_annotation(tag_levels = 'A') +
-  plot_layout (ncol = 3, guides = "collect", width = c(1,1))
+panel_shap_global 
 
-# knitr::include_graphics(path = "figures/fig_shap.jpeg")
 ```

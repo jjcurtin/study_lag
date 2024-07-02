@@ -31,7 +31,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-<!--At 4295 words not including 150 word abstract, discussion, or Shapley results.-->
+<!--At 4361 words not including 150 word abstract or discussion (about 500 words).-->
 
 <!--Notes:
 Target journal: Clinical Psychological Science 
@@ -203,7 +203,7 @@ We aim for the responsible and transparent reporting of model performance and cl
 We also acknowledge that models that work for only a subset of people, if implemented, could widen existing treatment disparities. We conducted Bayesian group comparisons to assess the likelihood that the model performs differently by group. We report median differences in posterior probabilities and the range.^[For our fairness evaluations, we altered our outer loop resampling method from 3 x 10 cross-validation to 6 x 5 cross-validation. This method still gave us 30 held out tests sets, but by splitting the data across fewer folds (i.e., 5 vs. 10) we were able to reduce the likelihood of the minority group being absent in any single fold.] 
 
 #### Feature Importance
-We calculated Shapley values [@lundbergUnifiedApproachInterpreting2017] from the 30 test sets to provide a description of the importance of categories of features across our five models. We used the SHAPforxgboost package that provides Shapley values in log-odds units for binary classification models. We averaged the three Shapley values for each observation for each feature (i.e., across the three repeats) to increase their stability. An inherent property of Shapley values is their additivity, allowing us to combine features into feature categories. We created separate feature categories for each of the nine EMA questions, the rates of past alcohol use and missing surveys, the time of day and day of the week of the start of the prediction window, and the seven demographic variables included in the models. We calculated the local (i.e., for each observation) importance for each category of features by adding Shapley values across all features in a category, separately for each observation.  We calculated global importance for each feature category by averaging the absolute value of the Shapley values of all features in the category across all observations. These local and global importance scores based on Shapley values allow us to contextualize relative feature importance.  
+We calculated Shapley values [@lundbergUnifiedApproachInterpreting2017] from the 30 test sets to provide a description of the importance of categories of features across our five models. We used the SHAPforxgboost package that provides Shapley values in log-odds units for binary classification models. We averaged the three Shapley values for each observation for each feature (i.e., across the three repeats) to increase their stability. An inherent property of Shapley values is their additivity, allowing us to combine features into feature categories. We created separate feature categories for each of the nine EMA questions, the rates of past alcohol use and missing surveys, the time of day and day of the week of the start of the prediction window, and the seven demographic variables included in the models. We calculated global importance for each feature category by averaging the absolute value of the Shapley values of all features in the category across all observations. These global importance scores based on Shapley values allow us to contextualize relative feature importance for each model.  
 
 
 ## Results
@@ -249,9 +249,10 @@ The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprint
 
 ### Feature Importance
 
-Global importance (mean |Shapley value|) for feature categories for each model appears in Panel A of @fig-shap. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across window widths. 
+Global importance (mean |Shapley value|) for feature categories for each model appears @fig-shap. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across window widths. The contribution of a feature category to model performance did not appear to differ across models.
 
-Sina plots of local Shapley values show the influence of feature categories on individual observations by model (@fig-shap, Panels B-D). The variance in feature importance for past use is widest in our immediate (no lag) model. Additionally, all EMA item categories appear to impact lapse probability for specific individuals at specific times even if they are not globally important across all observations.
+<!--Will make note about demographics and reference supplement ALE plots-->
+
 
 
 {{< embed notebooks/mak_figures.qmd#fig-shap >}}
