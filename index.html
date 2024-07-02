@@ -264,7 +264,7 @@ div.csl-indent {
   
 
 
-<!--At 4295 words not including 150 word abstract, discussion, or Shapley results.-->
+<!--At 4361 words not including 150 word abstract or discussion (about 500 words).-->
 <!--Notes:
 Target journal: Clinical Psychological Science 
 Format: Brief empirical report (5,000 words)
@@ -381,7 +381,7 @@ Note to include transparency report in supplement-->
 </section>
 <section id="feature-importance" class="level4">
 <h4 class="anchored" data-anchor-id="feature-importance">Feature Importance</h4>
-<p>We calculated Shapley values <span class="citation" data-cites="lundbergUnifiedApproachInterpreting2017">(<a href="#ref-lundbergUnifiedApproachInterpreting2017" role="doc-biblioref">Lundberg and Lee 2017</a>)</span> from the 30 test sets to provide a description of the importance of categories of features across our five models. We used the SHAPforxgboost package that provides Shapley values in log-odds units for binary classification models. We averaged the three Shapley values for each observation for each feature (i.e., across the three repeats) to increase their stability. An inherent property of Shapley values is their additivity, allowing us to combine features into feature categories. We created separate feature categories for each of the nine EMA questions, the rates of past alcohol use and missing surveys, the time of day and day of the week of the start of the prediction window, and the seven demographic variables included in the models. We calculated the local (i.e., for each observation) importance for each category of features by adding Shapley values across all features in a category, separately for each observation. We calculated global importance for each feature category by averaging the absolute value of the Shapley values of all features in the category across all observations. These local and global importance scores based on Shapley values allow us to contextualize relative feature importance.</p>
+<p>We calculated Shapley values <span class="citation" data-cites="lundbergUnifiedApproachInterpreting2017">(<a href="#ref-lundbergUnifiedApproachInterpreting2017" role="doc-biblioref">Lundberg and Lee 2017</a>)</span> from the 30 test sets to provide a description of the importance of categories of features across our five models. We used the SHAPforxgboost package that provides Shapley values in log-odds units for binary classification models. We averaged the three Shapley values for each observation for each feature (i.e., across the three repeats) to increase their stability. An inherent property of Shapley values is their additivity, allowing us to combine features into feature categories. We created separate feature categories for each of the nine EMA questions, the rates of past alcohol use and missing surveys, the time of day and day of the week of the start of the prediction window, and the seven demographic variables included in the models. We calculated global importance for each feature category by averaging the absolute value of the Shapley values of all features in the category across all observations. These global importance scores based on Shapley values allow us to contextualize relative feature importance for each model.</p>
 </section>
 </section>
 </section>
@@ -819,18 +819,18 @@ Figure&nbsp;2: Difference in auROCs by demographic group
 </section>
 <section id="feature-importance-1" class="level3">
 <h3 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h3>
-<p>Global importance (mean |Shapley value|) for feature categories for each model appears in Panel A of <a href="#fig-shap" class="quarto-xref">Figure&nbsp;3</a>. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across window widths.</p>
-<p>Sina plots of local Shapley values show the influence of feature categories on individual observations by model (<a href="#fig-shap" class="quarto-xref">Figure&nbsp;3</a>, Panels B-D). The variance in feature importance for past use is widest in our immediate (no lag) model. Additionally, all EMA item categories appear to impact lapse probability for specific individuals at specific times even if they are not globally important across all observations.</p>
+<p>Global importance (mean |Shapley value|) for feature categories for each model appears <a href="#fig-shap" class="quarto-xref">Figure&nbsp;3</a>. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across window widths. The contribution of a feature category to model performance did not appear to differ across models.</p>
+<!--Will make note about demographics and reference supplement ALE plots-->
 <div class="quarto-embed-nb-cell">
 <div id="cell-fig-shap" class="cell">
 <div class="cell-output cell-output-display">
 <div id="fig-shap" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-shap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Feature importance (Shapley values) for Models by lag time. Panel A displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panels B-F display local Shapley values that quantify the influence of feature categories on individual observations (i.e., a single prediction window for a specific participant) for each model."><img src="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" width="672" height="480" class="figure-img"></a>
+<a href="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Feature importance (Shapley values) for Models by lag time. The plot displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color."><img src="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" width="672" height="480" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-shap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Feature importance (Shapley values) for Models by lag time. Panel A displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panels B-F display local Shapley values that quantify the influence of feature categories on individual observations (i.e., a single prediction window for a specific participant) for each model.
+Figure&nbsp;3: Feature importance (Shapley values) for Models by lag time. The plot displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color.
 </figcaption>
 </figure>
 </div>
@@ -1347,7 +1347,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"selector":".lightbox","loop":false,"closeEffect":"zoom","descPosition":"bottom","openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","loop":false,"closeEffect":"zoom","selector":".lightbox","openEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
