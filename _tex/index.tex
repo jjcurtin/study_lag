@@ -234,32 +234,35 @@ Notebook}}
 \section{Introduction}\label{introduction}
 
 Precision medicine has been a goal in healthcare for over half a century
-(DeRubeis, 2019). Traditionally, precision medicine seeks to answer
-\emph{how} do we best treat a specific individual (e.g., which
-medication will work best for an individual given their unique
-background, preferences, and medical history)?
+(DeRubeis, 2019). Traditionally, precision medicine seeks to answer the
+question of \emph{how} we best treat a specific individual, given their
+unique combination of genetic, lifestyle, and environmental
+characteristics (e.g., which medication is most effective for whom).
 
 Today, this approach is also applied to chronic mental health conditions
-(i.e., precision mental health), like depression, substance use
-disorders, and suicide. However, mental health conditions are complex
+(i.e., precision mental health) such as depression, substance use
+disorders, and suicide. However, mental health conditions are complex,
 fluctuating processes. Unlike medical conditions that have clear
-biological precursors, mental health conditions are products of lots of
-psychosocial factors. These factors differ between individuals and
-within an individual over time. Additionally, there are a wide array of
-psychosocial supports available for clinicians to select from. Thus,
-precision mental health must consider both the \emph{when} and the
-\emph{how}.
+biological precursors, mental health conditions are products of numerous
+psychosocial factors. These factors differ between individuals and can
+change within an individual over time. Additionally, there is a wide
+array of psychosocial supports available for clinicians to choose from.
+Thus, precision mental health must consider both the \emph{how} and the
+\emph{when} (e.g., which treatment is most effective for whom at what
+moment).
 
 There has been long-standing interest in precision mental health and
-substance use disorders. In an early example, The Project MATCH research
-group attempted to match individuals with alcohol use disorder to their
-optimal treatment based on baseline measures of individual differences
-(Project Match Research Group, 1997). The study failed to find any
-differences in treatment success. This can likely be attributed to low
-dimensional analyses that failed to capture to the complex and
+substance use disorders. An early example is the Project MATCH research
+group, which attempted to match individuals with alcohol use disorder to
+their optimal treatment based on baseline measures of individual
+characteristics (Project Match Research Group, 1997). The study did not
+find any differences in treatment success. This can likely be attributed
+to low-dimensional analyses that failed to capture the complex and
 heterogeneous nature of substance use disorders and their use of static
-distal features to predict a non-linear time-varying course of recovery,
-lapse, and relapse (Witkiewitz \& Marlatt, 2007).
+distal features to predict a non-linear, time-varying course of
+recovery, lapse, and relapse (Witkiewitz \& Marlatt, 2007). In other
+words, they used overly simplistic models to address the question of
+\emph{how} and did not consider the question of \emph{when}.
 
 Take the example of lapses, discrete instances of goal inconsistent
 substance use. Lapses are a clinically important target for substance
@@ -272,13 +275,12 @@ progresses. On the contrary, lapse prediction requires dense, long-term
 monitoring of symptoms and related states proximal to the outcome.
 
 Recent advances in both personal sensing and machine learning may
-address both of these barriers to successful precision mental health.
-Personal sensing allows for frequent, longitudinal measurement of
-changes in proximal risk (e.g., lapse) with high temporal precision.
-Machine learning allows for high dimensional inputs. Moreover, tools
-from machine learning can be applied to models to understand which
-factors are specific to a specific individual at a specific moment in
-time.
+address these barriers to successful precision mental health. Personal
+sensing allows for frequent, longitudinal measurement of changes in
+proximal risk (e.g., lapse) with high temporal precision. Machine
+learning allows for high dimensional inputs. Moreover, tools from
+machine learning can be applied to models to understand which factors
+are specific to a specific individual at a specific moment in time.
 
 Ecological momentary assessment (EMA) may be particularly well-suited
 for these algorithms. It offers momentary subjective insight into
@@ -410,13 +412,12 @@ encountering risky situations and stressful events in the next week and
 the likelihood that they would drink alcohol in the next week (i.e.,
 abstinence self-efficacy).
 
-\subsubsection{Individual Differences}\label{individual-differences}
+\subsubsection{Individual
+Characteristics}\label{individual-characteristics}
 
 We collected self-report information about demographics (age, sex, race,
 ethnicity, education, marital status, employment, and income) and AUD
-symptom count. This information was collected primarily to characterize
-the sample and to evaluate the diversity of the training data. We also
-used the demographic information in our models.
+symptom count.
 
 \subsection{Data Analytic Strategy}\label{data-analytic-strategy}
 
@@ -463,11 +464,11 @@ Features were calculated using only data collected before the start of
 each prediction window to ensure our models were making true future
 predictions. For our no lag models this included all data prior to the
 hour of the start of the prediction window. For our lagged models, the
-last EMA data used for feature engineering were collected up to one day,
-three days, one week, or two weeks prior to the start of the prediction
-window.
+last EMA data used for feature engineering were collected up to 24
+hours, 72 hours, 168 hours, or 336 hours prior to the start of the
+prediction window.
 
-A total of 286 features were derived from three data sources:
+A total of 279 features were derived from two data sources:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -475,10 +476,6 @@ A total of 286 features were derived from three data sources:
   \emph{Demographics}: We created quantitative features for age and
   personal income, and dummy-coded features for sex, race/ethnicity,
   marital status, education, and employment.
-\item
-  \emph{Day and time of prediction window onset}: We created dummy-coded
-  features to indicate time of day and day of week that the prediction
-  window began.
 \item
   \emph{Previous EMA responses}: We created raw EMA and change features
   for varying scoring epochs (i.e., 12, 24, 48, 72, and 168 hours)
@@ -559,7 +556,8 @@ no lag vs.~336 hours).
 Second, we compared each adjacent lagged model (i.e., 24 hours vs 72
 hours, 72 hours vs.~168 hours, and 168 hours vs.~336 hours). These
 comparisons allow us to determine the probability that the lagged models
-systematically degrade as predictions are made further into the future.
+systematically differed as predictions were made further into the
+future.
 
 For both sets of model comparisons determined the probability that the
 models' performances differed systematically from each other by
