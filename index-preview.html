@@ -1022,6 +1022,8 @@ Figure&nbsp;2: Difference in auROCs by demographic group
 </section>
 <section id="feature-importance-1" class="level3">
 <h3 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h3>
+<p>Global importance (mean |Shapley value|) for feature categories for each model appears in Panel A of <a href="#fig-shap" class="quarto-xref">Figure&nbsp;3</a>. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across window widths.</p>
+<p>Sina plots of local Shapley values show the influence of feature categories on individual observations by model (<a href="#fig-shap" class="quarto-xref">Figure&nbsp;3</a>, Panels B-D). The variance in feature importance for past use is widest in our immediate (no lag) model. Additionally, all EMA item categories appear to impact lapse probability for specific individuals at specific times even if they are not globally important across all observations.</p>
 <div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-shap">
 <div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div id="cell-fig-shap" class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>panel_shap_global <span class="op">+</span> panel_shap_local_0 <span class="op">+</span> panel_shap_local_24 <span class="op">+</span> </span>
@@ -1551,7 +1553,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"openEffect":"zoom","closeEffect":"zoom","descPosition":"bottom","loop":false,"selector":".lightbox"});
+</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"selector":".lightbox","loop":false,"openEffect":"zoom","closeEffect":"zoom","descPosition":"bottom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

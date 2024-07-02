@@ -253,6 +253,11 @@ The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprint
 
 ### Feature Importance
 
+Global importance (mean |Shapley value|) for feature categories for each model appears in Panel A of @fig-shap. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across window widths. 
+
+Sina plots of local Shapley values show the influence of feature categories on individual observations by model (@fig-shap, Panels B-D). The variance in feature importance for past use is widest in our immediate (no lag) model. Additionally, all EMA item categories appear to impact lapse probability for specific individuals at specific times even if they are not globally important across all observations.
+
+
 {{< embed notebooks/mak_figures.qmd#fig-shap >}}
 
 ## Discussion
