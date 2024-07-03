@@ -12,7 +12,7 @@ format:
 params:
   study: "lag"
   window: "1week"
-  lead: 168
+  lead: 0
   version: "v1"
   cv: "nested"
   model: "main" # "main" or "baseline"
@@ -491,9 +491,9 @@ if(!file.exists(here::here(path_models, str_c("outer_metrics_",
 
 ```{r}
 shaps_v1 <- tibble()
-split_num <- 25
+split_num <- 1
 
-while (split_num <= 30) {
+while (split_num <= 10) {
   d_in <-
     training(splits$splits[[split_num]]) |>
     select(-id_obs)  # not used for training; only needed in d_out to tag for later joins
