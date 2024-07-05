@@ -12,7 +12,7 @@ format:
 params:
   study: "lag"
   window: "1week"
-  lead: 336
+  lead: 0
   version: "v1"
   cv: "nested"
   model: "main" # "main" or "baseline"

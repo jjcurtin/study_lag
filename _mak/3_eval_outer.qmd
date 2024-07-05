@@ -373,25 +373,25 @@ f <- pr_data |>
 #### Grouped Features
 
 ```{r read_shaps_grp}
-# shapsgrp_out <- readRDS(here::here(path_models, str_c("outer_shapsgrp_", 
-#                                                       window, "_", lead, "_", 
-#                                                       version, "_", cv, "_", 
-#                                                       model, ".rds")))
+shapsgrp_out <- readRDS(here::here(path_models, str_c("outer_shapsgrp_",
+                                                      window, "_", lead, "_",
+                                                      version, "_", cv, "_",
+                                                      model, ".rds")))
 ```
 
 
 Global importance SHAP plot for grouped features
 ```{r shap_grouped_plot}
-# shapsgrp_out %>% 
-#   group_by(variable_grp) %>% 
-#   summarize(mean_value = mean(abs(value)), .groups = "drop") %>% 
-#   arrange(mean_value) %>% 
-#   mutate(variable_grp = factor(variable_grp),
-#          variable_grp = fct_inorder(variable_grp)) %>% 
-#   ggplot(mapping = aes(x = variable_grp, y = mean_value)) +
-#   geom_point(size = 2, color = "red") +
-#   geom_segment(aes(x = variable_grp, y = mean_value, xend = variable_grp), 
-#                yend = 0, colour = "grey50")  +
-#   ylab("Mean |SHAP| value") +
-#   coord_flip()
+shapsgrp_out %>%
+  group_by(variable_grp) %>%
+  summarize(mean_value = mean(abs(value)), .groups = "drop") %>%
+  arrange(mean_value) %>%
+  mutate(variable_grp = factor(variable_grp),
+         variable_grp = fct_inorder(variable_grp)) %>%
+  ggplot(mapping = aes(x = variable_grp, y = mean_value)) +
+  geom_point(size = 2, color = "red") +
+  geom_segment(aes(x = variable_grp, y = mean_value, xend = variable_grp),
+               yend = 0, colour = "grey50")  +
+  ylab("Mean |SHAP| value") +
+  coord_flip()
 ```
