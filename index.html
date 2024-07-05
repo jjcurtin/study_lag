@@ -767,8 +767,8 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 </section>
 <section id="model-evaluation-1" class="level3">
 <h3 class="anchored" data-anchor-id="model-evaluation-1">Model Evaluation</h3>
-<p>The median auROC across the 30 test sets for our baseline model was high (median=0.892, IQR=0.046), consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=0.882, IQR=0.042), 72 hour lag (median=0.873, IQR=0.057), 168 hour lag (median=0.857, IQR=0.061), and 336 hour lag (median=0.857, IQR=0.064).</p>
-<p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.894 (baseline), 0.887 (24 hour lag), 0.875 (72 hour lag), 0.872 (168 hour lag), and 0.850 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline[0.877-0.908], 24 hour lag[0.869-0.902], 72 hour lag[0.856-0.892], 168 hour lag[0.852-0.888], 336 hour lag[0.828-0.870]. <a href="#fig-auroc" class="quarto-xref">Figure&nbsp;1</a> displays these median auROCs and 95% Bayesian CIs by model.</p>
+<p>The median auROC across the 30 test sets for our baseline model was high (median=0.893, IQR=0.045), consistent with our previous study. Performance across our lagged models was also high for the 24 hour lag (median=0.882, IQR=0.039), 72 hour lag (median=0.868, IQR=0.057), 168 hour lag (median=0.860, IQR=0.062), and 336 hour lag (median=0.856, IQR=0.062).</p>
+<p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.893 (baseline), 0.887 (24 hour lag), 0.875 (72 hour lag), 0.871 (168 hour lag), and 0.852 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline[0.876-0.908], 24 hour lag[0.869-0.903], 72 hour lag[0.855-0.892], 168 hour lag[0.850-0.889], 336 hour lag[0.830-0.872]. <a href="#fig-auroc" class="quarto-xref">Figure&nbsp;1</a> displays these median auROCs and 95% Bayesian CIs by model.</p>
 <div class="quarto-embed-nb-cell">
 <div id="cell-fig-auroc" class="cell">
 <div class="cell-output cell-output-display">
@@ -790,11 +790,11 @@ Figure&nbsp;1: Posterior probability for auROC and Bayesian credible intervals b
 <h3 class="anchored" data-anchor-id="model-comparisons-1">Model Comparisons</h3>
 <section id="baseline-contrasts" class="level4">
 <h4 class="anchored" data-anchor-id="baseline-contrasts">Baseline Contrasts</h4>
-<p>The median decrease in auROC for the baseline vs.&nbsp;24 hour lag model was 0.007 (95% CI=[0.001-0.012]), yielding a significant probability of 0.977 that the lagged model had worse performance. The median decrease in auROC for the baseline vs.&nbsp;72 hour model was 0.018 (95% CI=[0.012-0.024]), yielding a significant probability of 1.000 that the lagged model had worse performance. The median increase in auROC for the baseline vs.&nbsp;168 hour lag model was 0.022 (95% CI=[0.016-0.028]), yielding a significant probability of 1.000 that the lagged model had worse performance. The median increase in auROC for the baseline vs.&nbsp;336 hour lag model was 0.043 (95% CI=[0.036-0.051]), yielding a significant probability of 1.000 that the lagged model had worse performance.</p>
+<p>The median decrease in auROC for the baseline vs.&nbsp;24 hour lag model was 0.006 (95% CI=[0.000-0.012]), yielding a significant probability of 0.960 that the lagged model had worse performance. The median decrease in auROC for the baseline vs.&nbsp;72 hour model was 0.018 (95% CI=[0.012-0.025]), yielding a significant probability of 1.000 that the lagged model had worse performance. The median increase in auROC for the baseline vs.&nbsp;168 hour lag model was 0.023 (95% CI=[0.016-0.029]), yielding a significant probability of 1.000 that the lagged model had worse performance. The median increase in auROC for the baseline vs.&nbsp;336 hour lag model was 0.041 (95% CI=[0.033-0.049]), yielding a significant probability of 1.000 that the lagged model had worse performance.</p>
 </section>
 <section id="adjacent-contrasts" class="level4">
 <h4 class="anchored" data-anchor-id="adjacent-contrasts">Adjacent Contrasts</h4>
-<p>The median decrease in auROC for the 24 hour vs.&nbsp;72 hour lag model was 0.012 (95% CI=[0.006-0.018]), yielding a significant probability of 1.000 that the 72 hour lag model had worse performance than the 24 hour lag model. The median decrease in auROC for the 72 hour vs.&nbsp;168 hour lag model was 0.004 (95% CI=[-0.002-0.010]), yielding a non-significant probability of 0.840 that the 168 hour lag model had worse performance than the 72 hour lag model. The median decrease in auROC for the 168 hour vs.&nbsp;336 hour lag model was 0.021 (95% CI=[0.014-0.028]), yielding a significant probability of 1.000 that the 336 hour lag model had worse performance than the 168 hour lag model.</p>
+<p>The median decrease in auROC for the 24 hour vs.&nbsp;72 hour lag model was 0.012 (95% CI=[0.006-0.019]), yielding a significant probability of 1.000 that the 72 hour lag model had worse performance than the 24 hour lag model. The median decrease in auROC for the 72 hour vs.&nbsp;168 hour lag model was 0.004 (95% CI=[-0.002-0.011]), yielding a non-significant probability of 0.865 that the 168 hour lag model had worse performance than the 72 hour lag model. The median decrease in auROC for the 168 hour vs.&nbsp;336 hour lag model was 0.018 (95% CI=[0.011-0.025]), yielding a significant probability of 1.000 that the 336 hour lag model had worse performance than the 168 hour lag model.</p>
 </section>
 </section>
 <section id="fairness-benchmarks-1" class="level3">
@@ -1347,7 +1347,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","loop":false,"closeEffect":"zoom","selector":".lightbox","descPosition":"bottom"});
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","openEffect":"zoom","closeEffect":"zoom","selector":".lightbox","loop":false});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
