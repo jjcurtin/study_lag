@@ -23,31 +23,31 @@ path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
 
 ```{r}
 test_metrics_0 <- read_csv(here::here(path_models_lag, 
-                                        "test_metrics_1week_0_v2_nested.csv"), 
+                                        "test_metrics_1week_0_v1_nested.csv"), 
                               col_types = cols()) |> 
   filter(.metric == "roc_auc") |> 
   select(outer_split_num, "lag0" = .estimate)
 
 test_metrics_24 <- read_csv(here::here(path_models_lag, 
-                                       "test_metrics_1week_24_v2_nested.csv"),
+                                       "test_metrics_1week_24_v1_nested.csv"),
                              col_types = cols()) |> 
   filter(.metric == "roc_auc") |> 
   select(outer_split_num, "lag24" = .estimate)
 
 test_metrics_72 <- read_csv(here::here(path_models_lag, 
-                                        "test_metrics_1week_72_v2_nested.csv"),
+                                        "test_metrics_1week_72_v1_nested.csv"),
                               col_types = cols()) |> 
   filter(.metric == "roc_auc") |> 
   select(outer_split_num, "lag72" = .estimate)
 
 test_metrics_168 <- read_csv(here::here(path_models_lag, 
-                                        "test_metrics_1week_168_v2_nested.csv"), 
+                                        "test_metrics_1week_168_v1_nested.csv"), 
                               col_types = cols()) |> 
   filter(.metric == "roc_auc") |> 
   select(outer_split_num, "lag168" = .estimate)
 
 test_metrics_336 <- read_csv(here::here(path_models_lag, 
-                                       "test_metrics_1week_336_v2_nested.csv"),
+                                       "test_metrics_1week_336_v1_nested.csv"),
                              col_types = cols()) |> 
   filter(.metric == "roc_auc") |> 
   select(outer_split_num, "lag336" = .estimate)
