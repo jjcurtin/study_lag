@@ -1,0 +1,280 @@
+---
+title: "Supplemental Feature Plots"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+
+### Set Up Environment
+
+
+```{r, packages_workflow}
+#| message: false
+#| warning: false
+
+# handle conflicts
+options(conflicts.policy = "depends.ok")
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_ml.R?raw=true")
+tidymodels_conflictRules()
+```
+
+
+```{r, packages_script}
+#| message: false
+#| warning: false
+
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(tidymodels))
+library(kableExtra, exclude = "group_rows")
+
+
+theme_set(theme_classic()) 
+```
+
+
+```{r source_functions}
+#| output: false
+
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
+# CHTC support functions
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/chtc/static_files/fun_chtc.R?raw=true")
+```
+
+```{r, absolute_paths}
+path_processed <- format_path(str_c("studydata/risk/data_processed/lag"))
+path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
+path_chtc <- format_path(str_c("studydata/risk/chtc/lag/train_xgboost_1week_0lag_nested_1_x_10_3_x_10_v2_main/input"))
+
+source(here::here(path_chtc, "training_controls.R"))
+```
+
+
+### Read in Data
+
+Raw Shapley values - (testing with 0 lag models first)
+```{r}
+shap_0 <- read_rds(here::here(path_models_lag, 
+                              "outer_shaps_1week_0_v1_nested_main.rds")) |> 
+  glimpse()
+```
+
+
+Read in features
+```{r}
+feat_0 <- read_csv(here::here(path_processed, "features_0lag_v1.csv.xz"),
+                   show_col_types = FALSE) |> 
+  glimpse()
+```
+
+### Match raw feature to shaps
+
+```{r}
+feat_0 <- format_data(feat_0)  
+rec <- recipe(y ~ ., data = feat_0) |>
+    step_rm(subid) |>  
+    step_impute_median(all_numeric_predictors()) |> 
+    step_impute_mode(all_nominal_predictors()) |> 
+    step_zv(all_predictors()) |> 
+    step_dummy(all_factor_predictors()) |> 
+    prep()
+
+feat_0 <- bake(rec, new_data = NULL)
+```
+
+
+```{r}
+feat_0 <- feat_0 |> 
+  rename(id_obs = label_num) |> 
+  select(-y)
+
+feat_0 <- feat_0 |> 
+  pivot_longer(cols = !starts_with("id"), names_to = "variable", values_to = "feature_score")
+```
+
+Update names of features to match SHAP
+```{r}
+clean_feature_names <- function(feat_name){
+  new_name <- gsub(".l0", "", feat_name)
+  new_name <- gsub("rratecount.count", "raw_count", new_name)
+  new_name <- gsub("dratecount.count", "diff_count", new_name)
+  new_name <- gsub("drecent_response", "diff_recent", new_name)
+  new_name <- gsub("rrecent_response", "raw_recent", new_name)
+  new_name <- gsub("dmin_response", "diff_min", new_name)
+  new_name <- gsub("rmin_response", "raw_min", new_name)
+  new_name <- gsub("dmax_response", "diff_max", new_name)
+  new_name <- gsub("rmax_response", "raw_max", new_name)
+  new_name <- gsub("dmedian_response", "diff_median", new_name)
+  new_name <- gsub("rmedian_response", "raw_median", new_name)
+  new_name <- gsub("label_", "", new_name)
+  new_name <- gsub("demo_", "", new_name)
+  new_name <- gsub("High.school.or.less", "high.school", new_name)
+  new_name <- gsub("Some.college", "some.college", new_name)
+  new_name <- gsub("Mon", "mon", new_name)
+  new_name <- gsub("Tue", "tue", new_name)
+  new_name <- gsub("Wed", "wed", new_name)
+  new_name <- gsub("Thu", "thu", new_name)
+  new_name <- gsub("Fri", "fri", new_name)
+  new_name <- gsub("Sat", "sat", new_name)
+  new_name <- gsub("Sun", "sun", new_name)
+  new_name <- gsub("Never.Married", "never.married", new_name)
+  new_name <- gsub("Never.Other", "never.other", new_name)
+  new_name <- gsub("White.Caucasian", "caucasian", new_name)
+  new_name <- gsub("Male", "male", new_name)
+  new_name <- gsub("p12.raw_count.lapse", "lapse.p12.raw_count", new_name)
+  new_name <- gsub("p24.raw_count.lapse", "lapse.p24.raw_count", new_name)
+  new_name <- gsub("p48.raw_count.lapse", "lapse.p48.raw_count", new_name)
+  new_name <- gsub("p72.raw_count.lapse", "lapse.p72.raw_count", new_name)
+  new_name <- gsub("p168.raw_count.lapse", "lapse.p168.raw_count", new_name)
+  new_name <- gsub("p12.diff_count.lapse", "lapse.p12.diff_count", new_name)
+  new_name <- gsub("p24.diff_count.lapse", "lapse.p24.diff_count", new_name)
+  new_name <- gsub("p48.diff_count.lapse", "lapse.p48.diff_count", new_name)
+  new_name <- gsub("p72.diff_count.lapse", "lapse.p72.diff_count", new_name)
+  new_name <- gsub("p168.diff_count.lapse", "lapse.p168.diff_count", new_name)
+  new_name <- gsub("p12.raw_count.ema", "missing.p12.raw_count", new_name)
+  new_name <- gsub("p24.raw_count.ema", "missing.p24.raw_count", new_name)
+  new_name <- gsub("p48.raw_count.ema", "missing.p48.raw_count", new_name)
+  new_name <- gsub("p72.raw_count.ema", "missing.p72.raw_count", new_name)
+  new_name <- gsub("p168.raw_count.ema", "missing.p168.raw_count", new_name)
+  new_name <- gsub("p12.diff_count.ema", "missing.p12.diff_count", new_name)
+  new_name <- gsub("p24.diff_count.ema", "missing.p24.diff_count", new_name)
+  new_name <- gsub("p48.diff_count.ema", "missing.p48.diff_count", new_name)
+  new_name <- gsub("p72.diff_count.ema", "missing.p72.diff_count", new_name)
+  new_name <- gsub("p168.diff_count.ema", "missing.p168.diff_count", new_name)
+  return(new_name) 
+}
+
+feat_0 <- feat_0 |> 
+  mutate(variable = fct_relabel(variable, clean_feature_names))
+```
+
+```{r}
+nrow(shap_0)
+nrow(feat_0)
+```
+
+Pull out one subject as example
+
+```{r}
+feat_test <- feat_0 |> 
+  filter(id_obs == 1)
+
+shap_test <- shap_0 |> 
+  filter(id_obs == 1)
+
+test <- feat_test |> 
+  left_join(shap_test, by = c("id_obs", "variable"))
+```
+
+Not sure why there are two missing shap values for features for this observation?
+
+For now combine will combine feature scores with shaps using right join
+
+```{r}
+shap_feat <- feat_0 |> 
+  right_join(shap_0, by = c("id_obs", "variable")) |> 
+  glimpse()
+```
+
+### Standardize feature scores
+
+```{r}
+shap_feat <- shap_feat |> 
+  group_by(variable) |> 
+  mutate(feature_score_z = (feature_score - mean(feature_score))/sd(feature_score))
+```
+
+### Group categories
+
+Sum of shap values and mean of z-scored feature values
+
+```{r}
+shap_feat_grp <- shap_feat |>  
+    mutate(variable_grp = if_else(str_detect(variable, "lapse."),
+                           "past use (EMA item)",
+                           variable),
+           variable_grp = if_else(str_detect(variable_grp, "ema_2"),
+                           "craving (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_3"),
+                           "past risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_4"),
+                           "past stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_5"),
+                           "past pleasant event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_6"),
+                           "valence (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_7"),
+                           "arousal (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_8"),
+                           "future risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_9"),
+                           "future stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_10"),
+                           "future efficacy (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "missing."),
+                           "missing surveys (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "day"),
+                           "lapse day (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "hour"),
+                           "lapse hour (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "age"),
+                           "age (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "sex"),
+                           "sex (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "marital"),
+                           "marital (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "race"),
+                           "race (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "educ"),
+                           "education (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "income"),
+                           "income (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "employ"),
+                           "employment (demographic)",
+                           variable_grp)) |> 
+    mutate(variable_grp = factor(variable_grp)) |> 
+    group_by(id_obs, variable_grp) |>  # values are already averaged across repeats
+    summarize(value = sum(value),
+              feature_score_z_mean = mean(feature_score_z))
+```
+
+
+```{r}
+ head(shap_feat_grp, n = 20)
+```
+
+### Save out tibble
+
+```{r}
+shap_feat_grp |> 
+  write_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_1week_0_v1_nested_main.rds")) 
+```
+
+
+
+
