@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
     <meta name="author" content="Kendra Wyant">
-    <meta name="dcterms.date" content="2024-07-04">
+    <meta name="dcterms.date" content="2024-07-16">
 
-    <title>Fairness analyses</title>
+    <title>Supplemental Feature Plots</title>
     <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3175,15 +3175,15 @@ vertical-align: -.125em;
     <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
       
       <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link" href><i class="bi bi-caret-left"></i> Back to Article</a>
-      <h6><i class="bi bi-journal-code"></i> Fairness analyses</h6>
+      <h6><i class="bi bi-journal-code"></i> Supplemental Feature Plots</h6>
 
-            <a href="../notebooks/fairness.qmd" class="btn btn-primary quarto-download-embed" download="fairness.qmd">Download Source</a>
+            <a href="../notebooks/mak_feature_plots.qmd" class="btn btn-primary quarto-download-embed" download="mak_feature_plots.qmd">Download Source</a>
           </div>
 
      <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Fairness analyses</h1>
+      <h1 class="title">Supplemental Feature Plots</h1>
           </div>
 
     
@@ -3202,7 +3202,7 @@ vertical-align: -.125em;
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">July 4, 2024</p>
+              <p class="date">July 16, 2024</p>
             </div>
           </div>
           
@@ -3224,8 +3224,11 @@ vertical-align: -.125em;
    
   <ul>
   <li><a href="#set-up-environment" id="toc-set-up-environment" class="nav-link active" data-scroll-target="#set-up-environment">Set Up Environment</a></li>
-  <li><a href="#read-in-model-performance-metrics" id="toc-read-in-model-performance-metrics" class="nav-link" data-scroll-target="#read-in-model-performance-metrics">Read in Model Performance Metrics</a></li>
-  <li><a href="#get-median-posterior-probabilities-and-contrast-analyses" id="toc-get-median-posterior-probabilities-and-contrast-analyses" class="nav-link" data-scroll-target="#get-median-posterior-probabilities-and-contrast-analyses">Get Median Posterior Probabilities and contrast analyses</a></li>
+  <li><a href="#read-in-data" id="toc-read-in-data" class="nav-link" data-scroll-target="#read-in-data">Read in Data</a></li>
+  <li><a href="#match-raw-feature-to-shaps" id="toc-match-raw-feature-to-shaps" class="nav-link" data-scroll-target="#match-raw-feature-to-shaps">Match raw feature to shaps</a></li>
+  <li><a href="#standardize-feature-scores" id="toc-standardize-feature-scores" class="nav-link" data-scroll-target="#standardize-feature-scores">Standardize feature scores</a></li>
+  <li><a href="#group-categories" id="toc-group-categories" class="nav-link" data-scroll-target="#group-categories">Group categories</a></li>
+  <li><a href="#save-out-tibble" id="toc-save-out-tibble" class="nav-link" data-scroll-target="#save-out-tibble">Save out tibble</a></li>
   </ul>
 </nav>
 </div>
@@ -3250,11 +3253,10 @@ vertical-align: -.125em;
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidymodels))</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyposterior))</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra, <span class="at">exclude =</span> <span class="st">&quot;group_rows&quot;</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra, <span class="at">exclude =</span> <span class="st">&quot;group_rows&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_classic</span>()) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_classic</span>()) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
@@ -3271,1736 +3273,559 @@ vertical-align: -.125em;
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>path_processed <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="fu">str_c</span>(<span class="st">&quot;studydata/risk/data_processed/lag&quot;</span>))</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>path_models_lag <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="fu">str_c</span>(<span class="st">&quot;studydata/risk/models/lag&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>path_models_lag <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="fu">str_c</span>(<span class="st">&quot;studydata/risk/models/lag&quot;</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>path_chtc <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="fu">str_c</span>(<span class="st">&quot;studydata/risk/chtc/lag/train_xgboost_1week_0lag_nested_1_x_10_3_x_10_v2_main/input&quot;</span>))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(path_chtc, <span class="st">&quot;training_controls.R&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
 </section>
-<section id="read-in-model-performance-metrics" class="level3">
-<h3 class="anchored" data-anchor-id="read-in-model-performance-metrics">Read in Model Performance Metrics</h3>
+<section id="read-in-data" class="level3">
+<h3 class="anchored" data-anchor-id="read-in-data">Read in Data</h3>
+<p>Raw Shapley values - (testing with 0 lag models first)</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>auroc_dem_0 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;test_auroc_dem_6_x_5_1week_0_v1_nested.csv&quot;</span>),</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>),</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">10</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>auroc_dem_24 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;test_auroc_dem_6_x_5_1week_24_v1_nested.csv&quot;</span>),</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>),</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">10</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num)</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>auroc_dem_72 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;test_auroc_dem_6_x_5_1week_72_v1_nested.csv&quot;</span>),</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>),</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">10</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num)</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>auroc_dem_168 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;test_auroc_dem_6_x_5_1week_168_v1_nested.csv&quot;</span>),</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>),</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">10</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num)</span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>auroc_dem_336 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;test_auroc_dem_6_x_5_1week_336_v1_nested.csv&quot;</span>),</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>                      <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>),</span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">10</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>shap_0 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;outer_shaps_1week_0_v1_nested_main.rds&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 77,138,381
+Columns: 5
+Groups: id_obs [270,081]
+$ id_obs     &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ variable   &lt;fct&gt; lapse.p12.diff_count, lapse.p168.raw_count, lapse.p48.raw_c…
+$ value      &lt;dbl&gt; -0.1202097358, -0.0959646162, -0.0357964309, -0.0459769163,…
+$ rfvalue    &lt;dbl&gt; 0.016984509, -0.405306733, -0.296854932, -0.335092209, -0.0…
+$ mean_value &lt;dbl&gt; 0.137626631, 0.138602994, 0.053141532, 0.065154397, 0.06426…</code></pre>
+</div>
+</div></div>
+<p>Read in features</p>
+<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>feat_0 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_processed, <span class="st">&quot;features_0lag_v1.csv.xz&quot;</span>),</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 270,081
+Columns: 285
+$ label_num                       &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,…
+$ subid                           &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ dttm_label                      &lt;dttm&gt; 2017-03-03 06:00:00, 2017-03-03 07:00…
+$ lapse                           &lt;chr&gt; &quot;no&quot;, &quot;no&quot;, &quot;no&quot;, &quot;no&quot;, &quot;no&quot;, &quot;no&quot;, &quot;n…
+$ label_day                       &lt;chr&gt; &quot;Fri&quot;, &quot;Fri&quot;, &quot;Fri&quot;, &quot;Fri&quot;, &quot;Fri&quot;, &quot;Fr…
+$ label_hour                      &lt;chr&gt; &quot;other&quot;, &quot;other&quot;, &quot;other&quot;, &quot;other&quot;, &quot;o…
+$ p12.l0.rratecount.count.lapse   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ p12.l0.dratecount.count.lapse   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ p24.l0.rratecount.count.lapse   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ p24.l0.dratecount.count.lapse   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ p48.l0.rratecount.count.lapse   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ p48.l0.dratecount.count.lapse   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ p72.l0.rratecount.count.lapse   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ p72.l0.dratecount.count.lapse   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ p168.l0.rratecount.count.lapse  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ p168.l0.dratecount.count.lapse  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ p12.l0.rratecount.count.ema     &lt;dbl&gt; 0.16666667, 0.16666667, 0.16666667, 0.…
+$ p12.l0.dratecount.count.ema     &lt;dbl&gt; 0.04166667, 0.04666667, 0.05128205, -0…
+$ p24.l0.rratecount.count.ema     &lt;dbl&gt; 0.12500000, 0.12500000, 0.12500000, 0.…
+$ p24.l0.dratecount.count.ema     &lt;dbl&gt; 0.000000000, 0.005000000, 0.009615385,…
+$ p48.l0.rratecount.count.ema     &lt;dbl&gt; 0.1250000, 0.1200000, 0.1153846, 0.111…
+$ p48.l0.dratecount.count.ema     &lt;dbl&gt; 0.00000000, 0.00000000, 0.00000000, 0.…
+$ p72.l0.rratecount.count.ema     &lt;dbl&gt; 0.1250000, 0.1200000, 0.1153846, 0.111…
+$ p72.l0.dratecount.count.ema     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ p168.l0.rratecount.count.ema    &lt;dbl&gt; 0.1250000, 0.1200000, 0.1153846, 0.111…
+$ p168.l0.dratecount.count.ema    &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_2.p0.l0.rrecent_response    &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1,…
+$ ema_2.p0.l0.drecent_response    &lt;dbl&gt; -2.333333, -2.333333, -2.333333, -2.33…
+$ ema_3.p0.l0.rrecent_response    &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_3.p0.l0.drecent_response    &lt;dbl&gt; -5.00, -5.00, -5.00, -5.00, -5.00, -5.…
+$ ema_4.p0.l0.rrecent_response    &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_4.p0.l0.drecent_response    &lt;dbl&gt; -4.666667, -4.666667, -4.666667, -4.66…
+$ ema_5.p0.l0.rrecent_response    &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 8, 8, 0, 0, 0, 0,…
+$ ema_5.p0.l0.drecent_response    &lt;dbl&gt; -2.666667, -2.666667, -2.666667, -2.66…
+$ ema_6.p0.l0.rrecent_response    &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 6, 6, 7, 7, 7, 7,…
+$ ema_6.p0.l0.drecent_response    &lt;dbl&gt; 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.…
+$ ema_7.p0.l0.rrecent_response    &lt;dbl&gt; 7, 7, 7, 7, 7, 7, 7, 3, 3, 8, 8, 8, 8,…
+$ ema_7.p0.l0.drecent_response    &lt;dbl&gt; -0.3333333, -0.3333333, -0.3333333, -0…
+$ ema_8.p0.l0.rrecent_response    &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_8.p0.l0.drecent_response    &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_9.p0.l0.rrecent_response    &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 7, 7, 7, 7, 7, 7,…
+$ ema_9.p0.l0.drecent_response    &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,…
+$ ema_10.p0.l0.rrecent_response   &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ ema_10.p0.l0.drecent_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_8.p48.l0.rmedian_response   &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_8.p48.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_8.p72.l0.rmedian_response   &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_8.p72.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_8.p168.l0.rmedian_response  &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_8.p168.l0.dmedian_response  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_9.p48.l0.rmedian_response   &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6,…
+$ ema_9.p48.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_9.p72.l0.rmedian_response   &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6,…
+$ ema_9.p72.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_9.p168.l0.rmedian_response  &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6,…
+$ ema_9.p168.l0.dmedian_response  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_10.p48.l0.rmedian_response  &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ ema_10.p48.l0.dmedian_response  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_10.p72.l0.rmedian_response  &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ ema_10.p72.l0.dmedian_response  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_10.p168.l0.rmedian_response &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ ema_10.p168.l0.dmedian_response &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_2.p12.l0.rmedian_response   &lt;dbl&gt; 3.0, 3.0, 3.0, 1.0, 1.0, 1.0, 1.0, 1.5…
+$ ema_2.p12.l0.dmedian_response   &lt;dbl&gt; -1.0, -1.0, -1.0, -3.0, -3.0, -3.0, -3…
+$ ema_2.p24.l0.rmedian_response   &lt;dbl&gt; 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 3.0…
+$ ema_2.p24.l0.dmedian_response   &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0…
+$ ema_2.p48.l0.rmedian_response   &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 3, 3, 2, 2, 2, 2,…
+$ ema_2.p48.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_2.p72.l0.rmedian_response   &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 3, 3, 2, 2, 2, 2,…
+$ ema_2.p72.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_2.p168.l0.rmedian_response  &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 3, 3, 2, 2, 2, 2,…
+$ ema_2.p168.l0.dmedian_response  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_3.p12.l0.rmedian_response   &lt;dbl&gt; 7.5, 7.5, 7.5, 4.0, 4.0, 4.0, 4.0, 4.0…
+$ ema_3.p12.l0.dmedian_response   &lt;dbl&gt; -3.5, -3.5, -3.5, -7.0, -7.0, -7.0, -7…
+$ ema_3.p24.l0.rmedian_response   &lt;dbl&gt; 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11…
+$ ema_3.p24.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_3.p48.l0.rmedian_response   &lt;dbl&gt; 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11…
+$ ema_3.p48.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_3.p72.l0.rmedian_response   &lt;dbl&gt; 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11…
+$ ema_3.p72.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_3.p168.l0.rmedian_response  &lt;dbl&gt; 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11…
+$ ema_3.p168.l0.dmedian_response  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_4.p12.l0.rmedian_response   &lt;dbl&gt; 7, 7, 7, 4, 4, 4, 4, 4, 4, 4, 2, 2, 2,…
+$ ema_4.p12.l0.dmedian_response   &lt;dbl&gt; -3, -3, -3, -6, -6, -6, -6, -3, -3, 0,…
+$ ema_4.p24.l0.rmedian_response   &lt;dbl&gt; 10, 10, 10, 10, 10, 10, 10, 7, 7, 4, 4…
+$ ema_4.p24.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_4.p48.l0.rmedian_response   &lt;dbl&gt; 10, 10, 10, 10, 10, 10, 10, 7, 7, 4, 4…
+$ ema_4.p48.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_4.p72.l0.rmedian_response   &lt;dbl&gt; 10, 10, 10, 10, 10, 10, 10, 7, 7, 4, 4…
+$ ema_4.p72.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_4.p168.l0.rmedian_response  &lt;dbl&gt; 10, 10, 10, 10, 10, 10, 10, 7, 7, 4, 4…
+$ ema_4.p168.l0.dmedian_response  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_5.p12.l0.rmedian_response   &lt;dbl&gt; 6, 6, 6, 4, 4, 4, 4, 6, 6, 4, 4, 4, 4,…
+$ ema_5.p12.l0.dmedian_response   &lt;dbl&gt; -2, -2, -2, -4, -4, -4, -4, -2, -2, -4…
+$ ema_5.p24.l0.rmedian_response   &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 6, 6, 6,…
+$ ema_5.p24.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -2, …
+$ ema_5.p48.l0.rmedian_response   &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_5.p48.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_5.p72.l0.rmedian_response   &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_5.p72.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_5.p168.l0.rmedian_response  &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_5.p168.l0.dmedian_response  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_6.p12.l0.rmedian_response   &lt;dbl&gt; 7.5, 7.5, 7.5, 8.0, 8.0, 8.0, 8.0, 7.0…
+$ ema_6.p12.l0.dmedian_response   &lt;dbl&gt; 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 0.5…
+$ ema_6.p24.l0.rmedian_response   &lt;dbl&gt; 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 6.5…
+$ ema_6.p24.l0.dmedian_response   &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0…
+$ ema_6.p48.l0.rmedian_response   &lt;dbl&gt; 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 6.5…
+$ ema_6.p48.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_6.p72.l0.rmedian_response   &lt;dbl&gt; 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 6.5…
+$ ema_6.p72.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_6.p168.l0.rmedian_response  &lt;dbl&gt; 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 6.5…
+$ ema_6.p168.l0.dmedian_response  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_7.p12.l0.rmedian_response   &lt;dbl&gt; 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 5.0…
+$ ema_7.p12.l0.dmedian_response   &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.…
+$ ema_7.p24.l0.rmedian_response   &lt;dbl&gt; 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0…
+$ ema_7.p24.l0.dmedian_response   &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0…
+$ ema_7.p48.l0.rmedian_response   &lt;dbl&gt; 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,…
+$ ema_7.p48.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_7.p72.l0.rmedian_response   &lt;dbl&gt; 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,…
+$ ema_7.p72.l0.dmedian_response   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_7.p168.l0.rmedian_response  &lt;dbl&gt; 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,…
+$ ema_7.p168.l0.dmedian_response  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_8.p48.l0.rmax_response      &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_8.p48.l0.dmax_response      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_8.p72.l0.rmax_response      &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_8.p72.l0.dmax_response      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_8.p168.l0.rmax_response     &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_8.p168.l0.dmax_response     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_9.p48.l0.rmax_response      &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 7, 7, 7, 7, 7, 7,…
+$ ema_9.p48.l0.dmax_response      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,…
+$ ema_9.p72.l0.rmax_response      &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 7, 7, 7, 7, 7, 7,…
+$ ema_9.p72.l0.dmax_response      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,…
+$ ema_9.p168.l0.rmax_response     &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 7, 7, 7, 7, 7, 7,…
+$ ema_9.p168.l0.dmax_response     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,…
+$ ema_10.p48.l0.rmax_response     &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ ema_10.p48.l0.dmax_response     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_10.p72.l0.rmax_response     &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ ema_10.p72.l0.dmax_response     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_10.p168.l0.rmax_response    &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ ema_10.p168.l0.dmax_response    &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_2.p12.l0.rmax_response      &lt;dbl&gt; 5, 5, 5, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2,…
+$ ema_2.p12.l0.dmax_response      &lt;dbl&gt; 1.666667, 1.666667, 1.666667, -2.33333…
+$ ema_2.p24.l0.rmax_response      &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_2.p24.l0.dmax_response      &lt;dbl&gt; 1.666667, 1.666667, 1.666667, 1.666667…
+$ ema_2.p48.l0.rmax_response      &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_2.p48.l0.dmax_response      &lt;dbl&gt; 1.666667, 1.666667, 1.666667, 1.666667…
+$ ema_2.p72.l0.rmax_response      &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_2.p72.l0.dmax_response      &lt;dbl&gt; 1.666667, 1.666667, 1.666667, 1.666667…
+$ ema_2.p168.l0.rmax_response     &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_2.p168.l0.dmax_response     &lt;dbl&gt; 1.666667, 1.666667, 1.666667, 1.666667…
+$ ema_3.p12.l0.rmax_response      &lt;dbl&gt; 11, 11, 11, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ ema_3.p12.l0.dmax_response      &lt;dbl&gt; 2.00, 2.00, 2.00, -5.00, -5.00, -5.00,…
+$ ema_3.p24.l0.rmax_response      &lt;dbl&gt; 12, 12, 12, 12, 12, 12, 12, 12, 12, 12…
+$ ema_3.p24.l0.dmax_response      &lt;dbl&gt; 3.00, 3.00, 3.00, 3.00, 3.00, 3.00, 3.…
+$ ema_3.p48.l0.rmax_response      &lt;dbl&gt; 12, 12, 12, 12, 12, 12, 12, 12, 12, 12…
+$ ema_3.p48.l0.dmax_response      &lt;dbl&gt; 3.00, 3.00, 3.00, 3.00, 3.00, 3.00, 3.…
+$ ema_3.p72.l0.rmax_response      &lt;dbl&gt; 12, 12, 12, 12, 12, 12, 12, 12, 12, 12…
+$ ema_3.p72.l0.dmax_response      &lt;dbl&gt; 3.00, 3.00, 3.00, 3.00, 3.00, 3.00, 3.…
+$ ema_3.p168.l0.rmax_response     &lt;dbl&gt; 12, 12, 12, 12, 12, 12, 12, 12, 12, 12…
+$ ema_3.p168.l0.dmax_response     &lt;dbl&gt; 3.00, 3.00, 3.00, 3.00, 3.00, 3.00, 3.…
+$ ema_4.p12.l0.rmax_response      &lt;dbl&gt; 10, 10, 10, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ ema_4.p12.l0.dmax_response      &lt;dbl&gt; 1.333333, 1.333333, 1.333333, -4.66666…
+$ ema_4.p24.l0.rmax_response      &lt;dbl&gt; 12, 12, 12, 12, 12, 12, 12, 12, 12, 12…
+$ ema_4.p24.l0.dmax_response      &lt;dbl&gt; 3.333333, 3.333333, 3.333333, 3.333333…
+$ ema_4.p48.l0.rmax_response      &lt;dbl&gt; 12, 12, 12, 12, 12, 12, 12, 12, 12, 12…
+$ ema_4.p48.l0.dmax_response      &lt;dbl&gt; 3.333333, 3.333333, 3.333333, 3.333333…
+$ ema_4.p72.l0.rmax_response      &lt;dbl&gt; 12, 12, 12, 12, 12, 12, 12, 12, 12, 12…
+$ ema_4.p72.l0.dmax_response      &lt;dbl&gt; 3.333333, 3.333333, 3.333333, 3.333333…
+$ ema_4.p168.l0.rmax_response     &lt;dbl&gt; 12, 12, 12, 12, 12, 12, 12, 12, 12, 12…
+$ ema_4.p168.l0.dmax_response     &lt;dbl&gt; 3.333333, 3.333333, 3.333333, 3.333333…
+$ ema_5.p12.l0.rmax_response      &lt;dbl&gt; 8, 8, 8, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8,…
+$ ema_5.p12.l0.dmax_response      &lt;dbl&gt; 1.333333, 1.333333, 1.333333, -2.66666…
+$ ema_5.p24.l0.rmax_response      &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_5.p24.l0.dmax_response      &lt;dbl&gt; 1.333333, 1.333333, 1.333333, 1.333333…
+$ ema_5.p48.l0.rmax_response      &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_5.p48.l0.dmax_response      &lt;dbl&gt; 1.333333, 1.333333, 1.333333, 1.333333…
+$ ema_5.p72.l0.rmax_response      &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_5.p72.l0.dmax_response      &lt;dbl&gt; 1.333333, 1.333333, 1.333333, 1.333333…
+$ ema_5.p168.l0.rmax_response     &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_5.p168.l0.dmax_response     &lt;dbl&gt; 1.333333, 1.333333, 1.333333, 1.333333…
+$ ema_6.p12.l0.rmax_response      &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7,…
+$ ema_6.p12.l0.dmax_response      &lt;dbl&gt; 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.…
+$ ema_6.p24.l0.rmax_response      &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_6.p24.l0.dmax_response      &lt;dbl&gt; 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.…
+$ ema_6.p48.l0.rmax_response      &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_6.p48.l0.dmax_response      &lt;dbl&gt; 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.…
+$ ema_6.p72.l0.rmax_response      &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_6.p72.l0.dmax_response      &lt;dbl&gt; 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.…
+$ ema_6.p168.l0.rmax_response     &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_6.p168.l0.dmax_response     &lt;dbl&gt; 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.…
+$ ema_7.p12.l0.rmax_response      &lt;dbl&gt; 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8,…
+$ ema_7.p12.l0.dmax_response      &lt;dbl&gt; -0.3333333, -0.3333333, -0.3333333, -0…
+$ ema_7.p24.l0.rmax_response      &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_7.p24.l0.dmax_response      &lt;dbl&gt; 0.6666667, 0.6666667, 0.6666667, 0.666…
+$ ema_7.p48.l0.rmax_response      &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_7.p48.l0.dmax_response      &lt;dbl&gt; 0.6666667, 0.6666667, 0.6666667, 0.666…
+$ ema_7.p72.l0.rmax_response      &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_7.p72.l0.dmax_response      &lt;dbl&gt; 0.6666667, 0.6666667, 0.6666667, 0.666…
+$ ema_7.p168.l0.rmax_response     &lt;dbl&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
+$ ema_7.p168.l0.dmax_response     &lt;dbl&gt; 0.6666667, 0.6666667, 0.6666667, 0.666…
+$ ema_8.p48.l0.rmin_response      &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_8.p48.l0.dmin_response      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_8.p72.l0.rmin_response      &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_8.p72.l0.dmin_response      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_8.p168.l0.rmin_response     &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_8.p168.l0.dmin_response     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_9.p48.l0.rmin_response      &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_9.p48.l0.dmin_response      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -…
+$ ema_9.p72.l0.rmin_response      &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_9.p72.l0.dmin_response      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -…
+$ ema_9.p168.l0.rmin_response     &lt;dbl&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ ema_9.p168.l0.dmin_response     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -…
+$ ema_10.p48.l0.rmin_response     &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ ema_10.p48.l0.dmin_response     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_10.p72.l0.rmin_response     &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ ema_10.p72.l0.dmin_response     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_10.p168.l0.rmin_response    &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ ema_10.p168.l0.dmin_response    &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ema_2.p12.l0.rmin_response      &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ ema_2.p12.l0.dmin_response      &lt;dbl&gt; -2.333333, -2.333333, -2.333333, -2.33…
+$ ema_2.p24.l0.rmin_response      &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ ema_2.p24.l0.dmin_response      &lt;dbl&gt; -2.333333, -2.333333, -2.333333, -2.33…
+$ ema_2.p48.l0.rmin_response      &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ ema_2.p48.l0.dmin_response      &lt;dbl&gt; -2.333333, -2.333333, -2.333333, -2.33…
+$ ema_2.p72.l0.rmin_response      &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ ema_2.p72.l0.dmin_response      &lt;dbl&gt; -2.333333, -2.333333, -2.333333, -2.33…
+$ ema_2.p168.l0.rmin_response     &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ ema_2.p168.l0.dmin_response     &lt;dbl&gt; -2.333333, -2.333333, -2.333333, -2.33…
+$ ema_3.p12.l0.rmin_response      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_3.p12.l0.dmin_response      &lt;dbl&gt; -5.00, -5.00, -5.00, -5.00, -5.00, -5.…
+$ ema_3.p24.l0.rmin_response      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_3.p24.l0.dmin_response      &lt;dbl&gt; -5.00, -5.00, -5.00, -5.00, -5.00, -5.…
+$ ema_3.p48.l0.rmin_response      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_3.p48.l0.dmin_response      &lt;dbl&gt; -5.00, -5.00, -5.00, -5.00, -5.00, -5.…
+$ ema_3.p72.l0.rmin_response      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_3.p72.l0.dmin_response      &lt;dbl&gt; -5.00, -5.00, -5.00, -5.00, -5.00, -5.…
+$ ema_3.p168.l0.rmin_response     &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_3.p168.l0.dmin_response     &lt;dbl&gt; -5.00, -5.00, -5.00, -5.00, -5.00, -5.…
+$ ema_4.p12.l0.rmin_response      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_4.p12.l0.dmin_response      &lt;dbl&gt; -4.666667, -4.666667, -4.666667, -4.66…
+$ ema_4.p24.l0.rmin_response      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_4.p24.l0.dmin_response      &lt;dbl&gt; -4.666667, -4.666667, -4.666667, -4.66…
+$ ema_4.p48.l0.rmin_response      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_4.p48.l0.dmin_response      &lt;dbl&gt; -4.666667, -4.666667, -4.666667, -4.66…
+$ ema_4.p72.l0.rmin_response      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_4.p72.l0.dmin_response      &lt;dbl&gt; -4.666667, -4.666667, -4.666667, -4.66…
+$ ema_4.p168.l0.rmin_response     &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_4.p168.l0.dmin_response     &lt;dbl&gt; -4.666667, -4.666667, -4.666667, -4.66…
+$ ema_5.p12.l0.rmin_response      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_5.p12.l0.dmin_response      &lt;dbl&gt; -2.666667, -2.666667, -2.666667, -2.66…
+$ ema_5.p24.l0.rmin_response      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_5.p24.l0.dmin_response      &lt;dbl&gt; -2.666667, -2.666667, -2.666667, -2.66…
+$ ema_5.p48.l0.rmin_response      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_5.p48.l0.dmin_response      &lt;dbl&gt; -2.666667, -2.666667, -2.666667, -2.66…
+$ ema_5.p72.l0.rmin_response      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_5.p72.l0.dmin_response      &lt;dbl&gt; -2.666667, -2.666667, -2.666667, -2.66…
+$ ema_5.p168.l0.rmin_response     &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0,…
+$ ema_5.p168.l0.dmin_response     &lt;dbl&gt; -2.666667, -2.666667, -2.666667, -2.66…
+$ ema_6.p12.l0.rmin_response      &lt;dbl&gt; 7, 7, 7, 8, 8, 8, 8, 6, 6, 6, 6, 6, 6,…
+$ ema_6.p12.l0.dmin_response      &lt;dbl&gt; 0.00, 0.00, 0.00, 1.00, 1.00, 1.00, 1.…
+$ ema_6.p24.l0.rmin_response      &lt;dbl&gt; 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,…
+$ ema_6.p24.l0.dmin_response      &lt;dbl&gt; -1.00, -1.00, -1.00, -1.00, -1.00, -1.…
+$ ema_6.p48.l0.rmin_response      &lt;dbl&gt; 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,…
+$ ema_6.p48.l0.dmin_response      &lt;dbl&gt; -1.00, -1.00, -1.00, -1.00, -1.00, -1.…
+$ ema_6.p72.l0.rmin_response      &lt;dbl&gt; 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,…
+$ ema_6.p72.l0.dmin_response      &lt;dbl&gt; -1.00, -1.00, -1.00, -1.00, -1.00, -1.…
+$ ema_6.p168.l0.rmin_response     &lt;dbl&gt; 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,…
+$ ema_6.p168.l0.dmin_response     &lt;dbl&gt; -1.00, -1.00, -1.00, -1.00, -1.00, -1.…
+$ ema_7.p12.l0.rmin_response      &lt;dbl&gt; 7, 7, 7, 7, 7, 7, 7, 3, 3, 3, 3, 3, 3,…
+$ ema_7.p12.l0.dmin_response      &lt;dbl&gt; -0.3333333, -0.3333333, -0.3333333, -0…
+$ ema_7.p24.l0.rmin_response      &lt;dbl&gt; 7, 7, 7, 7, 7, 7, 7, 3, 3, 3, 3, 3, 3,…
+$ ema_7.p24.l0.dmin_response      &lt;dbl&gt; -0.3333333, -0.3333333, -0.3333333, -0…
+$ ema_7.p48.l0.rmin_response      &lt;dbl&gt; 7, 7, 7, 7, 7, 7, 7, 3, 3, 3, 3, 3, 3,…
+$ ema_7.p48.l0.dmin_response      &lt;dbl&gt; -0.3333333, -0.3333333, -0.3333333, -0…
+$ ema_7.p72.l0.rmin_response      &lt;dbl&gt; 7, 7, 7, 7, 7, 7, 7, 3, 3, 3, 3, 3, 3,…
+$ ema_7.p72.l0.dmin_response      &lt;dbl&gt; -0.3333333, -0.3333333, -0.3333333, -0…
+$ ema_7.p168.l0.rmin_response     &lt;dbl&gt; 7, 7, 7, 7, 7, 7, 7, 3, 3, 3, 3, 3, 3,…
+$ ema_7.p168.l0.dmin_response     &lt;dbl&gt; -0.3333333, -0.3333333, -0.3333333, -0…
+$ demo_age                        &lt;dbl&gt; 57, 57, 57, 57, 57, 57, 57, 57, 57, 57…
+$ demo_sex                        &lt;chr&gt; &quot;Male&quot;, &quot;Male&quot;, &quot;Male&quot;, &quot;Male&quot;, &quot;Male&quot;…
+$ demo_educ                       &lt;chr&gt; &quot;College or more&quot;, &quot;College or more&quot;, …
+$ demo_marital                    &lt;chr&gt; &quot;Never Married&quot;, &quot;Never Married&quot;, &quot;Nev…
+$ demo_race                       &lt;chr&gt; &quot;White/Caucasian&quot;, &quot;White/Caucasian&quot;, …
+$ demo_employ                     &lt;chr&gt; &quot;Unemployed&quot;, &quot;Unemployed&quot;, &quot;Unemploye…
+$ demo_income                     &lt;dbl&gt; 12000, 12000, 12000, 12000, 12000, 120…</code></pre>
+</div>
 </div></div>
 </section>
-<section id="get-median-posterior-probabilities-and-contrast-analyses" class="level3">
-<h3 class="anchored" data-anchor-id="get-median-posterior-probabilities-and-contrast-analyses">Get Median Posterior Probabilities and contrast analyses</h3>
-<p>function</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>calc_pp <span class="ot">&lt;-</span> <span class="cf">function</span> (lag, dem_var) {</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  data_name <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">&quot;auroc_dem_&quot;</span>, lag)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> </span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (dem_var <span class="sc">==</span> <span class="st">&quot;sex&quot;</span>) {</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">get</span>(data_name) <span class="sc">|&gt;</span> </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="at">id =</span> repeat_num, <span class="at">id2 =</span> fold_num, female, male)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (dem_var <span class="sc">==</span> <span class="st">&quot;income&quot;</span>) {</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">get</span>(data_name) <span class="sc">|&gt;</span> </span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="at">id =</span> repeat_num, <span class="at">id2 =</span> fold_num, <span class="st">`</span><span class="at">below poverty</span><span class="st">`</span>,<span class="st">`</span><span class="at">above poverty</span><span class="st">`</span>)</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (dem_var <span class="sc">==</span> <span class="st">&quot;race&quot;</span>) {</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">get</span>(data_name) <span class="sc">|&gt;</span> </span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="at">id =</span> repeat_num, <span class="at">id2 =</span> fold_num, <span class="st">`</span><span class="at">not white</span><span class="st">`</span>, <span class="st">`</span><span class="at">non-hispanic white</span><span class="st">`</span> <span class="ot">=</span> white)</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(dem_var, <span class="st">&quot; not in data&quot;</span>)</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  pp <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> </span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">perf_mod</span>(<span class="at">formula =</span> statistic <span class="sc">~</span> model <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id2<span class="sc">/</span>id),</span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">transform =</span> tidyposterior<span class="sc">::</span>logit_trans,  </span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>             <span class="at">iter =</span> <span class="dv">2000</span>, <span class="at">chains =</span> <span class="dv">4</span>,  </span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>             <span class="at">adapt_delta =</span> .<span class="dv">99</span>,</span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> gaussian) </span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  pp_tidy <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tidy</span>(<span class="at">seed =</span> <span class="dv">123</span>)</span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>  q <span class="ot">=</span> <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>)</span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>  ci <span class="ot">&lt;-</span> pp_tidy <span class="sc">|&gt;</span> </span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(model) <span class="sc">|&gt;</span> </span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">pp_median =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">2</span>]),</span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>              <span class="at">pp_lower =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">1</span>]), </span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>              <span class="at">pp_upper =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">3</span>]))  <span class="sc">|&gt;</span> </span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">lag =</span> lag) <span class="sc">|&gt;</span> </span>
-<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(model)</span>
-<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>  contrast_lists <span class="ot">&lt;-</span> </span>
-<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (dem_var <span class="sc">==</span> <span class="st">&quot;sex&quot;</span>) {</span>
-<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">list</span>(<span class="st">&quot;male&quot;</span>), <span class="fu">list</span>(<span class="st">&quot;female&quot;</span>))</span>
-<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (dem_var <span class="sc">==</span> <span class="st">&quot;income&quot;</span>) {</span>
-<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">list</span>(<span class="st">&quot;above poverty&quot;</span>), <span class="fu">list</span>(<span class="st">&quot;below poverty&quot;</span>))</span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (dem_var <span class="sc">==</span> <span class="st">&quot;race&quot;</span>) {</span>
-<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">list</span>(<span class="st">&quot;non-hispanic white&quot;</span>), <span class="fu">list</span>(<span class="st">&quot;not white&quot;</span>))</span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(dem_var, <span class="st">&quot; not in data&quot;</span>)</span>
-<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>  ci_contrast <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span></span>
-<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">contrast_models</span>(contrast_lists[<span class="dv">1</span>],  contrast_lists[<span class="dv">2</span>]) <span class="sc">|&gt;</span> </span>
-<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(<span class="at">size =</span> <span class="dv">0</span>) </span>
-<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>  ci_median_contrast <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
-<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>    <span class="fu">contrast_models</span>(contrast_lists[<span class="dv">1</span>],  contrast_lists[<span class="dv">2</span>]) <span class="sc">|&gt;</span>  </span>
-<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(contrast) <span class="sc">|&gt;</span> </span>
-<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">median =</span> <span class="fu">quantile</span>(difference, .<span class="dv">5</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">str_remove</span>(contrast, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.&quot;</span>))</span>
-<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>ci_contrast <span class="ot">&lt;-</span> ci_contrast <span class="sc">|&gt;</span> </span>
-<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">lag =</span> lag) <span class="sc">|&gt;</span> </span>
-<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(ci_median_contrast, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;contrast&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(contrast, probability, median, lower, upper, lag) </span>
-<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">ci =</span> ci, <span class="at">ci_contrast =</span> ci_contrast)</span>
-<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
-<p>sex</p>
+<section id="match-raw-feature-to-shaps" class="level3">
+<h3 class="anchored" data-anchor-id="match-raw-feature-to-shaps">Match raw feature to shaps</h3>
 <div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sex <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">24</span>,<span class="dv">72</span>,<span class="dv">168</span>,<span class="dv">336</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(lag) <span class="fu">calc_pp</span>(lag, <span class="st">&quot;sex&quot;</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 6.3e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.63 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 1.395 seconds (Warm-up)
-Chain 1:                0.46 seconds (Sampling)
-Chain 1:                1.855 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.3e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.712 seconds (Warm-up)
-Chain 2:                0.48 seconds (Sampling)
-Chain 2:                1.192 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 2.5e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 0.722 seconds (Warm-up)
-Chain 3:                0.778 seconds (Sampling)
-Chain 3:                1.5 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.5e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.836 seconds (Warm-up)
-Chain 4:                0.423 seconds (Sampling)
-Chain 4:                1.259 seconds (Total)
-Chain 4: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.5e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 1.447 seconds (Warm-up)
-Chain 1:                0.541 seconds (Sampling)
-Chain 1:                1.988 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.3e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.792 seconds (Warm-up)
-Chain 2:                0.437 seconds (Sampling)
-Chain 2:                1.229 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 1.9e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.19 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 0.77 seconds (Warm-up)
-Chain 3:                0.42 seconds (Sampling)
-Chain 3:                1.19 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.3e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 1.011 seconds (Warm-up)
-Chain 4:                0.636 seconds (Sampling)
-Chain 4:                1.647 seconds (Total)
-Chain 4: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.5e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 1.416 seconds (Warm-up)
-Chain 1:                0.823 seconds (Sampling)
-Chain 1:                2.239 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.2e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.804 seconds (Warm-up)
-Chain 2:                0.826 seconds (Sampling)
-Chain 2:                1.63 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 2.6e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.26 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 0.839 seconds (Warm-up)
-Chain 3:                0.679 seconds (Sampling)
-Chain 3:                1.518 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.4e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.826 seconds (Warm-up)
-Chain 4:                0.689 seconds (Sampling)
-Chain 4:                1.515 seconds (Total)
-Chain 4: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.5e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 1.101 seconds (Warm-up)
-Chain 1:                0.818 seconds (Sampling)
-Chain 1:                1.919 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 3.8e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.38 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.785 seconds (Warm-up)
-Chain 2:                0.5 seconds (Sampling)
-Chain 2:                1.285 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 1.8e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.18 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 0.736 seconds (Warm-up)
-Chain 3:                0.424 seconds (Sampling)
-Chain 3:                1.16 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.3e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.904 seconds (Warm-up)
-Chain 4:                0.441 seconds (Sampling)
-Chain 4:                1.345 seconds (Total)
-Chain 4: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.5e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 0.911 seconds (Warm-up)
-Chain 1:                0.829 seconds (Sampling)
-Chain 1:                1.74 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.3e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.86 seconds (Warm-up)
-Chain 2:                0.8 seconds (Sampling)
-Chain 2:                1.66 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 1.7e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.17 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 0.898 seconds (Warm-up)
-Chain 3:                0.476 seconds (Sampling)
-Chain 3:                1.374 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.4e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.92 seconds (Warm-up)
-Chain 4:                0.502 seconds (Sampling)
-Chain 4:                1.422 seconds (Total)
-Chain 4: </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>(pp_sex <span class="ot">&lt;-</span> <span class="fu">map</span>(sex, <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 5
-   model  pp_median pp_lower pp_upper   lag
-   &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
- 1 female     0.867    0.847    0.885     0
- 2 male       0.926    0.914    0.936     0
- 3 female     0.849    0.827    0.869    24
- 4 male       0.921    0.908    0.932    24
- 5 female     0.836    0.813    0.856    72
- 6 male       0.916    0.903    0.927    72
- 7 female     0.823    0.801    0.845   168
- 8 male       0.920    0.907    0.930   168
- 9 female     0.788    0.760    0.815   336
-10 male       0.905    0.890    0.918   336</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(contrast_sex <span class="ot">&lt;-</span> <span class="fu">map</span>(sex, <span class="dv">2</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 6
-  contrast       probability median  lower  upper   lag
-  &lt;chr&gt;                &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
-1 male vs female           1 0.0589 0.0433 0.0747     0
-2 male vs female           1 0.0714 0.0536 0.0901    24
-3 male vs female           1 0.0802 0.0621 0.100     72
-4 male vs female           1 0.0962 0.0774 0.116    168
-5 male vs female           1 0.116  0.0936 0.140    336</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>feat_0 <span class="ot">&lt;-</span> <span class="fu">format_data</span>(feat_0)  </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(y <span class="sc">~</span> ., <span class="at">data =</span> feat_0) <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_rm</span>(subid) <span class="sc">|&gt;</span>  </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_median</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_impute_mode</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_dummy</span>(<span class="fu">all_factor_predictors</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">prep</span>()</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>feat_0 <span class="ot">&lt;-</span> <span class="fu">bake</span>(rec, <span class="at">new_data =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
-<p>income</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>income <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">24</span>,<span class="dv">72</span>,<span class="dv">168</span>,<span class="dv">336</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(lag) <span class="fu">calc_pp</span>(lag, <span class="st">&quot;income&quot;</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.6e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.26 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 0.654 seconds (Warm-up)
-Chain 1:                0.412 seconds (Sampling)
-Chain 1:                1.066 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.5e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.755 seconds (Warm-up)
-Chain 2:                0.416 seconds (Sampling)
-Chain 2:                1.171 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 2.3e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 1.406 seconds (Warm-up)
-Chain 3:                0.815 seconds (Sampling)
-Chain 3:                2.221 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.3e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.683 seconds (Warm-up)
-Chain 4:                0.662 seconds (Sampling)
-Chain 4:                1.345 seconds (Total)
-Chain 4: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.4e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 0.68 seconds (Warm-up)
-Chain 1:                0.735 seconds (Sampling)
-Chain 1:                1.415 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.3e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.676 seconds (Warm-up)
-Chain 2:                0.484 seconds (Sampling)
-Chain 2:                1.16 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 2.3e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 1.38 seconds (Warm-up)
-Chain 3:                0.414 seconds (Sampling)
-Chain 3:                1.794 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.2e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.66 seconds (Warm-up)
-Chain 4:                0.622 seconds (Sampling)
-Chain 4:                1.282 seconds (Total)
-Chain 4: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.5e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 0.732 seconds (Warm-up)
-Chain 1:                0.713 seconds (Sampling)
-Chain 1:                1.445 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.1e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.637 seconds (Warm-up)
-Chain 2:                0.41 seconds (Sampling)
-Chain 2:                1.047 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 2.2e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 1.335 seconds (Warm-up)
-Chain 3:                0.805 seconds (Sampling)
-Chain 3:                2.14 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.2e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.673 seconds (Warm-up)
-Chain 4:                0.412 seconds (Sampling)
-Chain 4:                1.085 seconds (Total)
-Chain 4: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.5e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 0.617 seconds (Warm-up)
-Chain 1:                0.636 seconds (Sampling)
-Chain 1:                1.253 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.2e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.624 seconds (Warm-up)
-Chain 2:                0.416 seconds (Sampling)
-Chain 2:                1.04 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 2.2e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 1.334 seconds (Warm-up)
-Chain 3:                0.778 seconds (Sampling)
-Chain 3:                2.112 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.2e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.722 seconds (Warm-up)
-Chain 4:                0.413 seconds (Sampling)
-Chain 4:                1.135 seconds (Total)
-Chain 4: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.4e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 0.661 seconds (Warm-up)
-Chain 1:                0.653 seconds (Sampling)
-Chain 1:                1.314 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.3e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.867 seconds (Warm-up)
-Chain 2:                0.496 seconds (Sampling)
-Chain 2:                1.363 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 2.3e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 1.326 seconds (Warm-up)
-Chain 3:                0.412 seconds (Sampling)
-Chain 3:                1.738 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.2e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.74 seconds (Warm-up)
-Chain 4:                0.821 seconds (Sampling)
-Chain 4:                1.561 seconds (Total)
-Chain 4: </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>(pp_income <span class="ot">&lt;-</span> <span class="fu">map</span>(income, <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 5
-   model         pp_median pp_lower pp_upper   lag
-   &lt;chr&gt;             &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
- 1 above poverty     0.903    0.874    0.926     0
- 2 below poverty     0.812    0.757    0.856     0
- 3 above poverty     0.892    0.864    0.913    24
- 4 below poverty     0.805    0.759    0.843    24
- 5 above poverty     0.884    0.856    0.908    72
- 6 below poverty     0.792    0.744    0.834    72
- 7 above poverty     0.882    0.856    0.904   168
- 8 below poverty     0.749    0.700    0.794   168
- 9 above poverty     0.860    0.831    0.884   336
-10 below poverty     0.729    0.680    0.770   336</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>(contrast_income <span class="ot">&lt;-</span> <span class="fu">map</span>(income, <span class="dv">2</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 6
-  contrast                       probability median  lower upper   lag
-  &lt;chr&gt;                                &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 above poverty vs below poverty           1 0.0908 0.0509 0.135     0
-2 above poverty vs below poverty           1 0.0864 0.0504 0.125    24
-3 above poverty vs below poverty           1 0.0919 0.0540 0.133    72
-4 above poverty vs below poverty           1 0.133  0.0925 0.175   168
-5 above poverty vs below poverty           1 0.131  0.0929 0.172   336</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>feat_0 <span class="ot">&lt;-</span> feat_0 <span class="sc">|&gt;</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">id_obs =</span> label_num) <span class="sc">|&gt;</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>y)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>feat_0 <span class="ot">&lt;-</span> feat_0 <span class="sc">|&gt;</span> </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">!</span><span class="fu">starts_with</span>(<span class="st">&quot;id&quot;</span>), <span class="at">names_to =</span> <span class="st">&quot;variable&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;feature_score&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
-<p>race</p>
+<p>Update names of features to match SHAP</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>race <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">24</span>,<span class="dv">72</span>,<span class="dv">168</span>,<span class="dv">336</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(lag) <span class="fu">calc_pp</span>(lag, <span class="st">&quot;race&quot;</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>clean_feature_names <span class="ot">&lt;-</span> <span class="cf">function</span>(feat_name){</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;.l0&quot;</span>, <span class="st">&quot;&quot;</span>, feat_name)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;rratecount.count&quot;</span>, <span class="st">&quot;raw_count&quot;</span>, new_name)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;dratecount.count&quot;</span>, <span class="st">&quot;diff_count&quot;</span>, new_name)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;drecent_response&quot;</span>, <span class="st">&quot;diff_recent&quot;</span>, new_name)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;rrecent_response&quot;</span>, <span class="st">&quot;raw_recent&quot;</span>, new_name)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;dmin_response&quot;</span>, <span class="st">&quot;diff_min&quot;</span>, new_name)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;rmin_response&quot;</span>, <span class="st">&quot;raw_min&quot;</span>, new_name)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;dmax_response&quot;</span>, <span class="st">&quot;diff_max&quot;</span>, new_name)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;rmax_response&quot;</span>, <span class="st">&quot;raw_max&quot;</span>, new_name)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;dmedian_response&quot;</span>, <span class="st">&quot;diff_median&quot;</span>, new_name)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;rmedian_response&quot;</span>, <span class="st">&quot;raw_median&quot;</span>, new_name)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;label_&quot;</span>, <span class="st">&quot;&quot;</span>, new_name)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;demo_&quot;</span>, <span class="st">&quot;&quot;</span>, new_name)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;High.school.or.less&quot;</span>, <span class="st">&quot;high.school&quot;</span>, new_name)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Some.college&quot;</span>, <span class="st">&quot;some.college&quot;</span>, new_name)</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Mon&quot;</span>, <span class="st">&quot;mon&quot;</span>, new_name)</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Tue&quot;</span>, <span class="st">&quot;tue&quot;</span>, new_name)</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Wed&quot;</span>, <span class="st">&quot;wed&quot;</span>, new_name)</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Thu&quot;</span>, <span class="st">&quot;thu&quot;</span>, new_name)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Fri&quot;</span>, <span class="st">&quot;fri&quot;</span>, new_name)</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Sat&quot;</span>, <span class="st">&quot;sat&quot;</span>, new_name)</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Sun&quot;</span>, <span class="st">&quot;sun&quot;</span>, new_name)</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Never.Married&quot;</span>, <span class="st">&quot;never.married&quot;</span>, new_name)</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Never.Other&quot;</span>, <span class="st">&quot;never.other&quot;</span>, new_name)</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;White.Caucasian&quot;</span>, <span class="st">&quot;caucasian&quot;</span>, new_name)</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;Male&quot;</span>, <span class="st">&quot;male&quot;</span>, new_name)</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p12.raw_count.lapse&quot;</span>, <span class="st">&quot;lapse.p12.raw_count&quot;</span>, new_name)</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p24.raw_count.lapse&quot;</span>, <span class="st">&quot;lapse.p24.raw_count&quot;</span>, new_name)</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p48.raw_count.lapse&quot;</span>, <span class="st">&quot;lapse.p48.raw_count&quot;</span>, new_name)</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p72.raw_count.lapse&quot;</span>, <span class="st">&quot;lapse.p72.raw_count&quot;</span>, new_name)</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p168.raw_count.lapse&quot;</span>, <span class="st">&quot;lapse.p168.raw_count&quot;</span>, new_name)</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p12.diff_count.lapse&quot;</span>, <span class="st">&quot;lapse.p12.diff_count&quot;</span>, new_name)</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p24.diff_count.lapse&quot;</span>, <span class="st">&quot;lapse.p24.diff_count&quot;</span>, new_name)</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p48.diff_count.lapse&quot;</span>, <span class="st">&quot;lapse.p48.diff_count&quot;</span>, new_name)</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p72.diff_count.lapse&quot;</span>, <span class="st">&quot;lapse.p72.diff_count&quot;</span>, new_name)</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p168.diff_count.lapse&quot;</span>, <span class="st">&quot;lapse.p168.diff_count&quot;</span>, new_name)</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p12.raw_count.ema&quot;</span>, <span class="st">&quot;missing.p12.raw_count&quot;</span>, new_name)</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p24.raw_count.ema&quot;</span>, <span class="st">&quot;missing.p24.raw_count&quot;</span>, new_name)</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p48.raw_count.ema&quot;</span>, <span class="st">&quot;missing.p48.raw_count&quot;</span>, new_name)</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p72.raw_count.ema&quot;</span>, <span class="st">&quot;missing.p72.raw_count&quot;</span>, new_name)</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p168.raw_count.ema&quot;</span>, <span class="st">&quot;missing.p168.raw_count&quot;</span>, new_name)</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p12.diff_count.ema&quot;</span>, <span class="st">&quot;missing.p12.diff_count&quot;</span>, new_name)</span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p24.diff_count.ema&quot;</span>, <span class="st">&quot;missing.p24.diff_count&quot;</span>, new_name)</span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p48.diff_count.ema&quot;</span>, <span class="st">&quot;missing.p48.diff_count&quot;</span>, new_name)</span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p72.diff_count.ema&quot;</span>, <span class="st">&quot;missing.p72.diff_count&quot;</span>, new_name)</span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>  new_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;p168.diff_count.ema&quot;</span>, <span class="st">&quot;missing.p168.diff_count&quot;</span>, new_name)</span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(new_name) </span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>feat_0 <span class="ot">&lt;-</span> feat_0 <span class="sc">|&gt;</span> </span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">variable =</span> <span class="fu">fct_relabel</span>(variable, clean_feature_names))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(shap_0)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.4e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 0.785 seconds (Warm-up)
-Chain 1:                0.417 seconds (Sampling)
-Chain 1:                1.202 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.5e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.698 seconds (Warm-up)
-Chain 2:                0.816 seconds (Sampling)
-Chain 2:                1.514 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 2.3e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 0.795 seconds (Warm-up)
-Chain 3:                0.724 seconds (Sampling)
-Chain 3:                1.519 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.2e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.649 seconds (Warm-up)
-Chain 4:                0.632 seconds (Sampling)
-Chain 4:                1.281 seconds (Total)
-Chain 4: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.6e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.26 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 0.645 seconds (Warm-up)
-Chain 1:                0.727 seconds (Sampling)
-Chain 1:                1.372 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.1e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.929 seconds (Warm-up)
-Chain 2:                0.485 seconds (Sampling)
-Chain 2:                1.414 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 2.1e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 0.702 seconds (Warm-up)
-Chain 3:                0.703 seconds (Sampling)
-Chain 3:                1.405 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.3e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.797 seconds (Warm-up)
-Chain 4:                0.714 seconds (Sampling)
-Chain 4:                1.511 seconds (Total)
-Chain 4: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.4e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 0.758 seconds (Warm-up)
-Chain 1:                0.565 seconds (Sampling)
-Chain 1:                1.323 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.2e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.807 seconds (Warm-up)
-Chain 2:                0.605 seconds (Sampling)
-Chain 2:                1.412 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 2.2e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 0.898 seconds (Warm-up)
-Chain 3:                0.418 seconds (Sampling)
-Chain 3:                1.316 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.2e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.718 seconds (Warm-up)
-Chain 4:                0.76 seconds (Sampling)
-Chain 4:                1.478 seconds (Total)
-Chain 4: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.5e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 0.736 seconds (Warm-up)
-Chain 1:                0.452 seconds (Sampling)
-Chain 1:                1.188 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.1e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 0.819 seconds (Warm-up)
-Chain 2:                0.737 seconds (Sampling)
-Chain 2:                1.556 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 2.1e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 0.74 seconds (Warm-up)
-Chain 3:                0.796 seconds (Sampling)
-Chain 3:                1.536 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 3.4e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.34 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.799 seconds (Warm-up)
-Chain 4:                0.82 seconds (Sampling)
-Chain 4:                1.619 seconds (Total)
-Chain 4: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 2.4e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 0.791 seconds (Warm-up)
-Chain 1:                0.924 seconds (Sampling)
-Chain 1:                1.715 seconds (Total)
-Chain 1: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
-Chain 2: 
-Chain 2: Gradient evaluation took 2.2e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
-Chain 2: Adjust your expectations accordingly!
-Chain 2: 
-Chain 2: 
-Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 2: 
-Chain 2:  Elapsed Time: 1.121 seconds (Warm-up)
-Chain 2:                0.433 seconds (Sampling)
-Chain 2:                1.554 seconds (Total)
-Chain 2: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
-Chain 3: 
-Chain 3: Gradient evaluation took 2.4e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
-Chain 3: Adjust your expectations accordingly!
-Chain 3: 
-Chain 3: 
-Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 3: 
-Chain 3:  Elapsed Time: 1.488 seconds (Warm-up)
-Chain 3:                0.807 seconds (Sampling)
-Chain 3:                2.295 seconds (Total)
-Chain 3: 
-
-SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
-Chain 4: 
-Chain 4: Gradient evaluation took 2.1e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
-Chain 4: Adjust your expectations accordingly!
-Chain 4: 
-Chain 4: 
-Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain 4: 
-Chain 4:  Elapsed Time: 0.865 seconds (Warm-up)
-Chain 4:                0.675 seconds (Sampling)
-Chain 4:                1.54 seconds (Total)
-Chain 4: </code></pre>
+<pre><code>[1] 77138381</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>(pp_race <span class="ot">&lt;-</span> <span class="fu">map</span>(race, <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(feat_0)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 5
-   model              pp_median pp_lower pp_upper   lag
-   &lt;chr&gt;                  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
- 1 non-hispanic white     0.905    0.857    0.938     0
- 2 not white              0.736    0.622    0.822     0
- 3 non-hispanic white     0.894    0.829    0.938    24
- 4 not white              0.713    0.580    0.815    24
- 5 non-hispanic white     0.886    0.843    0.918    72
- 6 not white              0.727    0.644    0.792    72
- 7 non-hispanic white     0.881    0.847    0.908   168
- 8 not white              0.733    0.668    0.786   168
- 9 non-hispanic white     0.857    0.819    0.888   336
-10 not white              0.749    0.691    0.802   336</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>(contrast_race <span class="ot">&lt;-</span> <span class="fu">map</span>(race, <span class="dv">2</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 6
-  contrast                        probability median  lower upper   lag
-  &lt;chr&gt;                                 &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 non-hispanic white vs not white        1     0.168 0.0933 0.257     0
-2 non-hispanic white vs not white        1.00  0.179 0.0901 0.283    24
-3 non-hispanic white vs not white        1     0.159 0.100  0.227    72
-4 non-hispanic white vs not white        1     0.148 0.0995 0.201   168
-5 non-hispanic white vs not white        1     0.107 0.0643 0.152   336</code></pre>
+<pre><code>[1] 77783328</code></pre>
 </div>
 </div></div>
-<p>Bind all pp/contrast tibbles and save</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>pp_sex <span class="sc">|&gt;</span> </span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(pp_income) <span class="sc">|&gt;</span> </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(pp_race) <span class="sc">|&gt;</span> </span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;pp_dem_all.csv&quot;</span>))</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>pp_dem_contrast <span class="ot">&lt;-</span> contrast_sex <span class="sc">|&gt;</span> </span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(contrast_income) <span class="sc">|&gt;</span> </span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(contrast_race) <span class="sc">|&gt;</span> </span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;pp_dem_contrast_all.csv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Pull out one subject as example</p>
+<div class="cell-container"><div class="cell-decorator"><pre>In [11]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>feat_test <span class="ot">&lt;-</span> feat_0 <span class="sc">|&gt;</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(id_obs <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>shap_test <span class="ot">&lt;-</span> shap_0 <span class="sc">|&gt;</span> </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(id_obs <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> feat_test <span class="sc">|&gt;</span> </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(shap_test, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;id_obs&quot;</span>, <span class="st">&quot;variable&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<p>Not sure why there are two missing shap values for features for this observation?</p>
+<p>For now combine will combine feature scores with shaps using right join</p>
+<div class="cell-container"><div class="cell-decorator"><pre>In [12]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>shap_feat <span class="ot">&lt;-</span> feat_0 <span class="sc">|&gt;</span> </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">right_join</span>(shap_0, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;id_obs&quot;</span>, <span class="st">&quot;variable&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 77,138,381
+Columns: 6
+$ id_obs        &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ variable      &lt;fct&gt; lapse.p12.diff_count, lapse.p24.raw_count, lapse.p24.dif…
+$ feature_score &lt;dbl&gt; 0.00000000, 0.00000000, 0.00000000, 0.00000000, 0.000000…
+$ value         &lt;dbl&gt; -1.202097e-01, -7.540426e-03, -7.395879e-02, -3.579643e-…
+$ rfvalue       &lt;dbl&gt; 0.016984509, -0.232523230, 0.025711884, -0.296854932, 0.…
+$ mean_value    &lt;dbl&gt; 1.376266e-01, 9.903273e-03, 9.631549e-02, 5.314153e-02, …</code></pre>
+</div>
+</div></div>
+</section>
+<section id="standardize-feature-scores" class="level3">
+<h3 class="anchored" data-anchor-id="standardize-feature-scores">Standardize feature scores</h3>
+<div class="cell-container"><div class="cell-decorator"><pre>In [13]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>shap_feat <span class="ot">&lt;-</span> shap_feat <span class="sc">|&gt;</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variable) <span class="sc">|&gt;</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">feature_score_z =</span> (feature_score <span class="sc">-</span> <span class="fu">mean</span>(feature_score))<span class="sc">/</span><span class="fu">sd</span>(feature_score))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+</section>
+<section id="group-categories" class="level3">
+<h3 class="anchored" data-anchor-id="group-categories">Group categories</h3>
+<p>Sum of shap values and mean of z-scored feature values</p>
+<div class="cell-container"><div class="cell-decorator"><pre>In [14]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>shap_feat_grp <span class="ot">&lt;-</span> shap_feat <span class="sc">|&gt;</span>  </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable, <span class="st">&quot;lapse.&quot;</span>),</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;past use (EMA item)&quot;</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                           variable),</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;ema_2&quot;</span>),</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;craving (EMA item)&quot;</span>,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;ema_3&quot;</span>),</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;past risky situation (EMA item)&quot;</span>,</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;ema_4&quot;</span>),</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;past stressful event (EMA item)&quot;</span>,</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;ema_5&quot;</span>),</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;past pleasant event (EMA item)&quot;</span>,</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;ema_6&quot;</span>),</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;valence (EMA item)&quot;</span>,</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;ema_7&quot;</span>),</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;arousal (EMA item)&quot;</span>,</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;ema_8&quot;</span>),</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;future risky situation (EMA item)&quot;</span>,</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;ema_9&quot;</span>),</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;future stressful event (EMA item)&quot;</span>,</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;ema_10&quot;</span>),</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;future efficacy (EMA item)&quot;</span>,</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;missing.&quot;</span>),</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;missing surveys (other)&quot;</span>,</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;day&quot;</span>),</span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;lapse day (other)&quot;</span>,</span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;hour&quot;</span>),</span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;lapse hour (other)&quot;</span>,</span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;age&quot;</span>),</span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;age (demographic)&quot;</span>,</span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;sex&quot;</span>),</span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;sex (demographic)&quot;</span>,</span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;marital&quot;</span>),</span>
+<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;marital (demographic)&quot;</span>,</span>
+<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;race&quot;</span>),</span>
+<span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;race (demographic)&quot;</span>,</span>
+<span id="cb25-52"><a href="#cb25-52" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-53"><a href="#cb25-53" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;educ&quot;</span>),</span>
+<span id="cb25-54"><a href="#cb25-54" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;education (demographic)&quot;</span>,</span>
+<span id="cb25-55"><a href="#cb25-55" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-56"><a href="#cb25-56" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;income&quot;</span>),</span>
+<span id="cb25-57"><a href="#cb25-57" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;income (demographic)&quot;</span>,</span>
+<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a>                           variable_grp),</span>
+<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a>           <span class="at">variable_grp =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable_grp, <span class="st">&quot;employ&quot;</span>),</span>
+<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;employment (demographic)&quot;</span>,</span>
+<span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a>                           variable_grp)) <span class="sc">|&gt;</span> </span>
+<span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">variable_grp =</span> <span class="fu">factor</span>(variable_grp)) <span class="sc">|&gt;</span> </span>
+<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(id_obs, variable_grp) <span class="sc">|&gt;</span>  <span class="co"># values are already averaged across repeats</span></span>
+<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">value =</span> <span class="fu">sum</span>(value),</span>
+<span id="cb25-65"><a href="#cb25-65" aria-hidden="true" tabindex="-1"></a>              <span class="at">feature_score_z_mean =</span> <span class="fu">mean</span>(feature_score_z))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by &#39;id_obs&#39;. You can override using the
+`.groups` argument.</code></pre>
+</div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [15]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">head</span>(shap_feat_grp, <span class="at">n =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 4
+# Groups:   id_obs [1]
+   id_obs variable_grp                           value feature_score_z_mean
+    &lt;dbl&gt; &lt;fct&gt;                                  &lt;dbl&gt;                &lt;dbl&gt;
+ 1      1 age (demographic)                  0.000134                1.32  
+ 2      1 education (demographic)           -0.00122                -0.542 
+ 3      1 employment (demographic)           0.00507                 1.39  
+ 4      1 income (demographic)              -0.00604                -0.716 
+ 5      1 marital (demographic)              0.000137                0.204 
+ 6      1 race (demographic)                 0.0000241               0.386 
+ 7      1 sex (demographic)                 -0.00137                 0.978 
+ 8      1 future efficacy (EMA item)         0.350                   0.218 
+ 9      1 craving (EMA item)                -0.0143                  0.0230
+10      1 past risky situation (EMA item)    0.0284                  0.889 
+11      1 past stressful event (EMA item)   -0.120                   0.576 
+12      1 past pleasant event (EMA item)    -0.0611                  0.218 
+13      1 valence (EMA item)                 0.0172                  0.0681
+14      1 arousal (EMA item)                 0.00231                 0.379 
+15      1 future risky situation (EMA item) -0.0442                 -0.246 
+16      1 future stressful event (EMA item)  0.0169                 -0.470 
+17      1 lapse day (other)                  0.0000403              -0.409 
+18      1 lapse hour (other)                 0                       0.640 
+19      1 missing surveys (other)           -0.00114                 0.0388
+20      1 past use (EMA item)               -0.546                  -0.126 </code></pre>
+</div>
+</div></div>
+</section>
+<section id="save-out-tibble" class="level3">
+<h3 class="anchored" data-anchor-id="save-out-tibble">Save out tibble</h3>
+<div class="cell-container"><div class="cell-decorator"><pre>In [16]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>shap_feat_grp <span class="sc">|&gt;</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_rds</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;outer_shapsgrp_with_features_1week_0_v1_nested_main.rds&quot;</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
 </section>
      </main>
