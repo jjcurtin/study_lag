@@ -257,7 +257,7 @@ div.csl-indent {
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
   </ul>
-<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="index-preview.html"><i class="bi bi-journal-code"></i>Article Notebook</a></li><li><a href="notebooks\fairness-preview.html"><i class="bi bi-journal-code"></i>Fairness analyses</a></li><li><a href="notebooks\mak_figures-preview.html"><i class="bi bi-journal-code"></i>Make All Figures for Main Manuscript</a></li><li><a href="notebooks\mak_tables-preview.html"><i class="bi bi-journal-code"></i>Make All Tables for Main Manuscript</a></li><li><a href="notebooks\model_evaluation-preview.html"><i class="bi bi-journal-code"></i>Model evaluation</a></li><li><a href="notebooks\mak_feature_plot-preview.html"><i class="bi bi-journal-code"></i>Supplemental Feature Plot</a></li><li><a href="notebooks\mak_feature_tibble-preview.html"><i class="bi bi-journal-code"></i>Supplemental Feature Plot Tibble</a></li><li><a href="notebooks\supplement-preview.html"><i class="bi bi-journal-code"></i>Supplemental Figures and Tables</a></li></ul></div></nav>
+<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="index-preview.html"><i class="bi bi-journal-code"></i>Article Notebook</a></li><li><a href="notebooks\fairness-preview.html"><i class="bi bi-journal-code"></i>Fairness analyses</a></li><li><a href="notebooks\mak_figures-preview.html"><i class="bi bi-journal-code"></i>Make All Figures for Main Manuscript</a></li><li><a href="notebooks\mak_tables-preview.html"><i class="bi bi-journal-code"></i>Make All Tables for Main Manuscript</a></li><li><a href="notebooks\model_evaluation-preview.html"><i class="bi bi-journal-code"></i>Model evaluation</a></li><li><a href="notebooks\mak_feature_plot-preview.html"><i class="bi bi-journal-code"></i>Supplemental Feature Plot</a></li><li><a href="notebooks\supplement-preview.html"><i class="bi bi-journal-code"></i>Supplemental Figures and Tables</a></li></ul></div></nav>
 </div>
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
 </div>
@@ -804,27 +804,11 @@ Figure&nbsp;1: Panel A depicts posterior probability for area under ROC curve (a
 </section>
 <section id="fairness-benchmarks-1" class="level2">
 <h2 class="anchored" data-anchor-id="fairness-benchmarks-1">Fairness Benchmarks</h2>
-<p><a href="#fig-fairness" class="quarto-xref">Figure&nbsp;2</a> shows the difference in performance of each model by demographic group. All group comparisons for race, sex at birth, and income were significant (probability &gt; .95) across models. On average there was a median increase in auROC of NA (range NA-NA) for non-Hispanic White participants compared to participants who were not White. On average there was a median increase in auROC of NA (range NA-NA) for male participants compared to female participants. On average there was a median increase in auROC of NA (range NA-NA) for participants above the federal poverty line compared to participants below the federal poverty line. A table of model performance for each demographic group separately by model can be found in the supplement.</p>
-<div class="quarto-embed-nb-cell">
-<div id="cell-fig-fairness" class="cell" data-fig-width="7">
-<div class="cell-output cell-output-display">
-<div id="fig-fairness" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-fairness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/notebooks-mak_figures-fig-fairness-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Difference in auROCs by demographic group"><img src="index_files/figure-html/notebooks-mak_figures-fig-fairness-output-1.png" width="672" height="480" class="figure-img"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fairness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Difference in auROCs by demographic group
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</div>
+<p><strong>?@fig-fairness</strong> shows the difference in performance of each model by demographic group. All group comparisons for race, sex at birth, and income were significant (probability &gt; .95) across models. On average there was a median increase in auROC of NA (range NA-NA) for non-Hispanic White participants compared to participants who were not White. On average there was a median increase in auROC of NA (range NA-NA) for male participants compared to female participants. On average there was a median increase in auROC of NA (range NA-NA) for participants above the federal poverty line compared to participants below the federal poverty line. A table of model performance for each demographic group separately by model can be found in the supplement.</p>
 </section>
 <section id="feature-importance-1" class="level2">
 <h2 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h2>
-<p>Global importance (mean |Shapley value|) for feature categories for each model appears in <a href="#fig-shap" class="quarto-xref">Figure&nbsp;3</a>. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across models. Overall, the contribution of a feature category to model performance did not appear to differ across models.</p>
+<p>Global importance (mean |Shapley value|) for feature categories for each model appears in <a href="#fig-shap" class="quarto-xref">Figure&nbsp;2</a>. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across models. Overall, the contribution of a feature category to model performance did not appear to differ across models.</p>
 <!--Will make note about demographics and reference supplement ALE plots to show direction and effect of feature on lapse prediction-->
 <div class="quarto-embed-nb-cell">
 <div id="cell-fig-shap" class="cell">
@@ -832,10 +816,10 @@ Figure&nbsp;2: Difference in auROCs by demographic group
 <div id="fig-shap" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-shap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Feature importance (Shapley values) for Models by lag time. The plot displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color."><img src="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" width="672" height="480" class="figure-img"></a>
+<a href="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model."><img src="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" width="672" height="480" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-shap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Feature importance (Shapley values) for Models by lag time. The plot displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color.
+Figure&nbsp;2: Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model.
 </figcaption>
 </figure>
 </div>
@@ -1352,7 +1336,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","closeEffect":"zoom","selector":".lightbox","descPosition":"bottom","loop":false});
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","closeEffect":"zoom","loop":false,"selector":".lightbox","openEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

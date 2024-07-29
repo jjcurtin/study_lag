@@ -965,69 +965,23 @@ Figure&nbsp;1: Panel A depicts posterior probability for area under ROC curve (a
 </section>
 <section id="fairness-benchmarks-1" class="level2">
 <h2 class="anchored" data-anchor-id="fairness-benchmarks-1">Fairness Benchmarks</h2>
-<p><a href="#fig-fairness" class="quarto-xref">Figure&nbsp;2</a> shows the difference in performance of each model by demographic group. All group comparisons for race, sex at birth, and income were significant (probability &gt; .95) across models. On average there was a median increase in auROC of NA (range NA-NA) for non-Hispanic White participants compared to participants who were not White. On average there was a median increase in auROC of NA (range NA-NA) for male participants compared to female participants. On average there was a median increase in auROC of NA (range NA-NA) for participants above the federal poverty line compared to participants below the federal poverty line. A table of model performance for each demographic group separately by model can be found in the supplement.</p>
-<div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-fairness">
-<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="cell-fig-fairness" class="cell" data-fig-width="7">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pp_dem_contrast <span class="op">|&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  mutate(lag <span class="op">=</span> factor(lag, </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                      levels <span class="op">=</span> c(<span class="dv">336</span>, <span class="dv">168</span>, <span class="dv">72</span>, <span class="dv">24</span>, <span class="dv">0</span>),</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                      labels <span class="op">=</span> c(<span class="st">"336 hours"</span>, <span class="st">"168 hours"</span>, <span class="st">"72 hours"</span>, <span class="st">"24 hours"</span>, <span class="st">"0 hours"</span> )),</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>         contrast <span class="op">=</span> factor(contrast, levels <span class="op">=</span> c(<span class="st">"not white vs non-hispanic white"</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"female vs male"</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"below poverty vs above poverty"</span>),</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                           labels <span class="op">=</span> c(<span class="st">"Not White vs. Non-Hispanic White"</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Female vs. Male"</span>,</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Below Poverty vs. Above Poverty"</span>))) <span class="op">|&gt;</span> </span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  ggplot() <span class="op">+</span> </span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  geom_point(aes(x <span class="op">=</span> median, y <span class="op">=</span> lag), color <span class="op">=</span> <span class="st">"black"</span>) <span class="op">+</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> lag, x <span class="op">=</span> lower, xend <span class="op">=</span> upper),</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> pp_dem_contrast <span class="op">|&gt;</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>                 mutate(lag <span class="op">=</span> factor(lag, </span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>                                     levels <span class="op">=</span> c(<span class="dv">336</span>, <span class="dv">168</span>, <span class="dv">72</span>, <span class="dv">24</span>, <span class="dv">0</span>),</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>                                     labels <span class="op">=</span> c(<span class="st">"336 hours"</span>, <span class="st">"168 hours"</span>, <span class="st">"72 hours"</span>, <span class="st">"24 hours"</span>, <span class="st">"0 hours"</span> )),</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>                 contrast <span class="op">=</span> factor(contrast, levels <span class="op">=</span> c(<span class="st">"not white vs non-hispanic white"</span>,</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"female vs male"</span>,</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"below poverty vs above poverty"</span>),</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>                           labels <span class="op">=</span> c(<span class="st">"Not White vs. Non-Hispanic White"</span>,</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Female vs. Male"</span>,</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"Below Poverty vs. Above Poverty"</span>)))) <span class="op">+</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  facet_grid(<span class="op">~</span>contrast) <span class="op">+</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  scale_x_continuous(<span class="st">"Difference in Area Under ROC Curve"</span>, limits <span class="op">=</span> c(<span class="op">-</span><span class="fl">.3</span>, <span class="dv">0</span>), breaks <span class="op">=</span> c(<span class="op">-</span><span class="fl">.3</span>, <span class="op">-</span><span class="fl">.2</span>, <span class="op">-</span><span class="fl">.1</span>, <span class="dv">0</span>)) <span class="op">+</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">"Model Lag"</span>) <span class="op">+</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  theme_classic() <span class="op">+</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  theme(legend.position <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        panel.border <span class="op">=</span> element_rect(colour <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> NA, linewidth <span class="op">=</span> <span class="dv">1</span>)) <span class="op">+</span></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  geom_vline(xintercept <span class="op">=</span> <span class="dv">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div id="fig-fairness" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-fairness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
-<a href="index_files/figure-html/notebooks-mak_figures-fig-fairness-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Difference in auROCs by demographic group"><img src="index_files/figure-html/notebooks-mak_figures-fig-fairness-output-1.png" width="672" height="480" class="figure-img"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fairness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Difference in auROCs by demographic group
-</figcaption>
-</figure>
-</div>
-</div>
-</div></div>
-</div>
+<p><strong>?@fig-fairness</strong> shows the difference in performance of each model by demographic group. All group comparisons for race, sex at birth, and income were significant (probability &gt; .95) across models. On average there was a median increase in auROC of NA (range NA-NA) for non-Hispanic White participants compared to participants who were not White. On average there was a median increase in auROC of NA (range NA-NA) for male participants compared to female participants. On average there was a median increase in auROC of NA (range NA-NA) for participants above the federal poverty line compared to participants below the federal poverty line. A table of model performance for each demographic group separately by model can be found in the supplement.</p>
 </section>
 <section id="feature-importance-1" class="level2">
 <h2 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h2>
-<p>Global importance (mean |Shapley value|) for feature categories for each model appears in <a href="#fig-shap" class="quarto-xref">Figure&nbsp;3</a>. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across models. Overall, the contribution of a feature category to model performance did not appear to differ across models.</p>
+<p>Global importance (mean |Shapley value|) for feature categories for each model appears in <a href="#fig-shap" class="quarto-xref">Figure&nbsp;2</a>. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across models. Overall, the contribution of a feature category to model performance did not appear to differ across models.</p>
 <!--Will make note about demographics and reference supplement ALE plots to show direction and effect of feature on lapse prediction-->
 <div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-shap">
-<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div id="cell-fig-shap" class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>panel_shap_global </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="cell-fig-shap" class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cowplot::plot_grid(panel_shap_global, panel_shap_local, ncol <span class="op">=</span> <span class="dv">1</span>, labels <span class="op">=</span> c(<span class="st">"A"</span>, <span class="st">"B"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-shap" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-shap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
-<a href="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Feature importance (Shapley values) for Models by lag time. The plot displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color."><img src="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" width="672" height="480" class="figure-img"></a>
+<a href="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model."><img src="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" width="672" height="480" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-shap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Feature importance (Shapley values) for Models by lag time. The plot displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color.
+Figure&nbsp;2: Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model.
 </figcaption>
 </figure>
 </div>
@@ -1540,7 +1494,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","loop":false,"descPosition":"bottom","selector":".lightbox","openEffect":"zoom"});
+</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"selector":".lightbox","loop":false,"openEffect":"zoom","closeEffect":"zoom","descPosition":"bottom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

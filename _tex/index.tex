@@ -786,7 +786,7 @@ had worse performance than the 168 hour lag model.
 
 \subsection{Fairness Benchmarks}\label{fairness-benchmarks-1}
 
-Figure~\ref{fig-fairness} shows the difference in performance of each
+\textbf{?@fig-fairness} shows the difference in performance of each
 model by demographic group. All group comparisons for race, sex at
 birth, and income were significant (probability \textgreater{} .95)
 across models. On average there was a median increase in auROC of NA
@@ -798,22 +798,6 @@ participants. On average there was a median increase in auROC of NA
 to participants below the federal poverty line. A table of model
 performance for each demographic group separately by model can be found
 in the supplement.
-
-\begin{figure}[H]
-
-\centering{
-
-\includegraphics{index_files/figure-latex/notebooks-mak_figures-fig-fairness-output-1.png}
-
-}
-
-\caption{\label{fig-fairness}Difference in auROCs by demographic group}
-
-\end{figure}%
-
-\textsubscript{Source:
-\href{https://jjcurtin.github.io/study_lag/notebooks/mak_figures-preview.html\#cell-fig-fairness}{Make
-All Figures for Main Manuscript}}
 
 \subsection{Feature Importance}\label{feature-importance-1}
 
@@ -833,12 +817,13 @@ not appear to differ across models.
 
 }
 
-\caption{\label{fig-shap}Feature importance (Shapley values) for Models
-by lag time. The plot displays the global importance (mean
+\caption{\label{fig-shap}Panel A depicts the global importance (mean
 \textbar Shapley value\textbar) for feature categories for each model.
 Feature categories are ordered by their aggregate global importance
 (i.e., total bar length) across the five models. The importance of each
-feature category for specific models is displayed separately by color.}
+feature category for specific models is displayed separately by color.
+Panel B shows the local feature importance for the 336 hour lagged
+model.}
 
 \end{figure}%
 
