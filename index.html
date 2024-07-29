@@ -804,7 +804,7 @@ Figure&nbsp;1: Panel A depicts posterior probability for area under ROC curve (a
 </section>
 <section id="fairness-benchmarks-1" class="level2">
 <h2 class="anchored" data-anchor-id="fairness-benchmarks-1">Fairness Benchmarks</h2>
-<p>Panel B in <a href="#fig-1" class="quarto-xref">Figure&nbsp;1</a> shows the difference in performance of each model by demographic group. All group comparisons for race, sex at birth, and income were significant (probability &gt; .95) across models. On average there was a median increase in auROC of NA (range NA-NA) for non-Hispanic White participants compared to participants who were not White. On average there was a median increase in auROC of NA (range NA-NA) for male participants compared to female participants. On average there was a median increase in auROC of NA (range NA-NA) for participants above the federal poverty line compared to participants below the federal poverty line. A table of model performance for each demographic group separately by model can be found in the supplement.</p>
+<p>Panel B in <a href="#fig-1" class="quarto-xref">Figure&nbsp;1</a> shows the difference in performance of each model by demographic group. All group comparisons for race, sex at birth, and income were significant (probability &gt; .95) across models. On average there was a median increase in auROC of -0.159 (range NA–0.179) for non-Hispanic White participants compared to participants who were not White. On average there was a median increase in auROC of -0.080 (range -0.059–0.116) for male participants compared to female participants. On average there was a median increase in auROC of -0.092 (range -0.086–0.133) for participants above the federal poverty line compared to participants below the federal poverty line. A table of model performance for each demographic group separately by model can be found in the supplement.</p>
 </section>
 <section id="feature-importance-1" class="level2">
 <h2 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h2>
@@ -1336,7 +1336,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","descPosition":"bottom","selector":".lightbox","closeEffect":"zoom","loop":false});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","openEffect":"zoom","loop":false,"closeEffect":"zoom","descPosition":"bottom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
