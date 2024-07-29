@@ -175,31 +175,28 @@ global_all <- read_rds(here::here(path_models_lag, "shap_global_all.rds")) |>
    mutate(variable_grp = reorder(variable_grp, mean_value, sum),
           model = factor(model, c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag")))
 
-# shap_levels <- global_all |>
-#   mutate(variable_grp = reorder(variable_grp, mean_value, sum)) |>
-#   pull(variable_grp) |>
-#   levels()
-# 
-# local_0 <- read_rds(here::here(path_models_lag, 
-#                         "outer_shapsgrp_1week_0_v1_nested_main_downsized.rds")) |> 
-#    mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
-#    filter(!variable_grp %in% c("day of week (other)", "time of day (other)"))
-# local_24 <- read_rds(here::here(path_models_lag,
-#                       "outer_shapsgrp_1week_24_v1_nested_main_downsized.rds")) |> 
-#    mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
-#    filter(!variable_grp %in% c("day of week (other)", "time of day (other)"))
-# local_72 <- read_rds(here::here(path_models_lag, 
-#                         "outer_shapsgrp_1week_72_v1_nested_main_downsized.rds")) |>      
-#    mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
-#    filter(!variable_grp %in% c("day of week (other)", "time of day (other)"))
-# local_168 <- read_rds(here::here(path_models_lag, 
-#                         "outer_shapsgrp_1week_168_v1_nested_main_downsized.rds")) |> 
-#    mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
-#    filter(!variable_grp %in% c("day of week (other)", "time of day (other)")) 
-# local_336 <- read_rds(here::here(path_models_lag, 
-#                           "outer_shapsgrp_1week_336_v1_nested_main_downsized.rds")) |>
-#    mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |>
-#    filter(!variable_grp %in% c("day of week (other)", "time of day (other)")) 
+shap_levels <- global_all |>
+  mutate(variable_grp = reorder(variable_grp, mean_value, sum)) |>
+  pull(variable_grp) |>
+  levels()
+
+shap_feat <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_1week_336_v1_nested_main.rds")) |> 
+  filter(!variable_grp %in% c("lapse hour (other)", "lapse day (other)")) |>
+  mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |> 
+  glimpse()
+
+# downsize data
+downsample_ratio <- .10
+set.seed(102030)
+
+ids <- shap_feat |>
+  pull(id_obs) |>
+  unique()
+
+ids <- ids |> sample(size = round(length(ids)/(1/downsample_ratio)))
+
+shap_feat_down <- shap_feat |> 
+  filter(id_obs %in% ids)
 ```
 
 
@@ -222,78 +219,26 @@ panel_shap_global <- global_all |>
   coord_flip()
 ```
 
-Local shapley pannels
+Local Shapley Pannel
 ```{r}
-# panel_shap_local_0 <- local_0 |>
-#   ggplot(mapping = aes(x = variable_grp, y = value)) +
-#   ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
-#                      color = color_codes[1]) +
-#   geom_hline(yintercept = 0) +
-#   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-#   ylab("Shapley Value") +
-#   xlab("") +
-#   theme(axis.text.y = element_blank(),
-#         axis.ticks.y = element_blank(),
-#         axis.line.y = element_blank()) +
-#   coord_flip()
-# 
-# panel_shap_local_24 <- local_24 |>
-#   ggplot(mapping = aes(x = variable_grp, y = value)) +
-#   ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4, 
-#                      color = color_codes[2]) +
-#   geom_hline(yintercept = 0) +
-#   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-#   ylab("Shapley Value") +
-#   xlab("") +
-#   theme(axis.text.y = element_blank(),
-#         axis.ticks.y = element_blank(),
-#         axis.line.y = element_blank()) +
-#   coord_flip()
-# 
-# panel_shap_local_72 <- local_72 |>
-#   ggplot(mapping = aes(x = variable_grp, y = value)) +
-#   ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
-#                      color = color_codes[3]) +
-#   geom_hline(yintercept = 0) +
-#   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-#   ylab("Shapley Value") +
-#   xlab("") +
-#   theme(axis.text = element_text(size = 9.5)) +
-#   coord_flip()
-# 
-# panel_shap_local_168 <- local_168 |>
-#   ggplot(mapping = aes(x = variable_grp, y = value)) +
-#   ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
-#                      color = color_codes[4]) +
-#   geom_hline(yintercept = 0) +
-#   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-#   ylab("Shapley Value") +
-#   xlab("") +
-#   theme(axis.text.y = element_blank(),
-#         axis.ticks.y = element_blank(),
-#         axis.line.y = element_blank()) +
-#   coord_flip()
-# 
-# panel_shap_local_336 <- local_336 |>
-#   ggplot(mapping = aes(x = variable_grp, y = value)) +
-#   ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = 0.4,
-#                      color = color_codes[5]) +
-#   geom_hline(yintercept = 0) +
-#   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-#   ylab("Shapley Value") +
-#   xlab("") +
-#   theme(axis.text.y = element_blank(),
-#         axis.ticks.y = element_blank(),
-#         axis.line.y = element_blank()) +
-#   coord_flip()
+panel_shap_local <- shap_feat_down |>
+  ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score_z_mean)) +
+  ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = .4) +
+  geom_hline(yintercept = 0) +
+  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+  ylab("Shapley Value") +
+  xlab("") +
+  scale_color_binned(low = "#4A148C", high = "#F06292", labels = NULL) +
+  labs(color = "Feature") +
+  coord_flip()
 ```
+
 
 
 ```{r}
 #| label: fig-shap
-#| fig-cap: "Feature importance (Shapley values) for Models by lag time. The plot displays the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models.  The importance of each feature category for specific models is displayed separately by color. "
+#| fig-cap: "Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model."
 
-
-panel_shap_global 
+cowplot::plot_grid(panel_shap_global, panel_shap_local, ncol = 1, labels = c("A", "B"))
 
 ```

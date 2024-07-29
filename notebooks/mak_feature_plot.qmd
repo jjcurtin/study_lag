@@ -70,7 +70,7 @@ shap_levels <- global_all |>
   pull(variable_grp) |>
   levels()
 
-shap_feat <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_1week_0_v1_nested_main.rds")) |> 
+shap_feat <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_1week_336_v1_nested_main.rds")) |> 
   filter(!variable_grp %in% c("lapse hour (other)", "lapse day (other)")) |>
   mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |> 
   glimpse()
