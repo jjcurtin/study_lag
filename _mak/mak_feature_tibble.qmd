@@ -176,7 +176,7 @@ feat_0 <- feat_0 |>
   mutate(variable = fct_relabel(variable, clean_feature_names))
 
 # Combine feature scores with shaps using right join
-shap_feat <- feat_0 |> 
+shap_feat_0 <- feat_0 |> 
   right_join(shap_0, by = c("id_obs", "variable")) |> 
   glimpse()
 ```
@@ -300,7 +300,8 @@ shap_feat_72 <- shap_feat_72 |>
   mutate(feature_score_z = (feature_score - mean(feature_score))/sd(feature_score))
 shap_feat_168 <- shap_feat_168 |> 
   group_by(variable) |> 
-  mutate(feature_score_z = (feature_score - mean(feature_score))/sd(feature_score))shap_feat_336 <- shap_feat_336 |> 
+  mutate(feature_score_z = (feature_score - mean(feature_score))/sd(feature_score))
+shap_feat_336 <- shap_feat_336 |> 
   group_by(variable) |> 
   mutate(feature_score_z = (feature_score - mean(feature_score))/sd(feature_score))
 ```
@@ -642,9 +643,6 @@ shap_feat_grp_336 <- shap_feat_336 |>
 ```
 
 
-```{r}
- head(shap_feat_grp_336, n = 50) |>  print(n = Inf)
-```
 
 ### Save out tibble
 
