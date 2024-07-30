@@ -213,40 +213,41 @@ Global shapley pannel
 color_codes <- c("#240e31","#cb6bce", "#458892", "#75f3d3", "#751c6d")
 
 panel_shap_global <- global_all |>
-   mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ))) |> 
+   mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ),
+                         labels = c("336 hours", "168 hours", "72 hours", "24 hours", "0 hours" ))) |> 
   ggplot() +
   geom_bar(aes(x = variable_grp, y = mean_value, fill = model), stat = "identity") +
   ylab("Mean(|Shapley Value|)") +
   xlab("") +
-  labs(fill = NULL) +
+  labs(fill = "Model Lag") +
   scale_color_manual(values = color_codes) +
   scale_fill_manual(values = color_codes) +
-  theme(axis.text = element_text(size = 9.5),
+  theme(axis.text=element_text(size=9.5),
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
-        legend.position = "bottom",
-        legend.key.size = unit(.3, 'cm')) +
+        legend.position = "right",
+        # legend.key.size = unit(.3, 'cm'),
+        ) +
   coord_flip()
 ```
 
 Local Shapley Pannel
 ```{r}
 panel_shap_local <- shap_feat_down |>
-  mutate(feature_score = if_else(feature_score_z_mean > 4, 4,
-                                 feature_score_z_mean)) |> 
+  # standardize feat score to 0-1
+  mutate(feature_score = (feature_score_z_mean - min(feature_score_z_mean))/(max(feature_score_z_mean)-min(feature_score_z_mean))) |> 
   ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score)) +
   ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
   geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+  scale_y_continuous(limits = c(-2, 3), breaks = seq(-2, 3)) +
   ylab("Shapley Value") +
   xlab(NULL) +
-  scale_color_gradientn(colors = c("#751c6d", "#75f3d3"),
-                        breaks = c(-3, 3.9),
+  scale_color_gradientn(colors = c("#240e31", "#75f3d3"),
+                        breaks = c(.1, .9),
                         labels = c("low", "high")) +
-  labs(color = NULL) +
-  theme(legend.position = "bottom",
-        axis.text.y=element_blank(),
-        axis.ticks.y=element_blank(),
-        legend.key.size = unit(.3, 'cm'))+
+  labs(color = "Feature Value") +
+  theme(legend.position = "right",
+        axis.text=element_text(size=9.5),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
   coord_flip()
 ```
 
@@ -255,10 +256,9 @@ panel_shap_local <- shap_feat_down |>
 ```{r}
 #| label: fig-shap
 #| fig-cap: "Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model."
-#| fig-width: 8
+#| fig-height: 5.5
+#| fig-width: 7
 
-# cowplot::plot_grid(panel_shap_global, panel_shap_local, ncol = 1, labels = c("A", "B"), align = "v")
-
-cowplot::plot_grid(panel_shap_global, panel_shap_local, labels = c("A", "B"), align = "h", rel_widths = c(1.5, 1))
+cowplot::plot_grid(panel_shap_global, panel_shap_local, ncol = 1, labels = c("A", "B"), align = "v")
 
 ```
