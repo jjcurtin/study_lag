@@ -1,0 +1,27 @@
+---
+title: "Read in Methods Figure"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+number-sections: true
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-depth: 4
+editor_options: 
+  chunk_output_type: console
+html-table-processing: none
+---
+
+
+```{r}
+#| label: fig-methods
+#| fig-cap: "Add description."
+#| fig-width: 7
+
+knitr::include_graphics(path = here::here("figures/methods.jpg"))
+```
