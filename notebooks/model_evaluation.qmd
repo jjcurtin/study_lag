@@ -123,6 +123,9 @@ test_metrics_all_pp_perf <- pp_tidy |>
 test_metrics_all_pp_perf |> 
   write_csv(here::here(path_models_lag, "test_metrics_all_pp_perf.csv"))
 
+pp_tidy |> 
+  write_csv(here::here(path_models_lag, "pp_tidy.csv"))
+
 test_metrics_all_pp_perf
 ```
 
