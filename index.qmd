@@ -160,15 +160,11 @@ Data preprocessing, modeling, and Bayesian analyses were done in R using the tid
 <!-- I think we need a figure to show the prediction windows, feature scoring period (what did we call that in the last paper), and the lag  -->
 
 <!-- Can we follow the text from the original EMA paper a bit more closely here regarding rolling windows and also the fence? -->
-We predicted lapses occurring in one week windows. Predictions were updated hourly. Therefore our models provided hour-by-hour predictions of future probability of an alcohol lapse within a one week window shifted at various time points (i.e., lags) into the future (no lag and 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions). 
+We predicted lapses occurring in one week windows (@fig-methods). Predictions were updated hourly. Therefore our models provided hour-by-hour predictions of future probability of an alcohol lapse within a one week window shifted at various time points (i.e., lags) into the future (no lag and 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions). 
 
-```{r}
-#| output: true
-#| out-width: "7"
-#| fig-subcap: Methods fig
 
-knitr::include_graphics(path = "figures/methods.jpg")
-```
+{{< embed notebooks/methods_figure.qmd#fig-methods >}}
+
 
 The first prediction window for each participant began 24 hours from midnight on their study start date + lag time. For example, the first prediction for the 24 hour lagged prediction model would be 48 hours after participants' start date. This ensured at least 24 hours of past EMAs for future lapse prediction in these first windows. Subsequent windows for each participant were created by repeatedly rolling the window start time forward one hour until the end of their study participation (i.e., each participant's last prediction window started one week before their last recorded EMA).
 

@@ -257,7 +257,7 @@ div.csl-indent {
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
   </ul>
-<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="index-preview.html"><i class="bi bi-journal-code"></i>Article Notebook</a></li><li><a href="notebooks\fairness-preview.html"><i class="bi bi-journal-code"></i>Fairness analyses</a></li><li><a href="notebooks\mak_figures-preview.html"><i class="bi bi-journal-code"></i>Make All Figures for Main Manuscript</a></li><li><a href="notebooks\mak_tables-preview.html"><i class="bi bi-journal-code"></i>Make All Tables for Main Manuscript</a></li><li><a href="notebooks\model_evaluation-preview.html"><i class="bi bi-journal-code"></i>Model evaluation</a></li><li><a href="notebooks\supplement-preview.html"><i class="bi bi-journal-code"></i>Supplemental Figures and Tables</a></li></ul></div></nav>
+<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="index-preview.html"><i class="bi bi-journal-code"></i>Article Notebook</a></li><li><a href="notebooks\fairness-preview.html"><i class="bi bi-journal-code"></i>Fairness analyses</a></li><li><a href="notebooks\mak_figures-preview.html"><i class="bi bi-journal-code"></i>Make All Figures for Main Manuscript</a></li><li><a href="notebooks\mak_tables-preview.html"><i class="bi bi-journal-code"></i>Make All Tables for Main Manuscript</a></li><li><a href="notebooks\model_evaluation-preview.html"><i class="bi bi-journal-code"></i>Model evaluation</a></li><li><a href="notebooks\methods_figure-preview.html"><i class="bi bi-journal-code"></i>Read in Methods Figure</a></li><li><a href="notebooks\supplement-preview.html"><i class="bi bi-journal-code"></i>Supplemental Figures and Tables</a></li></ul></div></nav>
 </div>
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
 </div>
@@ -341,17 +341,23 @@ Note to include transparency report in supplement-->
 <h3 class="anchored" data-anchor-id="lapse-labels">Lapse Labels</h3>
 <!-- I think we need a figure to show the prediction windows, feature scoring period (what did we call that in the last paper), and the lag  -->
 <!-- Can we follow the text from the original EMA paper a bit more closely here regarding rolling windows and also the fence? -->
-<p>We predicted lapses occurring in one week windows. Predictions were updated hourly. Therefore our models provided hour-by-hour predictions of future probability of an alcohol lapse within a one week window shifted at various time points (i.e., lags) into the future (no lag and 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions).</p>
-<div class="cell">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="figures/methods.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Methods fig"><img src="figures/methods.jpg" class="img-fluid figure-img" width="7" alt="Methods fig"></a></p>
-<figcaption>Methods fig</figcaption>
+<p>We predicted lapses occurring in one week windows (<a href="#fig-methods" class="quarto-xref">Figure&nbsp;1</a>). Predictions were updated hourly. Therefore our models provided hour-by-hour predictions of future probability of an alcohol lapse within a one week window shifted at various time points (i.e., lags) into the future (no lag and 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions).</p>
+<div class="quarto-embed-nb-cell">
+<div id="cell-fig-methods" class="cell" data-fig-width="7">
+<div class="cell-output cell-output-display">
+<div id="fig-methods" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-methods-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="index_files/figure-html/notebooks-methods_figure-fig-methods-output-1.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: Add description."><img src="index_files/figure-html/notebooks-methods_figure-fig-methods-output-1.jpeg" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-methods-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Add description.
+</figcaption>
 </figure>
 </div>
 </div>
-<a class="quarto-notebook-link" id="nblink-1" href="index-preview.html">Source: Article Notebook</a></div>
+</div>
+</div>
 <p>The first prediction window for each participant began 24 hours from midnight on their study start date + lag time. For example, the first prediction for the 24 hour lagged prediction model would be 48 hours after participants’ start date. This ensured at least 24 hours of past EMAs for future lapse prediction in these first windows. Subsequent windows for each participant were created by repeatedly rolling the window start time forward one hour until the end of their study participation (i.e., each participant’s last prediction window started one week before their last recorded EMA).</p>
 <p>The start and end date/time of past drinking episodes were reported on the first EMA item. A prediction window was labeled <em>lapse</em> if the start date/hour of any drinking episode fell within that window. A window was labeled <em>no lapse</em> if no alcohol use occurred within that window +/- 24 hours. If no alcohol use occurred within the window but did occur within 24 hours of the start or end of the window, the window was excluded.</p>
 <p>We ended up with a total of 270,081 labels for our baseline (no lag) model, 266,599 labels for our 24 hour lagged model, 259,643 labels for our 72 hour lagged model, 245,707 labels for our 168 hour lagged model, and 221,206 labels for our 336 hour lagged model.</p>
@@ -784,7 +790,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <section id="model-evaluation-1" class="level2">
 <h2 class="anchored" data-anchor-id="model-evaluation-1">Model Evaluation</h2>
 <p>The median auROC across the 30 test sets for our baseline model was high (median=0.893, IQR=0.045), consistent with our previous study.<!-- GEF: maybe need a footnote here that these models were re-run? or up by the demographic characteristics? i am obviously more familiar with the values than other readers, but it stuck out to me that the median auROC is 0.89 rather than 0.90 --> Performance across our lagged models was also high for the 24 hour lag (median=0.882, IQR=0.039), 72 hour lag (median=0.868, IQR=0.057), 168 hour lag (median=0.860, IQR=0.062), and 336 hour lag (median=0.856, IQR=0.062).</p>
-<p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.893 (baseline), 0.887 (24 hour lag), 0.875 (72 hour lag), 0.871 (168 hour lag), and 0.852 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline [0.876-0.908], 24 hour lag [0.869-0.903], 72 hour lag [0.855-0.892], 168 hour lag [0.850-0.889], 336 hour lag [0.830-0.872].Panel A in <a href="#fig-1" class="quarto-xref">Figure&nbsp;1</a> displays these median auROCs and 95% Bayesian CIs by model.</p>
+<p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.893 (baseline), 0.887 (24 hour lag), 0.875 (72 hour lag), 0.871 (168 hour lag), and 0.852 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline [0.876-0.908], 24 hour lag [0.869-0.903], 72 hour lag [0.855-0.892], 168 hour lag [0.850-0.889], 336 hour lag [0.830-0.872].Panel A in <a href="#fig-1" class="quarto-xref">Figure&nbsp;2</a> displays these median auROCs and 95% Bayesian CIs by model.</p>
 <!-- we need HDI for CI I believe.  We need to look into that using tidyposterior -->
 <div class="quarto-embed-nb-cell">
 <div id="cell-fig-1" class="cell" data-fig-width="7">
@@ -792,10 +798,10 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <div id="fig-1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/notebooks-mak_figures-fig-1-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;1: Panel A depicts posterior probability for area under ROC curve (auROC) and Bayesian credible intervals by model. Dashed line indicates a model performing at chance. Panel B depicts difference in auROCs by demographic group"><img src="index_files/figure-html/notebooks-mak_figures-fig-1-output-1.png" width="672" height="480" class="figure-img"></a>
+<a href="index_files/figure-html/notebooks-mak_figures-fig-1-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Panel A depicts posterior probability for area under ROC curve (auROC) and Bayesian credible intervals by model. Dashed line indicates a model performing at chance. Panel B depicts difference in auROCs by demographic group"><img src="index_files/figure-html/notebooks-mak_figures-fig-1-output-1.png" width="672" height="480" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Panel A depicts posterior probability for area under ROC curve (auROC) and Bayesian credible intervals by model. Dashed line indicates a model performing at chance. Panel B depicts difference in auROCs by demographic group
+Figure&nbsp;2: Panel A depicts posterior probability for area under ROC curve (auROC) and Bayesian credible intervals by model. Dashed line indicates a model performing at chance. Panel B depicts difference in auROCs by demographic group
 </figcaption>
 </figure>
 </div>
@@ -817,13 +823,13 @@ Figure&nbsp;1: Panel A depicts posterior probability for area under ROC curve (a
 </section>
 <section id="fairness-benchmarks-1" class="level2">
 <h2 class="anchored" data-anchor-id="fairness-benchmarks-1">Fairness Benchmarks</h2>
-<p>Panel B in <a href="#fig-1" class="quarto-xref">Figure&nbsp;1</a> shows the difference in performance of each model by demographic group. All group comparisons for race, sex at birth, and income were significant (probability &gt; .95) across models. On average there was a median increase in auROC of -0.159 (range NA–0.179) for non-Hispanic White participants compared to participants who were not White. On average there was a median increase in auROC of -0.080 (range -0.059–0.116) for male participants compared to female participants. On average there was a median increase in auROC of -0.092 (range -0.086–0.133) for participants above the federal poverty line compared to participants below the federal poverty line. A table of model performance for each demographic group separately by model can be found in the supplement.</p>
+<p>Panel B in <a href="#fig-1" class="quarto-xref">Figure&nbsp;2</a> shows the difference in performance of each model by demographic group. All group comparisons for race, sex at birth, and income were significant (probability &gt; .95) across models. On average there was a median increase in auROC of -0.159 (range NA–0.179) for non-Hispanic White participants compared to participants who were not White. On average there was a median increase in auROC of -0.080 (range -0.059–0.116) for male participants compared to female participants. On average there was a median increase in auROC of -0.092 (range -0.086–0.133) for participants above the federal poverty line compared to participants below the federal poverty line. A table of model performance for each demographic group separately by model can be found in the supplement.</p>
 <!--do we know the numbers in each of the two groups for each characteristic?  Cant get that from demos table.  Maybe report it here? Or as second paragraph in demos section?  -->
 <!-- again, maybe focus on decrease in performance in protected group? -->
 </section>
 <section id="feature-importance-1" class="level2">
 <h2 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h2>
-<p>Global importance (mean |Shapley value|) for feature categories for each model appears in Panel A of <a href="#fig-shap" class="quarto-xref">Figure&nbsp;2</a>. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across models. Overall, the contribution of a feature category to model performance did not appear to differ across models.</p>
+<p>Global importance (mean |Shapley value|) for feature categories for each model appears in Panel A of <a href="#fig-shap" class="quarto-xref">Figure&nbsp;3</a>. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy was also globally important across models. Overall, the contribution of a feature category to model performance did not appear to differ across models.</p>
 <p>Panel B shows the local feature importance scores colored by high or low feature value for the 336 hour lag model. <!--comment on direction of features - ex. income. Also reference supplement with other local importance plots-->.</p>
 <div class="quarto-embed-nb-cell">
 <div id="cell-fig-shap" class="cell" data-fig-height="5.5" data-fig-width="7">
@@ -831,10 +837,10 @@ Figure&nbsp;1: Panel A depicts posterior probability for area under ROC curve (a
 <div id="fig-shap" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-shap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;2: Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model."><img src="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" width="672" height="528" class="figure-img"></a>
+<a href="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model."><img src="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" width="672" height="528" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-shap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model.
+Figure&nbsp;3: Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model.
 </figcaption>
 </figure>
 </div>
@@ -1351,7 +1357,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","closeEffect":"zoom","loop":false,"selector":".lightbox","descPosition":"bottom"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","openEffect":"zoom","closeEffect":"zoom","loop":false,"descPosition":"bottom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
