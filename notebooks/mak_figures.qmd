@@ -172,6 +172,10 @@ Read in data
 ```{r}
 global_all <- read_rds(here::here(path_models_lag, "shap_global_all.rds")) |> 
    filter(!variable_grp %in% c("day of week (other)", "time of day (other)")) |> 
+  mutate(variable_grp = str_remove(variable_grp, "(EMA item)"),
+          variable_grp = str_remove(variable_grp, "(demographic)"),
+          variable_grp = str_remove(variable_grp, "(other)"),
+        variable_grp = str_remove(variable_grp, "[[:punct:]][[:punct:]]")) |> 
    mutate(variable_grp = reorder(variable_grp, mean_value, sum),
           model = factor(model, c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag")))
 
@@ -181,7 +185,11 @@ shap_levels <- global_all |>
   levels()
 
 shap_feat <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_1week_336_v1_nested_main.rds")) |> 
-  filter(!variable_grp %in% c("lapse hour (other)", "lapse day (other)")) |>
+  filter(!variable_grp %in% c("lapse hour (other)", "lapse day (other)")) |> 
+  mutate(variable_grp = str_remove(variable_grp, "(EMA item)"),
+          variable_grp = str_remove(variable_grp, "(demographic)"),
+          variable_grp = str_remove(variable_grp, "(other)"),
+        variable_grp = str_remove(variable_grp, "[[:punct:]][[:punct:]]")) |> 
   mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |> 
   glimpse()
 
@@ -205,31 +213,40 @@ Global shapley pannel
 color_codes <- c("#240e31","#cb6bce", "#458892", "#75f3d3", "#751c6d")
 
 panel_shap_global <- global_all |>
-   mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ),
-                        labels = c("336 hours", "168 hours", "72 hours", "24 hours", "0 hours" ))) |> 
+   mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ))) |> 
   ggplot() +
   geom_bar(aes(x = variable_grp, y = mean_value, fill = model), stat = "identity") +
   ylab("Mean(|Shapley Value|)") +
   xlab("") +
-  labs(fill = "Model Lag") +
+  labs(fill = NULL) +
   scale_color_manual(values = color_codes) +
   scale_fill_manual(values = color_codes) +
   theme(axis.text = element_text(size = 9.5),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+        legend.position = "bottom",
+        legend.key.size = unit(.3, 'cm')) +
   coord_flip()
 ```
 
 Local Shapley Pannel
 ```{r}
 panel_shap_local <- shap_feat_down |>
-  ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score_z_mean)) +
-  ggforce::geom_sina(method = "counts", maxwidth = 0.7, alpha = .4) +
+  mutate(feature_score = if_else(feature_score_z_mean > 4, 4,
+                                 feature_score_z_mean)) |> 
+  ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score)) +
+  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
   geom_hline(yintercept = 0) +
   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
   ylab("Shapley Value") +
-  xlab("") +
-  scale_color_binned(low = "#4A148C", high = "#F06292", labels = NULL) +
-  labs(color = "Feature") +
+  xlab(NULL) +
+  scale_color_gradientn(colors = c("#751c6d", "#75f3d3"),
+                        breaks = c(-3, 3.9),
+                        labels = c("low", "high")) +
+  labs(color = NULL) +
+  theme(legend.position = "bottom",
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        legend.key.size = unit(.3, 'cm'))+
   coord_flip()
 ```
 
@@ -238,7 +255,10 @@ panel_shap_local <- shap_feat_down |>
 ```{r}
 #| label: fig-shap
 #| fig-cap: "Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model."
+#| fig-width: 8
 
-cowplot::plot_grid(panel_shap_global, panel_shap_local, ncol = 1, labels = c("A", "B"))
+# cowplot::plot_grid(panel_shap_global, panel_shap_local, ncol = 1, labels = c("A", "B"), align = "v")
+
+cowplot::plot_grid(panel_shap_global, panel_shap_local, labels = c("A", "B"), align = "h", rel_widths = c(1.5, 1))
 
 ```

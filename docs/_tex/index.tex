@@ -294,7 +294,6 @@ Witkiewitz \& Marlatt, 2004). EMA also appears to be well tolerated by
 individuals with substance use disorders (Wyant et al., 2023). Thus, it
 can serve as an important signal for predicting substance use outcomes
 and interpreting clinically relevant features over a sustained period.
-
 Promising preliminary work suggests it is possible to build EMA models
 that predict immediate lapses back to substance use (Bae et al., 2018;
 Chih et al., 2014; Soyster et al., 2022; Walters et al., 2021). In a
@@ -350,14 +349,17 @@ are publicly available (\url{https://osf.io/xta67/}).
 
 \subsection{Participants}\label{participants}
 
-We recruited 151 participants in early recovery (1-8 weeks of
-abstinence) from moderate to severe alcohol use disorder in Madison,
-Wisconsin, US for a three month longitudinal study. This sample size was
-determined based on traditional power analysis methods for logistic
-regression (Hsieh, 1989) because comparable approaches for machine
-learning models have not yet been validated. Participants were recruited
-through print and targeted digital advertisements and partnerships with
-treatment centers. We required participants:
+We recruited participants in early recovery (1-8 weeks of abstinence)
+from moderate to severe alcohol use disorder in Madison, Wisconsin, US
+for a three month longitudinal study. One hundred fifty one participants
+were included in our analyses. We used data from all participants
+included in our previous study (see (Wyant et al., n.d.) for enrollment
+and disposition information). This sample size was determined based on
+traditional power analysis methods for logistic regression (Hsieh, 1989)
+because comparable approaches for machine learning models have not yet
+been validated. Participants were recruited through print and targeted
+digital advertisements and partnerships with treatment centers. We
+required that participants:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -599,31 +601,29 @@ probabilities and the range.\footnote{For our fairness evaluations, we
 
 \paragraph{Feature Importance}\label{feature-importance}
 
-We calculated Shapley values (Lundberg \& Lee, 2017) from the 30 test
-sets to provide a description of the importance of categories of
-features across our five models. We used the SHAPforxgboost package that
-provides Shapley values in log-odds units for binary classification
-models. We averaged the three Shapley values for each observation for
+We calculated Shapley values in log-odds units for binary classification
+models from the 30 test sets to provide a description of the importance
+of categories of features across our five models (Lundberg \& Lee,
+2017). We averaged the three Shapley values for each observation for
 each feature (i.e., across the three repeats) to increase their
 stability. An inherent property of Shapley values is their additivity,
 allowing us to combine features into feature categories. We created
 separate feature categories for each of the nine EMA questions, the
 rates of past alcohol use and missing surveys, the time of day and day
 of the week of the start of the prediction window, and the seven
-demographic variables included in the models. We calculated global
-importance for each feature category by averaging the absolute value of
-the Shapley values of all features in the category across all
-observations. These global importance scores based on Shapley values
-allow us to contextualize relative feature importance for each model.
+demographic variables included in the models. We calculated the local
+(i.e., for each observation) importance for each category of features by
+adding Shapley values across all features in a category, separately for
+each observation. We calculated global importance for each feature
+category by averaging the absolute value of the Shapley values of all
+features in the category across all observations. These local and global
+importance scores based on Shapley values allow us to contextualize
+relative feature importance for each model.
 
 \section{Results}\label{results}
 
 \subsection{Demographic and Lapse
 Characteristics}\label{demographic-and-lapse-characteristics}
-
-One hundred fifty one participants were included in our analyses. We
-used data from all participants included in our previous study (see
-(Wyant et al., n.d.) for enrollment and disposition information).
 
 There were approximately equal numbers of men (N=77; 51.0\%) and women
 (N=74; 49.0\%) who ranged in age from 21 - 72 years old. The sample was
