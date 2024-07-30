@@ -10,7 +10,7 @@
 <meta name="author" content="Gaylen E. Fronk">
 <meta name="author" content="Jiachen Yu">
 <meta name="author" content="John J. Curtin">
-<meta name="dcterms.date" content="2024-07-29">
+<meta name="dcterms.date" content="2024-07-30">
 <meta name="keywords" content="Substance use disorders, Precision mental health">
 
 <title>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</title>
@@ -78,10 +78,10 @@ div.csl-indent {
 <meta name="citation_author" content="Gaylen E. Fronk">
 <meta name="citation_author" content="Jiachen Yu">
 <meta name="citation_author" content="John J. Curtin">
-<meta name="citation_publication_date" content="2024-07-29">
-<meta name="citation_cover_date" content="2024-07-29">
+<meta name="citation_publication_date" content="2024-07-30">
+<meta name="citation_cover_date" content="2024-07-30">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-07-29">
+<meta name="citation_online_date" content="2024-07-30">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=2022 National Survey on Drug Use and Health. Public data set.;,citation_journal_title=Substance Abuse and Mental Health Services Administration;,citation_publisher=https://www.samhsa.gov/data/report/2022-nsduh-detailed-tables;">
 <meta name="citation_reference" content="citation_title=Disparities in the Treatment of Substance Use Disorders: Does Where You Live Matter?;,citation_abstract=This study focused on (1) whether disparities in timely receipt of substance use services can be explained in part by the characteristics of the community in which the clients reside and (2) whether the effect of community characteristics on timely receipt of services was similar across racial/ethnic groups. The sample was composed of adults receiving publicly funded outpatient treatment in Washington State. Treatment data were linked to data from the US census. The outcome studied was “Initiation and Engagement” in treatment (IET), a measure noting timely receipt of services at the beginning of treatment. Community characteristics studied included community level economic disadvantage and concentration of American Indian, Latino, and Black residents in the community. Black and American Indian clients were less likely to initiate or engage in treatment compared to non-Latino white clients, and American Indian clients living in economically disadvantaged communities were at even greater risk of not initiating treatment. Community economic disadvantage and racial/ethnic makeup of the community were associated with treatment initiation, but not engagement, although they did not entirely explain the disparities found in IET.;,citation_author=Andrea Acevedo;,citation_author=Lee Panas;,citation_author=Deborah Garnick;,citation_author=Dolores Acevedo-Garcia;,citation_author=Jennifer Miles;,citation_author=Grant Ritter;,citation_author=Kevin Campbell;,citation_publication_date=2018-10;,citation_cover_date=2018-10;,citation_year=2018;,citation_issue=4;,citation_doi=10.1007/s11414-018-9586-y;,citation_issn=1556-3308;,citation_volume=45;,citation_language=en-US;,citation_journal_title=The Journal of Behavioral Health Services &amp;amp;amp; Research;">
@@ -191,7 +191,7 @@ div.csl-indent {
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">July 29, 2024</p>
+              <p class="date">July 30, 2024</p>
             </div>
           </div>
           
@@ -342,6 +342,16 @@ Note to include transparency report in supplement-->
 <!-- I think we need a figure to show the prediction windows, feature scoring period (what did we call that in the last paper), and the lag  -->
 <!-- Can we follow the text from the original EMA paper a bit more closely here regarding rolling windows and also the fence? -->
 <p>We predicted lapses occurring in one week windows. Predictions were updated hourly. Therefore our models provided hour-by-hour predictions of future probability of an alcohol lapse within a one week window shifted at various time points (i.e., lags) into the future (no lag and 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions).</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="figures/methods.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Methods fig"><img src="figures/methods.png" class="img-fluid figure-img" width="7" alt="Methods fig"></a></p>
+<figcaption>Methods fig</figcaption>
+</figure>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-1" href="index-preview.html">Source: Article Notebook</a></div>
 <p>The first prediction window for each participant began 24 hours from midnight on their study start date + lag time. For example, the first prediction for the 24 hour lagged prediction model would be 48 hours after participants’ start date. This ensured at least 24 hours of past EMAs for future lapse prediction in these first windows. Subsequent windows for each participant were created by repeatedly rolling the window start time forward one hour until the end of their study participation (i.e., each participant’s last prediction window started one week before their last recorded EMA).</p>
 <p>The start and end date/time of past drinking episodes were reported on the first EMA item. A prediction window was labeled <em>lapse</em> if the start date/hour of any drinking episode fell within that window. A window was labeled <em>no lapse</em> if no alcohol use occurred within that window +/- 24 hours. If no alcohol use occurred within the window but did occur within 24 hours of the start or end of the window, the window was excluded.</p>
 <p>We ended up with a total of 270,081 labels for our baseline (no lag) model, 266,599 labels for our 24 hour lagged model, 259,643 labels for our 72 hour lagged model, 245,707 labels for our 168 hour lagged model, and 221,206 labels for our 336 hour lagged model.</p>
@@ -782,7 +792,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <div id="fig-1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/notebooks-mak_figures-fig-1-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: Panel A depicts posterior probability for area under ROC curve (auROC) and Bayesian credible intervals by model. Dashed line indicates a model performing at chance. Panel B depicts difference in auROCs by demographic group"><img src="index_files/figure-html/notebooks-mak_figures-fig-1-output-1.png" width="672" height="480" class="figure-img"></a>
+<a href="index_files/figure-html/notebooks-mak_figures-fig-1-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;1: Panel A depicts posterior probability for area under ROC curve (auROC) and Bayesian credible intervals by model. Dashed line indicates a model performing at chance. Panel B depicts difference in auROCs by demographic group"><img src="index_files/figure-html/notebooks-mak_figures-fig-1-output-1.png" width="672" height="480" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Panel A depicts posterior probability for area under ROC curve (auROC) and Bayesian credible intervals by model. Dashed line indicates a model performing at chance. Panel B depicts difference in auROCs by demographic group
@@ -821,7 +831,7 @@ Figure&nbsp;1: Panel A depicts posterior probability for area under ROC curve (a
 <div id="fig-shap" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-shap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model."><img src="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" width="672" height="528" class="figure-img"></a>
+<a href="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;2: Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model."><img src="index_files/figure-html/notebooks-mak_figures-fig-shap-output-1.png" width="672" height="528" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-shap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model.
@@ -1341,7 +1351,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","openEffect":"zoom","descPosition":"bottom","loop":false,"selector":".lightbox"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","openEffect":"zoom","loop":false,"descPosition":"bottom","closeEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
