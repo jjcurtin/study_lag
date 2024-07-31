@@ -9,7 +9,7 @@
     <meta name="author" content="Gaylen E. Fronk">
     <meta name="author" content="Jiachen Yu">
     <meta name="author" content="John J. Curtin">
-    <meta name="dcterms.date" content="2024-07-30">
+    <meta name="dcterms.date" content="2024-07-31">
     <meta name="keywords" content="Substance use disorders, Precision mental health">
 
     <title>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</title>
@@ -199,10 +199,10 @@
 <meta name="citation_author" content="Gaylen E. Fronk">
 <meta name="citation_author" content="Jiachen Yu">
 <meta name="citation_author" content="John J. Curtin">
-<meta name="citation_publication_date" content="2024-07-30">
-<meta name="citation_cover_date" content="2024-07-30">
+<meta name="citation_publication_date" content="2024-07-31">
+<meta name="citation_cover_date" content="2024-07-31">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-07-30">
+<meta name="citation_online_date" content="2024-07-31">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=2022 National Survey on Drug Use and Health. Public data set.;,citation_journal_title=Substance Abuse and Mental Health Services Administration;,citation_publisher=https://www.samhsa.gov/data/report/2022-nsduh-detailed-tables;">
 <meta name="citation_reference" content="citation_title=Disparities in the Treatment of Substance Use Disorders: Does Where You Live Matter?;,citation_abstract=This study focused on (1) whether disparities in timely receipt of substance use services can be explained in part by the characteristics of the community in which the clients reside and (2) whether the effect of community characteristics on timely receipt of services was similar across racial/ethnic groups. The sample was composed of adults receiving publicly funded outpatient treatment in Washington State. Treatment data were linked to data from the US census. The outcome studied was “Initiation and Engagement” in treatment (IET), a measure noting timely receipt of services at the beginning of treatment. Community characteristics studied included community level economic disadvantage and concentration of American Indian, Latino, and Black residents in the community. Black and American Indian clients were less likely to initiate or engage in treatment compared to non-Latino white clients, and American Indian clients living in economically disadvantaged communities were at even greater risk of not initiating treatment. Community economic disadvantage and racial/ethnic makeup of the community were associated with treatment initiation, but not engagement, although they did not entirely explain the disparities found in IET.;,citation_author=Andrea Acevedo;,citation_author=Lee Panas;,citation_author=Deborah Garnick;,citation_author=Dolores Acevedo-Garcia;,citation_author=Jennifer Miles;,citation_author=Grant Ritter;,citation_author=Kevin Campbell;,citation_publication_date=2018-10;,citation_cover_date=2018-10;,citation_year=2018;,citation_issue=4;,citation_doi=10.1007/s11414-018-9586-y;,citation_issn=1556-3308;,citation_volume=45;,citation_language=en-US;,citation_journal_title=The Journal of Behavioral Health Services &amp;amp;amp; Research;">
@@ -319,7 +319,7 @@
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">July 30, 2024</p>
+              <p class="date">July 31, 2024</p>
             </div>
           </div>
           
@@ -501,22 +501,23 @@ Note to include transparency report in supplement-->
 <!-- Can we follow the text from the original EMA paper a bit more closely here regarding rolling windows and also the fence? -->
 <p>We predicted lapses occurring in one week windows (<a href="#fig-methods" class="quarto-xref">Figure&nbsp;1</a>). Predictions were updated hourly. Therefore our models provided hour-by-hour predictions of future probability of an alcohol lapse within a one week window shifted at various time points (i.e., lags) into the future (no lag and 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions).</p>
 <div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\methods_figure.qmd" data-notebook-title="Read in Methods Figure" data-notebook-cellid="cell-fig-methods">
-<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div id="cell-fig-methods" class="cell" data-fig-width="7">
+<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div id="cell-fig-methods" class="cell" data-fig-height="8">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>knitr::include_graphics(path <span class="op">=</span> here::here(<span class="st">"figures/methods.jpg"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-methods" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-methods-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
-<a href="index_files/figure-html/notebooks-methods_figure-fig-methods-output-1.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: We used all available data up until the prediction timepoint to generate features using varying scoring epochs. Prediction timepoints rolled forward hour-by-hour (Pannel A). Prediction windows were 1 week wide. A prediction window started immediately after the prediction timepoint (0 lag) or was lagged by 24, 72, 168, or 336 hours (Pannel B)."><img src="index_files/figure-html/notebooks-methods_figure-fig-methods-output-1.jpeg" class="img-fluid figure-img"></a>
+<a href="index_files/figure-html/notebooks-methods_figure-fig-methods-output-1.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: We used all available data up until the prediction timepoint to generate features using varying scoring epochs. Prediction timepoints rolled forward hour-by-hour (Panel A). Prediction windows were 1 week wide. A prediction window started immediately after the prediction timepoint (0 lag) or was lagged by 24, 72, 168, or 336 hours (Panel B)."><img src="index_files/figure-html/notebooks-methods_figure-fig-methods-output-1.jpeg" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-methods-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: We used all available data up until the prediction timepoint to generate features using varying scoring epochs. Prediction timepoints rolled forward hour-by-hour (Pannel A). Prediction windows were 1 week wide. A prediction window started immediately after the prediction timepoint (0 lag) or was lagged by 24, 72, 168, or 336 hours (Pannel B).
+Figure&nbsp;1: We used all available data up until the prediction timepoint to generate features using varying scoring epochs. Prediction timepoints rolled forward hour-by-hour (Panel A). Prediction windows were 1 week wide. A prediction window started immediately after the prediction timepoint (0 lag) or was lagged by 24, 72, 168, or 336 hours (Panel B).
 </figcaption>
 </figure>
 </div>
 </div>
 </div></div>
 </div>
+<!--update to be more consistent with new fig-->
 <p>The first prediction window for each participant began 24 hours from midnight on their study start date + lag time. For example, the first prediction for the 24 hour lagged prediction model would be 48 hours after participants’ start date. This ensured at least 24 hours of past EMAs for future lapse prediction in these first windows. Subsequent windows for each participant were created by repeatedly rolling the window start time forward one hour until the end of their study participation (i.e., each participant’s last prediction window started one week before their last recorded EMA).</p>
 <p>The start and end date/time of past drinking episodes were reported on the first EMA item. A prediction window was labeled <em>lapse</em> if the start date/hour of any drinking episode fell within that window. A window was labeled <em>no lapse</em> if no alcohol use occurred within that window +/- 24 hours. If no alcohol use occurred within the window but did occur within 24 hours of the start or end of the window, the window was excluded.</p>
 <p>We ended up with a total of 270,081 labels for our baseline (no lag) model, 266,599 labels for our 24 hour lagged model, 259,643 labels for our 72 hour lagged model, 245,707 labels for our 168 hour lagged model, and 221,206 labels for our 336 hour lagged model.</p>
@@ -1516,7 +1517,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","openEffect":"zoom","loop":false,"descPosition":"bottom"});
+</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"selector":".lightbox","openEffect":"zoom","loop":false,"descPosition":"bottom","closeEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
