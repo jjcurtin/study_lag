@@ -85,7 +85,7 @@ shap_feat_0 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_feature
 shap_feat_24 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_downsized_1week_24_v1_nested_main.rds")) |> 
   mutate(variable_grp = factor(variable_grp, levels = shap_levels))
 
-shap_feat_72 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_downsized_1week_72_v1_nested_main.rds"))
+shap_feat_72 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_downsized_1week_72_v1_nested_main.rds")) |> 
   mutate(variable_grp = factor(variable_grp, levels = shap_levels))
 
 shap_feat_168 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_downsized_1week_168_v1_nested_main.rds")) |> 
@@ -194,13 +194,172 @@ cowplot::plot_grid(panel_shap_local_0, panel_shap_local_24,
 ```
 
 
-### Figure S3: Individual Shapley Plots for Top 4 Features
+### Figure S3: Individual Shapley Plots for Top Features
 
+Past use
 ```{r}
+shap_feat_336 |> 
+  filter(variable_grp == "past use ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Past Use", y = "Shapley (336 Hour Lag)", x = "Feature value")
 
+shap_feat_0 |> 
+  filter(variable_grp == "past use ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Past Use", y = "Shapley (0 Hour Lag)", x = "Feature value")
+
+shap_feat_24 |> 
+  filter(variable_grp == "past use ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Past Use", y = "Shapley (24 Hour Lag)", x = "Feature value")
+
+shap_feat_72 |> 
+  filter(variable_grp == "past use ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Past Use", y = "Shapley (72 Hour Lag)", x = "Feature value")
+
+shap_feat_168 |> 
+  filter(variable_grp == "past use ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Past Use", y = "Shapley (168 Hour Lag)", x = "Feature value")
 ```
 
+future efficacy
+```{r}
+shap_feat_336 |> 
+  filter(variable_grp == "future efficacy ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Future Efficacy", y = "Shapley (336 Hour Lag)", x = "Feature value")
 
+shap_feat_0 |> 
+  filter(variable_grp == "future efficacy ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Future Efficacy", y = "Shapley (0 Hour Lag)", x = "Feature value")
+
+shap_feat_24 |> 
+  filter(variable_grp == "future efficacy ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Future Efficacy", y = "Shapley (24 Hour Lag)", x = "Feature value")
+
+shap_feat_72 |> 
+  filter(variable_grp == "future efficacy ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Future Efficacy", y = "Shapley (72 Hour Lag)", x = "Feature value")
+
+shap_feat_168 |> 
+  filter(variable_grp == "future efficacy ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Future Efficacy", y = "Shapley (168 Hour Lag)", x = "Feature value")
+```
+
+Income
+```{r}
+shap_feat_336 |> 
+  filter(variable_grp == "income ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Income", y = "Shapley (336 Hour Lag)", x = "Feature value")
+
+shap_feat_0 |> 
+  filter(variable_grp == "income ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Income", y = "Shapley (0 Hour Lag)", x = "Feature value")
+
+shap_feat_24 |> 
+  filter(variable_grp == "income ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Income", y = "Shapley (24 Hour Lag)", x = "Feature value")
+
+shap_feat_72 |> 
+  filter(variable_grp == "income ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Income", y = "Shapley (72 Hour Lag)", x = "Feature value")
+
+shap_feat_168 |> 
+  filter(variable_grp == "income ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Income", y = "Shapley (168 Hour Lag)", x = "Feature value")
+```
+
+Craving
+```{r}
+shap_feat_336 |> 
+  filter(variable_grp == "craving ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Craving", y = "Shapley (336 Hour Lag)", x = "Feature value")
+
+shap_feat_0 |> 
+  filter(variable_grp == "craving ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Craving", y = "Shapley (0 Hour Lag)", x = "Feature value")
+
+shap_feat_24 |> 
+  filter(variable_grp == "craving ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Craving", y = "Shapley (24 Hour Lag)", x = "Feature value")
+
+shap_feat_72 |> 
+  filter(variable_grp == "craving ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Craving", y = "Shapley (72 Hour Lag)", x = "Feature value")
+
+shap_feat_168 |> 
+  filter(variable_grp == "craving ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Craving", y = "Shapley (168 Hour Lag)", x = "Feature value")
+```
+
+Future Risky Situation
+```{r}
+shap_feat_336 |> 
+  filter(variable_grp == "future risky situation ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Future Risky Situation", y = "Shapley (336 Hour Lag)", x = "Feature value")
+
+shap_feat_0 |> 
+  filter(variable_grp == "future risky situation ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Future Risky Situation", y = "Shapley (0 Hour Lag)", x = "Feature value")
+
+shap_feat_24 |> 
+  filter(variable_grp == "future risky situation ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Future Risky Situation", y = "Shapley (24 Hour Lag)", x = "Feature value")
+
+shap_feat_72 |> 
+  filter(variable_grp == "future risky situation ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Future Risky Situation", y = "Shapley (72 Hour Lag)", x = "Feature value")
+
+shap_feat_168 |> 
+  filter(variable_grp == "future risky situation ") |> 
+  ggplot(aes(x = feature_score_z_mean, y = value)) +
+  geom_point(alpha = .4) +
+  labs(title = "Future Risky Situation", y = "Shapley (168 Hour Lag)", x = "Feature value")
+```
 
 ## Supplemental Tables
 
