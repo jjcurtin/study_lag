@@ -1,0 +1,15 @@
+{
+  "hash": "05aa1b0abbe945ffda6420b5d1fc7de5",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Read in Methods Figure\"\nauthor: \"Kendra Wyant\"\ndate: \"2024-08-01\"\nnumber-sections: true\noutput: \n  html_document:\n    toc: true \n    toc_depth: 4\nformat:\n  html:\n    embed-resources: true\n    toc: true\n    toc-depth: 4\neditor_options: \n  chunk_output_type: console\nhtml-table-processing: none\n---\n\n::: {#cell-fig-methods .cell}\n\n```{.r .cell-code .hidden}\n#| label: fig-methods\n#| fig-cap: \"We used all available data up until the prediction timepoint to generate features using varying scoring epochs. Prediction timepoints rolled forward hour-by-hour (Panel A). Prediction windows were 1 week wide. A prediction window started immediately after the prediction timepoint (0 lag) or was lagged by 24, 72, 168, or 336 hours (Panel B).\"\n\nknitr::include_graphics(path = here::here(\"figures/methods.jpg\"))\n```\n\n::: {.cell-output-display}\n![We used all available data up until the prediction timepoint to generate features using varying scoring epochs. Prediction timepoints rolled forward hour-by-hour (Panel A). Prediction windows were 1 week wide. A prediction window started immediately after the prediction timepoint (0 lag) or was lagged by 24, 72, 168, or 336 hours (Panel B).](../figures/methods.jpg){#fig-methods}\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
