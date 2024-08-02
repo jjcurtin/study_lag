@@ -5,10 +5,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-    <meta name="author" content="Kendra Wyant">
-    <meta name="dcterms.date" content="2024-07-31">
+    <meta name="author" content="Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, and John J. Curtin">
+    <meta name="dcterms.date" content="2024-08-02">
 
-    <title>Supplemental Figures and Tables</title>
+    <title>Supplemental Material</title>
     <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3200,7 +3200,7 @@ font-family: inherit;
     <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
       
       <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link" href><i class="bi bi-caret-left"></i> Back to Article</a>
-      <h6><i class="bi bi-journal-code"></i> Supplemental Figures and Tables</h6>
+      <h6><i class="bi bi-journal-code"></i> Supplemental Material</h6>
 
             <a href="../notebooks/supplement.qmd" class="btn btn-primary quarto-download-embed" download="supplement.qmd">Download Source</a>
           </div>
@@ -3208,7 +3208,8 @@ font-family: inherit;
      <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Supplemental Figures and Tables</h1>
+      <h1 class="title">Supplemental Material</h1>
+            <p class="subtitle lead">Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</p>
           </div>
 
     
@@ -3220,14 +3221,14 @@ font-family: inherit;
                 <div>
             <div class="quarto-title-meta-heading">Author</div>
             <div class="quarto-title-meta-contents">
-                        <p>Kendra Wyant </p>
+                        <p>Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, and John J. Curtin </p>
                       </div>
           </div>
                 
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">July 31, 2024</p>
+              <p class="date">August 2, 2024</p>
             </div>
           </div>
           
@@ -3248,7 +3249,14 @@ font-family: inherit;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#supplemental-figures" id="toc-supplemental-figures" class="nav-link active" data-scroll-target="#supplemental-figures">Supplemental Figures</a>
+  <li><a href="#transparency-report-1.0-full-36-items-aczel-et-al.-2019" id="toc-transparency-report-1.0-full-36-items-aczel-et-al.-2019" class="nav-link active" data-scroll-target="#transparency-report-1.0-full-36-items-aczel-et-al.-2019">Transparency Report 1.0 (full, 36 items; Aczel et al., 2019)</a>
+  <ul class="collapse">
+  <li><a href="#preregistration-section" id="toc-preregistration-section" class="nav-link" data-scroll-target="#preregistration-section">Preregistration Section</a></li>
+  <li><a href="#methods-section" id="toc-methods-section" class="nav-link" data-scroll-target="#methods-section">Methods Section</a></li>
+  <li><a href="#results-and-discussion-section" id="toc-results-and-discussion-section" class="nav-link" data-scroll-target="#results-and-discussion-section">Results and Discussion Section</a></li>
+  <li><a href="#data-code-and-materials-availability-section" id="toc-data-code-and-materials-availability-section" class="nav-link" data-scroll-target="#data-code-and-materials-availability-section">Data, Code, and Materials Availability Section</a></li>
+  </ul></li>
+  <li><a href="#supplemental-figures" id="toc-supplemental-figures" class="nav-link" data-scroll-target="#supplemental-figures">Supplemental Figures</a>
   <ul class="collapse">
   <li><a href="#figure-s1-full-posterior-distributions-for-auroc-by-model" id="toc-figure-s1-full-posterior-distributions-for-auroc-by-model" class="nav-link" data-scroll-target="#figure-s1-full-posterior-distributions-for-auroc-by-model">Figure S1: Full Posterior Distributions for auROC by Model</a></li>
   <li><a href="#figure-s2-local-shapley-plots-by-model" id="toc-figure-s2-local-shapley-plots-by-model" class="nav-link" data-scroll-target="#figure-s2-local-shapley-plots-by-model">Figure S2: Local Shapley Plots by Model</a></li>
@@ -3265,7 +3273,9 @@ font-family: inherit;
 </div>
 <main class="content quarto-banner-title-block" id="quarto-document-content">      
 
-       <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
+       <p>This file contains the supplemental materials for <em>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</em>. It includes a transparency report and all supplemental figures and tables. Additional materials are made available on our study’s OSF page (<a href="https://osf.io/xta67/">https://osf.io/xta67/</a>).</p>
+<hr>
+<div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">source</span>(<span class="st">&quot;https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true&quot;</span>))</span>
@@ -3291,6 +3301,79 @@ font-family: inherit;
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>pp_dem <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;pp_dem_all.csv&quot;</span>), </span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
+<section id="transparency-report-1.0-full-36-items-aczel-et-al.-2019" class="level2">
+<h2 class="anchored" data-anchor-id="transparency-report-1.0-full-36-items-aczel-et-al.-2019">Transparency Report 1.0 (full, 36 items; Aczel et al., 2019)</h2>
+<p><strong>Manuscript Title:</strong> Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support<br>
+<strong>Authors:</strong> Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, and John J. Curtin<br>
+<strong>Corresponding author’s email address:</strong> jjcurtin@wisc.edu<br>
+<strong>Link to Project Repository:</strong> <a href="https://osf.io/xta67/">https://osf.io/xta67/</a></p>
+<section id="preregistration-section" class="level3">
+<h3 class="anchored" data-anchor-id="preregistration-section">Preregistration Section</h3>
+<ul>
+<li>Prior to analyzing the complete data set, a time-stamped preregistration was posted in an independent, third-party registry for the data analysis plan: Yes</li>
+</ul>
+<p>Comments about your Preregistration: We pre-registered our data analytic strategy on OSF.</p>
+</section>
+<section id="methods-section" class="level3">
+<h3 class="anchored" data-anchor-id="methods-section">Methods Section</h3>
+<p>The manuscript fully describes…</p>
+<ul>
+<li>the rationale for the sample size used (e.g., an a priori power analysis): Yes<br>
+</li>
+<li>how participants were recruited: Yes<br>
+</li>
+<li>how participants were selected (e.g., eligibility criteria): Yes<br>
+</li>
+<li>what compensation was offered for participation: Yes<br>
+</li>
+<li>how participant dropout was handled (e.g., replaced, omitted, etc): Yes<br>
+</li>
+<li>how participants were assigned to conditions: N/A. There are no conditions.<br>
+</li>
+<li>how stimulus materials were randomized: N/A.<br>
+</li>
+<li>whether (and, if so, how) participants, experimenters, and data-analysts were kept naive to potentially biasing information: N/A. This is an observations study that does not include analysis of group or manipulations. There were no study conditions to blind.<br>
+</li>
+<li>the study design, procedures, and materials to allow independent replication: Yes<br>
+</li>
+<li>the measures of interest (e.g., friendliness): Yes<br>
+</li>
+<li>all operationalizations for the measures of interest (e.g., a questionnaire measuring friendliness): Yes</li>
+</ul>
+</section>
+<section id="results-and-discussion-section" class="level3">
+<h3 class="anchored" data-anchor-id="results-and-discussion-section">Results and Discussion Section</h3>
+<p>The manuscript…</p>
+<ul>
+<li>distinguishes explicitly between “confirmatory” (i.e., prespecified) and “exploratory” (i.e., not prespecified) analyses: All analyses were pre-registered.</li>
+<li>describes how violations of statistical assumptions were handled: No<br>
+</li>
+<li>justifies all statistical choices (e.g., including or excluding covariates; applying or not applying transformations; use of multi-level models vs. ANOVA): Yes<br>
+</li>
+<li>reports the sample size for each cell of the design: Yes<br>
+</li>
+<li>reports how incomplete or missing data were handled: Yes<br>
+</li>
+<li>presents protocols for data preprocessing (e.g., cleaning, discarding of cases and items, normalizing, smoothing, artifact correction): Yes</li>
+</ul>
+</section>
+<section id="data-code-and-materials-availability-section" class="level3">
+<h3 class="anchored" data-anchor-id="data-code-and-materials-availability-section">Data, Code, and Materials Availability Section</h3>
+<p>The following have been made publicly available…</p>
+<ul>
+<li>the (processed) data, on which the analyses of the manuscript were based: Yes<br>
+</li>
+<li>all code and software (that is not copyright protected): Yes<br>
+</li>
+<li>all instructions, stimuli, and test materials (that are not copyright protected): Yes<br>
+</li>
+<li>Are the data properly archived (i.e., would a graduate student with relevant background knowledge be able to identify each variable and reproduce the analysis): Yes<br>
+</li>
+<li>The manuscript includes a statement concerning the availability and location of all research items, including data, materials, and code relevant to the study: Yes</li>
+</ul>
+<div style="page-break-after: always;"></div>
+</section>
+</section>
 <section id="supplemental-figures" class="level2">
 <h2 class="anchored" data-anchor-id="supplemental-figures">Supplemental Figures</h2>
 <section id="figure-s1-full-posterior-distributions-for-auroc-by-model" class="level3">
@@ -4247,7 +4330,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","openEffect":"zoom","selector":".lightbox","loop":false,"descPosition":"bottom"});
+</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","openEffect":"zoom","descPosition":"bottom","loop":false});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

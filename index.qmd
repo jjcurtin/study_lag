@@ -117,9 +117,6 @@ In this study, we compared the performance of one of our models from a previous 
 
 # Methods
 
-<!--OSF link correct - need to add materials
-Need to add participant compensation to methods per transparancy report-->
-
 ## Transparency and Openness
 We adhere to research transparency principles that are crucial for robust and replicable science. We preregistered our data analytic strategy. We reported how we determined the sample size, all data exclusions, all manipulations, and all study measures. We provide a transparency report in the supplement. Finally, our data, analysis scripts, annotated results, questionnaires, and other study materials are publicly available ([https://osf.io/xta67/](https://osf.io/xta67/)).
 
@@ -136,7 +133,7 @@ We recruited participants in early recovery (1-8 weeks of abstinence) from moder
 We also excluded participants exhibiting severe symptoms of psychosis or paranoia.
 
 ## Procedure
-Participants completed five study visits over approximately three months. After an initial phone screen, participants attended an in-person screening visit to determine eligibility, complete informed consent, and collect self-report measures. Eligible, consented participants returned approximately one week later for an intake visit. Three additional follow-up visits occurred about every 30 days that participants remained on study. Participants were expected to complete four daily EMAs while on study. Other personal sensing data streams (geolocation, cellular communications, sleep quality, and audio check-ins) were collected as part of the parent grant's aims (R01 AA024391).
+Participants completed five study visits over approximately three months. After an initial phone screen, participants attended an in-person screening visit to determine eligibility, complete informed consent, and collect self-report measures. Eligible, consented participants returned approximately one week later for an intake visit. Three additional follow-up visits occurred about every 30 days that participants remained on study. Participants were expected to complete four daily EMAs while on study. Other personal sensing data streams (geolocation, cellular communications, sleep quality, and audio check-ins) were collected as part of the parent grant's aims (R01 AA024391). Participants could earn up to \$150/month if they completed all study visits, had 10% or less missing EMA data and opted in to provide data for other personal sensing data streams.
 
 ## Measures
 ### Ecological Momentary Assessments
@@ -148,9 +145,10 @@ On the first EMA each day, participants also rated the likelihood of encounterin
 
 
 ### Individual Characteristics
-We collected self-report information about demographics (age, sex, race, ethnicity, education, marital status, employment, and income) and AUD symptom count. 
+We collected self-report information about demographics (age, sex, race, ethnicity, education, marital status, employment, and income) and AUD symptom count to characterize our sample. Demographic information was also included as features in our models and a subset (sex, race, ethnicity, and income) used for model fairness analyses. 
 
-<!-- we say we list all measures.  Do we need to indicate that we have many other trait and state measures that we dont use here but report on OSF? -->
+As part of the aims of the parent project we collected many other trait and state measures throughout the study. A complete list of all measures can be found on our study's OSF page.
+
 
 ## Data Analytic Strategy
 Data preprocessing, modeling, and Bayesian analyses were done in R using the tidymodels ecosystem [@kuhnTidymodelsCollectionPackages2020]. Models were trained and evaluated using high-throughput computing resources provided by the University of Wisconsin Center for High Throughput Computing [@chtc].
@@ -213,6 +211,8 @@ For both sets of model comparisons, we determined the probability that the model
 We aim for the responsible and transparent reporting of model performance and clinical utility. In these efforts, we calculated the median posterior probability and 95% Bayesian CI for auROC for each model separately for three dichotomized demographic groups with potential disparities in access to substance use treatment - race and ethnicity (non-Hispanic White vs. non-White) [@pinedoCurrentReexaminationRacial2019; @kilaruIncidenceTreatmentOpioid2020], income (above poverty vs. below poverty) [@olfsonHealthcareCoverageService2022], and sex at birth (male vs. female) [@greenfieldSubstanceAbuseTreatment2007; @kilaruIncidenceTreatmentOpioid2020].
 
 <!-- Should these analyses and their rationale have been in the intro?  SHould we have more detailed aims in the intro? -->
+
+<!-- KW: At the moment I am thinking this should stay here and we can expand in the discussion on implications of what we have found and how this informs future directions (better representation, different modeling strategies, etc.). This is for a few reasons: We are trying to keep the paper from getting too long, but also I don't think we are exploring these analyses enough and we don't have enough representation in our categories for it to be a main aim. -->
 
 We also acknowledge that models that work for only a subset of people, if implemented, could widen existing treatment disparities. We conducted Bayesian group comparisons to assess the likelihood that the model performs differently by group. We report the median difference and range in posterior probabilities across all models. The median auROC and Bayesian CIs are reported separately by group and model in the supplement.^[For our fairness analyses, we altered our outer loop resampling method from 3 x 10 cross-validation to 6 x 5 cross-validation. This method still gave us 30 held out tests sets, but by splitting the data across fewer folds (i.e., 5 vs. 10) we were able to reduce the likelihood of the minority group being absent in any single fold.] 
 
