@@ -442,14 +442,28 @@ and evaluated using high-throughput computing resources provided by the
 University of Wisconsin Center for High Throughput Computing (Center for
 High Throughput Computing, 2006).
 
-\subsubsection{Lapse Labels}\label{lapse-labels}
+\subsubsection{Predictions}\label{predictions}
 
-We predicted lapses occurring in one week windows
-(Figure~\ref{fig-methods}). Predictions were updated hourly. Therefore
-our models provided hour-by-hour predictions of future probability of an
-alcohol lapse within a one week window shifted at various time points
-(i.e., lags) into the future (no lag and 24 hour, 72 hour, 168 hour, or
-336 hour lagged predictions).
+Figure~\ref{fig-methods} shows how we established prediction timepoints,
+windows, and lags.
+
+All available data up until a timepoint was used to generate model
+predictions. Prediction timepoints were updated hourly (Panel A). The
+first prediction timepoint each participant was 24 hours from midnight
+on their study start date. This ensured at least 24 hours of past EMAs
+for future lapse prediction at these first timepoints. Subsequent
+timepoints for each participant repeatedly rolled hour-by-hour until the
+end of their study participation.
+
+The prediction window width was one week. Prediction windows rolled
+forward hour-by-hour with the prediction timepoint (Panel B). There were
+five possible lag times between the prediction timepoint and start of
+the prediction window. A prediction window started immediately after the
+prediction timepoint (0 lag) or was lagged by 24, 72, 168, or 336 hours.
+
+Therefore our models provided hour-by-hour probabilities of an alcohol
+lapse in the next week lagged to different times into the future (no lag
+or 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions).
 
 \begin{figure}[H]
 
@@ -472,15 +486,7 @@ hours (Panel B).}
 \href{https://jjcurtin.github.io/study_lag/notebooks/methods_figure-preview.html\#cell-fig-methods}{Read
 in Methods Figure}}
 
-The first prediction window for each participant began 24 hours from
-midnight on their study start date + lag time. For example, the first
-prediction for the 24 hour lagged prediction model would be 48 hours
-after participants' start date. This ensured at least 24 hours of past
-EMAs for future lapse prediction in these first windows. Subsequent
-windows for each participant were created by repeatedly rolling the
-window start time forward one hour until the end of their study
-participation (i.e., each participant's last prediction window started
-one week before their last recorded EMA).
+\subsubsection{Labels}\label{labels}
 
 The start and end date/time of past drinking episodes were reported on
 the first EMA item. A prediction window was labeled \emph{lapse} if the
