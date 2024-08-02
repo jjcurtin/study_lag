@@ -562,7 +562,25 @@ auROC across the 10 validation sets. Final performance evaluation of
 those best model configurations used median auROC across the 30 test
 sets.
 
-\paragraph{Model Evaluation}\label{model-evaluation}
+\paragraph{Bayesian Model Evaluation and
+Comparisons}\label{bayesian-model-evaluation-and-comparisons}
+
+Bayesian analyses were accomplished using the tidyposterior
+(\textbf{kuhnTidyposteriorBayesianAnalysis2022?}) and rstanarm
+(\textbf{goodrichRstanarmBayesianApplied2023?}) packages in R. Following
+recommendations from the rstanarm team and others
+(\textbf{rstudioteamRStudioIntegratedDevelopment2020?};
+\textbf{gabryPriorDistributionsRstanarm2023?}), we used the rstanarm
+default autoscaled, weakly informative, data-dependent priors that take
+into account the order of magnitude of the variables to provide some
+regularization to stabilize computation and avoid over-fitting.
+Specifically, the priors were set as follows: residual standard
+deviation \textasciitilde{} normal(location=0, scale=exp(2)), intercept
+(after centering predictors) \textasciitilde{} normal(location=2.3,
+scale=1.3), the two coefficients for window width contrasts
+\textasciitilde{} normal (location=0, scale=2.69), and covariance
+\textasciitilde{} decov(regularization=1, concentration=1, shape=1,
+scale=1).
 
 We used a Bayesian hierarchical generalized linear model to estimate the
 posterior probability distributions and 95\% Bayesian credible intervals
@@ -572,8 +590,6 @@ The median posterior probability for auROC represents our best estimate
 for the magnitude of the auROC parameter for each model. If the
 confidence intervals do not contain .5 (chance performance), this
 suggests our model is capturing signal in the data.
-
-\paragraph{Model Comparisons}\label{model-comparisons}
 
 We performed two sets of Bayesian model comparisons. First, we compared
 each lagged model to our baseline model (no lag) (Wyant et al., n.d.).
@@ -613,13 +629,15 @@ Kilaru et al., 2020).
 We also acknowledge that models that work for only a subset of people,
 if implemented, could widen existing treatment disparities. We conducted
 Bayesian group comparisons to assess the likelihood that the model
-performs differently by group. We report median differences in posterior
-probabilities and the range.\footnote{For our fairness evaluations, we
-  altered our outer loop resampling method from 3 x 10 cross-validation
-  to 6 x 5 cross-validation. This method still gave us 30 held out tests
-  sets, but by splitting the data across fewer folds (i.e., 5 vs.~10) we
-  were able to reduce the likelihood of the minority group being absent
-  in any single fold.}
+performs differently by group. We report the median difference and range
+in posterior probabilities across all models. The median auROC and
+Bayesian CIs are reported separately by group and model in the
+supplement.\footnote{For our fairness analyses, we altered our outer
+  loop resampling method from 3 x 10 cross-validation to 6 x 5
+  cross-validation. This method still gave us 30 held out tests sets,
+  but by splitting the data across fewer folds (i.e., 5 vs.~10) we were
+  able to reduce the likelihood of the minority group being absent in
+  any single fold.}
 
 \paragraph{Feature Importance}\label{feature-importance}
 
@@ -736,14 +754,17 @@ Number of reported lapses & & & 6.8 & 12 & 0-75 \\
 \href{https://jjcurtin.github.io/study_lag/notebooks/mak_tables-preview.html\#cell-tbl-demohtml}{Make
 All Tables for Main Manuscript}}
 
-\subsection{Model Evaluation}\label{model-evaluation-1}
+\subsection{Model Evaluation}\label{model-evaluation}
 
 The median auROC across the 30 test sets for our baseline model was high
-(median=0.893, IQR=0.045), consistent with our previous study.
-Performance across our lagged models was also high for the 24 hour lag
-(median=0.882, IQR=0.039), 72 hour lag (median=0.868, IQR=0.057), 168
-hour lag (median=0.860, IQR=0.062), and 336 hour lag (median=0.856,
-IQR=0.062).
+(median=0.893, IQR=0.045), consistent with our previous
+study.\footnote{Baseline models in our previous study yielded a median
+  auROC of .895. These models inadvertently excluded income and
+  employment as features. We reran models to include these features in
+  the current study.} Performance across our lagged models was also high
+for the 24 hour lag (median=0.882, IQR=0.039), 72 hour lag
+(median=0.868, IQR=0.057), 168 hour lag (median=0.860, IQR=0.062), and
+336 hour lag (median=0.856, IQR=0.062).
 
 Histograms of the full posterior probability distributions for auROC for
 each model are available in the supplement. The median auROCs from these
@@ -776,7 +797,7 @@ in auROCs by demographic group}
 \href{https://jjcurtin.github.io/study_lag/notebooks/mak_figures-preview.html\#cell-fig-1}{Make
 All Figures for Main Manuscript}}
 
-\subsection{Model Comparisons}\label{model-comparisons-1}
+\subsection{Model Comparisons}\label{model-comparisons}
 
 \subsubsection{Baseline Contrasts}\label{baseline-contrasts}
 
@@ -785,10 +806,10 @@ The median decrease in auROC for the baseline vs.~24 hour lag model was
 0.960 that the lagged model had worse performance. The median decrease
 in auROC for the baseline vs.~72 hour model was 0.018 (95\%
 CI={[}0.012-0.025{]}), yielding a significant probability of 1.000 that
-the lagged model had worse performance. The median increase in auROC for
+the lagged model had worse performance. The median decrease in auROC for
 the baseline vs.~168 hour lag model was 0.023 (95\%
 CI={[}0.016-0.029{]}), yielding a significant probability of 1.000 that
-the lagged model had worse performance. The median increase in auROC for
+the lagged model had worse performance. The median decrease in auROC for
 the baseline vs.~336 hour lag model was 0.041 (95\%
 CI={[}0.033-0.049{]}), yielding a significant probability of 1.000 that
 the lagged model had worse performance.
@@ -809,17 +830,19 @@ had worse performance than the 168 hour lag model.
 \subsection{Fairness Benchmarks}\label{fairness-benchmarks-1}
 
 Panel B in Figure~\ref{fig-1} shows the difference in performance of
-each model by demographic group. All group comparisons for race, sex at
-birth, and income were significant (probability \textgreater{} .95)
-across models. On average there was a median increase in auROC of -0.159
-(range NA--0.179) for non-Hispanic White participants compared to
-participants who were not White. On average there was a median increase
-in auROC of -0.080 (range -0.059--0.116) for male participants compared
-to female participants. On average there was a median increase in auROC
-of -0.092 (range -0.086--0.133) for participants above the federal
-poverty line compared to participants below the federal poverty line. A
-table of model performance for each demographic group separately by
-model can be found in the supplement.
+each model by race (not White; \(N = 20\) vs.~Non-Hispanic White;
+\(N = 131\)), sex at birth (female; \(N = 74\) vs.~Male; \(N = 77\)),
+and income (below poverty; \(N = 18\) vs.~above poverty; \(N = 133\)).
+All group comparisons were significant (probability \textgreater{} .95)
+across models. On average there was a median decrease in auROC of 0.159
+(range 0.107-0.179) for participants who were not White compared to
+non-Hispanic White participants. On average there was a median decrease
+in auROC of 0.080 (range 0.059-0.116) for female participants compared
+to male participants. On average there was a median decrease in auROC of
+0.092 (range 0.086-0.133) for participants below the federal poverty
+line compared to participants above the federal poverty line. Table 1 in
+the supplement shows the median auROC and credible intervals separately
+by group and model.
 
 \subsection{Feature Importance}\label{feature-importance-1}
 
@@ -827,12 +850,21 @@ Global importance (mean \textbar Shapley value\textbar) for feature
 categories for each model appears in Panel A of Figure~\ref{fig-shap}.
 Consistent with previous models using similar features, past use was the
 most important feature category for lapse prediction across lagged
-models. Future abstinence efficacy was also globally important across
-models. Overall, the contribution of a feature category to model
-performance did not appear to differ across models.
+models. Future abstinence efficacy, craving, and future risky situations
+were also globally important across models. Income was the only
+demographic feature that emerged as having high global importance for
+lapse prediction. Overall, the contribution of a feature category to
+model performance did not appear to differ across models.
 
 Panel B shows the local feature importance scores colored by high or low
-feature value for the 336 hour lag model. .
+feature value for the baseline (0 lag) model. Local feature importance
+plots for our other models can be found in the supplement. Future
+abstinence efficacy, future risky situations, and income appear to have
+a linear relationship to lapse prediction. Higher efficacy, fewer future
+risky situations, and higher income were associated with a lower
+likelihood that the model would predict a lapse. In the supplement, we
+plot the relationship between Shapley value and feature score
+individually for our top five features by model.
 
 \begin{figure}[H]
 
@@ -869,6 +901,8 @@ All Figures for Main Manuscript}}
   Improving model performance for unprivileged classes. Considering
   other important classes for SUD, such as geographic location,
   Improving diversity of training data
+\item
+  low N in disparity groups for model comparisons - causing wide CIs?
 \item
   Performance discrepancies sets up fairness methods paper. How can we
   improve these discrepancies? Mention in discussion as current future
