@@ -118,16 +118,16 @@ shap_levels <- global_all |>
   pull(variable_grp) |>
   levels()
 
-shap_feat <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_downsized_1week_336_v1_nested_main.rds")) |> 
-  mutate(variable_grp = factor(variable_grp, levels = shap_levels),
-         feature_score_z_mean = if_else(variable_grp == "future efficacy ",
-                                        feature_score_z_mean * -1,
-                                        feature_score_z_mean))
-# shap_feat <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_downsized_1week_0_v1_nested_main.rds")) |> 
+# shap_feat <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_downsized_1week_336_v1_nested_main.rds")) |> 
 #   mutate(variable_grp = factor(variable_grp, levels = shap_levels),
 #          feature_score_z_mean = if_else(variable_grp == "future efficacy ",
 #                                         feature_score_z_mean * -1,
 #                                         feature_score_z_mean))
+shap_feat <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_downsized_1week_0_v1_nested_main.rds")) |>
+  mutate(variable_grp = factor(variable_grp, levels = shap_levels),
+         feature_score_z_mean = if_else(variable_grp == "future efficacy ",
+                                        feature_score_z_mean * -1,
+                                        feature_score_z_mean))
 ```
 
 
@@ -155,25 +155,6 @@ panel_shap_global <- global_all |>
 
 Local Shapley Pannel
 ```{r}
-panel_shap_local <- shap_feat |>
-  filter(!is.na(variable_grp)) |> 
-  # scale feat score to 0-1
-  mutate(feature_score = (feature_score_z_mean - min(feature_score_z_mean))/(max(feature_score_z_mean)-min(feature_score_z_mean))) |> 
-  ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 3), breaks = seq(-2, 3)) +
-  ylab("Shapley Value (336 Hour Lag)") +
-  xlab(NULL) +
-  scale_color_gradientn(colors = c("#240e31", "#cb6bce"),
-                        breaks = c(.1, .9),
-                        labels = c("low", "high")) +
-  labs(color = "Feature Value") +
-  theme(legend.position = "right",
-        axis.text=element_text(size=9.5),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  coord_flip()
-
 # panel_shap_local <- shap_feat |>
 #   filter(!is.na(variable_grp)) |> 
 #   # scale feat score to 0-1
@@ -181,10 +162,10 @@ panel_shap_local <- shap_feat |>
 #   ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score)) +
 #   ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
 #   geom_hline(yintercept = 0) +
-#   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-#   ylab("Shapley Value (0 Hour Lag)") +
+#   scale_y_continuous(limits = c(-2, 3), breaks = seq(-2, 3)) +
+#   ylab("Shapley Value (336 Hour Lag)") +
 #   xlab(NULL) +
-#   scale_color_gradientn(colors = c("#240e31", "#f9e79f"),
+#   scale_color_gradientn(colors = c("#240e31", "#cb6bce"),
 #                         breaks = c(.1, .9),
 #                         labels = c("low", "high")) +
 #   labs(color = "Feature Value") +
@@ -192,6 +173,25 @@ panel_shap_local <- shap_feat |>
 #         axis.text=element_text(size=9.5),
 #         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
 #   coord_flip()
+
+panel_shap_local <- shap_feat |>
+  filter(!is.na(variable_grp)) |>
+  # scale feat score to 0-1
+  mutate(feature_score = (feature_score_z_mean - min(feature_score_z_mean))/(max(feature_score_z_mean)-min(feature_score_z_mean))) |>
+  ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score)) +
+  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
+  geom_hline(yintercept = 0) +
+  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+  ylab("Shapley Value (0 Hour Lag)") +
+  xlab(NULL) +
+  scale_color_gradientn(colors = c("#240e31", "#f9e79f"),
+                        breaks = c(.1, .9),
+                        labels = c("low", "high")) +
+  labs(color = "Feature Value") +
+  theme(legend.position = "right",
+        axis.text=element_text(size=9.5),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+  coord_flip()
 ```
 
 

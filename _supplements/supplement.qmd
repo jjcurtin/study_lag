@@ -1,7 +1,8 @@
 ---
-title: "Supplemental Figures and Tables" 
-author: "Kendra Wyant"
-date: "`r July 31, 2024"
+title: "Supplemental Material"
+subtitle: "Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support"
+author: "Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, and John J. Curtin"
+date: last-modified
 number-sections: true
 format: 
   html: 
@@ -11,6 +12,12 @@ format:
 editor_options: 
   chunk_output_type: console
 ---
+
+This file contains the supplemental materials for *Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support*. It includes a transparency report and all supplemental figures and tables. Additional materials are made available on our study's OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)).   
+
+-----
+
+
 
 ```{r}
 #| echo: false
@@ -43,6 +50,55 @@ ci <- read_csv(here::here(path_models_lag, "test_metrics_all_pp_perf.csv"),
 pp_dem <- read_csv(here::here(path_models_lag, "pp_dem_all.csv"), 
                                  show_col_types = FALSE)
 ```
+
+## Transparency Report 1.0 (full, 36 items)[@aczelConsensusbasedTransparencyChecklist2019]
+
+**Manuscript Title:** Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support   
+**Authors:** Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, and John J. Curtin   
+**Corresponding author’s email address:** jjcurtin@wisc.edu   
+**Link to Project Repository:** [https://osf.io/xta67/](https://osf.io/xta67/)      
+
+### Preregistration Section   
+- Prior to analyzing the complete data set, a time-stamped preregistration was posted in an independent, third-party registry for the data analysis plan: Yes  
+
+Comments about your Preregistration: We pre-registered our data analytic strategy.   
+
+### Methods Section
+The manuscript fully describes…    
+
+- the rationale for the sample size used (e.g., an a priori power analysis): Yes  
+- how participants were recruited: Yes  
+- how participants were selected (e.g., eligibility criteria): Yes  
+- what compensation was offered for participation: Yes  
+- how participant dropout was handled (e.g., replaced, omitted, etc): Yes  
+- how participants were assigned to conditions: N/A.  There are no conditions.  
+- how stimulus materials were randomized: N/A.    
+- whether (and, if so, how) participants, experimenters, and data-analysts were kept naive to potentially biasing information: N/A.  This is an observations study that does not include analysis of group or manipulations.   There were no study conditions to blind.   
+- the study design, procedures, and materials to allow independent replication: Yes   
+-	the measures of interest (e.g., friendliness): Yes   
+-	all operationalizations for the measures of interest (e.g., a questionnaire measuring friendliness): Yes   
+
+### Results and Discussion Section
+The manuscript…  
+
+-	distinguishes explicitly between “confirmatory” (i.e., prespecified) and “exploratory” (i.e., not prespecified) analyses: All analyses were pre-registered.
+-	describes how violations of statistical assumptions were handled: No  
+-	justifies all statistical choices (e.g., including or excluding covariates; applying or not applying transformations; use of multi-level models vs. ANOVA): Yes  
+-	reports the sample size for each cell of the design: Yes  
+-	reports how incomplete or missing data were handled: Yes  
+-	presents protocols for data preprocessing (e.g., cleaning, discarding of cases and items, normalizing, smoothing, artifact correction): Yes  
+
+### Data, Code, and Materials Availability Section
+The following have been made publicly available…  
+
+-	the (processed) data, on which the analyses of the manuscript were based: Yes   
+-	all code and software (that is not copyright protected): Yes   
+-	all instructions, stimuli, and test materials (that are not copyright protected): Yes   
+-	Are the data properly archived (i.e., would a graduate student with relevant background knowledge be able to identify each variable and reproduce the analysis): Yes   
+-	The manuscript includes a statement concerning the availability and location of all research items, including data, materials, and code relevant to the study: Yes   
+
+
+\newpage
 
 
 ## Supplemental Figures
@@ -121,27 +177,6 @@ shap_feat_336 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_featu
 
 ```{r}
 #| echo: false
-
-panel_shap_local_0 <- shap_feat_0 |>
-  filter(!is.na(variable_grp)) |> 
-  # scale feat score to 0-1
-  mutate(feature_score = (feature_score_z_mean - min(feature_score_z_mean))/(max(feature_score_z_mean)-min(feature_score_z_mean))) |> 
-  ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (0 Hour Lag)") +
-  xlab(NULL) +
-  scale_color_gradientn(colors = c("#240e31", "#f9e79f"),
-                        breaks = c(.1, .9),
-                        labels = c("low", "high")) +
-  labs(color = NULL) +
-  theme(legend.position = "right",
-        legend.key.size = unit(0.25, "cm"),
-        axis.text=element_text(size=9.5),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  coord_flip()
-
 panel_shap_local_24 <- shap_feat_24 |>
   filter(!is.na(variable_grp)) |> 
   # scale feat score to 0-1
@@ -201,6 +236,27 @@ panel_shap_local_168 <- shap_feat_168 |>
         axis.text=element_text(size=9.5),
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
   coord_flip()
+
+
+panel_shap_local_336 <- shap_feat_336 |>
+  filter(!is.na(variable_grp)) |> 
+  # scale feat score to 0-1
+  mutate(feature_score = (feature_score_z_mean - min(feature_score_z_mean))/(max(feature_score_z_mean)-min(feature_score_z_mean))) |> 
+  ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score)) +
+  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
+  geom_hline(yintercept = 0) +
+  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+  ylab("Shapley Value (0 Hour Lag)") +
+  xlab(NULL) +
+  scale_color_gradientn(colors = c("#240e31", "#cb6bce"),
+                        breaks = c(.1, .9),
+                        labels = c("low", "high")) +
+  labs(color = NULL) +
+  theme(legend.position = "right",
+        legend.key.size = unit(0.25, "cm"),
+        axis.text=element_text(size=9.5),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+  coord_flip()
 ```
 
 
@@ -211,8 +267,10 @@ panel_shap_local_168 <- shap_feat_168 |>
 #| fig-height: 8
 #| fig-width: 10
 
-cowplot::plot_grid(panel_shap_local_0, panel_shap_local_24,
-                   panel_shap_local_72, panel_shap_local_168,
+cowplot::plot_grid(panel_shap_local_24,
+                   panel_shap_local_72, 
+                   panel_shap_local_168,
+                   panel_shap_local_336, 
                    ncol = 2, labels = c("A", "B", "C", "D"), 
                    align = "hv")
 

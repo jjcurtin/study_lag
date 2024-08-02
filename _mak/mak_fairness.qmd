@@ -93,7 +93,7 @@ feat_preds <- feat |>
 
 ### Create dichotomous groups for auROC comparisons
 
-Income, Gender, Race, Age
+Income, Gender, Race
 ```{r}
 feat_preds <- feat_preds |> 
   mutate(demo_sex = if_else(demo_sex == "Female", "female", "male"),

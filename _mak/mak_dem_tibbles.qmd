@@ -33,6 +33,9 @@ screen <- read_csv(file.path(path_shared, "screen.csv"),
                               dsm5_8, dsm5_9, dsm5_10, dsm5_11))) |>  
   ungroup() |> 
   select(subid, starts_with("dem"), dsm5_total) |> 
+  mutate(race_di = if_else(dem_3 == "White/Caucasian" & dem_4 == "No, I am not of Hispanic, Latino, or Spanish origin", 
+                           "white", "not white"),
+         income_di = if_else(dem_7 < 1560, "below poverty", "above poverty")) |> 
   write_csv(file.path(path_processed, "dem_tibble.csv"))
 
 lapses <- read_csv(file.path(path_shared, "lapses.csv"), col_types = cols()) |>

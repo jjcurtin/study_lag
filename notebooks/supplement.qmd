@@ -121,27 +121,6 @@ shap_feat_336 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_featu
 
 ```{r}
 #| echo: false
-
-panel_shap_local_0 <- shap_feat_0 |>
-  filter(!is.na(variable_grp)) |> 
-  # scale feat score to 0-1
-  mutate(feature_score = (feature_score_z_mean - min(feature_score_z_mean))/(max(feature_score_z_mean)-min(feature_score_z_mean))) |> 
-  ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (0 Hour Lag)") +
-  xlab(NULL) +
-  scale_color_gradientn(colors = c("#240e31", "#f9e79f"),
-                        breaks = c(.1, .9),
-                        labels = c("low", "high")) +
-  labs(color = NULL) +
-  theme(legend.position = "right",
-        legend.key.size = unit(0.25, "cm"),
-        axis.text=element_text(size=9.5),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  coord_flip()
-
 panel_shap_local_24 <- shap_feat_24 |>
   filter(!is.na(variable_grp)) |> 
   # scale feat score to 0-1
@@ -201,6 +180,27 @@ panel_shap_local_168 <- shap_feat_168 |>
         axis.text=element_text(size=9.5),
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
   coord_flip()
+
+
+panel_shap_local_336 <- shap_feat_336 |>
+  filter(!is.na(variable_grp)) |> 
+  # scale feat score to 0-1
+  mutate(feature_score = (feature_score_z_mean - min(feature_score_z_mean))/(max(feature_score_z_mean)-min(feature_score_z_mean))) |> 
+  ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score)) +
+  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
+  geom_hline(yintercept = 0) +
+  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+  ylab("Shapley Value (0 Hour Lag)") +
+  xlab(NULL) +
+  scale_color_gradientn(colors = c("#240e31", "#cb6bce"),
+                        breaks = c(.1, .9),
+                        labels = c("low", "high")) +
+  labs(color = NULL) +
+  theme(legend.position = "right",
+        legend.key.size = unit(0.25, "cm"),
+        axis.text=element_text(size=9.5),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+  coord_flip()
 ```
 
 
@@ -211,8 +211,10 @@ panel_shap_local_168 <- shap_feat_168 |>
 #| fig-height: 8
 #| fig-width: 10
 
-cowplot::plot_grid(panel_shap_local_0, panel_shap_local_24,
-                   panel_shap_local_72, panel_shap_local_168,
+cowplot::plot_grid(panel_shap_local_24,
+                   panel_shap_local_72, 
+                   panel_shap_local_168,
+                   panel_shap_local_336, 
                    ncol = 2, labels = c("A", "B", "C", "D"), 
                    align = "hv")
 
