@@ -31,25 +31,14 @@ editor_options:
   chunk_output_type: console
 ---
 
-<!--At 4361 words not including 150 word abstract or discussion (about 500 words).-->
+<!-- 8/3/24 - At 4907 words not including 150 word abstract or discussion.-->
 
 <!--Notes:
 Target journal: Clinical Psychological Science 
 Format: Brief empirical report (5,000 words)
 
-Brief Empirical Reports. Brief empirical reports will have a 5,000-word limit, inclusive of front (title page) and back matter (references, footnotes). Articles are limited to a total combination of 4 tables and figures (e.g., 2 tables and 2 figures) that are not part of the word limit. Each table or figure should occupy no more than one printed page. An abstract (maximum of 150 words) is included in the word limit.
+Brief Empirical Reports. Brief empirical reports will have a 5,000-word limit, inclusive of front (title page) and back matter (references, footnotes). Articles are limited to a total combination of 4 tables and figures (e.g., 2 tables and 2 figures) that are not part of the word limit. Each table or figure should occupy no more than one printed page. An abstract (maximum of 150 words) is included in the word limit.-->
 
-Empirical Articles. Empirical Articles should aim for a 12,000-word maximum, inclusive of front (title page) and back matter (references, footnotes, appendices). Articles are limited to a total combination of 6 tables and figures (e.g., 4 tables and 2 figures) that are not part of the word limit. Each table or figure should occupy no more than one printed page. Reporting of multiple investigations within a single manuscript is encouraged, and length adjustments can be discussed if and as needed. An abstract (maximum of 150 words) is included in the word limit. -->
-
-
-
-<!-- Results figs/tables (4 total):
-
-1. Demographics table
-2. figure with auroc and confidence interval by lag 
-3. Figure with auroc and confidence interval by demographic group and lag 
-4. figure for Shapley values
--->
 
 ```{r}
 suppressPackageStartupMessages(library(tidyverse))
