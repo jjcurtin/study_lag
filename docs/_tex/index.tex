@@ -305,7 +305,7 @@ stressful events, emotional valence and arousal, and self-efficacy. We
 showed that it was possible to predict immediate alcohol lapses within
 the next week, day, and hour with clinically meaningful accuracy - area
 under the receiver operating curves (auROCs) of 0.90, 0.91, and 0.93,
-respectively (Wyant et al., n.d.). We also characterized the relative
+respectively (Wyant et al., 2024). We also characterized the relative
 importance of features contributing to these risk probabilities for
 specific individuals at specific moments in time. These models are
 well-suited to make algorithm-guided recommendations to address
@@ -327,7 +327,7 @@ patients with increased lead time to implement supports that might not
 be immediately available to them.
 
 In this study, we compared the performance of one of our models from a
-previous study (Wyant et al., n.d.) with models using increased lag time
+previous study (Wyant et al., 2024) with models using increased lag time
 between predictions and outcomes. Specifically, we used the same EMA
 features as our immediate model and train new models to predict the
 probability of a lapse beginning one day (24 hours), three days (72
@@ -353,7 +353,7 @@ We recruited participants in early recovery (1-8 weeks of abstinence)
 from moderate to severe alcohol use disorder in Madison, Wisconsin, US
 for a three month longitudinal study. One hundred fifty one participants
 were included in our analyses. We used data from all participants
-included in our previous study (see (Wyant et al., n.d.) for enrollment
+included in our previous study (see (Wyant et al., 2024) for enrollment
 and disposition information). This sample size was determined based on
 traditional power analysis methods for logistic regression (Hsieh, 1989)
 because comparable approaches for machine learning models have not yet
@@ -444,32 +444,33 @@ High Throughput Computing, 2006).
 
 \subsubsection{Predictions}\label{predictions}
 
-Figure~\ref{fig-methods} shows how we established prediction timepoints,
-windows, and lags.
+Figure~\ref{fig-methods} shows how we established prediction time
+points, windows, and lags.
 
-All available data up until a timepoint was used to generate model
-predictions. Prediction timepoints were updated hourly (Panel A). The
-first prediction timepoint each participant was 24 hours from midnight
+All available data up until a time point was used to generate model
+predictions. Prediction time points were updated hourly (Panel A). The
+first prediction time point each participant was 24 hours from midnight
 on their study start date. This ensured at least 24 hours of past EMAs
-for future lapse prediction at these first timepoints. Subsequent
-timepoints for each participant repeatedly rolled hour-by-hour until the
-end of their study participation.
+for future lapse prediction at these first time points. Subsequent time
+points for each participant repeatedly rolled hour-by-hour until the end
+of their study participation.
 
 The prediction window width was one week. Prediction windows rolled
-forward hour-by-hour with the prediction timepoint (Panel B). There were
-five possible lag times between the prediction timepoint and start of
-the prediction window. A prediction window started immediately after the
-prediction timepoint (0 lag) or was lagged by 24, 72, 168, or 336 hours.
+forward hour-by-hour with the prediction time point (Panel B). There
+were five possible lag times between the prediction time point and start
+of the prediction window. A prediction window started immediately after
+the prediction time point (0 lag) or was lagged by 24, 72, 168, or 336
+hours.
 
 Therefore our models provided hour-by-hour probabilities of an alcohol
-lapse in the next week lagged to different times into the future (no lag
-or 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions).
+lapse in the next week pushed forward at different times into the future
+(no lag or 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions).
 
 \begin{figure}[H]
 
 \centering{
 
-\includegraphics{index_files/figure-latex/notebooks-methods_figure-fig-methods-output-1.jpeg}
+\includegraphics{index_files/figure-latex/notebooks-mak_figures-fig-methods-output-1.jpeg}
 
 }
 
@@ -483,8 +484,8 @@ hours (Panel B).}
 \end{figure}%
 
 \textsubscript{Source:
-\href{https://jjcurtin.github.io/study_lag/notebooks/methods_figure-preview.html\#cell-fig-methods}{Read
-in Methods Figure}}
+\href{https://jjcurtin.github.io/study_lag/notebooks/mak_figures-preview.html\#cell-fig-methods}{Make
+All Figures for Main Manuscript}}
 
 \subsubsection{Labels}\label{labels}
 
@@ -576,57 +577,50 @@ auROC across the 10 validation sets. Final performance evaluation of
 those best model configurations used median auROC across the 30 test
 sets.
 
-\paragraph{Bayesian Model Evaluation and
-Comparisons}\label{bayesian-model-evaluation-and-comparisons}
-
-Bayesian analyses were accomplished using the tidyposterior
-(\textbf{kuhnTidyposteriorBayesianAnalysis2022?}) and rstanarm
-(\textbf{goodrichRstanarmBayesianApplied2023?}) packages in R. Following
-recommendations from the rstanarm team and others
-(\textbf{rstudioteamRStudioIntegratedDevelopment2020?};
-\textbf{gabryPriorDistributionsRstanarm2023?}), we used the rstanarm
-default autoscaled, weakly informative, data-dependent priors that take
-into account the order of magnitude of the variables to provide some
-regularization to stabilize computation and avoid over-fitting.
-Specifically, the priors were set as follows: residual standard
-deviation \textasciitilde{} normal(location=0, scale=exp(2)), intercept
-(after centering predictors) \textasciitilde{} normal(location=2.3,
-scale=1.3), the two coefficients for window width contrasts
-\textasciitilde{} normal (location=0, scale=2.69), and covariance
-\textasciitilde{} decov(regularization=1, concentration=1, shape=1,
-scale=1).
+\paragraph{Bayesian Model}\label{bayesian-model}
 
 We used a Bayesian hierarchical generalized linear model to estimate the
 posterior probability distributions and 95\% Bayesian credible intervals
-(CIs) for auROC for the five best models (no lag and 24 hour, 72 hour,
-168 hour, and 336 hour lagged predictions) on the 30 held-out test sets.
-The median posterior probability for auROC represents our best estimate
-for the magnitude of the auROC parameter for each model. If the
-confidence intervals do not contain .5 (chance performance), this
-suggests our model is capturing signal in the data.
+(CIs) for the five best models (no lag and 24 hour, 72 hour, 168 hour,
+and 336 hour lagged predictions) from our 30 held-out test sets. We set
+two random intercepts: one for the repeat, and another for the fold
+nested within repeat. auROCs were transformed using the logit function
+and regressed as a function of model contrast. We specified two sets of
+contrasts for model comparisons. The first set compared each lagged
+model to the baseline model (0 lag vs.~24 hour lag, 0 lag vs.~72 hour
+lag, 0 lag vs.~168 lag, 0 lag vs.~336 lag). The second set compared
+adjacently lagged models (24 hour lag vs.~72 hour lag, 72 hour lag
+vs.~168 hour lag, 168 hour lag vs.~336 hour lag).
 
-We performed two sets of Bayesian model comparisons. First, we compared
-each lagged model to our baseline model (no lag) (Wyant et al., n.d.).
-We have demonstrated previously that our baseline model performs well.
-These comparisons show whether we can predict lapses with similar
-performance with varying lags (i.e., no lag vs.~24 hours, no lag vs.~72
-hours, no lag vs.~168 hours, no lag vs.~336 hours).
+Bayesian analyses were accomplished using the tidyposterior (Kuhn, 2022)
+and rstanarm (Goodrich et al., 2023) packages in R. Following
+recommendations from the rstanarm team and others (Gabry \& Goodrich,
+2023; RStudio Team, 2020), we used the rstanarm default autoscaled,
+weakly informative, data-dependent priors that take into account the
+order of magnitude of the variables to provide some regularization to
+stabilize computation and avoid over-fitting.\footnote{Priors were set
+  as follows: residual standard deviation \textasciitilde{}
+  normal(location=0, scale=exp(2)), intercept (after centering
+  predictors) \textasciitilde{} normal(location=2.3, scale=1.3), the two
+  coefficients for window width contrasts \textasciitilde{} normal
+  (location=0, scale=2.69), and covariance \textasciitilde{}
+  decov(regularization=1, concentration=1, shape=1, scale=1).}
 
-Second, we compared each adjacent lagged model (i.e., 24 hours vs 72
-hours, 72 hours vs.~168 hours, and 168 hours vs.~336 hours). These
-comparisons allow us to determine the probability that the lagged models
-systematically differed as predictions were made further into the
-future.
+From the Bayesian model we obtained the posterior distribution
+(transformed back from logit) and Bayeisan CIs for overall model
+evaluation. To evaluate our models' overall performance we report the
+median posterior probability for auROC and Bayesian CIs. This represents
+our best estimate for the magnitude of the auROC parameter for each
+model. If the confidence intervals do not contain .5 (chance
+performance), this suggests our model is capturing signal in the data.
 
-For both sets of model comparisons, we determined the probability that
-the models' performances differed systematically from each other by
-regressing the auROCs (logit transformed) from the 30 test sets as a
-function of the contrast. We set two random intercepts: one for the
-repeat, and another for the fold within repeat. We also report the
-precise posterior probability for the difference in auROCs and the 95\%
-Bayesian CIs. If there was a probability \textgreater{} 0.95 that the
-more lagged model's performance was worse, we labeled the model contrast
-as significant.
+We then conducted Bayesian model comparisons using our two sets of
+contrasts - baseline and adjacent lags. For both model comparisons, we
+determined the probability that the models' performances differed
+systematically from each other. We also report the precise posterior
+probability for the difference in auROCs and the 95\% Bayesian CIs. If
+there was a probability \textgreater.95 that the more lagged model's
+performance was worse, we labeled the model contrast as significant.
 
 \paragraph{Fairness Benchmarks}\label{fairness-benchmarks}
 
@@ -964,6 +958,15 @@ DeRubeis, R. J. (2019). The history, current status, and possible future
 of precision mental health. \emph{Behaviour Research and Therapy},
 \emph{123}, 103506. \url{https://doi.org/10.1016/j.brat.2019.103506}
 
+\bibitem[\citeproctext]{ref-gabryPriorDistributionsRstanarm2023}
+Gabry, J., \& Goodrich, B. (2023). Prior {Distributions} for rstanarm
+{Models}. \emph{CRAN R-Project}.
+https://cran.r-project.org/web/packages/rstanarm/vignettes/priors.html.
+
+\bibitem[\citeproctext]{ref-goodrichRstanarmBayesianApplied2023}
+Goodrich, B., Gabry, J., Ali, I., \& Brilleman, S. (2023). Rstanarm:
+{Bayesian Applied Regression Modeling} via {Stan}.
+
 \bibitem[\citeproctext]{ref-greenfieldSubstanceAbuseTreatment2007}
 Greenfield, S. F., Brooks, A. J., Gordon, S. M., Green, C. A., Kropp,
 F., McHugh, R. K., et al. (2007). Substance abuse treatment entry,
@@ -981,6 +984,10 @@ Khatri, U., et al. (2020). Incidence of {Treatment} for {Opioid Use
 Disorder Following Nonfatal Overdose} in {Commercially Insured
 Patients}. \emph{JAMA Network Open}, \emph{3}(5), e205852.
 \url{https://doi.org/10.1001/jamanetworkopen.2020.5852}
+
+\bibitem[\citeproctext]{ref-kuhnTidyposteriorBayesianAnalysis2022}
+Kuhn, M. (2022). Tidyposterior: {Bayesian Analysis} to {Compare Models}
+using {Resampling Statistics}.
 
 \bibitem[\citeproctext]{ref-kuhnAppliedPredictiveModeling2018}
 Kuhn, M., \& Johnson, K. (2018). \emph{Applied {Predictive Modeling}}
@@ -1027,6 +1034,10 @@ treatments to client heterogeneity: {Project MATCH Posttreatment}
 drinking outcomes. \emph{Journal of Studies on Alcohol}, \emph{58}(1),
 7--29.
 
+\bibitem[\citeproctext]{ref-rstudioteamRStudioIntegratedDevelopment2020}
+RStudio Team. (2020). {RStudio}: {Integrated Development} for {R}.
+Boston, MA: RStudio, Inc.
+
 \bibitem[\citeproctext]{ref-soysterPooledPersonspecificMachine2022}
 Soyster, P. D., Ashlock, L., \& Fisher, A. J. (2022). Pooled and
 person-specific machine learning models for predicting future alcohol
@@ -1054,17 +1065,17 @@ post-treatment drinking: {It}'s a rocky road to relapse. \emph{Clinical
 Psychology Review}, \emph{27}(6), 724--738.
 \url{https://doi.org/10.1016/j.cpr.2007.01.002}
 
-\bibitem[\citeproctext]{ref-wyantMachineLearningModels2023}
-Wyant, K., Sant'Ana, S. J. K., Fronk, G., \& Curtin, J. J. (n.d.).
-Machine learning models for temporally precise lapse prediction in
-alcohol use disorder. \emph{Psychopathology and Clinical Science}.
-\url{https://doi.org/10.31234/osf.io/cgsf7}
-
 \bibitem[\citeproctext]{ref-wyantAcceptabilityPersonalSensing2023}
 Wyant, K., Moshontz, H., Ward, S. B., Fronk, G. E., \& Curtin, J. J.
 (2023). Acceptability of {Personal Sensing Among People With Alcohol Use
 Disorder}: {Observational Study}. \emph{JMIR mHealth and uHealth},
 \emph{11}(1), e41833. \url{https://doi.org/10.2196/41833}
+
+\bibitem[\citeproctext]{ref-wyantMachineLearningModels2023}
+Wyant, K., Sant'Ana, S. J. K., Fronk, G., \& Curtin, J. J. (2024).
+Machine learning models for temporally precise lapse prediction in
+alcohol use disorder. \emph{Psychopathology and Clinical Science}.
+\url{https://doi.org/10.31234/osf.io/cgsf7}
 
 \end{CSLReferences}
 

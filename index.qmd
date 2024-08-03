@@ -151,21 +151,18 @@ As part of the aims of the parent project we collected many other trait and stat
 
 
 ## Data Analytic Strategy
-Data preprocessing, modeling, and Bayesian analyses were done in R using the tidymodels ecosystem [@kuhnTidymodelsCollectionPackages2020]. Models were trained and evaluated using high-throughput computing resources provided by the University of Wisconsin Center for High Throughput Computing [@chtc].
+Data preprocessing, modeling, and Bayesian analyses were done in R using the tidymodels ecosystem [@kuhnTidymodelsCollectionPackages2020; @kuhnTidyposteriorBayesianAnalysis2022; @goodrichRstanarmBayesianApplied2023]. Models were trained and evaluated using high-throughput computing resources provided by the University of Wisconsin Center for High Throughput Computing [@chtc].
 
 ### Predictions
 
+@fig-methods shows how we established prediction time points, windows, and lags. All available data up until, but not including, the prediction time point was used to generate model predictions. Prediction time points were updated hourly (Panel A). The first prediction time point for each participant was 24 hours from midnight on their study start date. This ensured at least 24 hours of past EMAs for future lapse prediction at these first time points. Subsequent predictions time points for each participant repeatedly rolled hour-by-hour until the end of their study participation.
 
-@fig-methods shows how we established prediction timepoints, windows, and lags.
+The prediction window width was one week. Prediction windows rolled forward hour-by-hour with the prediction time point (Panel B). There were five possible lag times between the prediction time point and start of the prediction window. A prediction window either started immediately after the prediction time point (0 lag) or was lagged by 24, 72, 168, or 336 hours.
 
-All available data up until a timepoint was used to generate model predictions. Prediction timepoints were updated hourly (Panel A). The first prediction timepoint each participant was 24 hours from midnight on their study start date. This ensured at least 24 hours of past EMAs for future lapse prediction at these first timepoints. Subsequent timepoints for each participant repeatedly rolled hour-by-hour until the end of their study participation.
-
-The prediction window width was one week. Prediction windows rolled forward hour-by-hour with the prediction timepoint (Panel B). There were five possible lag times between the prediction timepoint and start of the prediction window. A prediction window started immediately after the prediction timepoint (0 lag) or was lagged by 24, 72, 168, or 336 hours.
-
-Therefore our models provided hour-by-hour probabilities of an alcohol lapse in the next week lagged to different times into the future (no lag or 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions). 
+Therefore, our models provided hour-by-hour probabilities of an alcohol lapse in the next week pushed out up to two weeks into the future. 
 
 
-{{< embed notebooks/methods_figure.qmd#fig-methods >}}
+{{< embed notebooks/mak_figures.qmd#fig-methods >}}
 
 
 ### Labels
@@ -197,11 +194,9 @@ We used participant-grouped, nested cross-validation for model training, selecti
 
 #### Bayesian Model
 
-We used a Bayesian hierarchical generalized linear model to estimate the posterior probability distributions and 95% Bayesian credible intervals (CIs) for the five best models (no lag and 24 hour, 72 hour, 168 hour, and 336 hour lagged predictions) from our 30 held-out test sets. We set two random intercepts: one for the repeat, and another for the fold nested within repeat. auROCs were transformed using the logit function and regressed as a function of model contrast. We specified two sets of contrasts for model comparisons. The first set compared each lagged model to the baseline model (0 lag vs. 24 hour lag, 0 lag vs. 72 hour lag, 0 lag vs. 168 lag, 0 lag vs. 336 lag). The second set compared adjacently lagged models (24 hour lag vs. 72 hour lag, 72 hour lag vs. 168 hour lag, 168 hour lag vs. 336 hour lag).  
+We used a Bayesian hierarchical generalized linear model to estimate the posterior probability distributions and 95% Bayesian credible intervals (CIs) from the 30 held-out test sets for our five best models. Following recommendations from the rstanarm team and others [@rstudioteamRStudioIntegratedDevelopment2020; @gabryPriorDistributionsRstanarm2023], we used the rstanarm default autoscaled, weakly informative, data-dependent priors that take into account the order of magnitude of the variables to provide some regularization to stabilize computation and avoid over-fitting.^[Priors were set as follows: residual standard deviation ~ normal(location=0, scale=exp(2)), intercept (after centering predictors) ~ normal(location=2.3, scale=1.3), the two coefficients for window width contrasts ~ normal (location=0, scale=2.69), and covariance ~ decov(regularization=1, concentration=1, shape=1, scale=1).] We set two random intercepts to account for our resampling method: one for the repeat, and another for the fold nested within repeat. We specified two sets of contrasts for model comparisons. The first set compared each lagged model to the baseline model (0 lag vs. 24 hour lag, 0 lag vs. 72 hour lag, 0 lag vs. 168 lag, 0 lag vs. 336 lag). The second set compared adjacently lagged models (24 hour lag vs. 72 hour lag, 72 hour lag vs. 168 hour lag, 168 hour lag vs. 336 hour lag). auROCs were transformed using the logit function and regressed as a function of model contrast. 
 
-Bayesian analyses were accomplished using the tidyposterior [@kuhnTidyposteriorBayesianAnalysis2022] and rstanarm [@goodrichRstanarmBayesianApplied2023] packages in R. Following recommendations from the rstanarm team and others [@rstudioteamRStudioIntegratedDevelopment2020; @gabryPriorDistributionsRstanarm2023], we used the rstanarm default autoscaled, weakly informative, data-dependent priors that take into account the order of magnitude of the variables to provide some regularization to stabilize computation and avoid over-fitting.^[Priors were set as follows: residual standard deviation ~ normal(location=0, scale=exp(2)), intercept (after centering predictors) ~ normal(location=2.3, scale=1.3), the two coefficients for window width contrasts ~ normal (location=0, scale=2.69), and covariance ~ decov(regularization=1, concentration=1, shape=1, scale=1).] 
-
-From the Bayesian model we obtained the posterior distribution (transformed back from logit) and Bayeisan CIs for overall model evaluation. To evaluate our models' overall performance we report the median posterior probability for auROC and Bayesian CIs. This represents our best estimate for the magnitude of the auROC parameter for each model. If the confidence intervals do not contain .5 (chance performance), this suggests our model is capturing signal in the data.  
+From the Bayesian model we obtained the posterior distribution (transformed back from logit) and Bayeisan CIs for all five models. To evaluate our models' overall performance we report the median posterior probability for auROC and Bayesian CIs. This represents our best estimate for the magnitude of the auROC parameter for each model. If the confidence intervals do not contain .5 (chance performance), this suggests our model is capturing signal in the data.  
 
 We then conducted Bayesian model comparisons using our two sets of contrasts - baseline and adjacent lags. For both model comparisons, we determined the probability that the models' performances differed systematically from each other. We also report the precise posterior probability for the difference in auROCs and the 95% Bayesian CIs. If there was a probability >.95 that the more lagged model's performance was worse, we labeled the model contrast as significant.
 
