@@ -156,16 +156,16 @@ Data preprocessing, modeling, and Bayesian analyses were done in R using the tid
 ### Predictions
 
 
-@fig-methods shows how we established prediction timepoints, windows, and lags.
+@fig-methods shows how we established prediction time points, windows, and lags.
 
-All available data up until a timepoint was used to generate model predictions. Prediction timepoints were updated hourly (Panel A). The first prediction timepoint each participant was 24 hours from midnight on their study start date. This ensured at least 24 hours of past EMAs for future lapse prediction at these first timepoints. Subsequent timepoints for each participant repeatedly rolled hour-by-hour until the end of their study participation.
+All available data up until a time point was used to generate model predictions. Prediction time points were updated hourly (Panel A). The first prediction time point each participant was 24 hours from midnight on their study start date. This ensured at least 24 hours of past EMAs for future lapse prediction at these first time points. Subsequent time points for each participant repeatedly rolled hour-by-hour until the end of their study participation.
 
-The prediction window width was one week. Prediction windows rolled forward hour-by-hour with the prediction timepoint (Panel B). There were five possible lag times between the prediction timepoint and start of the prediction window. A prediction window started immediately after the prediction timepoint (0 lag) or was lagged by 24, 72, 168, or 336 hours.
+The prediction window width was one week. Prediction windows rolled forward hour-by-hour with the prediction time point (Panel B). There were five possible lag times between the prediction time point and start of the prediction window. A prediction window started immediately after the prediction time point (0 lag) or was lagged by 24, 72, 168, or 336 hours.
 
-Therefore our models provided hour-by-hour probabilities of an alcohol lapse in the next week lagged to different times into the future (no lag or 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions). 
+Therefore our models provided hour-by-hour probabilities of an alcohol lapse in the next week pushed forward at different times into the future (no lag or 24 hour, 72 hour, 168 hour, or 336 hour lagged predictions). 
 
 
-{{< embed notebooks/methods_figure.qmd#fig-methods >}}
+{{< embed notebooks/mak_figures.qmd#fig-methods >}}
 
 
 ### Labels
