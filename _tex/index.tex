@@ -256,64 +256,66 @@ There has been long-standing interest in precision mental health and
 substance use disorders. An early example is the Project MATCH research
 group, which attempted to match individuals with alcohol use disorder to
 their optimal treatment based on baseline measures of individual
-characteristics (Project Match Research Group, 1997). The study did not
-find any differences in treatment success. This can likely be attributed
-to 1) low-dimensional analyses that failed to capture the complex and
-heterogeneous nature of substance use disorders; and 2) their use of
-static distal features to predict a non-linear, time-varying course of
-recovery, lapse, and relapse (Witkiewitz \& Marlatt, 2007). In other
-words, they used overly simplistic models to address the question of
-\emph{how} and did not consider the question of \emph{when}.
+characteristics (Project Match Research Group, 1997). Earlier studies,
+however, have been constrained to 1) low-dimensional analyses that fail
+to capture the complex and heterogeneous nature of substance use
+disorders and 2) the use of static distal features to predict a
+non-linear, time-varying course of recovery, lapse, and relapse
+(Witkiewitz \& Marlatt, 2007).
 
-The \emph{when} is particularly important for predicting discrete
-symptoms or behaviors. Take the example of lapses, discrete instances of
-goal inconsistent substance use. Lapses are a clinically important
-target for substance use treatment. They are often an early warning sign
-of relapse, and maladaptive responses to lapses can undermine recovery.
-For some substances, even a single lapse can result in an overdose
-and/or death. It would be unreasonable to expect that we could predict a
-lapse with any temporal precision using only features that become more
-distal as time progresses. Rather, lapse prediction requires dense,
-long-term monitoring of symptoms and related states proximal to the
-outcome.
-
-Recent advances in both personal sensing and machine learning may
-address these barriers to successful precision mental health. Personal
-sensing allows for frequent, longitudinal measurement of changes in
-proximal risk (e.g., for a lapse) with high temporal precision. Machine
+Recent advances in both machine learning and personal sensing may
+address these barriers to successful precision mental health. Machine
 learning uses high dimensional inputs that can capture the complexity of
 mental health conditions. Moreover, tools from machine learning can be
 applied to models to understand which factors are important to a
-specific individual at a specific moment in time.
+specific individual at a specific moment in time, addressing the
+question of \emph{how}.
+
+Personal sensing allows for frequent, longitudinal measurement of
+changes in proximal risk (e.g., for a lapse) with high temporal
+precision, for better understanding the \emph{when}. This precision is
+particularly important for predicting discrete symptoms or behaviors.
+Take the example of lapses, discrete instances of goal inconsistent
+substance use. Lapses are a clinically important target for substance
+use treatment. They are often an early warning sign of relapse, and
+maladaptive responses to lapses can undermine recovery. For some
+substances, even a single lapse can result in an overdose and/or death.
+It would be unreasonable to expect that we could predict a lapse with
+any temporal precision using only features that become more distal as
+time progresses. Rather, lapse prediction requires dense, long-term
+monitoring of symptoms and related states proximal to the outcome.
 
 Ecological momentary assessment (EMA) may be particularly well-suited
-for these algorithms. It offers momentary subjective insight into
-constructs that can be easily mapped onto modular forms of treatment,
-such as the relapse prevention model (Marlatt \& Gordon, 1985;
-Witkiewitz \& Marlatt, 2004). EMA also appears to be well tolerated by
-individuals with substance use disorders (Wyant et al., 2023). Thus, it
-can serve as an important signal for predicting substance use outcomes
-and interpreting clinically relevant features over a sustained period.
+for risk prediction algorithms. It offers momentary subjective insight
+into constructs that can be easily mapped onto modular forms of
+treatment, such as the relapse prevention model (Marlatt \& Gordon,
+1985; Witkiewitz \& Marlatt, 2004). EMA also appears to be well
+tolerated by individuals with substance use disorders (Wyant et al.,
+2023). Thus, it can serve as an important signal for predicting
+substance use outcomes and interpreting clinically relevant features
+over a sustained period.
+
 Promising preliminary work suggests it is possible to build EMA models
 that predict immediate lapses back to substance use (Bae et al., 2018;
 Chih et al., 2014; Soyster et al., 2022; Walters et al., 2021). In a
 previous study from our group, we demonstrated that we can do this very
-well. We used 4X daily EMA with questions designed to measure
-theoretically-implicated risk factors including past use, craving, past
-pleasant events, past and future risky situations, past and future
-stressful events, emotional valence and arousal, and self-efficacy. We
-showed that it was possible to predict immediate alcohol lapses within
-the next week, day, and hour with clinically meaningful accuracy - area
-under the receiver operating curves (auROCs) of 0.90, 0.91, and 0.93,
-respectively (Wyant et al., 2024). We also characterized the relative
-importance of features contributing to these risk probabilities for
-specific individuals at specific moments in time. These models are
-well-suited to make algorithm-guided recommendations to address
-immediate risks - for example, recommending a coping with craving
-activity when someone has increased craving, or recommending a guided
-relaxation video when someone is reporting recent stressful events.
-Importantly, these supports can be available 24/7 (e.g., in a digital
-therapeutic) for an individual, allowing them to take action right away.
+well (Wyant et al., 2024). We used 4X daily EMA with questions designed
+to measure theoretically-implicated risk factors including past use,
+craving, past pleasant events, past and future risky situations, past
+and future stressful events, emotional valence and arousal, and
+self-efficacy. We showed that it was possible to predict immediate
+alcohol lapses for several different prediction widths with clinically
+meaningful accuracy.
+
+Narrow prediction window widths (i.e., next hour or next day) without
+any lag time between the prediction time point and start of the
+prediction window are well-suited for \emph{Just-in-Time} interventions
+that make algorithm-guided recommendations to address immediate risks -
+for example, recommending a coping with craving activity when someone
+has increased craving, or recommending a guided relaxation video when
+someone is reporting recent stressful events. Importantly, these
+supports can be available 24/7 (e.g., in a digital therapeutic) for an
+individual, allowing them to take action right away.
 
 However, many interventions cannot be self-contained in a digital
 therapeutic and take time to set up. For example, someone who has
@@ -322,18 +324,35 @@ be encouraged to attend a self-help meeting, plan an outing with
 important people in their life, or schedule an appointment with a
 therapist. These multimodal interventions (i.e., combined human and
 digital interventions) are not available 24/7. A \emph{time-lagged}
-model with predictions shifted further into the future could provide
-patients with increased lead time to implement supports that might not
-be immediately available to them.
+model where prediction windows are shifted further into the future
+(i.e., away from the prediction time point) could provide patients with
+increased lead time to implement supports that might not be immediately
+available to them. In these situations, a wider prediction window width
+(i.e, one week) may be preferred. Wider window widths yield higher
+proportions of positive labels mitigating issues of an unbalanced
+outcome. Additionally, when scheduling real world support, it is
+important that the lead up time is adequate and not that the prediction
+is necessarily temporally precise.
 
-In this study, we compared the performance of one of our models from a
-previous study (Wyant et al., 2024) with models using increased lag time
-between predictions and outcomes. Specifically, we used the same EMA
-features as our immediate model and train new models to predict the
-probability of a lapse beginning one day (24 hours), three days (72
-hours), one week (168 hours), or two weeks (336 hours) into the future.
-Our primary objective was to assess how well models perform with
-increasing lag time.
+In this study, we evaluated the performance of a model predicting
+immediate next week lapses with models using increased lag time between
+the prediction time points and the start of the prediction window.
+Specifically, we used the same EMA features as our immediate model and
+trained new models to predict the probability of a lapse beginning one
+day (24 hours), three days (72 hours), one week (168 hours), or two
+weeks (336 hours) into the future. We evaluated each lagged model to
+determine if they perform at clinically implementable levels and
+assessed the relative difference in performance as lag time increased.
+
+Additionally, our group is committed to the responsible and transparent
+reporting of model performance. Models that work for only a subset of
+people, if implemented, could widen existing treatment disparities.
+Therefore we reported our models' performance for three dichotomized
+demographic groups with known disparities in access to substance use
+treatment - race and ethnicity (not White vs.~non-Hispanic White)
+(Kilaru et al., 2020; Pinedo, 2019), income (below poverty vs.~above
+poverty) (Olfson et al., 2022), and sex at birth (female vs.~male)
+(Greenfield et al., 2007; Kilaru et al., 2020).
 
 \section{Methods}\label{methods}
 
@@ -617,30 +636,21 @@ probability for the difference in auROCs and the 95\% Bayesian CIs. If
 there was a probability \textgreater.95 that the more lagged model's
 performance was worse, we labeled the model contrast as significant.
 
-\paragraph{Fairness Benchmarks}\label{fairness-benchmarks}
+\paragraph{Fairness Analyses}\label{fairness-analyses}
 
-We aim for the responsible and transparent reporting of model
-performance and clinical utility. In these efforts, we calculated the
-median posterior probability and 95\% Bayesian CI for auROC for each
-model separately for three dichotomized demographic groups with
-potential disparities in access to substance use treatment - race and
-ethnicity (non-Hispanic White vs.~non-White) (Kilaru et al., 2020;
-Pinedo, 2019), income (above poverty vs.~below poverty) (Olfson et al.,
-2022), and sex at birth (male vs.~female) (Greenfield et al., 2007;
-Kilaru et al., 2020).
-
-We also acknowledge that models that work for only a subset of people,
-if implemented, could widen existing treatment disparities. We conducted
-Bayesian group comparisons to assess the likelihood that the model
-performs differently by group. We report the median difference and range
-in posterior probabilities across all models. The median auROC and
-Bayesian CIs are reported separately by group and model in the
-supplement.\footnote{For our fairness analyses, we altered our outer
-  loop resampling method from 3 x 10 cross-validation to 6 x 5
-  cross-validation. This method still gave us 30 held out tests sets,
-  but by splitting the data across fewer folds (i.e., 5 vs.~10) we were
-  able to reduce the likelihood of the minority group being absent in
-  any single fold.}
+We calculated the median posterior probability and 95\% Bayesian CI for
+auROC for each model separately by race and ethnicity (not White
+vs.~non-Hispanic White), income (below poverty vs.~above poverty), and
+sex at birth (female vs.~male). We conducted Bayesian group comparisons
+to assess the likelihood that each model performs differently by group.
+We report the median difference and range in posterior probabilities
+across all models. The median auROC and Bayesian CIs are reported
+separately by group and model in the supplement.\footnote{For our
+  fairness analyses, we altered our outer loop resampling method from 3
+  x 10 cross-validation to 6 x 5 cross-validation. This method still
+  gave us 30 held out tests sets, but by splitting the data across fewer
+  folds (i.e., 5 vs.~10) we were able to reduce the likelihood of the
+  minority group being absent in any single fold.}
 
 \paragraph{Feature Importance}\label{feature-importance}
 
@@ -830,7 +840,7 @@ hour vs.~336 hour lag model was 0.018 (95\% CI={[}0.011-0.025{]}),
 yielding a significant probability of 1.000 that the 336 hour lag model
 had worse performance than the 168 hour lag model.
 
-\subsection{Fairness Benchmarks}\label{fairness-benchmarks-1}
+\subsection{Fairness Analyses}\label{fairness-analyses-1}
 
 Panel B in Figure~\ref{fig-1} shows the difference in performance of
 each model by race (not White; \emph{N} = 20 vs.~Non-Hispanic White;
