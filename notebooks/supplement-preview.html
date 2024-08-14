@@ -3520,7 +3520,7 @@ font-family: inherit;
 <span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>  ggforce<span class="sc">::</span><span class="fu">geom_sina</span>(<span class="at">method =</span> <span class="st">&quot;counts&quot;</span>, <span class="at">maxwidth =</span> .<span class="dv">7</span>, <span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
 <span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
 <span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">5</span>), <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">5</span>)) <span class="sc">+</span></span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Shapley Value (0 Hour Lag)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Shapley Value (336 Hour Lag)&quot;</span>) <span class="sc">+</span></span>
 <span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="cn">NULL</span>) <span class="sc">+</span></span>
 <span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_gradientn</span>(<span class="at">colors =</span> <span class="fu">c</span>(<span class="st">&quot;#240e31&quot;</span>, <span class="st">&quot;#f9e79f&quot;</span>),</span>
 <span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>                        <span class="at">breaks =</span> <span class="fu">c</span>(.<span class="dv">1</span>, .<span class="dv">9</span>),</span>
@@ -3573,7 +3573,7 @@ Local feature importance plots by model.
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>color_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;#240e31&quot;</span>, <span class="st">&quot;#751c6d&quot;</span>, <span class="st">&quot;#458892&quot;</span>, <span class="st">&quot;#75f3d3&quot;</span>, <span class="st">&quot;#cb6bce&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>color_codes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;#cb6bce&quot;</span>, <span class="st">&quot;#751c6d&quot;</span>, <span class="st">&quot;#458892&quot;</span>, <span class="st">&quot;#75f3d3&quot;</span>, <span class="st">&quot;#240e31&quot;</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>shap_feat_all <span class="sc">|&gt;</span> </span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable_grp <span class="sc">==</span> <span class="st">&quot;past use &quot;</span>) <span class="sc">|&gt;</span> </span>
@@ -4330,7 +4330,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","loop":false,"selector":".lightbox","openEffect":"zoom","descPosition":"bottom"});
+</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"selector":".lightbox","descPosition":"bottom","closeEffect":"zoom","loop":false,"openEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
