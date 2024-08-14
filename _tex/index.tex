@@ -216,8 +216,21 @@ Wisconsin-Madison, }
 
 
 \begin{abstract}
-This study found some pretty cool results that have both high impact and
-important clinical implications. For example \ldots{}
+We evaluated the performance of a model predicting immediate alcohol
+lapses and models with increasing lag time between the prediction time
+points and start of the prediction window (24, 72, 168, or 336 hour
+lag). Model features were engineered from 4x daily ecological momentary
+assessment. Participants (N =151; 51\% male; mean age= 41; 87\% White,
+97\% Non-Hispanic) were in early recovery from alcohol use disorder and
+provided data for up to three months. We used nested cross-validation to
+select and evaluate the best models. Median auROCs were high across
+models (range = 0.85 -- 0.89). All lagged models performed significantly
+worse than the 0 lag model (probabilities \textgreater{} .95).
+Comparisons between adjacent lags revealed significant differences
+between 24 and 72 hour lag models and 168 and 336 hour lag models. All
+models performed significantly worse for minority groups (not White
+vs.~non-Hispanic White, below poverty vs.~above poverty, female
+vs.~male).
 \end{abstract}
 
 
@@ -335,14 +348,15 @@ important that the lead up time is adequate and not that the prediction
 is necessarily temporally precise.
 
 In this study, we evaluated the performance of a model predicting
-immediate next week lapses with models using increased lag time between
-the prediction time points and the start of the prediction window.
-Specifically, we used the same EMA features as our immediate model and
-trained new models to predict the probability of a lapse beginning one
-day (24 hours), three days (72 hours), one week (168 hours), or two
-weeks (336 hours) into the future. We evaluated each lagged model to
-determine if they perform at clinically implementable levels and
-assessed the relative difference in performance as lag time increased.
+immediate next week lapses compared to models using increased lag time
+between the prediction time points and the start of the prediction
+window. Specifically, we used the same EMA features as our immediate
+model and trained new models to predict the probability of a lapse
+beginning one day (24 hours), three days (72 hours), one week (168
+hours), or two weeks (336 hours) into the future. We evaluated each
+lagged model to determine if they perform at clinically implementable
+levels and assessed the relative difference in performance as lag time
+increased.
 
 Additionally, our group is committed to the responsible and transparent
 reporting of model performance. Models that work for only a subset of

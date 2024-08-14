@@ -22,7 +22,7 @@ keywords:
   - Substance use disorders
   - Precision mental health 
 abstract: |
-  This study found some pretty cool results that have both high impact and important clinical implications.  For example ...
+  We evaluated the performance of a model predicting immediate alcohol lapses and models with increasing lag time between the prediction time points and start of the prediction window (24, 72, 168, or 336 hour lag). Model features were engineered from 4x daily ecological momentary assessment. Participants (N =151; 51% male; mean age= 41; 87% White, 97% Non-Hispanic) were in early recovery from alcohol use disorder and provided data for up to three months. We used nested cross-validation to select and evaluate the best models. Median auROCs were high across models (range = 0.85 – 0.89). All lagged models performed significantly worse than the 0 lag model (probabilities > .95).  Comparisons between adjacent lags revealed significant differences between 24 and 72 hour lag models and 168 and 336 hour lag models. All models performed significantly worse for minority groups (not White vs. non-Hispanic White, below poverty vs. above poverty, female vs. male).
 date: last-modified
 bibliography: references.bib
 bibliographystyle: apa
@@ -31,7 +31,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-<!-- 8/3/24 - At 4907 words not including 150 word abstract or discussion.-->
+<!-- 8/14/24 - At 5057 words not including discussion.-->
 
 <!--Notes:
 Target journal: Clinical Psychological Science 
@@ -100,7 +100,7 @@ Narrow prediction window widths (i.e., next hour or next day) without any lag ti
 
 However, many interventions cannot be self-contained in a digital therapeutic and take time to set up. For example, someone who has reported recent past alcohol use and low abstinence self-efficacy might be encouraged to attend a self-help meeting, plan an outing with important people in their life, or schedule an appointment with a therapist. These multimodal interventions (i.e., combined human and digital interventions) are not available 24/7. A *time-lagged* model where prediction windows are shifted further into the future (i.e., away from the prediction time point) could provide patients with increased lead time to implement supports that might not be immediately available to them. In these situations, a wider prediction window width (i.e, one week) may be preferred. Wider window widths yield higher proportions of positive labels mitigating issues of an unbalanced outcome. Additionally, when scheduling real world support, it is important that the lead up time is adequate and not that the prediction is necessarily temporally precise.
 
-In this study, we evaluated the performance of a model predicting immediate next week lapses with models using increased lag time between the prediction time points and the start of the prediction window. Specifically, we used the same EMA features as our immediate model and trained new models to predict the probability of a lapse beginning one day (24 hours), three days (72 hours), one week (168 hours), or two weeks (336 hours) into the future. We evaluated each lagged model to determine if they perform at clinically implementable levels and assessed the relative difference in performance as lag time increased. 
+In this study, we evaluated the performance of a model predicting immediate next week lapses compared to models using increased lag time between the prediction time points and the start of the prediction window. Specifically, we used the same EMA features as our immediate model and trained new models to predict the probability of a lapse beginning one day (24 hours), three days (72 hours), one week (168 hours), or two weeks (336 hours) into the future. We evaluated each lagged model to determine if they perform at clinically implementable levels and assessed the relative difference in performance as lag time increased. 
 
 Additionally, our group is committed to the responsible and transparent reporting of model performance. Models that work for only a subset of people, if implemented, could widen existing treatment disparities. Therefore we reported our models' performance for three dichotomized demographic groups with known disparities in access to substance use treatment - race and ethnicity (not White vs. non-Hispanic White) [@pinedoCurrentReexaminationRacial2019; @kilaruIncidenceTreatmentOpioid2020], income (below poverty vs. above poverty) [@olfsonHealthcareCoverageService2022], and sex at birth (female vs. male) [@greenfieldSubstanceAbuseTreatment2007; @kilaruIncidenceTreatmentOpioid2020].
 
