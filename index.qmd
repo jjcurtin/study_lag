@@ -108,10 +108,12 @@ Additionally, our group is committed to the responsible and transparent reportin
 # Methods
 
 ## Transparency and Openness
+
 We adhere to research transparency principles that are crucial for robust and replicable science. We preregistered our data analytic strategy. We reported how we determined the sample size, all data exclusions, all manipulations, and all study measures. We provide a transparency report in the supplement. Finally, our data, analysis scripts, annotated results, questionnaires, and other study materials are publicly available ([https://osf.io/xta67/](https://osf.io/xta67/)).
 
 
 ## Participants
+
 We recruited participants in early recovery (1-8 weeks of abstinence) from moderate to severe alcohol use disorder in Madison, Wisconsin, US for a three month longitudinal study. One hundred fifty one participants were included in our analyses. We used data from all participants included in our previous study (see [@wyantMachineLearningModels2023] for enrollment and disposition information). This sample size was determined based on traditional power analysis methods for logistic regression [@hsiehSampleSizeTables1989] because comparable approaches for machine learning models have not yet been validated. Participants were recruited through print and targeted digital advertisements and partnerships with treatment centers. We required that participants:
 
 1.  were age 18 or older,
@@ -123,10 +125,13 @@ We recruited participants in early recovery (1-8 weeks of abstinence) from moder
 We also excluded participants exhibiting severe symptoms of psychosis or paranoia.
 
 ## Procedure
+
 Participants completed five study visits over approximately three months. After an initial phone screen, participants attended an in-person screening visit to determine eligibility, complete informed consent, and collect self-report measures. Eligible, consented participants returned approximately one week later for an intake visit. Three additional follow-up visits occurred about every 30 days that participants remained on study. Participants were expected to complete four daily EMAs while on study. Other personal sensing data streams (geolocation, cellular communications, sleep quality, and audio check-ins) were collected as part of the parent grant's aims (R01 AA024391). Participants could earn up to \$150/month if they completed all study visits, had 10% or less missing EMA data and opted in to provide data for other personal sensing data streams.
 
 ## Measures
+
 ### Ecological Momentary Assessments
+
 Participants completed four brief (7-10 questions) EMAs daily. The first and last EMAs of the day were scheduled within one hour of participants' typical wake and sleep times. The other two EMAs were scheduled randomly within the first and second halves of their typical day, with at least one hour between EMAs. Participants learned how to complete the EMA and the meaning of each question during their intake visit.
 
 On all EMAs, participants reported dates/times of any unreported past alcohol use. Next, participants rated the maximum intensity of recent (i.e., since last EMA) experiences of craving, risky situations, stressful events, and pleasant events. Finally, participants rated their current affect on two bipolar scales: valence (Unpleasant/Unhappy to Pleasant/Happy) and arousal (Calm/Sleepy to Aroused/Alert).
@@ -135,12 +140,14 @@ On the first EMA each day, participants also rated the likelihood of encounterin
 
 
 ### Individual Characteristics
+
 We collected self-report information about demographics (age, sex, race, ethnicity, education, marital status, employment, and income) and AUD symptom count to characterize our sample. Demographic information was also included as features in our models and a subset (sex, race, ethnicity, and income) used for model fairness analyses. 
 
 As part of the aims of the parent project we collected many other trait and state measures throughout the study. A complete list of all measures can be found on our study's OSF page.
 
 
 ## Data Analytic Strategy
+
 Data preprocessing, modeling, and Bayesian analyses were done in R using the tidymodels ecosystem [@kuhnTidymodelsCollectionPackages2020; @kuhnTidyposteriorBayesianAnalysis2022; @goodrichRstanarmBayesianApplied2023]. Models were trained and evaluated using high-throughput computing resources provided by the University of Wisconsin Center for High Throughput Computing [@chtc].
 
 ### Predictions
@@ -162,6 +169,7 @@ The start and end date/time of past drinking episodes were reported on the first
 We ended up with a total of 270,081 labels for our baseline (no lag) model, 266,599 labels for our 24 hour lagged model, 259,643 labels for our 72 hour lagged model, 245,707 labels for our 168 hour lagged model, and 221,206 labels for our 336 hour lagged model.
 
 ### Feature Engineering
+
 Features were calculated using only data collected before the start of each prediction window to ensure our models were making true future predictions. For our no lag models this included all data prior to the hour of the start of the prediction window. For our lagged models, the last EMA data used for feature engineering were collected up to 24 hours, 72 hours, 168 hours, or 336 hours prior to the start of the prediction window.
 
 A total of 279 features were derived from two data sources: 
@@ -173,12 +181,15 @@ A total of 279 features were derived from two data sources:
 Other generic feature engineering steps included imputing missing data (median imputation for numeric features, mode imputation for nominal features) and removing zero and near-zero variance features as determined from held-in data (see Cross-validation section below). 
 
 ### Model Training and Evaluation
+
 #### Model Configurations
+
 We trained and evaluated five separate classification models: one baseline (no lag) model and one model for 24 hour, 72 hour, 168 hour, and 336 hour lagged predictions. We considered four well-established statistical algorithms (elastic net, XGBoost, regularized discriminant analysis, and single layer neural networks) that vary across characteristics expected to affect model performance (e.g., flexibility, complexity, handling higher-order interactions natively) [@kuhnAppliedPredictiveModeling2018]. 
 
 Candidate model configurations differed across sensible values for key hyperparameters. They also differed on outcome resampling method (i.e., no resampling and up-sampling and down-sampling of the outcome using majority/no lapse to minority/lapse ratios ranging from 1:1 to 2:1). We calibrated predicted probabilities using the beta distribution to support optimal decision-making under variable outcome distributions [@kullSigmoidsHowObtain2017].
 
 #### Cross-validation
+
 We used participant-grouped, nested cross-validation for model training, selection, and evaluation with auROC. auROC indexes the probability that the model will predict a higher score for a randomly selected positive case (lapse) relative to a randomly selected negative case (no lapse). Grouped cross-validation assigns all data from a participant as either held-in or held-out to avoid bias introduced when predicting a participant's data from their own data. We used 1 repeat of 10-fold cross-validation for the inner loops (i.e., *validation* sets) and 3 repeats of 10-fold cross-validation for the outer loop (i.e., *test* sets). Best model configurations were selected using median auROC across the 10 validation sets. Final performance evaluation of those best model configurations used median auROC across the 30 test sets.
 
 
@@ -191,15 +202,18 @@ From the Bayesian model we obtained the posterior distribution (transformed back
 We then conducted Bayesian model comparisons using our two sets of contrasts - baseline and adjacent lags. For both model comparisons, we determined the probability that the models' performances differed systematically from each other. We also report the precise posterior probability for the difference in auROCs and the 95% Bayesian CIs. If there was a probability >.95 that the more lagged model's performance was worse, we labeled the model contrast as significant.
 
 #### Fairness Analyses
+
 We calculated the median posterior probability and 95% Bayesian CI for auROC for each model separately by race and ethnicity (not White vs. non-Hispanic White), income (below poverty vs. above poverty), and sex at birth (female vs. male). We conducted Bayesian group comparisons to assess the likelihood that each model performs differently by group. We report the median difference and range in posterior probabilities across all models. The median auROC and Bayesian CIs are reported separately by group and model in the supplement.^[For our fairness analyses, we altered our outer loop resampling method from 3 x 10 cross-validation to 6 x 5 cross-validation. This method still gave us 30 held out tests sets, but by splitting the data across fewer folds (i.e., 5 vs. 10) we were able to reduce the likelihood of the minority group being absent in any single fold.] 
 
 #### Feature Importance
+
 We calculated Shapley values in log-odds units for binary classification models from the 30 test sets to provide a description of the importance of categories of features across our five models [@lundbergUnifiedApproachInterpreting2017]. We averaged the three Shapley values for each observation for each feature (i.e., across the three repeats) to increase their stability. An inherent property of Shapley values is their additivity, allowing us to combine features into feature categories. We created separate feature categories for each of the nine EMA questions, the rates of past alcohol use and missing surveys, the time of day and day of the week of the start of the prediction window, and the seven demographic variables included in the models. We calculated the local (i.e., for each observation) importance for each category of features by adding Shapley values across all features in a category, separately for each observation. We calculated global importance for each feature category by averaging the absolute value of the Shapley values of all features in the category across all observations. These local and global importance scores based on Shapley values allow us to contextualize relative feature importance for each model.  
 
 
 # Results
 
 ## Demographic and Lapse Characteristics
+
 There were approximately equal numbers of men (N=`r nrow(subset(screen, dem_2 == "Male"))`; `r sprintf("%1.1f", nrow(subset(screen, dem_2 == "Male"))/nrow(screen)*100)`%) and women (N=`r nrow(subset(screen, dem_2 == "Female"))`; `r sprintf("%1.1f", nrow(subset(screen, dem_2 == "Female"))/nrow(screen)*100)`%) who ranged in age from `r screen |> pull(dem_1) |> min()` - `r screen |> pull(dem_1) |> max()` years old.  The sample was majority White (N=`r nrow(subset(screen, dem_3 == "White/Caucasian"))`; `r  sprintf("%1.1f", nrow(subset(screen, dem_3 == "White/Caucasian"))/nrow(screen)*100)`%) and non-Hispanic (N=`r nrow(subset(screen, dem_4 == "No, I am not of Hispanic, Latino, or Spanish origin"))`; `r  sprintf("%1.1f", nrow(subset(screen, dem_4 == "No, I am not of Hispanic, Latino, or Spanish origin"))/nrow(screen)*100)`%).  Participants self-reported a median of `r sprintf("%1.1f",screen |> pull(dsm5_total) |> median())` DSM-5 symptoms of AUD (mean=`r sprintf("%1.1f",screen |> pull(dsm5_total) |> mean())`; SD=`r sprintf("%1.1f",screen |> pull(dsm5_total) |> sd())`; range=`r sprintf("%1.1f",screen |> pull(dsm5_total) |> min())`-`r sprintf("%1.1f",screen |> pull(dsm5_total) |> max())`). Most participants (N=`r nrow(subset(lapses_per_subid, n >0))`; `r sprintf("%1.1f", nrow(subset(lapses_per_subid, n >0))/nrow(lapses_per_subid)*100)`%) reported one or more lapses during participation.  The median number of lapses per participant while on-study was `r sprintf("%1.1f",lapses_per_subid |> pull(n) |> median())` (mean=`r sprintf("%1.1f",lapses_per_subid |> pull(n) |> mean())`; SD = `r sprintf("%1.1f",lapses_per_subid |> pull(n) |> sd())`; range=`r sprintf("%1.1f",lapses_per_subid |> pull(n) |> min())`-`r sprintf("%1.1f",lapses_per_subid |> pull(n) |> max())`).  [@tbl-demohtml] provides more detail on demographic and lapse characteristics of the sample.
 
 
@@ -211,9 +225,7 @@ There were approximately equal numbers of men (N=`r nrow(subset(screen, dem_2 ==
 
 The median auROC across the 30 test sets for our baseline model was high (median=`r sprintf("%1.3f", test_metrics_all_perf$lag0_median)`, IQR=`r sprintf("%1.3f", test_metrics_all_perf$lag0_IQR)`), consistent with our previous study.^[Baseline models in our previous study yielded a median auROC of .895. These models inadvertently excluded income and employment as features. We reran models to include these features in the current study.] Performance across our lagged models was also high for the 24 hour lag (median=`r sprintf("%1.3f", test_metrics_all_perf$lag24_median)`, IQR=`r sprintf("%1.3f", test_metrics_all_perf$lag24_IQR)`), 72 hour lag (median=`r sprintf("%1.3f", test_metrics_all_perf$lag72_median)`, IQR=`r sprintf("%1.3f", test_metrics_all_perf$lag72_IQR)`), 168 hour lag (median=`r sprintf("%1.3f", test_metrics_all_perf$lag168_median)`, IQR=`r sprintf("%1.3f", test_metrics_all_perf$lag168_IQR)`), and 336 hour lag (median=`r sprintf("%1.3f", test_metrics_all_perf$lag336_median)`, IQR=`r sprintf("%1.3f", test_metrics_all_perf$lag336_IQR)`). 
 
-Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_median))` (baseline), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_median))` (24 hour lag), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_median))` (72 hour lag), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_median))` (168 hour lag), and `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_median))` (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline [`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_upper))`], 24 hour lag [`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_upper))`], 72 hour lag [`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_upper))`], 168 hour lag [`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_upper))`], 336 hour lag [`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_upper))`].Panel A in @fig-1 displays these median auROCs and 95% Bayesian CIs by model.
-
-<!-- we need HDI for CI I believe.  We need to look into that using tidyposterior -->
+Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_median))` (baseline), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_median))` (24 hour lag), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_median))` (72 hour lag), `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_median))` (168 hour lag), and `r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_median))` (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline [`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_upper))`], 24 hour lag [`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_upper))`], 72 hour lag [`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_upper))`], 168 hour lag [`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_upper))`], 336 hour lag [`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_lower))`-`r sprintf("%1.3f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_upper))`]. Panel A in @fig-1 displays these median auROCs and 95% Bayesian CIs by model.
 
 
 {{< embed notebooks/mak_figures.qmd#fig-1 >}}
@@ -223,6 +235,7 @@ Histograms of the full posterior probability distributions for auROC for each mo
 ## Model Comparisons
 
 ### Baseline Contrasts
+
 The median decrease in auROC for the baseline vs. 24 hour lag model was `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 24") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 24") |> pull(lower))`-`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 24") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 24") |> pull(probability))` that the lagged model had worse performance. The median decrease in auROC for the baseline vs. 72 hour model was `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 72") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 72") |> pull(lower))`-`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 72") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 72") |> pull(probability))` that the lagged model had worse performance. The median decrease in auROC for the baseline vs. 168 hour lag model was `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 168") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 168") |> pull(lower))`-`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 168") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 168") |> pull(probability))` that the lagged model had worse performance. The median decrease in auROC for the baseline vs. 336 hour lag model was `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 336") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 336") |> pull(lower))`-`r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 336") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_baseline |> filter(contrast == "0 vs. 336") |> pull(probability))` that the lagged model had worse performance. 
 
 ### Adjacent Contrasts
@@ -230,10 +243,12 @@ The median decrease in auROC for the baseline vs. 24 hour lag model was `r sprin
 The median decrease in auROC for the 24 hour vs. 72 hour lag model was `r sprintf("%1.3f", ci_lag |> filter(contrast == "24 vs. 72") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_lag |> filter(contrast == "24 vs. 72") |> pull(lower))`-`r sprintf("%1.3f", ci_lag |> filter(contrast == "24 vs. 72") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_lag |> filter(contrast == "24 vs. 72") |> pull(probability))` that the 72 hour lag model had worse performance than the 24 hour lag model. The median decrease in auROC for the 72 hour vs. 168 hour lag model was `r sprintf("%1.3f", ci_lag |> filter(contrast == "72 vs. 168") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_lag |> filter(contrast == "72 vs. 168") |> pull(lower))`-`r sprintf("%1.3f", ci_lag |> filter(contrast == "72 vs. 168") |> pull(upper))`]), yielding a non-significant probability of `r sprintf("%1.3f", ci_lag |> filter(contrast == "72 vs. 168") |> pull(probability))` that the 168 hour lag model had worse performance than the 72 hour lag model. The median decrease in auROC for the 168 hour vs. 336 hour lag model was `r sprintf("%1.3f", ci_lag |> filter(contrast == "168 vs. 336") |> pull(median))` (95% CI=[`r sprintf("%1.3f", ci_lag |> filter(contrast == "168 vs. 336") |> pull(lower))`-`r sprintf("%1.3f", ci_lag |> filter(contrast == "168 vs. 336") |> pull(upper))`]), yielding a significant probability of `r sprintf("%1.3f", ci_lag |> filter(contrast == "168 vs. 336") |> pull(probability))` that the 336 hour lag model had worse performance than the 168 hour lag model. 
 
 ## Fairness Analyses
+
 Panel B in @fig-1 shows the difference in performance of each model by race (not White; *N* = 20 vs. Non-Hispanic White; *N* = 131), sex at birth (female; *N* = 74 vs. Male; *N* = 77), and income (below poverty; *N* = 18 vs. above poverty; *N* = 133). All group comparisons were significant (probability > .95) across models. On average there was a median decrease in auROC of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "not white vs non-hispanic white") |> pull(median) |>  abs()) |> median()` (range `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "not white vs non-hispanic white") |> pull(median) |>  abs()) |> min()`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "not white vs non-hispanic white") |> pull(median) |>  abs()) |> max()`) for participants who were not White compared to non-Hispanic White participants. On average there was a median decrease in auROC of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "female vs male") |> pull(median) |>  abs()) |> median()` (range `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "female vs male") |> pull(median)  |>  abs()) |> min()`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "female vs male") |> pull(median) |>  abs()) |> max()`) for female participants compared to male participants. On average there was a median decrease in auROC of `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "below poverty vs above poverty") |> pull(median) |>  abs()) |> median()` (range `r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "below poverty vs above poverty") |> pull(median) |>  abs()) |> min()`-`r sprintf("%1.3f", pp_dem_contrast |> filter(contrast == "below poverty vs above poverty") |> pull(median) |>  abs()) |> max()`) for participants below the federal poverty line compared to participants above the federal poverty line. Table 1 in the supplement shows the median auROC and credible intervals separately by group and model.
 
 
 ## Feature Importance
+
 Global importance (mean |Shapley value|) for feature categories for each model appears in Panel A of @fig-shap. Consistent with previous models using similar features, past use was the most important feature category for lapse prediction across lagged models. Future abstinence efficacy, craving, and future risky situations were also globally important across models. Income was the only demographic feature that emerged as having high global importance for lapse prediction. Overall, the contribution of a feature category to model performance did not appear to differ across models. 
 
 Panel B shows the local feature importance scores colored by high or low feature value for the baseline (0 lag) model. Local feature importance plots for our other models can be found in the supplement. Future abstinence efficacy, future risky situations, and income appear to have a linear relationship to lapse prediction. Higher efficacy, fewer future risky situations, and higher income were associated with a lower likelihood that the model would predict a lapse. In the supplement, we plot the relationship between Shapley value and feature score individually for our top five features by model.
@@ -243,17 +258,29 @@ Panel B shows the local feature importance scores colored by high or low feature
 
 ## Discussion
 
-- Model degrades but perhaps not meaningfully even down to two weeks out.
+1. Model degrades as lag time increases.
+    
+    - Features become less proximal to our outcome
+  
+2. However, performance is still clinically meaningful even with a two week lag.
 
-- All models were worse for women and people were not white and below poverty line. 
+    - .85 auROC is still excellent and the benefit of advanced notice may outweigh the drop in performance. 
 
-- Improving model performance for unprivileged classes. Considering other important classes for SUD, such as geographic location, Improving diversity of training data
+3. All models were worse for women and people were not white and below poverty line. 
+    
+    - Acknowledge low N in minority groups for income and race/ethnicity (causing wide CIs?)
+    
+4. Discussion of Shapley values.
 
-- low N in disparity groups for model comparisons - causing wide CIs?
+    - local shapley plots suggest what someone needs is different and different moments (within and between differences). 
+    - Difference between slow changing states (e.g., income) and more dynamic states (e.g., craving).
 
-- Performance discrepancies sets up fairness methods paper. How can we improve these discrepancies? Mention in discussion as current future direction
+5. Future directions
 
-- Note from Gaylen: if the model performance doesn’t degrade much, and the feature importance doesn’t seem to change much across lags... what does this say about the need for proximal predictors? obviously 2-3 weeks out is different than 6 months out, but even in-the-moment features are still important for predicting a lapse up to 3 weeks later (2 week lag plus 1 week window as lapse could be any time within the window). it is obviously exciting that we can do this advanced prediction, but i think you’ll have to navigate the line between celebrating that success and still calling for dense monitoring of proximal predictors
+    - Explore methods for improving model performance for groups underrepresented in the data, such as upsampling and adjusting penalties for minority groups (fairness paper).
+    - Recruit a more representative sample to improve diversity of training data (RISK2 grant).
+    - Build personalized models that inherently capture time series data and how one's risk evolves over time (state-space models). 
+
 
 ## References
 ::: {#refs}
