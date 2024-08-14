@@ -9,7 +9,7 @@
     <meta name="author" content="Gaylen E. Fronk">
     <meta name="author" content="Jiachen Yu">
     <meta name="author" content="John J. Curtin">
-    <meta name="dcterms.date" content="2024-08-03">
+    <meta name="dcterms.date" content="2024-08-14">
     <meta name="keywords" content="Substance use disorders, Precision mental health">
 
     <title>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</title>
@@ -199,10 +199,10 @@
 <meta name="citation_author" content="Gaylen E. Fronk">
 <meta name="citation_author" content="Jiachen Yu">
 <meta name="citation_author" content="John J. Curtin">
-<meta name="citation_publication_date" content="2024-08-03">
-<meta name="citation_cover_date" content="2024-08-03">
+<meta name="citation_publication_date" content="2024-08-14">
+<meta name="citation_cover_date" content="2024-08-14">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-08-03">
+<meta name="citation_online_date" content="2024-08-14">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=2022 National Survey on Drug Use and Health. Public data set.;,citation_journal_title=Substance Abuse and Mental Health Services Administration;,citation_publisher=https://www.samhsa.gov/data/report/2022-nsduh-detailed-tables;">
 <meta name="citation_reference" content="citation_title=Disparities in the Treatment of Substance Use Disorders: Does Where You Live Matter?;,citation_abstract=This study focused on (1) whether disparities in timely receipt of substance use services can be explained in part by the characteristics of the community in which the clients reside and (2) whether the effect of community characteristics on timely receipt of services was similar across racial/ethnic groups. The sample was composed of adults receiving publicly funded outpatient treatment in Washington State. Treatment data were linked to data from the US census. The outcome studied was “Initiation and Engagement” in treatment (IET), a measure noting timely receipt of services at the beginning of treatment. Community characteristics studied included community level economic disadvantage and concentration of American Indian, Latino, and Black residents in the community. Black and American Indian clients were less likely to initiate or engage in treatment compared to non-Latino white clients, and American Indian clients living in economically disadvantaged communities were at even greater risk of not initiating treatment. Community economic disadvantage and racial/ethnic makeup of the community were associated with treatment initiation, but not engagement, although they did not entirely explain the disparities found in IET.;,citation_author=Andrea Acevedo;,citation_author=Lee Panas;,citation_author=Deborah Garnick;,citation_author=Dolores Acevedo-Garcia;,citation_author=Jennifer Miles;,citation_author=Grant Ritter;,citation_author=Kevin Campbell;,citation_publication_date=2018-10;,citation_cover_date=2018-10;,citation_year=2018;,citation_issue=4;,citation_doi=10.1007/s11414-018-9586-y;,citation_issn=1556-3308;,citation_volume=45;,citation_language=en-US;,citation_journal_title=The Journal of Behavioral Health Services &amp;amp;amp; Research;">
@@ -323,7 +323,7 @@
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">August 3, 2024</p>
+              <p class="date">August 14, 2024</p>
             </div>
           </div>
           
@@ -396,21 +396,12 @@
 </div>
 <main class="content quarto-banner-title-block" id="quarto-document-content">      
 
-       <!--At 4361 words not including 150 word abstract or discussion (about 500 words).-->
+       <!-- 8/3/24 - At 4907 words not including 150 word abstract or discussion.-->
 <!--Notes:
 Target journal: Clinical Psychological Science 
 Format: Brief empirical report (5,000 words)
 
-Brief Empirical Reports. Brief empirical reports will have a 5,000-word limit, inclusive of front (title page) and back matter (references, footnotes). Articles are limited to a total combination of 4 tables and figures (e.g., 2 tables and 2 figures) that are not part of the word limit. Each table or figure should occupy no more than one printed page. An abstract (maximum of 150 words) is included in the word limit.
-
-Empirical Articles. Empirical Articles should aim for a 12,000-word maximum, inclusive of front (title page) and back matter (references, footnotes, appendices). Articles are limited to a total combination of 6 tables and figures (e.g., 4 tables and 2 figures) that are not part of the word limit. Each table or figure should occupy no more than one printed page. Reporting of multiple investigations within a single manuscript is encouraged, and length adjustments can be discussed if and as needed. An abstract (maximum of 150 words) is included in the word limit. -->
-<!-- Results figs/tables (4 total):
-
-1. Demographics table
-2. figure with auroc and confidence interval by lag 
-3. Figure with auroc and confidence interval by demographic group and lag 
-4. figure for Shapley values
--->
+Brief Empirical Reports. Brief empirical reports will have a 5,000-word limit, inclusive of front (title page) and back matter (references, footnotes). Articles are limited to a total combination of 4 tables and figures (e.g., 2 tables and 2 figures) that are not part of the word limit. Each table or figure should occupy no more than one printed page. An abstract (maximum of 150 words) is included in the word limit.-->
 <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">source</span>(<span class="st">"https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"</span>))</span>
@@ -949,8 +940,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <section id="model-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="model-evaluation">Model Evaluation</h2>
 <p>The median auROC across the 30 test sets for our baseline model was high (median=0.893, IQR=0.045), consistent with our previous study.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> Performance across our lagged models was also high for the 24 hour lag (median=0.882, IQR=0.039), 72 hour lag (median=0.868, IQR=0.057), 168 hour lag (median=0.860, IQR=0.062), and 336 hour lag (median=0.856, IQR=0.062).</p>
-<p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.893 (baseline), 0.887 (24 hour lag), 0.875 (72 hour lag), 0.871 (168 hour lag), and 0.852 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline [0.876-0.908], 24 hour lag [0.869-0.903], 72 hour lag [0.855-0.892], 168 hour lag [0.850-0.889], 336 hour lag [0.830-0.872].Panel A in <a href="#fig-1" class="quarto-xref">Figure&nbsp;2</a> displays these median auROCs and 95% Bayesian CIs by model.</p>
-<!-- we need HDI for CI I believe.  We need to look into that using tidyposterior -->
+<p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.893 (baseline), 0.887 (24 hour lag), 0.875 (72 hour lag), 0.871 (168 hour lag), and 0.852 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline [0.876-0.908], 24 hour lag [0.869-0.903], 72 hour lag [0.855-0.892], 168 hour lag [0.850-0.889], 336 hour lag [0.830-0.872]. Panel A in <a href="#fig-1" class="quarto-xref">Figure&nbsp;2</a> displays these median auROCs and 95% Bayesian CIs by model.</p>
 <div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-1">
 <div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="cell-fig-1" class="cell" data-fig-width="7">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cowplot::plot_grid(fig_1_a, fig_1_b, labels <span class="op">=</span> c(<span class="st">"A"</span>, <span class="st">"B"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1008,14 +998,31 @@ Figure&nbsp;3: Panel A depicts the global importance (mean |Shapley value|) for 
 </section>
 <section id="discussion" class="level2">
 <h2 class="anchored" data-anchor-id="discussion">Discussion</h2>
+<ol type="1">
+<li><p>Model degrades as lag time increases.</p>
 <ul>
-<li><p>Model degrades but perhaps not meaningfully even down to two weeks out.</p></li>
-<li><p>All models were worse for women and people were not white and below poverty line.</p></li>
-<li><p>Improving model performance for unprivileged classes. Considering other important classes for SUD, such as geographic location, Improving diversity of training data</p></li>
-<li><p>low N in disparity groups for model comparisons - causing wide CIs?</p></li>
-<li><p>Performance discrepancies sets up fairness methods paper. How can we improve these discrepancies? Mention in discussion as current future direction</p></li>
-<li><p>Note from Gaylen: if the model performance doesn’t degrade much, and the feature importance doesn’t seem to change much across lags… what does this say about the need for proximal predictors? obviously 2-3 weeks out is different than 6 months out, but even in-the-moment features are still important for predicting a lapse up to 3 weeks later (2 week lag plus 1 week window as lapse could be any time within the window). it is obviously exciting that we can do this advanced prediction, but i think you’ll have to navigate the line between celebrating that success and still calling for dense monitoring of proximal predictors</p></li>
-</ul>
+<li>Features become less proximal to our outcome</li>
+</ul></li>
+<li><p>However, performance is still clinically meaningful even with a two week lag.</p>
+<ul>
+<li>.85 auROC is still excellent and the benefit of advanced notice may outweigh the drop in performance.</li>
+</ul></li>
+<li><p>All models were worse for women and people were not white and below poverty line.</p>
+<ul>
+<li>Acknowledge low N in minority groups for income and race/ethnicity (causing wide CIs?)</li>
+</ul></li>
+<li><p>Discussion of Shapley values.</p>
+<ul>
+<li>local shapley plots suggest what someone needs is different and different moments (within and between differences).</li>
+<li>Difference between slow changing states (e.g., income) and more dynamic states (e.g., craving).</li>
+</ul></li>
+<li><p>Future directions</p>
+<ul>
+<li>Explore methods for improving model performance for groups underrepresented in the data, such as upsampling and adjusting penalties for minority groups (fairness paper).</li>
+<li>Recruit a more representative sample to improve diversity of training data (RISK2 grant).</li>
+<li>Build personalized models that inherently capture time series data and how one’s risk evolves over time (state-space models).</li>
+</ul></li>
+</ol>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
@@ -1526,7 +1533,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"openEffect":"zoom","loop":false,"descPosition":"bottom","closeEffect":"zoom","selector":".lightbox"});
+</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"selector":".lightbox","loop":false,"descPosition":"bottom","closeEffect":"zoom","openEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
