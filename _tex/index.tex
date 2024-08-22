@@ -875,13 +875,17 @@ and credible intervals separately by group and model.
 
 Global importance (mean \textbar Shapley value\textbar) for feature
 categories for each model appears in Panel A of Figure~\ref{fig-shap}.
-Consistent with previous models using similar features, past use was the
-most important feature category for lapse prediction across lagged
-models. Future abstinence efficacy, craving, and future risky situations
-were also globally important across models. Income was the only
-demographic feature that emerged as having high global importance for
-lapse prediction. Overall, the contribution of a feature category to
-model performance did not appear to differ across models.
+The top three feature categories for all models were past use, future
+efficacy, and craving. Future risky situations were also globally
+important across models. This category was ranked as the 4th most
+important feature across lagged models (24, 72, 168, and 336 hours). For
+the immediate model (0 hour lag), past risky situations were ranked as
+the 4th most important feature category and future risky situations was
+ranked as the fifth most important. Income was the only demographic
+feature that emerged as having high global importance for lapse
+prediction (in top 6 for all models). A table of feature categories
+ranked by global importance for each model is available in the
+supplement.
 
 Panel B shows the local feature importance scores colored by high or low
 feature value for the baseline (0 lag) model. Local feature importance
@@ -891,7 +895,7 @@ a linear relationship to lapse prediction. Higher efficacy, fewer future
 risky situations, and higher income were associated with a lower
 likelihood that the model would predict a lapse. In the supplement, we
 plot the relationship between Shapley value and feature score
-individually for our top five features by model.
+individually for our overall top five features by model.
 
 \begin{figure}[H]
 
@@ -906,8 +910,7 @@ individually for our top five features by model.
 Feature categories are ordered by their aggregate global importance
 (i.e., total bar length) across the five models. The importance of each
 feature category for specific models is displayed separately by color.
-Panel B shows the local feature importance for the 336 hour lagged
-model.}
+Panel B shows the local feature importance for the 0 hour lagged model.}
 
 \end{figure}%
 
