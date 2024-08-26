@@ -952,13 +952,12 @@ Second, participants only provided EMA for up to three months. Therefore
 a lag time of two weeks between the prediction time point and start of
 the prediction window prohibits us from using 1/8th of the EMA data for
 predictions. In a separate NIH protocol underway, participants are
-providing EMA and other sensed data for up to 12 months
-(\textbf{moshontzProspectivePredictionLapses2021?}). We will better be
-able to evaluate whether this loss of data impacted model performance
-and if we can sustain similar performance with even longer lags in these
-data. Still, we wish to emphasize that our lowest auROC (.85) is still
-excellent and the benefit of advanced notice likely outweighs the cost
-to performance.
+providing EMA and other sensed data for up to 12 months (Moshontz et
+al., 2021). We will better be able to evaluate whether this loss of data
+impacted model performance and if we can sustain similar performance
+with even longer lags in these data. Still, we wish to emphasize that
+our lowest auROC (.85) is still excellent and the benefit of advanced
+notice likely outweighs the cost to performance.
 
 We saw mixed evidence that feature importance might change depending on
 lag. Past use and craving were the top two features for all models. This
@@ -983,17 +982,16 @@ errors for minority groups are weighted more heavily than prediction
 errors for majority groups.
 
 Lastly, we could consider building models for a specific individual
-(i.e., idiographic) (\textbf{fisherOpenTrialPersonalized2019?};
-\textbf{wrightAppliedAmbulatoryAssessment2019?}). Unfortunately, a
-person-specific lapse prediction model would require a sufficient number
-of positive labels (i.e., lapses) for that individual. Waiting until an
-individual has lapsed multiple (perhaps many) times to offer help is in
-direct opposition with our goals. One potential solution to this
-conundrum may involve departing from traditional machine learning
-algorithms. For example, state space models, which are grounded in
-traditional repeated measures designs, inherently capture time series
-data and allow for the modeling of how an individual's risk evolves over
-time from observable and latent states.
+(i.e., idiographic) (Fisher et al., 2019; Wright \& Zimmermann, 2019).
+Unfortunately, a person-specific lapse prediction model would require a
+sufficient number of positive labels (i.e., lapses) for that individual.
+Waiting until an individual has lapsed multiple (perhaps many) times to
+offer help is in direct opposition with our goals. One potential
+solution to this conundrum may involve departing from traditional
+machine learning algorithms. For example, state space models, which are
+grounded in traditional repeated measures designs, inherently capture
+time series data and allow for the modeling of how an individual's risk
+evolves over time from observable and latent states.
 
 However, we did have equal representation of men and women and we still
 saw differences in performance. This difference is likely due to another
@@ -1010,17 +1008,16 @@ categories of features to emerge.
 All of the proposed suggestions above for improving model fairness are
 current directions in our lab. To increase the diversity of our data, we
 recruited a nationally representative sample of people with opioid use
-disorder (data collection is near complete)
-(\textbf{moshontzProspectivePredictionLapses2021?}). In our current
-sample of participants we are building models that prioritize accuracy
-for underrepresented groups. We are also building models that use
-sensing methods, like geolocation and text message content, separately
-and in conjunction with EMA. In these combined models we plan to assess
-whether the relative top features differs by group. For example, it is
-possible that data driven features (e.g., from geolocation) emerge as
-more important for groups that have been historically underrepresented
-in the research on relapse risk factors driving our self-report
-measures.
+disorder (data collection is near complete) (Moshontz et al., 2021). In
+our current sample of participants we are building models that
+prioritize accuracy for underrepresented groups. We are also building
+models that use sensing methods, like geolocation and text message
+content, separately and in conjunction with EMA. In these combined
+models we plan to assess whether the relative top features differs by
+group. For example, it is possible that data driven features (e.g., from
+geolocation) emerge as more important for groups that have been
+historically underrepresented in the research on relapse risk factors
+driving our self-report measures.
 
 Measurement burden of EMA is also a concern. Research suggests people
 can comply with effortful sensing methods (e.g., 4 x daily EMA) while
@@ -1084,6 +1081,13 @@ DeRubeis, R. J. (2019). The history, current status, and possible future
 of precision mental health. \emph{Behaviour Research and Therapy},
 \emph{123}, 103506. \url{https://doi.org/10.1016/j.brat.2019.103506}
 
+\bibitem[\citeproctext]{ref-fisherOpenTrialPersonalized2019}
+Fisher, A. J., Bosley, H. G., Fernandez, K. C., Reeves, J. W., Soyster,
+P. D., Diamond, A. E., \& Barkin, J. (2019). Open trial of a
+personalized modular treatment for mood and anxiety. \emph{Behaviour
+Research and Therapy}, \emph{116}, 69--79.
+\url{https://doi.org/10.1016/j.brat.2019.01.010}
+
 \bibitem[\citeproctext]{ref-gabryPriorDistributionsRstanarm2023}
 Gabry, J., \& Goodrich, B. (2023). Prior {Distributions} for rstanarm
 {Models}. \emph{CRAN R-Project}.
@@ -1141,6 +1145,13 @@ Marlatt, G. A., \& Gordon, J. R. (Eds.). (1985). \emph{Relapse
 {Prevention}: {Maintenance Strategies} in the {Treatment} of {Addictive
 Behaviors}} (First edition). New York: The Guilford Press.
 
+\bibitem[\citeproctext]{ref-moshontzProspectivePredictionLapses2021}
+Moshontz, H., Colmenares, A. J., Fronk, G. E., Sant'Ana, S. J., Wyant,
+K., Wanta, S. E., et al. (2021). Prospective {Prediction} of {Lapses} in
+{Opioid Use Disorder}: {Protocol} for a {Personal Sensing Study}.
+\emph{JMIR Research Protocols}, \emph{10}(12), e29563.
+\url{https://doi.org/10.2196/29563}
+
 \bibitem[\citeproctext]{ref-olfsonHealthcareCoverageService2022}
 Olfson, M., Mauro, C., Wall, M. M., Choi, C. J., Barry, C. L., \&
 Mojtabai, R. (2022). Healthcare coverage and service access for
@@ -1190,6 +1201,12 @@ Witkiewitz, K., \& Marlatt, G. A. (2007). Modeling the complexity of
 post-treatment drinking: {It}'s a rocky road to relapse. \emph{Clinical
 Psychology Review}, \emph{27}(6), 724--738.
 \url{https://doi.org/10.1016/j.cpr.2007.01.002}
+
+\bibitem[\citeproctext]{ref-wrightAppliedAmbulatoryAssessment2019}
+Wright, A. G. C., \& Zimmermann, J. (2019). Applied {Ambulatory
+Assessment}: {Integrating Idiographic} and {Nomothetic Principles} of
+{Measurement}. \emph{Psychological Assessment}, \emph{31}(12),
+1467--1480. \url{https://doi.org/10.1037/pas0000685}
 
 \bibitem[\citeproctext]{ref-wyantAcceptabilityPersonalSensing2023}
 Wyant, K., Moshontz, H., Ward, S. B., Fronk, G. E., \& Curtin, J. J.
