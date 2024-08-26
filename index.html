@@ -10,7 +10,7 @@
 <meta name="author" content="Gaylen E. Fronk">
 <meta name="author" content="Jiachen Yu">
 <meta name="author" content="John J. Curtin">
-<meta name="dcterms.date" content="2024-08-22">
+<meta name="dcterms.date" content="2024-08-26">
 <meta name="keywords" content="Substance use disorders, Precision mental health">
 
 <title>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</title>
@@ -78,10 +78,10 @@ div.csl-indent {
 <meta name="citation_author" content="Gaylen E. Fronk">
 <meta name="citation_author" content="Jiachen Yu">
 <meta name="citation_author" content="John J. Curtin">
-<meta name="citation_publication_date" content="2024-08-22">
-<meta name="citation_cover_date" content="2024-08-22">
+<meta name="citation_publication_date" content="2024-08-26">
+<meta name="citation_cover_date" content="2024-08-26">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-08-22">
+<meta name="citation_online_date" content="2024-08-26">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=2022 National Survey on Drug Use and Health. Public data set.;,citation_journal_title=Substance Abuse and Mental Health Services Administration;,citation_publisher=https://www.samhsa.gov/data/report/2022-nsduh-detailed-tables;">
 <meta name="citation_reference" content="citation_title=Disparities in the Treatment of Substance Use Disorders: Does Where You Live Matter?;,citation_abstract=This study focused on (1) whether disparities in timely receipt of substance use services can be explained in part by the characteristics of the community in which the clients reside and (2) whether the effect of community characteristics on timely receipt of services was similar across racial/ethnic groups. The sample was composed of adults receiving publicly funded outpatient treatment in Washington State. Treatment data were linked to data from the US census. The outcome studied was “Initiation and Engagement” in treatment (IET), a measure noting timely receipt of services at the beginning of treatment. Community characteristics studied included community level economic disadvantage and concentration of American Indian, Latino, and Black residents in the community. Black and American Indian clients were less likely to initiate or engage in treatment compared to non-Latino white clients, and American Indian clients living in economically disadvantaged communities were at even greater risk of not initiating treatment. Community economic disadvantage and racial/ethnic makeup of the community were associated with treatment initiation, but not engagement, although they did not entirely explain the disparities found in IET.;,citation_author=Andrea Acevedo;,citation_author=Lee Panas;,citation_author=Deborah Garnick;,citation_author=Dolores Acevedo-Garcia;,citation_author=Jennifer Miles;,citation_author=Grant Ritter;,citation_author=Kevin Campbell;,citation_publication_date=2018-10;,citation_cover_date=2018-10;,citation_year=2018;,citation_issue=4;,citation_doi=10.1007/s11414-018-9586-y;,citation_issn=1556-3308;,citation_volume=45;,citation_language=en-US;,citation_journal_title=The Journal of Behavioral Health Services &amp;amp;amp; Research;">
@@ -195,7 +195,7 @@ div.csl-indent {
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">August 22, 2024</p>
+              <p class="date">August 26, 2024</p>
             </div>
           </div>
           
@@ -835,31 +835,17 @@ Figure&nbsp;3: Panel A depicts the global importance (mean |Shapley value|) for 
 </section>
 <section id="discussion" class="level2">
 <h2 class="anchored" data-anchor-id="discussion">Discussion</h2>
-<ol type="1">
-<li><p>Model degrades as lag time increases.</p>
-<ul>
-<li>Features become less proximal to our outcome</li>
-</ul></li>
-<li><p>However, performance is still clinically meaningful even with a two week lag.</p>
-<ul>
-<li>.85 auROC is still excellent and the benefit of advanced notice may outweigh the drop in performance.</li>
-</ul></li>
-<li><p>All models were worse for women and people were not white and below poverty line.</p>
-<ul>
-<li>Acknowledge low N in minority groups for income and race/ethnicity (causing wide CIs?)</li>
-</ul></li>
-<li><p>Discussion of Shapley values.</p>
-<ul>
-<li>local shapley plots suggest what someone needs is different and different moments (within and between differences).</li>
-<li>Difference between slow changing states (e.g., income) and more dynamic states (e.g., craving).</li>
-</ul></li>
-<li><p>Future directions</p>
-<ul>
-<li>Explore methods for improving model performance for groups underrepresented in the data, such as upsampling and adjusting penalties for minority groups (fairness paper).</li>
-<li>Recruit a more representative sample to improve diversity of training data (RISK2 grant).</li>
-<li>Build personalized models that inherently capture time series data and how one’s risk evolves over time (state-space models).</li>
-</ul></li>
-</ol>
+<p>Performance across models was clinically meaningful even up to two weeks out. Our models yielded median posterior probabilities for auROCs of 0.893 (baseline), 0.887 (24 hour lag), 0.875 (72 hour lag), 0.871 (168 hour lag), and 0.852 (336 hour lag). Our rigorous resampling methods (grouped, nested, k-fold cross-validation) make us confident that these are valid estimates of how our models would perform with new individuals.</p>
+<p>Nevertheless, model performance did significantly decrease as models predicted further into the future. This is unsurprising given what we know about prediction and substance use. For one, as lag time increases features become less proximal to the prediction time point. Many important relapse risk factors are fluctuating processes that can change day-by-day (if not more frequently). For example, cravings can come on quickly (e.g., after encountering a person or place that reminds them of their use) and typically only last for up to 30 minutes. It may be less important, however, that we miss some of these more fluctuating risk factors if we consider lagged models as a supplement to immediate lapse prediction models (i.e., no lag). Lagged prediction models are most useful for their ability to provide individuals with advanced notice that they may be at risk for lapsing. This can be used for implementing more time-intensive recovery supports, such as attending a support group. On the other hand, an immediate lapse prediction model (i.e., no lag) is well-suited for detecting and recommending an activity for immediate risk (e.g., an urge surfing activity for addressing frequent and recent cravings). Thus, lag time can be customized and layered based on the intended purpose.</p>
+<p>Second, participants only provided EMA for up to three months. Therefore a lag time of two weeks between the prediction time point and start of the prediction window prohibits us from using 1/8th of the EMA data for predictions. In a separate NIH protocol underway, participants are providing EMA and other sensed data for up to 12 months <span class="citation" data-cites="moshontzProspectivePredictionLapses2021">(<a href="#ref-moshontzProspectivePredictionLapses2021" role="doc-biblioref"><strong>moshontzProspectivePredictionLapses2021?</strong></a>)</span>. We will better be able to evaluate whether this loss of data impacted model performance and if we can sustain similar performance with even longer lags in these data. Still, we wish to emphasize that our lowest auROC (.85) is still excellent and the benefit of advanced notice likely outweighs the cost to performance.</p>
+<p>We saw mixed evidence that feature importance might change depending on lag. Past use and craving were the top two features for all models. This suggests that although these features can change quickly, they are important enough to consistently emerge as top predictors regardless of lag time. Recent past risky situations, however, ranked high for the immediate prediction models, but future anticipated risky situations was relatively more important for the lagged models.</p>
+<p>All models performed worse for women, for people who were not white, and for people who had an income below the poverty line. The largest contributing factor is likely the lack of diversity in our training data. For example, even with our coarse combination of race/ethnicity (i.e., not White vs.&nbsp;non-Hispanic White) the minority race/ethnicity group was largely underrepresented. The best solution to this limitation would be to recruit a more representative sample. However, there may be additional methodological considerations for mitigating these issues in the current data. We could explore upsampling minority group representation in the data (e.g., using synthetic minority oversampling technique). We also could adjust the penalty weights so that prediction errors for minority groups are weighted more heavily than prediction errors for majority groups.</p>
+<p>Lastly, we could consider building models for a specific individual (i.e., idiographic) <span class="citation" data-cites="fisherOpenTrialPersonalized2019 wrightAppliedAmbulatoryAssessment2019">(<a href="#ref-fisherOpenTrialPersonalized2019" role="doc-biblioref"><strong>fisherOpenTrialPersonalized2019?</strong></a>; <a href="#ref-wrightAppliedAmbulatoryAssessment2019" role="doc-biblioref"><strong>wrightAppliedAmbulatoryAssessment2019?</strong></a>)</span>. Unfortunately, a person-specific lapse prediction model would require a sufficient number of positive labels (i.e., lapses) for that individual. Waiting until an individual has lapsed multiple (perhaps many) times to offer help is in direct opposition with our goals. One potential solution to this conundrum may involve departing from traditional machine learning algorithms. For example, state space models, which are grounded in traditional repeated measures designs, inherently capture time series data and allow for the modeling of how an individual’s risk evolves over time from observable and latent states. <!--cite Erick's paper--></p>
+<p>However, we did have equal representation of men and women and we still saw differences in performance. This difference is likely due to another source of bias - measurement bias. We chose our EMA items based on domain expertise and years of relapse risk research. It is possible that these constructs more precisely describe relapse risk factors for men than for women. This could mean that more research is needed to identify relapse risk factors for women. Additionally, data driven (bottom-up) approaches to creating features could be one way to remove some of the bias in domain driven (top-down) approaches. For example, using natural language processing on text message content could allow for new categories of features to emerge.</p>
+<p>All of the proposed suggestions above for improving model fairness are current directions in our lab. To increase the diversity of our data, we recruited a nationally representative sample of people with opioid use disorder (data collection is near complete) <span class="citation" data-cites="moshontzProspectivePredictionLapses2021">(<a href="#ref-moshontzProspectivePredictionLapses2021" role="doc-biblioref"><strong>moshontzProspectivePredictionLapses2021?</strong></a>)</span>. In our current sample of participants we are building models that prioritize accuracy for underrepresented groups. We are also building models that use sensing methods, like geolocation and text message content, separately and in conjunction with EMA. In these combined models we plan to assess whether the relative top features differs by group. For example, it is possible that data driven features (e.g., from geolocation) emerge as more important for groups that have been historically underrepresented in the research on relapse risk factors driving our self-report measures.</p>
+<p>Measurement burden of EMA is also a concern. Research suggests people can comply with effortful sensing methods (e.g., 4 x daily EMA) while using substances <span class="citation" data-cites="wyantAcceptabilityPersonalSensing2023 jonesComplianceEcologicalMomentary2019a">(<a href="#ref-wyantAcceptabilityPersonalSensing2023" role="doc-biblioref">Wyant et al. 2023</a>; <a href="#ref-jonesComplianceEcologicalMomentary2019a" role="doc-biblioref"><strong>jonesComplianceEcologicalMomentary2019a?</strong></a>)</span>. However, it is likely that frequent daily surveys will eventually become too burdensome when considering long-term monitoring. We plan to build models that use only 1 x daily EMA to contrast model performance vs.&nbsp;assessment burden. We also plan to build models that combine EMA and passive sensing methods, likes geolocation and evaluate the retained important features. It is possible that adding other low burden sensing methods could allow us to reduce the frequency (e.g., 1 x weekly EMA) and/or length (e.g, 2-3 items) of our EMAs.</p>
+<p>Finally, due to prevalent substance use treatment initiation and outcome disparities among underrepresented groups, it is important to solicit and consider individual preferences and perceptions of the sensing data used to build an algorithm-guided risk monitoring support system from the beginning (i.e., before an intervention is developed). Providing a support tool only acceptable to a majority group, could widen existing disparities. In this light we are currently using a mixed-methods design to assess issues related to feasibility and acceptability by sensing method and demographic characteristics in our national sample of participants with opioid use disorder.</p>
+<p>This study suggests it is possible to predict alcohol lapses up to two weeks into the future. This advanced notice could allow patients to implement multimodal support options not immediately available. Important steps are still needed to make these models clinically implementable. Most notably, is the increased fairness in model performance. However, we remain optimistic as we have already begun to take several steps in addressing these barriers.</p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
@@ -1374,7 +1360,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","selector":".lightbox","loop":false,"closeEffect":"zoom","openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"loop":false,"descPosition":"bottom","selector":".lightbox","closeEffect":"zoom","openEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
