@@ -10,7 +10,7 @@
 <meta name="author" content="Gaylen E. Fronk">
 <meta name="author" content="Jiachen Yu">
 <meta name="author" content="John J. Curtin">
-<meta name="dcterms.date" content="2024-09-02">
+<meta name="dcterms.date" content="2024-09-09">
 <meta name="keywords" content="Substance use disorders, Precision mental health">
 
 <title>Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support</title>
@@ -72,10 +72,10 @@ div.csl-indent {
 <meta name="citation_author" content="Gaylen E. Fronk">
 <meta name="citation_author" content="Jiachen Yu">
 <meta name="citation_author" content="John J. Curtin">
-<meta name="citation_publication_date" content="2024-09-02">
-<meta name="citation_cover_date" content="2024-09-02">
+<meta name="citation_publication_date" content="2024-09-09">
+<meta name="citation_cover_date" content="2024-09-09">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-09-02">
+<meta name="citation_online_date" content="2024-09-09">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Matching alcoholism treatments to client heterogeneity: Project MATCH Posttreatment drinking outcomes.;,citation_abstract=Studied the benefits of matching alcohol-dependent clients to the Cognitive Behavioral Coping Skills Therapy, Motivational Enhancement Therapy, or 12-Step Facilitation Therapy with reference to various client attributes (CLAs). Two parallel but independent clinical trials were conducted, 1 with 952 alcohol-dependent Ss in outpatient therapy (mean age 38.9 yrs) and 1 with 774 Ss taking aftercare therapy (mean age 41.9 yrs) following 3-mo inpatient or day hospital treatment. Results show sustained improvement in drinking frequency and severity from pretreatment to 1-yr posttreatment with little difference across treatments for both groups. Findings suggest psychiatric severity should be considered when assigning clients to outpatient therapies. The lack of other robust matching effects suggests that providers need not take these CLAs into account when triaging clients to 1 or the other of these 3 individually delivered treatment approaches, despite their different treatment philosophies.;,citation_author=U. S. Project Match Research Group;,citation_publication_date=1997;,citation_cover_date=1997;,citation_year=1997;,citation_issue=1;,citation_volume=58;,citation_journal_title=Journal of Studies on Alcohol;">
 <meta name="citation_reference" content="citation_title=Sample size tables for logistic regression;,citation_abstract=Sample size tables are presented for epidemiologic studies which extend the use of whittemores formula. The tables are easy to use both simple and multiple logistic regressions. Monte Carlo simulatins are performed which show three important results. Firstly, the sample size tables are suitable for studies with either high or low event proportions, secondly, although the tables can be inaccurate for risk factors having double exponential distributions. Finally, the power of a study varies both with the number of events and the number of individual risks.;,citation_author=F. Hsieh;,citation_publication_date=1989;,citation_cover_date=1989;,citation_year=1989;,citation_volume=8;,citation_journal_title=Statistics in Medicine;">
@@ -194,7 +194,7 @@ div.csl-indent {
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">September 2, 2024</p>
+              <p class="date">September 9, 2024</p>
             </div>
           </div>
           
@@ -285,7 +285,7 @@ Brief Empirical Reports. Brief empirical reports will have a 5,000-word limit, i
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 <p>Precision medicine has been a goal in healthcare for over half a century <span class="citation" data-cites="derubeisHistoryCurrentStatus2019">(<a href="#ref-derubeisHistoryCurrentStatus2019" role="doc-biblioref">DeRubeis 2019</a>)</span>. Traditionally, precision medicine seeks to answer the question of <em>how</em> we best treat a specific individual, given their unique combination of genetic, lifestyle, and environmental characteristics (e.g., which medication is most effective for whom).</p>
-<p>Today, this approach is also applied to chronic mental health conditions (i.e., precision mental health) such as depression, substance use disorders, and suicide. Mental health conditions are complex, fluctuating processes. Medical conditions often have clear biological precursors, which may be treated well with a single medication. In contrast, mental health conditions are products of numerous psychosocial factors, and treatments must be selected from a wide array of psychosocial supports. Moreover, the factors driving mental health conditions differ between individuals and can change within an individual over time. Thus, precision mental health must consider both the <em>how</em> and the <em>when</em> (e.g., which treatment is most effective for whom at what moment).</p>
+<p>Today, this approach is also applied to chronic mental health conditions (i.e., precision mental health) such as depression, substance use disorders, and suicide. Mental health conditions are complex, fluctuating processes. Medical conditions often have clear biological precursors, which may be treated well with a single medication. In contrast, mental health conditions are products of numerous psychosocial factors, and treatments must be selected from a wide array of supports. Moreover, the factors driving mental health conditions differ between individuals and can change within an individual over time. Thus, precision mental health must consider both the <em>how</em> and the <em>when</em> (e.g., which treatment is most effective for whom at what moment).</p>
 <p>There has been long-standing interest in precision mental health and substance use disorders. An early example is the Project MATCH research group, which attempted to match individuals with alcohol use disorder to their optimal treatment based on baseline measures of individual characteristics <span class="citation" data-cites="projectmatchresearchgroupMatchingAlcoholismTreatments1997">(<a href="#ref-projectmatchresearchgroupMatchingAlcoholismTreatments1997" role="doc-biblioref">Project Match Research Group 1997</a>)</span>. Earlier studies, however, have been constrained to 1) low-dimensional analyses that fail to capture the complex and heterogeneous nature of substance use disorders and 2) the use of static distal features to predict a non-linear, time-varying course of recovery, lapse, and relapse <span class="citation" data-cites="witkiewitzModelingComplexityPosttreatment2007">(<a href="#ref-witkiewitzModelingComplexityPosttreatment2007" role="doc-biblioref">Witkiewitz and Marlatt 2007</a>)</span>.</p>
 <p>Recent advances in both machine learning and personal sensing may address these barriers to successful precision mental health. Machine learning uses high dimensional inputs that can capture the complexity of mental health conditions. Moreover, tools from machine learning can be applied to models to understand which factors are important to a specific individual at a specific moment in time, addressing the question of <em>how</em>.</p>
 <p>Personal sensing allows for frequent, longitudinal measurement of changes in proximal risk (e.g., for a lapse) with high temporal precision, for better understanding the <em>when</em>. This precision is particularly important for predicting discrete symptoms or behaviors. Take the example of lapses, discrete instances of goal inconsistent substance use. Lapses are a clinically important target for substance use treatment. They are often an early warning sign of relapse, and maladaptive responses to lapses can undermine recovery. For some substances, even a single lapse can result in an overdose and/or death. It would be unreasonable to expect that we could predict a lapse with any temporal precision using only features that become more distal as time progresses. Rather, lapse prediction requires dense, long-term monitoring of symptoms and related states proximal to the outcome.</p>
@@ -1392,7 +1392,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","openEffect":"zoom","descPosition":"bottom","loop":false});
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","descPosition":"bottom","selector":".lightbox","loop":false,"closeEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
