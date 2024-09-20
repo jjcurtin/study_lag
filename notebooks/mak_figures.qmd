@@ -50,7 +50,7 @@ pp_dem_contrast <- read_csv(here::here(path_models_lag, "pp_dem_contrast_all.csv
 #| label: fig-methods
 #| fig-cap: "We used all available data up until the prediction timepoint to generate features using varying scoring epochs. Prediction timepoints rolled forward hour-by-hour (Panel A). Prediction windows were 1 week wide. A prediction window started immediately after the prediction timepoint (0 lag) or was lagged by 24, 72, 168, or 336 hours (Panel B)."
 
-knitr::include_graphics(path = here::here("figures/methods.jpg"))
+knitr::include_graphics(path = here::here("figures/methods.png"), error = FALSE)
 ```
 
 
@@ -145,7 +145,7 @@ shap_feat <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_
 
 Global shapley pannel
 ```{r}
-color_codes <- c("#cb6bce","#75f3d3", "#458892", "#751c6d", "#240e31")
+color_codes <- c("#240e31","#75f3d3", "#458892", "#751c6d", "#cb6bce")
 
 panel_shap_global <- global_all |>
    mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ),
@@ -164,6 +164,7 @@ panel_shap_global <- global_all |>
         ) +
   coord_flip()
 ```
+
 
 Local Shapley Pannel
 ```{r}
@@ -196,7 +197,7 @@ panel_shap_local <- shap_feat |>
   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
   ylab("Shapley Value (0 Hour Lag)") +
   xlab(NULL) +
-  scale_color_gradientn(colors = c("#240e31", "#f9e79f"),
+  scale_color_gradientn(colors = c("#240e31", "#cb6bce"),
                         breaks = c(.1, .9),
                         labels = c("low", "high")) +
   labs(color = "Feature Value") +
@@ -210,7 +211,7 @@ panel_shap_local <- shap_feat |>
 
 ```{r}
 #| label: fig-shap
-#| fig-cap: "Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 336 hour lagged model."
+#| fig-cap: "Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 0 hour lagged model."
 #| fig-height: 5.5
 #| fig-width: 7
 

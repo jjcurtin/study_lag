@@ -10,12 +10,12 @@ format:
   html:
     embed-resources: true
 params:
+  
   study: "lag"
   cv: "nested"
   window: "1week"
   model: "main" 
   lead: 336
-  
   version: "v1"
 editor_options: 
   chunk_output_type: console
