@@ -1,0 +1,220 @@
+---
+title: "Make All Figures for Main Manuscript"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+number-sections: true
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-depth: 4
+editor_options: 
+  chunk_output_type: console
+html-table-processing: none
+---
+
+```{r}
+#| message: false
+#| warning: false
+
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
+suppressPackageStartupMessages(library(tidyposterior))
+library(kableExtra, exclude = "group_rows")
+library(patchwork)
+
+theme_set(theme_classic())
+
+path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
+path_shared <- format_path("studydata/risk/data_processed/shared")
+path_processed <- format_path("studydata/risk/data_processed/lag")
+```
+
+Data for figures
+```{r}
+test_metrics_all_pp_perf <- read_csv(here::here(path_models_lag,
+                                                "test_metrics_all_pp_perf.csv"),
+                                     show_col_types = FALSE)
+
+pp_dem_contrast <- read_csv(here::here(path_models_lag, "pp_dem_contrast_all.csv"),
+                            show_col_types = FALSE)
+```
+
+
+## Figure 1: Prediction Methods
+```{r}
+#| label: fig-methods
+#| fig-cap: "We used all available data up until the prediction timepoint to generate features using varying scoring epochs. Prediction timepoints rolled forward hour-by-hour (Panel A). Prediction windows were 1 week wide. A prediction window started immediately after the prediction timepoint (0 lag) or was lagged by 24, 72, 168, or 336 hours (Panel B)."
+
+knitr::include_graphics(path = here::here("figures/methods.png"), error = FALSE)
+```
+
+
+
+
+## Figure 2: Posterior probability for auROC by model and demographic group differences
+```{r}
+
+fig_1_a <- test_metrics_all_pp_perf |>
+  mutate(model_numeric = case_when(model == "336 lag" ~ as.numeric(336),
+                                   model == "168 lag" ~ as.numeric(168),
+                                   model == "72 lag" ~ as.numeric(72),
+                                   model == "24 lag" ~ as.numeric(24),
+                                   model == "0 lag" ~ as.numeric(0))) |> 
+  ggplot() + 
+  geom_point(aes(x = model_numeric, y = pp_median), color = "black") +
+  geom_line(aes(x = model_numeric, y = pp_median)) +
+  geom_segment(mapping = aes(x = model_numeric, y = pp_lower, yend = pp_upper)) +
+  scale_y_continuous("Area Under ROC Curve", limits = c(.50, 1.0)) +
+  scale_x_continuous("Model Lag (Hours)", breaks = c(0, 24, 72, 168, 336), 
+                     labels = c("0", "24", "72", "168", "336")) +
+  theme_classic() +
+  theme(legend.position = "none",
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  geom_hline(yintercept = 0.5, linetype = "dashed", color = "black")
+  
+```
+
+
+```{r}
+fig_1_b <- pp_dem_contrast |>
+  mutate(lag_numeric = as.numeric(lag),
+         contrast = factor(contrast, levels = c("not white vs non-hispanic white",
+                                                "female vs male",
+                                                "below poverty vs above poverty"),
+                           labels = c("Not White vs. Non-Hispanic White",
+                                      "Female vs. Male",
+                                      "Below Poverty vs. Above Poverty"))) |> 
+  ggplot() + 
+  geom_point(aes(x = lag_numeric, y = median), color = "black") +
+  geom_line(aes(x = lag_numeric, y = median)) +
+  geom_segment(mapping = aes(x = lag_numeric, y = lower, yend = upper)) +
+  facet_wrap(~contrast, ncol = 1) +
+  scale_y_continuous("Difference in Area Under ROC Curve", limits = c(-.3, 0.1), breaks = c(-.3, -.2, -.1, .0, .1)) +
+  scale_x_continuous("Model Lag (Hours)",breaks = c(0, 24, 72, 168, 336)) +
+  theme_classic() +
+  theme(legend.position = "none",
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+        strip.placement = "top") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+```{r}
+#| label: fig-1
+#| fig-cap: "Panel A depicts posterior probability for area under ROC curve (auROC) and Bayesian credible intervals by model. Dashed line indicates a model performing at chance. Panel B depicts difference in auROCs by demographic group"
+#| fig-width: 7
+
+
+cowplot::plot_grid(fig_1_a, fig_1_b, labels = c("A", "B"))
+```
+
+
+## Figure 3: Shapley values 
+Read in data
+```{r}
+global_all <- read_rds(here::here(path_models_lag, "shap_global_all.rds")) |> 
+   filter(!variable_grp %in% c("day of week (other)", "time of day (other)")) |> 
+  mutate(variable_grp = str_remove(variable_grp, "(EMA item)"),
+          variable_grp = str_remove(variable_grp, "(demographic)"),
+          variable_grp = str_remove(variable_grp, "(other)"),
+        variable_grp = str_remove(variable_grp, "[[:punct:]][[:punct:]]")) |> 
+   mutate(variable_grp = reorder(variable_grp, mean_value, sum),
+          model = factor(model, c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag")))
+
+shap_levels <- global_all |>
+  mutate(variable_grp = reorder(variable_grp, mean_value, sum)) |>
+  pull(variable_grp) |>
+  levels()
+
+# shap_feat <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_downsized_1week_336_v1_nested_main.rds")) |> 
+#   mutate(variable_grp = factor(variable_grp, levels = shap_levels),
+#          feature_score_z_mean = if_else(variable_grp == "future efficacy ",
+#                                         feature_score_z_mean * -1,
+#                                         feature_score_z_mean))
+shap_feat <- read_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_downsized_1week_0_v1_nested_main.rds")) |>
+  mutate(variable_grp = factor(variable_grp, levels = shap_levels),
+         feature_score_z_mean = if_else(variable_grp == "future efficacy ",
+                                        feature_score_z_mean * -1,
+                                        feature_score_z_mean))
+```
+
+
+Global shapley pannel
+```{r}
+color_codes <- c("#240e31","#75f3d3", "#458892", "#751c6d", "#cb6bce")
+
+panel_shap_global <- global_all |>
+   mutate(model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag" ),
+                         labels = c("336 hours", "168 hours", "72 hours", "24 hours", "0 hours" ))) |> 
+  ggplot() +
+  geom_bar(aes(x = variable_grp, y = mean_value, fill = model), stat = "identity") +
+  ylab("Mean(|Shapley Value|)") +
+  xlab("") +
+  labs(fill = "Model Lag") +
+  scale_color_manual(values = color_codes) +
+  scale_fill_manual(values = color_codes) +
+  theme(axis.text=element_text(size=9.5),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+        legend.position = "right",
+        # legend.key.size = unit(.3, 'cm'),
+        ) +
+  coord_flip()
+```
+
+
+Local Shapley Pannel
+```{r}
+# panel_shap_local <- shap_feat |>
+#   filter(!is.na(variable_grp)) |> 
+#   # scale feat score to 0-1
+#   mutate(feature_score = (feature_score_z_mean - min(feature_score_z_mean))/(max(feature_score_z_mean)-min(feature_score_z_mean))) |> 
+#   ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score)) +
+#   ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
+#   geom_hline(yintercept = 0) +
+#   scale_y_continuous(limits = c(-2, 3), breaks = seq(-2, 3)) +
+#   ylab("Shapley Value (336 Hour Lag)") +
+#   xlab(NULL) +
+#   scale_color_gradientn(colors = c("#240e31", "#cb6bce"),
+#                         breaks = c(.1, .9),
+#                         labels = c("low", "high")) +
+#   labs(color = "Feature Value") +
+#   theme(legend.position = "right",
+#         axis.text=element_text(size=9.5),
+#         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+#   coord_flip()
+
+panel_shap_local <- shap_feat |>
+  filter(!is.na(variable_grp)) |>
+  # scale feat score to 0-1
+  mutate(feature_score = (feature_score_z_mean - min(feature_score_z_mean))/(max(feature_score_z_mean)-min(feature_score_z_mean))) |>
+  ggplot(mapping = aes(x = variable_grp, y = value, color = feature_score)) +
+  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
+  geom_hline(yintercept = 0) +
+  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+  ylab("Shapley Value (0 Hour Lag)") +
+  xlab(NULL) +
+  scale_color_gradientn(colors = c("#240e31", "#cb6bce"),
+                        breaks = c(.1, .9),
+                        labels = c("low", "high")) +
+  labs(color = "Feature Value") +
+  theme(legend.position = "right",
+        axis.text=element_text(size=9.5),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+  coord_flip()
+```
+
+
+
+```{r}
+#| label: fig-shap
+#| fig-cap: "Panel A depicts the global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color. Panel B shows the local feature importance for the 0 hour lagged model."
+#| fig-height: 5.5
+#| fig-width: 7
+
+cowplot::plot_grid(panel_shap_global, panel_shap_local, ncol = 1, labels = c("A", "B"), align = "v")
+
+```

@@ -1,0 +1,664 @@
+---
+title: "Supplemental Feature Plot Tibble"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+
+### Set Up Environment
+
+
+```{r, packages_workflow}
+#| message: false
+#| warning: false
+
+# handle conflicts
+options(conflicts.policy = "depends.ok")
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_ml.R?raw=true")
+tidymodels_conflictRules()
+```
+
+
+```{r, packages_script}
+#| message: false
+#| warning: false
+
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(tidymodels))
+library(kableExtra, exclude = "group_rows")
+
+
+theme_set(theme_classic()) 
+```
+
+
+```{r source_functions}
+#| output: false
+
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
+# CHTC support functions
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/chtc/static_files/fun_chtc.R?raw=true")
+```
+
+```{r, absolute_paths}
+path_processed <- format_path(str_c("studydata/risk/data_processed/lag"))
+path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
+path_chtc <- format_path(str_c("studydata/risk/chtc/lag/train_xgboost_1week_0lag_nested_1_x_10_3_x_10_v2_main/input"))
+
+source(here::here(path_chtc, "training_controls.R"))
+```
+
+function for cleaning shap names
+```{r}
+clean_feature_names <- function(feat_name){
+  new_name <- gsub(".l0", "", feat_name)
+  new_name <- gsub("rratecount.count", "raw_count", new_name)
+  new_name <- gsub("dratecount.count", "diff_count", new_name)
+  new_name <- gsub("drecent_response", "diff_recent", new_name)
+  new_name <- gsub("rrecent_response", "raw_recent", new_name)
+  new_name <- gsub("dmin_response", "diff_min", new_name)
+  new_name <- gsub("rmin_response", "raw_min", new_name)
+  new_name <- gsub("dmax_response", "diff_max", new_name)
+  new_name <- gsub("rmax_response", "raw_max", new_name)
+  new_name <- gsub("dmedian_response", "diff_median", new_name)
+  new_name <- gsub("rmedian_response", "raw_median", new_name)
+  new_name <- gsub("label_", "", new_name)
+  new_name <- gsub("demo_", "", new_name)
+  new_name <- gsub("High.school.or.less", "high.school", new_name)
+  new_name <- gsub("Some.college", "some.college", new_name)
+  new_name <- gsub("Mon", "mon", new_name)
+  new_name <- gsub("Tue", "tue", new_name)
+  new_name <- gsub("Wed", "wed", new_name)
+  new_name <- gsub("Thu", "thu", new_name)
+  new_name <- gsub("Fri", "fri", new_name)
+  new_name <- gsub("Sat", "sat", new_name)
+  new_name <- gsub("Sun", "sun", new_name)
+  new_name <- gsub("Never.Married", "never.married", new_name)
+  new_name <- gsub("Never.Other", "never.other", new_name)
+  new_name <- gsub("White.Caucasian", "caucasian", new_name)
+  new_name <- gsub("Male", "male", new_name)
+  new_name <- gsub("p12.raw_count.lapse", "lapse.p12.raw_count", new_name)
+  new_name <- gsub("p24.raw_count.lapse", "lapse.p24.raw_count", new_name)
+  new_name <- gsub("p48.raw_count.lapse", "lapse.p48.raw_count", new_name)
+  new_name <- gsub("p72.raw_count.lapse", "lapse.p72.raw_count", new_name)
+  new_name <- gsub("p168.raw_count.lapse", "lapse.p168.raw_count", new_name)
+  new_name <- gsub("p12.diff_count.lapse", "lapse.p12.diff_count", new_name)
+  new_name <- gsub("p24.diff_count.lapse", "lapse.p24.diff_count", new_name)
+  new_name <- gsub("p48.diff_count.lapse", "lapse.p48.diff_count", new_name)
+  new_name <- gsub("p72.diff_count.lapse", "lapse.p72.diff_count", new_name)
+  new_name <- gsub("p168.diff_count.lapse", "lapse.p168.diff_count", new_name)
+  new_name <- gsub("p12.raw_count.ema", "missing.p12.raw_count", new_name)
+  new_name <- gsub("p24.raw_count.ema", "missing.p24.raw_count", new_name)
+  new_name <- gsub("p48.raw_count.ema", "missing.p48.raw_count", new_name)
+  new_name <- gsub("p72.raw_count.ema", "missing.p72.raw_count", new_name)
+  new_name <- gsub("p168.raw_count.ema", "missing.p168.raw_count", new_name)
+  new_name <- gsub("p12.diff_count.ema", "missing.p12.diff_count", new_name)
+  new_name <- gsub("p24.diff_count.ema", "missing.p24.diff_count", new_name)
+  new_name <- gsub("p48.diff_count.ema", "missing.p48.diff_count", new_name)
+  new_name <- gsub("p72.diff_count.ema", "missing.p72.diff_count", new_name)
+  new_name <- gsub("p168.diff_count.ema", "missing.p168.diff_count", new_name)
+  return(new_name) 
+}
+```
+
+
+
+### Read in Data
+
+Raw Shapley values - 
+```{r}
+shap_0 <- read_rds(here::here(path_models_lag, 
+                              "outer_shaps_1week_0_v1_nested_main.rds")) 
+
+shap_24 <- read_rds(here::here(path_models_lag, 
+                              "outer_shaps_1week_24_v1_nested_main.rds")) 
+
+shap_72 <- read_rds(here::here(path_models_lag, 
+                              "outer_shaps_1week_72_v1_nested_main.rds")) 
+
+shap_168 <- read_rds(here::here(path_models_lag, 
+                              "outer_shaps_1week_168_v1_nested_main.rds")) 
+
+shap_336 <- read_rds(here::here(path_models_lag, 
+                              "outer_shaps_1week_336_v1_nested_main.rds")) 
+```
+
+
+Read in features
+```{r}
+feat_0 <- read_csv(here::here(path_processed, "features_0lag_v1.csv.xz"),
+                   show_col_types = FALSE)
+
+feat_24 <- read_csv(here::here(path_processed, "features_24lag_v1.csv.xz"),
+                   show_col_types = FALSE)
+
+feat_72 <- read_csv(here::here(path_processed, "features_72lag_v1.csv.xz"),
+                   show_col_types = FALSE)
+
+feat_168 <- read_csv(here::here(path_processed, "features_168lag_v1.csv.xz"),
+                   show_col_types = FALSE)
+
+feat_336 <- read_csv(here::here(path_processed, "features_336lag_v1.csv.xz"),
+                   show_col_types = FALSE)
+```
+
+### Match raw feature to shaps
+
+```{r}
+feat_0 <- format_data(feat_0)  
+rec <- recipe(y ~ ., data = feat_0) |>
+    step_rm(subid) |>  
+    step_impute_median(all_numeric_predictors()) |> 
+    step_impute_mode(all_nominal_predictors()) |> 
+    step_zv(all_predictors()) |> 
+    step_dummy(all_factor_predictors()) |> 
+    prep()
+
+feat_0 <- bake(rec, new_data = NULL)
+
+feat_0 <- feat_0 |> 
+  rename(id_obs = label_num) |> 
+  select(-y)
+
+feat_0 <- feat_0 |> 
+  pivot_longer(cols = !starts_with("id"), names_to = "variable", values_to = "feature_score")
+
+# Update names of features to match SHAP
+feat_0 <- feat_0 |> 
+  mutate(variable = fct_relabel(variable, clean_feature_names))
+
+# Combine feature scores with shaps using right join
+shap_feat_0 <- feat_0 |> 
+  right_join(shap_0, by = c("id_obs", "variable")) |> 
+  glimpse()
+```
+
+```{r}
+feat_24 <- format_data(feat_24)  
+rec <- recipe(y ~ ., data = feat_24) |>
+    step_rm(subid) |>  
+    step_impute_median(all_numeric_predictors()) |> 
+    step_impute_mode(all_nominal_predictors()) |> 
+    step_zv(all_predictors()) |> 
+    step_dummy(all_factor_predictors()) |> 
+    prep()
+
+feat_24 <- bake(rec, new_data = NULL)
+
+feat_24 <- feat_24 |> 
+  rename(id_obs = label_num) |> 
+  select(-y)
+
+feat_24 <- feat_24 |> 
+  pivot_longer(cols = !starts_with("id"), names_to = "variable", values_to = "feature_score")
+
+feat_24 <- feat_24 |> 
+  mutate(variable = fct_relabel(variable, clean_feature_names))
+
+shap_feat_24 <- feat_24 |> 
+  right_join(shap_24, by = c("id_obs", "variable")) 
+```
+
+```{r}
+feat_72 <- format_data(feat_72)  
+rec <- recipe(y ~ ., data = feat_72) |>
+    step_rm(subid) |>  
+    step_impute_median(all_numeric_predictors()) |> 
+    step_impute_mode(all_nominal_predictors()) |> 
+    step_zv(all_predictors()) |> 
+    step_dummy(all_factor_predictors()) |> 
+    prep()
+
+feat_72 <- bake(rec, new_data = NULL)
+
+feat_72 <- feat_72 |> 
+  rename(id_obs = label_num) |> 
+  select(-y)
+
+feat_72 <- feat_72 |> 
+  pivot_longer(cols = !starts_with("id"), names_to = "variable", values_to = "feature_score")
+
+feat_72 <- feat_72 |> 
+  mutate(variable = fct_relabel(variable, clean_feature_names))
+
+shap_feat_72 <- feat_72 |> 
+  right_join(shap_72, by = c("id_obs", "variable")) 
+```
+
+```{r}
+feat_168 <- format_data(feat_168)  
+rec <- recipe(y ~ ., data = feat_168) |>
+    step_rm(subid) |>  
+    step_impute_median(all_numeric_predictors()) |> 
+    step_impute_mode(all_nominal_predictors()) |> 
+    step_zv(all_predictors()) |> 
+    step_dummy(all_factor_predictors()) |> 
+    prep()
+
+feat_168 <- bake(rec, new_data = NULL)
+
+feat_168 <- feat_168 |> 
+  rename(id_obs = label_num) |> 
+  select(-y)
+
+feat_168 <- feat_168 |> 
+  pivot_longer(cols = !starts_with("id"), names_to = "variable", values_to = "feature_score")
+
+feat_168 <- feat_168 |> 
+  mutate(variable = fct_relabel(variable, clean_feature_names))
+
+shap_feat_168 <- feat_168 |> 
+  right_join(shap_168, by = c("id_obs", "variable")) 
+```
+
+```{r}
+feat_336 <- format_data(feat_336)  
+rec <- recipe(y ~ ., data = feat_336) |>
+    step_rm(subid) |>  
+    step_impute_median(all_numeric_predictors()) |> 
+    step_impute_mode(all_nominal_predictors()) |> 
+    step_zv(all_predictors()) |> 
+    step_dummy(all_factor_predictors()) |> 
+    prep()
+
+feat_336 <- bake(rec, new_data = NULL)
+
+feat_336 <- feat_336 |> 
+  rename(id_obs = label_num) |> 
+  select(-y)
+
+feat_336 <- feat_336 |> 
+  pivot_longer(cols = !starts_with("id"), names_to = "variable", values_to = "feature_score")
+
+feat_336 <- feat_336 |> 
+  mutate(variable = fct_relabel(variable, clean_feature_names))
+
+shap_feat_336 <- feat_336 |> 
+  right_join(shap_336, by = c("id_obs", "variable")) 
+```
+
+
+### Standardize feature scores
+
+```{r}
+shap_feat_0 <- shap_feat_0 |> 
+  group_by(variable) |> 
+  mutate(feature_score_z = (feature_score - mean(feature_score))/sd(feature_score))
+shap_feat_24 <- shap_feat_24 |> 
+  group_by(variable) |> 
+  mutate(feature_score_z = (feature_score - mean(feature_score))/sd(feature_score))
+shap_feat_72 <- shap_feat_72 |> 
+  group_by(variable) |> 
+  mutate(feature_score_z = (feature_score - mean(feature_score))/sd(feature_score))
+shap_feat_168 <- shap_feat_168 |> 
+  group_by(variable) |> 
+  mutate(feature_score_z = (feature_score - mean(feature_score))/sd(feature_score))
+shap_feat_336 <- shap_feat_336 |> 
+  group_by(variable) |> 
+  mutate(feature_score_z = (feature_score - mean(feature_score))/sd(feature_score))
+```
+
+### Group categories
+
+Sum of shap values and mean of z-scored feature values
+
+```{r}
+shap_feat_grp_0 <- shap_feat_0 |>  
+    mutate(variable_grp = if_else(str_detect(variable, ".lapse"),
+                           "past use (EMA item)",
+                           variable),
+           variable_grp = if_else(str_detect(variable_grp, "ema_2"),
+                           "craving (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_3"),
+                           "past risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_4"),
+                           "past stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_5"),
+                           "past pleasant event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_6"),
+                           "valence (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_7"),
+                           "arousal (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_8"),
+                           "future risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_9"),
+                           "future stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_10"),
+                           "future efficacy (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, ".ema"),
+                           "missing surveys (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "day"),
+                           "lapse day (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "hour"),
+                           "lapse hour (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "age"),
+                           "age (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "sex"),
+                           "sex (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "marital"),
+                           "marital (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "race"),
+                           "race (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "educ"),
+                           "education (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "income"),
+                           "income (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "employ"),
+                           "employment (demographic)",
+                           variable_grp)) |> 
+    mutate(variable_grp = factor(variable_grp)) |> 
+    group_by(id_obs, variable_grp) |>  # values are already averaged across repeats
+    summarize(value = sum(value),
+              feature_score_z_mean = mean(feature_score_z))
+
+shap_feat_grp_24 <- shap_feat_24 |>  
+    mutate(variable_grp = if_else(str_detect(variable, ".lapse"),
+                           "past use (EMA item)",
+                           variable),
+           variable_grp = if_else(str_detect(variable_grp, "ema_2"),
+                           "craving (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_3"),
+                           "past risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_4"),
+                           "past stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_5"),
+                           "past pleasant event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_6"),
+                           "valence (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_7"),
+                           "arousal (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_8"),
+                           "future risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_9"),
+                           "future stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_10"),
+                           "future efficacy (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, ".ema"),
+                           "missing surveys (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "day"),
+                           "lapse day (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "hour"),
+                           "lapse hour (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "age"),
+                           "age (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "sex"),
+                           "sex (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "marital"),
+                           "marital (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "race"),
+                           "race (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "educ"),
+                           "education (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "income"),
+                           "income (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "employ"),
+                           "employment (demographic)",
+                           variable_grp)) |> 
+    mutate(variable_grp = factor(variable_grp)) |> 
+    group_by(id_obs, variable_grp) |>  # values are already averaged across repeats
+    summarize(value = sum(value),
+              feature_score_z_mean = mean(feature_score_z))
+
+shap_feat_grp_72 <- shap_feat_72 |>  
+    mutate(variable_grp = if_else(str_detect(variable, ".lapse"),
+                           "past use (EMA item)",
+                           variable),
+           variable_grp = if_else(str_detect(variable_grp, "ema_2"),
+                           "craving (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_3"),
+                           "past risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_4"),
+                           "past stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_5"),
+                           "past pleasant event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_6"),
+                           "valence (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_7"),
+                           "arousal (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_8"),
+                           "future risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_9"),
+                           "future stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_10"),
+                           "future efficacy (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, ".ema"),
+                           "missing surveys (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "day"),
+                           "lapse day (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "hour"),
+                           "lapse hour (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "age"),
+                           "age (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "sex"),
+                           "sex (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "marital"),
+                           "marital (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "race"),
+                           "race (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "educ"),
+                           "education (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "income"),
+                           "income (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "employ"),
+                           "employment (demographic)",
+                           variable_grp)) |> 
+    mutate(variable_grp = factor(variable_grp)) |> 
+    group_by(id_obs, variable_grp) |>  # values are already averaged across repeats
+    summarize(value = sum(value),
+              feature_score_z_mean = mean(feature_score_z))
+
+shap_feat_grp_168 <- shap_feat_168 |>  
+    mutate(variable_grp = if_else(str_detect(variable, ".lapse"),
+                           "past use (EMA item)",
+                           variable),
+           variable_grp = if_else(str_detect(variable_grp, "ema_2"),
+                           "craving (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_3"),
+                           "past risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_4"),
+                           "past stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_5"),
+                           "past pleasant event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_6"),
+                           "valence (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_7"),
+                           "arousal (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_8"),
+                           "future risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_9"),
+                           "future stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_10"),
+                           "future efficacy (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, ".ema"),
+                           "missing surveys (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "day"),
+                           "lapse day (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "hour"),
+                           "lapse hour (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "age"),
+                           "age (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "sex"),
+                           "sex (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "marital"),
+                           "marital (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "race"),
+                           "race (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "educ"),
+                           "education (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "income"),
+                           "income (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "employ"),
+                           "employment (demographic)",
+                           variable_grp)) |> 
+    mutate(variable_grp = factor(variable_grp)) |> 
+    group_by(id_obs, variable_grp) |>  # values are already averaged across repeats
+    summarize(value = sum(value),
+              feature_score_z_mean = mean(feature_score_z))
+
+shap_feat_grp_336 <- shap_feat_336 |>  
+    mutate(variable_grp = if_else(str_detect(variable, ".lapse"),
+                           "past use (EMA item)",
+                           variable),
+           variable_grp = if_else(str_detect(variable_grp, "ema_2"),
+                           "craving (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_3"),
+                           "past risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_4"),
+                           "past stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_5"),
+                           "past pleasant event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_6"),
+                           "valence (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_7"),
+                           "arousal (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_8"),
+                           "future risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_9"),
+                           "future stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_10"),
+                           "future efficacy (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, ".ema"),
+                           "missing surveys (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "day"),
+                           "lapse day (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "hour"),
+                           "lapse hour (other)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "age"),
+                           "age (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "sex"),
+                           "sex (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "marital"),
+                           "marital (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "race"),
+                           "race (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "educ"),
+                           "education (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "income"),
+                           "income (demographic)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "employ"),
+                           "employment (demographic)",
+                           variable_grp)) |> 
+    mutate(variable_grp = factor(variable_grp)) |> 
+    group_by(id_obs, variable_grp) |>  # values are already averaged across repeats
+    summarize(value = sum(value),
+              feature_score_z_mean = mean(feature_score_z))
+```
+
+
+
+### Save out tibble
+
+```{r}
+shap_feat_grp_0 |> 
+  write_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_1week_0_v1_nested_main.rds")) 
+shap_feat_grp_24 |> 
+  write_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_1week_24_v1_nested_main.rds")) 
+shap_feat_grp_72 |> 
+  write_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_1week_72_v1_nested_main.rds")) 
+shap_feat_grp_168 |> 
+  write_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_1week_168_v1_nested_main.rds")) 
+shap_feat_grp_336 |> 
+  write_rds(here::here(path_models_lag, "outer_shapsgrp_with_features_1week_336_v1_nested_main.rds")) 
+```
+
+
+
+
