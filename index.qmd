@@ -32,7 +32,7 @@ editor_options:
 ---
 
 <!-- 9/20/24 - At 6,532 words.-->
-
+  
 <!--Notes:
 Target journal: Clinical Psychological Science 
 Format: Brief empirical report (5,000 words)
