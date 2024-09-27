@@ -31,7 +31,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-<!-- 8/26/24 - At 6,460 words.-->
+<!-- 9/20/24 - At 6,532 words.-->
 
 <!--Notes:
 Target journal: Clinical Psychological Science 
