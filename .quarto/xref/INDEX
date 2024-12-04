@@ -1,0 +1,44 @@
+{
+  "notebooks/mak_tables.qmd": {
+    "mak_tables.embed.ipynb": "9986594f",
+    "mak_tables.out.ipynb": "e35eca7d",
+    "mak_tables-preview.html": "3c21f58b"
+  },
+  "notebooks/supplement.qmd": {
+    "supplement.embed.ipynb": "336d1b7a",
+    "supplement.out.ipynb": "edee3d96",
+    "supplement-preview.html": "343652ed"
+  },
+  "notebooks/ana_time_subgroup.qmd": {
+    "ana_time_subgroup.embed.ipynb": "92b61516",
+    "ana_time_subgroup.out.ipynb": "2a3a5f83",
+    "ana_time_subgroup-preview.html": "25c9ac83"
+  },
+  "notebooks/ana_fairness.qmd": {
+    "ana_fairness.embed.ipynb": "7925a13e",
+    "ana_fairness.out.ipynb": "a95bac3e",
+    "ana_fairness-preview.html": "8e5d4c5c"
+  },
+  "notebooks/mak_figures.qmd": {
+    "mak_figures.embed.ipynb": "db13b098",
+    "mak_figures.out.ipynb": "483d1a0b",
+    "mak_figures-preview.html": "3d932d25"
+  },
+  "notebooks/ana_bayesian.qmd": {
+    "ana_bayesian.embed.ipynb": "f5b5def6",
+    "ana_bayesian.out.ipynb": "98b09065",
+    "ana_bayesian-preview.html": "9b2ad974"
+  },
+  "notebooks/tables.qmd": {
+    "tables.embed.ipynb": "cd5c5318",
+    "tables.out.ipynb": "bc19ac54",
+    "tables-preview.html": "9cc2affd"
+  },
+  "index.qmd": {
+    "index.embed.ipynb": "fdff8595",
+    "index.out.ipynb": "980994b1",
+    "index-preview.html": "b30ff5e1",
+    "index.html": "35ad4a80",
+    "index.docx": "5b8206b5"
+  }
+}
