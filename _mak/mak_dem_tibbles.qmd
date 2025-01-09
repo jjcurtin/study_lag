@@ -1,0 +1,54 @@
+---
+title: "Make demograpghic tibble for manuscript"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+editor_options: 
+  chunk_output_type: console
+format:
+  html:
+    embed-resources: true
+---
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
+suppressPackageStartupMessages(library(tidyposterior))
+library(kableExtra)
+
+path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
+path_shared <- format_path("studydata/risk/data_processed/shared")
+path_processed <- format_path("studydata/risk/data_processed/lag")
+```
+
+```{r}
+disposition <- read_csv(file.path(path_processed, "disposition.csv"), 
+                        col_types = "ccDDcccccccccc")
+
+screen <- read_csv(file.path(path_shared, "screen.csv"), 
+                   col_types = cols()) |>
+  filter(subid %in% subset(disposition, analysis == "yes")$subid) |> 
+  mutate(across(dsm5_1:dsm5_11, ~ recode(., "No" = 0, "Yes" = 1))) |>  
+  rowwise() |>  
+  mutate(dsm5_total = sum(c(dsm5_1, dsm5_2, dsm5_3, dsm5_4, dsm5_5, dsm5_6, dsm5_7, 
+                              dsm5_8, dsm5_9, dsm5_10, dsm5_11))) |>  
+  ungroup() |> 
+  select(subid, starts_with("dem"), dsm5_total) |> 
+  mutate(race_di = if_else(dem_3 == "White/Caucasian" & dem_4 == "No, I am not of Hispanic, Latino, or Spanish origin", 
+                           "white", "not white"),
+         income_di = if_else(dem_7 < 1560, "below poverty", "above poverty")) |> 
+  write_csv(file.path(path_processed, "dem_tibble.csv"))
+
+lapses <- read_csv(file.path(path_shared, "lapses.csv"), col_types = cols()) |>
+  filter(exclude == FALSE)
+
+lapses_per_subid <- screen |>
+  select(subid) |>
+  left_join(lapses |>
+  janitor::tabyl(subid) |>
+  select(-percent), by = "subid") |>
+  mutate(n = if_else(is.na(n), 0, n),
+         lapse = if_else(n > 0, "yes", "no")) |> 
+  write_csv(file.path(path_processed, "lapse_tibble.csv"))
+```
+
+

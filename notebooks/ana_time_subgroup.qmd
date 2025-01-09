@@ -1,0 +1,360 @@
+---
+title: "Group by Time Effects"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+
+### Set Up Environment
+
+
+```{r, packages_workflow}
+#| message: false
+#| warning: false
+
+# handle conflicts
+options(conflicts.policy = "depends.ok")
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_ml.R?raw=true")
+tidymodels_conflictRules()
+```
+
+
+```{r, packages_script}
+#| message: false
+#| warning: false
+
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(tidymodels))
+suppressPackageStartupMessages(library(tidyposterior))
+library(kableExtra, exclude = "group_rows")
+library(Rcpp, exclude = "populate")
+library(brms, exclude = c("ar", "mixture"))
+
+
+theme_set(theme_classic()) 
+```
+
+
+```{r source_functions}
+#| output: false
+
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
+# CHTC support functions
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/chtc/static_files/fun_chtc.R?raw=true")
+```
+
+```{r, absolute_paths}
+path_processed <- format_path(str_c("studydata/risk/data_processed/lag"))
+path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
+```
+
+
+### Read in Model Performance Metrics
+
+```{r}
+auroc_dem_0 <- read_csv(here::here(path_models_lag, "test_auroc_dem_6_x_5_1week_0_v1_nested.csv"),
+                      col_types = cols()) |> 
+  mutate(fold_num = rep(1:5, 6),
+         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
+                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
+  select(-outer_split_num)
+
+
+auroc_dem_24 <- read_csv(here::here(path_models_lag, "test_auroc_dem_6_x_5_1week_24_v1_nested.csv"),
+                      col_types = cols()) |> 
+  mutate(fold_num = rep(1:5, 6),
+         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
+                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
+  select(-outer_split_num)
+
+auroc_dem_72 <- read_csv(here::here(path_models_lag, "test_auroc_dem_6_x_5_1week_72_v1_nested.csv"),
+                      col_types = cols())|> 
+  mutate(fold_num = rep(1:5, 6),
+         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
+                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
+  select(-outer_split_num)
+
+auroc_dem_168 <- read_csv(here::here(path_models_lag, "test_auroc_dem_6_x_5_1week_168_v1_nested.csv"),
+                      col_types = cols()) |> 
+  mutate(fold_num = rep(1:5, 6),
+         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
+                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
+  select(-outer_split_num)
+
+auroc_dem_336 <- read_csv(here::here(path_models_lag, "test_auroc_dem_6_x_5_1week_336_v1_nested.csv"),
+                      col_types = cols()) |> 
+  mutate(fold_num = rep(1:5, 6),
+         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
+                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
+  select(-outer_split_num)
+```
+
+
+```{r}
+auroc_dem_all <- auroc_dem_0 |> 
+  mutate(lag = 0) |> 
+  bind_rows(auroc_dem_24 |> 
+              mutate(lag = 24)) |>
+  bind_rows(auroc_dem_72 |> 
+              mutate(lag = 72)) |>
+  bind_rows(auroc_dem_168 |> 
+              mutate(lag = 168)) |>
+  bind_rows(auroc_dem_336 |> 
+              mutate(lag = 336))
+
+set.seed(101)
+```
+
+### Race
+
+```{r}
+data <- auroc_dem_all |> 
+  select(id = fold_num, id2 = repeat_num, `not white`, `non-hispanic white` = white, lag) |> 
+  pivot_longer(cols = c(`not white`, `non-hispanic white`), names_to = "race", values_to = "auroc") |> 
+  mutate(race = factor(race)) |>
+  glimpse()
+```
+
+
+
+Set priors to `perf_mod()` defaults
+```{r}
+priors <- c(
+  prior(normal(2, 1.1), class = "Intercept"),
+  
+  prior(normal(0, 2.79), class = "b"),
+
+  prior(exponential(2.2), class = "sigma")
+)
+
+```
+
+
+```{r}
+model_race <- brm(
+  formula = auroc ~ 1 + race + lag + race*lag + (1 | id2/id), # folds nested in repeats
+  data = subset(data, !is.na(auroc)),
+  family = gaussian(link = "logit"), # normal distribution w/auroc bounded between 0 and 1
+  chains = 4,
+  prior = priors,
+  control = list(adapt_delta = 0.99), 
+  iter = 6000,
+  thin = 10,
+  seed = 123
+)
+```
+
+
+```{r}
+summary(model_race) 
+```
+
+
+```{r}
+pp_race <- summary(model_race)$fixed |>
+  as_tibble(rownames = "coef") |> 
+  select(coef,
+         pp_mean = Estimate, 
+         pp_lower = `l-95% CI`, 
+         pp_upper = `u-95% CI`) 
+```
+
+
+
+plot posterior distribution for race effect
+```{r}
+as.matrix(model_race, variable = "b_racenotwhite") |> 
+  as_tibble() |> 
+  ggplot(aes(x = b_racenotwhite)) +
+  geom_histogram(fill = "grey", color = "black", bins = 30) +
+  geom_segment(mapping = aes(y = 250, yend = 300, x = pp_mean, xend = pp_mean),
+               data = subset(pp_race, coef == "racenotwhite")) +
+  geom_segment(mapping = aes(y = 275, yend = 275, x = pp_lower, xend = pp_upper),
+                data = subset(pp_race, coef == "racenotwhite")) +
+  geom_vline(xintercept = 0, linetype =  "dashed") 
+```
+
+
+plot posterior distribution for interaction effect
+```{r}
+as.matrix(model_race, variable = "b_racenotwhite:lag") |> 
+  ggplot(aes(x = `b_racenotwhite:lag`)) +
+  geom_histogram(fill = "grey", color = "black", bins = 30) +
+    geom_segment(mapping = aes(y = 100, yend = 150, x = pp_mean, xend = pp_mean),
+               data = subset(pp_race, coef == "racenotwhite:lag")) +
+  geom_segment(mapping = aes(y = 125, yend = 125, x = pp_lower, xend = pp_upper),
+                data = subset(pp_race, coef == "racenotwhite:lag")) +
+  geom_vline(xintercept = 0, linetype =  "dashed") 
+```
+
+
+Check convergence diagnostics
+
+```{r}
+bayesplot::mcmc_trace(model_race, pars = c("b_Intercept", "b_racenotwhite", "b_lag", "b_racenotwhite:lag"))
+
+bayesplot::mcmc_acf(model_race, pars = c("b_Intercept", "b_racenotwhite", "b_lag", "b_racenotwhite:lag"))
+
+bayesplot::mcmc_dens(model_race, pars = c("b_Intercept", "b_racenotwhite", "b_lag", "b_racenotwhite:lag"))
+```
+
+Check posteriors
+```{r}
+pp_check(model_race)
+```
+
+
+### Sex
+```{r}
+data <- auroc_dem_all |> 
+  select(id = fold_num, id2 = repeat_num, female, male, lag) |> 
+  pivot_longer(cols = c(female, male), names_to = "sex", values_to = "auroc") |>
+  mutate(sex = factor(sex, levels = c("male", "female"))) |>
+  glimpse()
+
+model_sex <-brm(
+  formula = auroc ~ 1 + sex + lag + sex*lag + (1 | id2/id), # folds nested in repeats
+  data = subset(data, !is.na(auroc)),
+  family = gaussian(link = "logit"), # normal distribution w/auroc bounded between 0 and 1
+  chains = 4,
+  prior = priors,
+  control = list(adapt_delta = 0.99), 
+  iter = 6000,
+  thin = 10,
+  seed = 123
+)
+```
+
+```{r}
+summary(model_sex)
+```
+
+```{r}
+pp_sex <- summary(model_sex)$fixed |>
+  as_tibble(rownames = "coef") |> 
+  select(coef,
+         pp_mean = Estimate, 
+         pp_lower = `l-95% CI`, 
+         pp_upper = `u-95% CI`) 
+```
+
+plot posterior distribution for sex effect
+```{r}
+as.matrix(model_sex, variable = "b_sexfemale") |> 
+  as_tibble() |> 
+  ggplot(aes(x = b_sexfemale)) +
+  geom_histogram(fill = "grey", color = "black", bins = 30) +
+  geom_segment(mapping = aes(y = 300, yend = 350, x = pp_mean, xend = pp_mean),
+               data = subset(pp_sex, coef == "sexfemale")) +
+  geom_segment(mapping = aes(y = 325, yend = 325, x = pp_lower, xend = pp_upper),
+                data = subset(pp_sex, coef == "sexfemale")) +
+  geom_vline(xintercept = 0, linetype =  "dashed") 
+```
+
+
+plot posterior distribution for interaction effect
+```{r}
+as.matrix(model_sex, variable = "b_sexfemale:lag") |> 
+  ggplot(aes(x = `b_sexfemale:lag`)) +
+  geom_histogram(fill = "grey", color = "black", bins = 30) +
+    geom_segment(mapping = aes(y = 100, yend = 150, x = pp_mean, xend = pp_mean),
+               data = subset(pp_sex, coef == "sexfemale:lag")) +
+  geom_segment(mapping = aes(y = 125, yend = 125, x = pp_lower, xend = pp_upper),
+                data = subset(pp_sex, coef == "sexfemale:lag")) +
+  geom_vline(xintercept = 0, linetype =  "dashed") 
+```
+
+```{r}
+bayesplot::mcmc_trace(model_sex, pars = c("b_Intercept", "b_sexfemale", "b_lag", "b_sexfemale:lag"))
+
+bayesplot::mcmc_acf(model_sex, pars = c("b_Intercept", "b_sexfemale", "b_lag", "b_sexfemale:lag"))
+
+bayesplot::mcmc_dens(model_sex, pars = c("b_Intercept", "b_sexfemale", "b_lag", "b_sexfemale:lag"))
+```
+
+Check posteriors
+```{r}
+pp_check(model_sex)
+```
+
+### Income
+```{r}
+data <- auroc_dem_all |> 
+  select(id = fold_num, id2 = repeat_num, `above poverty`, `below poverty`, lag) |> 
+  pivot_longer(cols = c(`above poverty`, `below poverty`), names_to = "income", 
+               values_to = "auroc") |>
+  mutate(income = factor(income)) |>
+  glimpse()
+
+model_income <- brm(
+  formula = auroc ~ 1 + income + lag + income*lag + (1 | id2/id), # folds nested in repeats
+  data = subset(data, !is.na(auroc)),
+  family = gaussian(link = "logit"), # normal distribution w/auroc bounded between 0 and 1
+  chains = 4,
+  prior = priors,
+  control = list(adapt_delta = 0.999), 
+  iter = 6000,
+  thin = 10,
+  seed = 123
+)
+```
+
+```{r}
+summary(model_income)
+```
+
+```{r}
+pp_income <- summary(model_income)$fixed |>
+  as_tibble(rownames = "coef") |> 
+  select(coef,
+         pp_mean = Estimate, 
+         pp_lower = `l-95% CI`, 
+         pp_upper = `u-95% CI`) 
+```
+
+plot posterior distribution for income effect
+```{r}
+as.matrix(model_income, variable = "b_incomebelowpoverty") |> 
+  as_tibble() |> 
+  ggplot(aes(x = b_incomebelowpoverty)) +
+  geom_histogram(fill = "grey", color = "black", bins = 30) +
+  geom_segment(mapping = aes(y = 225, yend = 275, x = pp_mean, xend = pp_mean),
+               data = subset(pp_income, coef == "incomebelowpoverty")) +
+  geom_segment(mapping = aes(y = 250, yend = 250, x = pp_lower, xend = pp_upper),
+                data = subset(pp_income, coef == "incomebelowpoverty")) +
+  geom_vline(xintercept = 0, linetype =  "dashed") 
+```
+
+
+plot posterior distribution for interaction effect
+```{r}
+as.matrix(model_income, variable = "b_incomebelowpoverty:lag") |> 
+  ggplot(aes(x = `b_incomebelowpoverty:lag`)) +
+  geom_histogram(fill = "grey", color = "black", bins = 30) +
+  geom_segment(mapping = aes(y = 125, yend = 175, x = pp_mean, xend = pp_mean),
+               data = subset(pp_income, coef == "incomebelowpoverty:lag")) +
+  geom_segment(mapping = aes(y = 150, yend = 150, x = pp_lower, xend = pp_upper),
+                data = subset(pp_income, coef == "incomebelowpoverty:lag")) +
+  geom_vline(xintercept = 0, linetype =  "dashed") 
+```
+
+```{r}
+bayesplot::mcmc_trace(model_income, pars = c("b_Intercept", "b_incomebelowpoverty", "b_lag", "b_incomebelowpoverty:lag"))
+
+bayesplot::mcmc_acf(model_income, pars = c("b_Intercept", "b_incomebelowpoverty", "b_lag", "b_incomebelowpoverty:lag"))
+
+bayesplot::mcmc_dens(model_income, pars = c("b_Intercept", "b_incomebelowpoverty", "b_lag", "b_incomebelowpoverty:lag"))
+```
+
+Check posteriors
+```{r}
+pp_check(model_income)
+```
