@@ -1,5 +1,5 @@
 ---
-title: "Make lapse labels for for 1 week window with `r params$lag` lag"
+title: "Make lapse labels for for 1 day window with `r params$lag` lag"
 author: "John Curtin and Kendra Wyant"
 date: "`r lubridate::today()`"
 editor_options: 
@@ -13,15 +13,15 @@ params:
 
 ### Code Status
 
-The script is currently set up for the LAG study
+The script is currently set up for the lag study
 
-This script is based on the EMA study script for making the three windows with updates to apply to only 1week window and buffers that correspond to 24 hours + lag time in hours (lag hours = 24, 72, 168, 366). Notably, we have changed made the exclusion time for sampling no lapses around lapses less conservative (6 hours vs. 24 hours). There are other minor updates for qmd and current lab conventions.
+This script is based on the EMA study script. It creates labels for prediction windows of 1 day and buffers that correspond to 24 hours + lag time in hours (lag hours = 24, 72, 168, 366). It uses a conservative 24 hour buffer for excluding no lapse observations within 24 hours of a reported lapse. There are other minor updates for qmd and current lab conventions.
 
-This script makes labels based on the cleaned lapses. See conclusions for important decisions and notes related to the pre-processing of lapses done in shared/scripts_cln/mak_lapses.Rmd   
+This script makes labels based on the cleaned lapses. See conclusions for important decisions and notes related to the pre-processing of lapses done in `shared/scripts_cln/mak_lapses.Rmd`   
 
 ### Conclusions   
 
-- More complete EDA on all EMA data and lapses is in cln_ema.Rmd and mak_lapses.Rmd.  
+- More complete EDA on all EMA data and lapses is in `cln_ema.Rmd` and `mak_lapses.Rmd`.  
 
 - We decided to retain lapses with no end time if their onset was valid. We will use a
 24 hour rule when sampling non-lapses. That is we will not sample non-lapses in the 
@@ -158,7 +158,7 @@ Source for script
 
 devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/print_kbl.R?raw=true")
 devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_eda.R?raw=true")
-source(here::here("shared/fun_local.R"))
+source(here::here("../analysis_risk/shared/fun_local.R"))
 ```
 
 ### Read in lapses
@@ -208,20 +208,13 @@ plan(multisession, workers = parallel::detectCores(logical = FALSE))
 subids <- unique(dates$subid)
 ```
 
-Make labels with 1 week window duration and `r params$lag` lag.    
+Make labels with 1 day window duration and `r params$lag` lag.    
 Labels will start at midnight on start day + 24 hours + lag hours
 ```{r future_map}   
-if (lag == 0) {
-  labels <- subids |> 
+labels <- subids |> 
     future_map_dfr(\(subid) get_lapse_labels(subid, lapses, dates, 
-                                    buffer_start = 60 * 60 * 24, window_dur = 604800)) |>  # window_dur is 1 week
+                                    buffer_start = 60 * 60 * (24 + lag), window_dur = 86400)) |>  # window_dur is 1 day
     glimpse()
-} else {
-  labels <- subids |> 
-    future_map_dfr(\(subid) get_lapse_labels(subid, lapses, dates, 
-                                    buffer_start = 60 * 60 * (24 + lag), window_dur = 604800)) |>  # window_dur is 1 week
-    glimpse()
-}
 ```
 
 Return to sequential processing
@@ -330,5 +323,5 @@ labels |>
 Save valid_observations and labels
 ```{r}
 labels |> 
-  write_csv(here::here(str_c(path_lag, "/labels_1week_", lag, "lag.csv"))) 
+  write_csv(here::here(str_c(path_lag, "/labels_1day_", lag, "lag.csv"))) 
 ```

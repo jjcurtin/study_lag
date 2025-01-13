@@ -1,5 +1,5 @@
 ---
-title: "SAMHSA 2018 data"
+title: "SAMHSA 2022 data"
 author: "Kendra Wyant"
 editor_options: 
   chunk_output_type: console
@@ -22,7 +22,7 @@ path_shared <- format_path("studydata/risk/data_processed/shared")
 ```{r}
 #| message: false
 
-load("../NSDUH_2018.Rdata")
+load("../NSDUH_2022.Rdata")
 
 d <- NSDUH_2018 |> 
   mutate(subid = QUESTID2,
@@ -75,23 +75,36 @@ d <- NSDUH_2018 |>
          aud_sev_past_year = factor(IRPYSEV5ALC, levels = c(1,2,3,9),
          labels = c("mild", "moderate", "severe", "none")),
          aud_tx_clinician_past_year = if_else(irsutinhosp == 1 | irsutinrhab == 1 |
-                                               irsutinrsmh == 1 | irsutinopl == 1 | irsutoutrhab == 1 |
-                                                irsutoutmhcr == 1 | irsutoutthrp == 1 | irsutoutdoc == 1 |
-                                                irsutouthosp == 1 | irsutoutschl == 1 | irsutoutopl == 1 |
-                                                irsutrxalc == 1 | irsutphvid == 1 | irsutdetox == 1,
+                                               irsutinrsmh == 1 | irsutinopl == 1 | 
+                                                irsutoutrhab == 1 |
+                                                irsutoutmhcr == 1 | irsutoutthrp == 1 | 
+                                                irsutoutdoc == 1 |
+                                                irsutouthosp == 1 | irsutoutschl == 1 | 
+                                                irsutoutopl == 1 |
+                                                irsutrxalc == 1 | irsutphvid == 1 | 
+                                                irsutdetox == 1,
                                     "yes", "no"),
          aud_tx_clinician_carceral_past_year = if_else(irsutinhosp == 1 | irsutinrhab == 1 |
-                                               irsutinrsmh == 1 | irsutinopl == 1 | irsutoutrhab == 1 |
-                                                irsutoutmhcr == 1 | irsutoutthrp == 1 | irsutoutdoc == 1 |
-                                                irsutouthosp == 1 | irsutoutschl == 1 | irsutoutopl == 1 |
-                                                irsutrxalc == 1 | irsutphvid == 1 | irsutdetox == 1 |
+                                               irsutinrsmh == 1 | irsutinopl == 1 | 
+                                                 irsutoutrhab == 1 |
+                                                irsutoutmhcr == 1 | irsutoutthrp == 1 | 
+                                                 irsutoutdoc == 1 |
+                                                irsutouthosp == 1 | irsutoutschl == 1 | 
+                                                 irsutoutopl == 1 |
+                                                irsutrxalc == 1 | irsutphvid == 1 | 
+                                                 irsutdetox == 1 |
                                                sutrtalcpy == 1 | sutrtdralpy == 1,
                                     "yes", "no"),
-         aud_tx_any_past_year = if_else(irsutinhosp == 1 | irsutinrhab == 1 | irsutinrsmh == 1 | 
-                                          irsutinopl == 1 | irsutoutrhab == 1 | irsutoutmhcr == 1 |
-                                          irsutoutthrp == 1 | irsutoutdoc == 1 | irsutouthosp == 1 |
-                                          irsutoutschl == 1 | irsutoutopl == 1 | irsutrxalc == 1 |
-                                          irsutphvid == 1 | irsutdetox == 1  | irsutpeerspc == 1 |
+         aud_tx_any_past_year = if_else(irsutinhosp == 1 | irsutinrhab == 1 | 
+                                          irsutinrsmh == 1 | 
+                                          irsutinopl == 1 | irsutoutrhab == 1 | 
+                                          irsutoutmhcr == 1 |
+                                          irsutoutthrp == 1 | irsutoutdoc == 1 | 
+                                          irsutouthosp == 1 |
+                                          irsutoutschl == 1 | irsutoutopl == 1 | 
+                                          irsutrxalc == 1 |
+                                          irsutphvid == 1 | irsutdetox == 1  | 
+                                          irsutpeerspc == 1 |
                                           irsutsuppgrp == 1,
                                     "yes", "no"))
 ```
