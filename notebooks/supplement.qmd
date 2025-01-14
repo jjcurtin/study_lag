@@ -106,20 +106,6 @@ The following have been made publicly available…
 
 \newpage
 
-## Supplemental Methods
-
-### Feature Importance
-
-We calculated Shapley values in log-odds units for binary classification models from the 30 test sets to provide a description of the importance of categories of features across our five models [@lundbergUnifiedApproachInterpreting2017]. We averaged the three Shapley values for each observation for each feature (i.e., across the three repeats) to increase their stability. An inherent property of Shapley values is their additivity, allowing us to combine features into feature categories. We created separate feature categories for each of the nine EMA questions, the rates of past alcohol use and missing surveys, the time of day and day of the week of the start of the prediction window, and the seven demographic variables included in the models. We calculated the local (i.e., for each observation) importance for each category of features by adding Shapley values across all features in a category, separately for each observation. We calculated global importance for each feature category by averaging the absolute value of the Shapley values of all features in the category across all observations. These local and global importance scores based on Shapley values allow us to contextualize relative feature importance for each model.
-
-## Supplemental Results
-
-### Feature Importance
-
-The top three globally important (i.e., highest mean |Shapley value|) feature categories for all models were past use, future efficacy, and craving (Figure S2). Future risky situations were also globally important across models. This category was ranked as the 4th most important feature across lagged models (24, 72, 168, and 336 hours). For the immediate model (0 hour lag), past risky situations were ranked as the 4th most important feature category and future risky situations was ranked as the fifth most important. Income was the only demographic feature that emerged as having high global importance for lapse prediction (in top 6 for all models). See Table S1 for a table of feature categories ranked by global importance for each model.    
-
-See Figure S3 for a local feature importance plots for each model. Future abstinence efficacy, future risky situations, and income appear to have a linear relationship to lapse prediction. Higher efficacy, fewer future risky situations, and higher income were associated with a lower likelihood that the model would predict a lapse. In Figure S4, we plot the relationship between Shapley value and feature score individually for our overall top five features by model.
-
 
 ## Supplemental Figures
 
@@ -510,82 +496,6 @@ cowplot::plot_grid(panel_shap_local_0,
 
 ```
 
-
-### Figure S5: Individual Shapley Plots for Top Features
-
-```{r}
-#| echo: false 
-
-shap_feat_all <- shap_feat_0 |> 
-  mutate(model = "0 hours") |> 
-  rbind(shap_feat_24 |> 
-  mutate(model = "24 hours")) |> 
-  rbind(shap_feat_72 |> 
-  mutate(model = "72 hours")) |> 
-  rbind(shap_feat_168 |> 
-  mutate(model = "168 hours")) |> 
-  rbind(shap_feat_336 |> 
-  mutate(model = "336 hours")) |> 
-  mutate(model = factor(model, levels = c("0 hours", "24 hours", "72 hours",
-                                          "168 hours", "336 hours"))) 
-```
-
-```{r}
-#| echo: false
-
-color_codes <- c("#cb6bce", "#751c6d", "#458892", "#75f3d3", "#240e31")
-
-shap_feat_all |> 
-  filter(variable_grp == "past use ") |> 
-  ggplot(aes(x = feature_value, y = shapley_value, color = model)) +
-  geom_point(alpha = .4) +
-  facet_wrap(~model) +
-  scale_color_manual(values = color_codes) +
-  labs(title = "Past Use", y = "Shapley", x = "Feature value") +
-  theme(legend.position = "none",
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
-
-
-shap_feat_all |> 
-  filter(variable_grp == "future efficacy ") |> 
-  ggplot(aes(x = feature_value, y = shapley_value, color = model)) +
-  geom_point(alpha = .4) +
-  facet_wrap(~model) +
-  scale_color_manual(values = color_codes) +
-  labs(title = "Future Efficacy", y = "Shapley", x = "Feature value") +
-  theme(legend.position = "none",
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
-
-shap_feat_all |> 
-  filter(variable_grp == "income ") |> 
-  ggplot(aes(x = feature_value, y = shapley_value, color = model)) +
-  geom_point(alpha = .4) +
-  facet_wrap(~model) +
-  scale_color_manual(values = color_codes) +
-  labs(title = "Income", y = "Shapley", x = "Feature value") +
-  theme(legend.position = "none",
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
-
-shap_feat_all |> 
-  filter(variable_grp == "craving ") |> 
-  ggplot(aes(x = feature_value, y = shapley_value, color = model)) +
-  geom_point(alpha = .4) +
-  facet_wrap(~model) +
-  scale_color_manual(values = color_codes) +
-  labs(title = "Craving", y = "Shapley", x = "Feature value") +
-  theme(legend.position = "none",
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
-
-shap_feat_all |> 
-  filter(variable_grp == "future risky situation ") |> 
-  ggplot(aes(x = feature_value, y = shapley_value, color = model)) +
-  geom_point(alpha = .4) +
-  facet_wrap(~model) +
-  scale_color_manual(values = color_codes) +
-  labs(title = "Future Risky Situation", y = "Shapley", x = "Feature value") +
-  theme(legend.position = "none",
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
-```
 
 
 

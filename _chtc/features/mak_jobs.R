@@ -2,10 +2,13 @@
 
 # Constants: EDIT
 # MUST EDIT IN mak_features_chtc.R as well
-lead_hours <- 24 # considering 0, 24, 72, 168 (1 week), and 336(2 weeks)
-version <- "v2" 
-# Version 1 - uses features from v5 of ema study
-# Version 2 - uses features from v5 of ema study but with 6 hour exclusions instead of 24 hour
+lead_hours <- 336 # considering 0, 24, 72, 168 (1 week), and 336(2 weeks)
+version <- "v3" 
+# Version 1 - uses features from v5 of ema study for 1 week labels
+# Version 2 - uses features from v5 of ema study but with 6 hour exclusions instead 
+# of 24 hour
+# Version 3 - uses features from v5 of ema study for 1 day labels without label hour 
+# and with income and employment demographic feats
 
 # load packages
 library(tidyverse)
@@ -16,7 +19,7 @@ name_job <- str_c("features_", lead_hours, "_", version)
 
 path_processed <- "P:/studydata/risk/data_processed/lag" 
 name_ema <- "ema.csv"
-name_labels <- str_c("labels_1week_", lead_hours, "lag.csv")
+name_labels <- str_c("labels_1day_", lead_hours, "lag.csv")
 name_study_dates <- "study_dates.csv"
 
 path_shared <- "P:/studydata/risk/data_processed/shared" 
@@ -66,15 +69,16 @@ file.copy(from = here::here(path_shared, "screen.csv"),
           to = here::here(path_jobs, name_job, "input", "screen.csv")) 
 
 # copy over function script
-file.copy(from = here::here("shared", name_fun),
+file.copy(from = here::here("../analysis_risk/shared", name_fun),
           to = here::here(path_jobs, name_job, "input", name_fun))
 
 # copy R script
-file.copy(from = here::here("lag", "chtc", "features", name_script),
+file.copy(from = here::here("_chtc/features", name_script),
           to = here::here(path_jobs, name_job, "input", name_script))
 
 # copy over condor files(sh and sub)
-file.copy(from = here::here("lag", "chtc", "features", "condor", "features.sh"),
+file.copy(from = here::here("_chtc/features/condor/features.sh"),
           to = here::here(path_jobs, name_job, "input", "features.sh")) 
-file.copy(from = here::here("lag", "chtc", "features", "condor", "features.sub"),
+file.copy(from = here::here("_chtc/features/condor/features.sub"),
           to = here::here(path_jobs, name_job, "input", "features.sub")) 
+

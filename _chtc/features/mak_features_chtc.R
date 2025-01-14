@@ -1,11 +1,14 @@
 # Script to engineer EMA features on CHTC for lag study
-# Version 1 - uses features from v5 of ema study
-# Version 2 - uses features from v5 of ema study but with 6 hour exclusions instead of 24 hour
+# Version 1 - uses features from v5 of ema study for 1 week labels
+# Version 2 - uses features from v5 of ema study but with 6 hour exclusions instead 
+# of 24 hour
+# Version 3 - uses features from v5 of ema study for 1 day labels without label hour 
+# and with income and employment demographic feats
 
 # Constants: EDIT
 # MUST EDIT IN mak_jobs as well
-lead_hours <- 24  # considering 0, 24, 72, 168 (1 week), and 336(2 weeks)
-version <- "v2" 
+lead_hours <- 336  # considering 0, 24, 72, 168 (1 week), and 336(2 weeks)
+version <- "v3" 
 
 period_durations_morning <- c(48, 72, 168) # feature duration window for items 8-10
 period_durations_later <- c(12, 24, 48, 72, 168) # feature duration window for items 2-7 
@@ -99,12 +102,12 @@ features <- foreach (i_label = 1:nrow(labels), .combine = "rbind") %do% {
                                  the_tz = "America/Chicago")
   
   # hour of lapse label
-  feature_row <- feature_row %>%   
-    full_join(score_label_hour(the_subid = subid, 
-                               the_dttm_label = dttm_label, 
-                               levels = 2, 
-                               the_tz = "America/Chicago"),
-              by = c("subid", "dttm_label"))
+  # feature_row <- feature_row %>%   
+  #   full_join(score_label_hour(the_subid = subid, 
+  #                              the_dttm_label = dttm_label, 
+  #                              levels = 2, 
+  #                              the_tz = "America/Chicago"),
+  #             by = c("subid", "dttm_label"))
   
   # rate of previous lapses
   feature_row <- feature_row %>%   

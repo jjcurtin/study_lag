@@ -68,9 +68,10 @@ fig_2a <- test_metrics_all_pp_perf |>
   geom_point(aes(x = model_numeric, y = pp_median), color = "black") +
   geom_line(aes(x = model_numeric, y = pp_median)) +
   geom_segment(mapping = aes(x = model_numeric, y = pp_lower, yend = pp_upper)) +
-  scale_y_continuous("Area Under ROC Curve", limits = c(.50, 1.0)) +
-  scale_x_continuous("Model Lag (Hours)", breaks = c(0, 24, 72, 168, 336), 
-                     labels = c("0", "24", "72", "168", "336")) +
+  scale_y_continuous("auROC", limits = c(.50, 1.0)) +
+  scale_x_continuous("Model Lag", breaks = c(0, 24, 72, 168, 336), 
+                     labels = c("0", "1 day", "3 days", "1 week",
+                                "2 weeks")) +
   theme_classic() +
   theme(legend.position = "none",
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
@@ -98,23 +99,23 @@ pp_dem <- pp_dem |>
                                           "male",
                                           "below poverty",
                                           "above poverty"),
-                        labels = c("advantaged group", 
-                                   "disadvantaged group",
-                                   "disadvantaged group",
-                                   "advantaged group",
-                                   "disadvantaged group",
-                                   "advantaged group"))) 
+                        labels = c("advantaged group (non-Hispanic White, male, above poverty)", 
+                                   "disadvantaged group (not White, female, below poverty)",
+                                   "disadvantaged group (not White, female, below poverty)",
+                                   "advantaged group (non-Hispanic White, male, above poverty)",
+                                   "disadvantaged group (not White, female, below poverty)",
+                                   "advantaged group (non-Hispanic White, male, above poverty)"))) 
 
 pp_dem_a <- pp_dem |> 
-  filter(contrast == "Not White vs. Non-Hispanic White") |> 
+  filter(contrast == "Not White vs. Non-Hispanic White" & lag %in% c(0, 336)) |> 
+  mutate(lag = factor(lag),
+         contrast = "Race/Ethnicity") |> 
   ggplot() + 
   geom_point(aes(x = lag, y = pp_median, color = group)) +
-  geom_line(aes(x = lag, y = pp_median, color = group)) +
   geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = group)) +
   facet_wrap(~ contrast) +
-  scale_y_continuous("Area Under ROC Curve", limits = c(.50, 1.0)) +
-  scale_x_continuous(NULL, breaks = c(0, 24, 72, 168, 336), 
-                     labels = c("0", "24", "72", "168", "336")) +
+  scale_y_continuous("auROC", limits = c(.50, 1.0)) +
+  scale_x_discrete(NULL, labels = c("0", "2 weeks")) +
   theme_classic() +
   theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   scale_color_manual(values = c("#240e31", "#cb6bce")) +
@@ -122,15 +123,15 @@ pp_dem_a <- pp_dem |>
   labs(color = NULL)
 
 pp_dem_b <- pp_dem |> 
-  filter(contrast == "Female vs. Male") |> 
+  filter(contrast == "Female vs. Male" & lag %in% c(0, 336)) |> 
+  mutate(lag = factor(lag),
+         contrast = "Sex at birth") |> 
   ggplot() + 
   geom_point(aes(x = lag, y = pp_median, color = group)) +
-  geom_line(aes(x = lag, y = pp_median, color = group)) +
   geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = group)) +
   facet_wrap(~ contrast) +
   scale_y_continuous(NULL, limits = c(.50, 1.0)) +
-  scale_x_continuous("Model Lag (Hours)", breaks = c(0, 24, 72, 168, 336), 
-                     labels = c("0", "24", "72", "168", "336")) +
+  scale_x_discrete("Model Lag", labels = c("0", "2 weeks")) +
   theme_classic() +
   theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   scale_color_manual(values = c("#240e31", "#cb6bce")) +
@@ -138,15 +139,15 @@ pp_dem_b <- pp_dem |>
   labs(color = NULL)
 
 pp_dem_c <- pp_dem |> 
-  filter(contrast == "Below Poverty vs. Above Poverty") |> 
+  filter(contrast == "Below Poverty vs. Above Poverty" & lag %in% c(0, 336)) |> 
+  mutate(lag = factor(lag),
+         contrast = "Income") |> 
   ggplot() + 
   geom_point(aes(x = lag, y = pp_median, color = group)) +
-  geom_line(aes(x = lag, y = pp_median, color = group)) +
   geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = group)) +
   facet_wrap(~ contrast) +
   scale_y_continuous(NULL, limits = c(.50, 1.0)) +
-  scale_x_continuous(NULL, breaks = c(0, 24, 72, 168, 336), 
-                     labels = c("0", "24", "72", "168", "336")) +
+  scale_x_discrete(NULL, labels = c("0", "2 weeks")) +
   theme_classic() +
   theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   scale_color_manual(values = c("#240e31", "#cb6bce")) +
@@ -154,7 +155,7 @@ pp_dem_c <- pp_dem |>
   labs(color = NULL)
 
 fig_2b <- pp_dem_a + pp_dem_b + pp_dem_c + plot_layout(guides = "collect") &
-  theme(legend.position = "bottom") 
+  theme(legend.position = "bottom", legend.direction = "vertical") 
 
 fig_2 <- (fig_2a / fig_2b) &
   plot_annotation(tag_levels = "A")
@@ -163,7 +164,7 @@ fig_2 <- (fig_2a / fig_2b) &
 
 ```{r}
 #| label: fig-2
-#| fig-cap: "Panel A in displays the median posterior probability for area under ROC curve (auROC) and 95% Bayesian CI for each lagged model (0, 24, 72, 168, 336 hours). Dashed line represents a random classifier with an auROC of .5. Panels B-D display the median auROC and Bayesian credible interval by model and fairness contrast. The darker lines represent the advantaged groups (White, male, above poverty) and the lighter lines represent the disadvantaged groups (not-White, female, below poverty). Dashed line represents a random classifier with an auROC of .5."
+#| fig-cap: "Panel A displays the median posterior probability for area under ROC curve (auROC) and 95% Bayesian CI for each lagged model (0, 1-day, 3-day, 1-week, and 2-week lag). Dashed line represents a random classifier with an auROC of .5. Panels B-D display the median auROC and Bayesian credible interval for the 0 and 2-week lag models by fairness contrast. The darker lines represent the advantaged groups (non-Hispanic White, male, above poverty) and the lighter lines represent the disadvantaged groups (not White, female, below poverty). Dashed lines represent a random classifier with an auROC of .5."
 #| fig-width: 8
 #| fig-height: 6
 
@@ -171,3 +172,13 @@ fig_2
 ```
 
 
+## Figure 3: Global and Local Shapley Plots
+<!--three panel figure for global and local shapley plots for 0 and 336 lag-->
+```{r}
+#| label: fig-3
+#| fig-cap: "Panel A diplays"
+#| fig-width: 8
+#| fig-height: 6
+
+fig_3 
+```

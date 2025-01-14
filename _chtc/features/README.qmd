@@ -1,3 +1,10 @@
+Version 1 - uses features from v5 of ema study for 1 week labels without label hour or day and with income and employment demographic feats
+
+Version 2 - uses features from v5 of ema study but with 6 hour exclusions instead of 24 hour
+
+Version 3 - uses features from v5 of ema study for 1 day labels without label hour and with income and employment demographic feats
+
+
 The scripts in this folder are used to create features for the lag study.  Follow these steps
 
 1. Edit `lead_hours` and `version` (if needed) in both `mak_jobs.R` and `mak_features_chtc.R`
@@ -17,7 +24,7 @@ The scripts in this folder are used to create features for the lag study.  Follo
   - `ls error/error_* -lSr` to confirm that all error files are empty/0k in size. This will sort from smallest to largest so you can easily see any non-zero files.  Investigate contents if they exist. 
 
 8. Combine and check individual feature files into one aggregate file: `batch_features.csv`.  
-- `head -n +1 features_*_1_300.csv > batch_features.csv; ls features*.csv | xargs awk 'FNR>1' >> batch_features.csv` combines the files into one file.
+- `head -n +1 results/features_*_1_300.csv > batch_features.csv; ls results/features*.csv | xargs awk 'FNR>1' >> batch_features.csv` combines the files into one file.
 - `cat batch_features.csv | wc -l` makes sure there is data in the file you created.
 
 9. FTP `batch_features.csv` back to server in the output folder.  FTP the job log file back to the output folder as well.

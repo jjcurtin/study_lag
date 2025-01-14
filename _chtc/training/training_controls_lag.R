@@ -1,13 +1,12 @@
 # Training controls for lag study
 
 # NOTES------------------------------
-# Batches will be made based on lead and algorithm
+# V1 features - 6 hour fence, 1 week window
 # xgboost 0 lead (done)
 # xgboost 24 lead (done)
 # xgboost 72 lead (done)
 # xgboost 168 lead (done)
 # xgboost 336 lead (done)
-# additional xgboost batch made for no resampling since didnt originally include (done)
 
 # glmnet 0 lead (done)
 # glmnet 24 lead (done)
@@ -21,30 +20,37 @@
 # rda 168 lead (done)
 # rda 336 lead (done)
 
-# neural 0 lead (CY running)
+# neural 0 lead (done)
 # neural 24 lead (done)
 # neural 72 lead (batch made)
 # neural 168 lead (batch made)
 # neural 336 lead (batch made)
 
-# Xgboost V1 features - 24 hour fence
+# Xgboost V1 features - 24 hour fence, 1 week window
 # xgboost 0 lead (done)
-# xgboost 24 lead (KW running)
-# xgboost 72 lead (KW running)
-# xgboost 168 lead (KW running)
-# xgboost 336 lead (KW running)
+# xgboost 24 lead (done)
+# xgboost 72 lead (done)
+# xgboost 168 lead (done)
+# xgboost 336 lead (done)
+
+# Xgboost V3 features - 24 hour fence, 1 day window
+# xgboost 0 lead (KW running)
+# xgboost 24 lead (batch made)
+# xgboost 72 lead (batch made)
+# xgboost 168 lead (batch made)
+# xgboost 336 lead 
 
 
 # SET GLOBAL PARAMETERS--------------------
 study <- "lag"
-window <- "1week"
+window <- "1day"
 lead <- 336
-version <- "v1" #feature version (v1 = 24 hour fence, v2 = 6 hour fence)
+version <- "v3" #feature version (v1 = 24 hour fence, v2 = 6 hour fence, v3 = 1day/24 hour fence)
 algorithm <- "xgboost"
 model <- "main"
 
 feature_set <- c("all") # EMA Features set names
-data_trn <- str_c("features_", lead, "lag_", version, ".csv.xz")  
+data_trn <- str_c("features_", lead, "lag_", version, ".csv")  
 
 seed_splits <- 102030
 
@@ -54,7 +60,8 @@ configs_per_job <- 50 # number of model configurations that will be fit/evaluate
 # RESAMPLING FOR OUTCOME-----------------------------------
 # note that ratio is under_ratio, which is used by downsampling as is
 # It is converted to  overratio (1/ratio) for up and smote
-resample <- c("none", "up_1", "up_2", "down_1", "down_2") # only sample 1-2 and none for week (lapse base rate = 25%)
+resample <- c("none", "up_1", "up_2", "up_3", "up_4", "up_5", 
+              "down_1", "down_2", "down_3", "down_4", "down_5") # only sample 1-2 and none for week (lapse base rate = 25%)
 # Note: I started testing SMOTE but the disk and memory requirements were so drastically
 # different these will need to be run as separate batch IF we want to look at performance with SMOTE
 
