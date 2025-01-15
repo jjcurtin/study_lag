@@ -211,10 +211,13 @@ subids <- unique(dates$subid)
 Make labels with 1 day window duration and `r params$lag` lag.    
 Labels will start at midnight on start day + 24 hours + lag hours
 ```{r future_map}   
+buffer = 24 +lag
+
 labels <- subids |> 
-    future_map_dfr(\(subid) get_lapse_labels(subid, lapses, dates, 
-                                    buffer_start = 60 * 60 * (24 + lag), window_dur = 86400)) |>  # window_dur is 1 day
-    glimpse()
+  future_map_dfr(\(subid) get_lapse_labels(subid, lapses, dates, 
+                                    buffer_start = 60 * 60 * buffer, 
+                                    window_dur = 86400)) |>  # window_dur is 1 day
+  glimpse()
 ```
 
 Return to sequential processing
