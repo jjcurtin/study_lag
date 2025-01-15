@@ -38,7 +38,7 @@
 # xgboost 24 lead (batch made)
 # xgboost 72 lead (batch made)
 # xgboost 168 lead (batch made)
-# xgboost 336 lead 
+# xgboost 336 lead (batch made)
 
 
 # SET GLOBAL PARAMETERS--------------------
