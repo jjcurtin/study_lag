@@ -11,9 +11,9 @@ format:
     embed-resources: true
 params:
   study: "lag"
-  window: "1week"
+  window: "1day"
   lead: 0
-  version: "v1"
+  version: "v3"
   cv: "nested"
   model: "main" # "main" or "baseline"
 editor_options: 
@@ -95,13 +95,7 @@ Function to fit, predict, and calc metrics and preds
 ```{r function_2}
 fit_predict_eval <- function(split_num, splits, configs_best){
 
-  # write tmp file to repo to track progress through loop
-  # delete this file when script is complete.  
-  write_csv(tibble(stage = "eval",
-                   outer_split_num = split_num, 
-                   start_time = Sys.time()),
-            here::here(path_models, str_c("tmp_metrics_outer_progress_", window)),
-            append = TRUE)
+
   
   d_in <- training(splits$splits[[split_num]]) |> 
     select(-id_obs)  # not used for training; only needed in d_out to tag for later joins 
@@ -126,33 +120,8 @@ fit_predict_eval <- function(split_num, splits, configs_best){
   feat_out <- rec_prepped |> 
     bake(new_data = d_out)   # no id_obs because not included in d_in
   
-  # metrics from raw (uncalibrated) predictions for held out fold
   preds_prob <- predict(model_best, feat_out,
                         type = "prob")
-  preds_class <- predict(model_best, feat_out, type = "class")$.pred_class
-
-  roc <- tibble(truth = feat_out$y, 
-                prob = preds_prob[[str_c(".pred_", y_level_pos)]]) %>% 
-      roc_auc(prob, truth = truth, event_level = "first") %>% 
-      select(metric = .metric, 
-             estimate = .estimate)
-  
-  cm <- tibble(truth = feat_out$y, estimate = preds_class) %>% 
-    conf_mat(truth, estimate)
-    
-  metrics_out <- cm |> 
-    summary(event_level = "first") |>   
-    select(metric = .metric,
-           estimate = .estimate) |> 
-    filter(metric %in% c("sens", "spec", "ppv", "npv", "accuracy", "bal_accuracy")) |> 
-    suppressWarnings() |>  # warning not about metrics we are returning
-    bind_rows(roc) |> 
-    pivot_wider(names_from = "metric", values_from = "estimate") |>    
-    relocate(roc_auc, sens, spec, ppv, npv, accuracy, bal_accuracy) |> 
-    bind_cols(config_best) |>
-    relocate(outer_split_num, algorithm, feature_set, hp1, hp2, hp3, 
-             resample) |> 
-    relocate(accuracy_in, bal_accuracy_in, .after = last_col())
 
   if (model != "baseline") {
     # train calibration model train/test split on held in data
@@ -214,8 +183,7 @@ fit_predict_eval <- function(split_num, splits, configs_best){
                                 "Lapse" = "yes"))
   
 
-    return(list(probs_out = probs_out, 
-                metrics_out = metrics_out)) 
+    return(list(probs_out = probs_out)) 
 
   } else {
     probs_out <- tibble(id_obs = d_out$id_obs,
@@ -224,8 +192,7 @@ fit_predict_eval <- function(split_num, splits, configs_best){
                         label = d_out$y) |> 
     mutate(label = fct_recode(label, "No lapse" = "no",
                                 "Lapse" = "yes"))
-    return(list(probs_out = probs_out, 
-                metrics_out = metrics_out))
+    return(list(probs_out = probs_out))
   }
 }
 ```
@@ -285,7 +252,7 @@ Map over all outer splits to get predicted probabilities, metrics, and SHAPs fro
 
 NOTE: Delete `outer_metrics_*` or this code chunk won't run!
 ```{r eval_outer_folds}
-if(!file.exists(here::here(path_models, str_c("outer_metrics_dem_6_x_5_", 
+if(!file.exists(here::here(path_models, str_c("outer_preds_dem_6_x_5_", 
                                   window, "_", lead, "_", version, "_", 
                                   cv, "_", model, ".rds")))){ 
   
@@ -335,23 +302,7 @@ if(!file.exists(here::here(path_models, str_c("outer_metrics_dem_6_x_5_",
   
   
   rm(splits)  # save a bit of memory!
-  
-  write_csv(tibble(stage = "metrics_save",
-                   outer_split_num = NA, 
-                   start_time = Sys.time()),
-            here::here(path_models, str_c("tmp_metrics_outer_progress_", window)),
-            append = TRUE)
-  metrics_out <- all |> 
-    map(\(l) pluck(l, "metrics_out")) |> 
-    list_rbind() |> 
-    write_rds(here::here(path_models, str_c("outer_metrics_dem_6_x_5_", 
-                                           window, "_", lead, "_", version, "_", 
-                                           cv, "_", model, ".rds")))
-  write_csv(tibble(stage = "probs_save",
-                   outer_split_num = NA, 
-                   start_time = Sys.time()),
-            here::here(path_models, str_c("tmp_metrics_outer_progress_",window)),
-            append = TRUE)  
+
   probs_out <- all |> 
     map(\(l) pluck(l, "probs_out")) |> 
     list_rbind() |> 
@@ -359,42 +310,16 @@ if(!file.exists(here::here(path_models, str_c("outer_metrics_dem_6_x_5_",
                                            window, "_", lead, "_", version, "_", 
                                            cv, "_", model, ".rds")))
 
-    write_csv(tibble(stage = "shaps_save",
-                   outer_split_num = NA, 
-                   start_time = Sys.time()),
-            here::here(path_models, str_c("tmp_metrics_outer_progress_", window)),
-            append = TRUE)    
+     
     
 } else {
   message("Resampled performance from nested CV previously calculated")
   
-  metrics_out <- read_rds(here::here(path_models, str_c("outer_metrics_", 
+  probs_out <- read_rds(here::here(path_models, str_c("outer_preds_dem_6_x_5_", 
                                                        window, "_", lead, "_", 
                                                        version, "_", 
                                                        cv, "_", model, ".rds")))
 }
 ```
 
-
-### Final Review performance eval from outer loop
-
-Done more in depth later script but here is a quick look
-```{r print_metrics}
-metrics_out |> 
-  print_kbl()
-
-metrics_out |> 
-  summarize(median(roc_auc), mean(roc_auc), min(roc_auc), max(roc_auc))
-
-metrics_out |> 
-  ggplot(aes(x = roc_auc)) +
-  geom_histogram(bins = 10)
-```
-
-```{r}
-# delete tracking file
-if(file.exists(here::here(path_models, str_c("tmp_metrics_outer_progress_", window)))) {
-  file.remove(here::here(path_models, str_c("tmp_metrics_outer_progress_", window)))
-}
-```
 

@@ -44,7 +44,7 @@
 # SET GLOBAL PARAMETERS--------------------
 study <- "lag"
 window <- "1day"
-lead <- 336
+lead <- 0
 version <- "v3" #feature version (v1 = 24 hour fence, v2 = 6 hour fence, v3 = 1day/24 hour fence)
 algorithm <- "xgboost"
 model <- "main"
@@ -69,7 +69,7 @@ resample <- c("none", "up_1", "up_2", "up_3", "up_4", "up_5",
 # tar <- c("train.tar.gz") # name of tar packages for submit file - does not transfer these anywhere 
 max_idle <- 1000
 request_cpus <- 1 
-request_memory <- "50000MB"
+request_memory <- "30000MB"
 request_disk <- "1600MB"
 flock <- TRUE
 glide <- TRUE

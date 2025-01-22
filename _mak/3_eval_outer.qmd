@@ -12,10 +12,10 @@ format:
 params:
   study: "lag"
   cv: "nested"
-  window: "1week"
+  window: "1day"
   model: "main" # Note this should always be "main" - baseline models have separate outer script
-  lead: 336
-  version: "v1"
+  lead: 0
+  version: "v3"
 editor_options: 
   chunk_output_type: console
 ---
@@ -101,7 +101,7 @@ options(tibble.print_max = Inf)
 preds_out <- read_rds(here::here(path_models, str_c("outer_preds_", window, "_", 
                                                     lead, "_", version, "_", 
                                                     cv, "_", model, ".rds")))
-metrics_out <- read_rds(here::here(path_models, str_c("outer_metrics_", window, "_", 
+metrics_in <- read_csv(here::here(path_models, str_c("inner_metrics_", window, "_", 
                                                       lead, "_", version, "_", 
                                                     cv, "_", model, ".rds")))
 ```
@@ -113,9 +113,7 @@ Best model configurations were selected using the median AUCs across 10 inner fo
 This comes from metrics_out validation sets.  Only used for auROC in validation sets
 
 ```{r}
-metrics_out |> glimpse()
-
-metrics_out |> 
+metrics_in |> 
   summarize(median(roc_auc_in), mean(roc_auc_in), min(roc_auc_in), max(roc_auc_in), sd(roc_auc_in))
 ```
 
@@ -124,85 +122,37 @@ metrics_out |>
 
 This calculates auROC and other metrics using test sets (out loop held out folds).  The metrics also use probability corrected (prob_beta) probabilities.
 
-First get auROCs 
+
 ```{r}
-auroc <- preds_out %>%
+metrics_test <- preds_out %>%
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_beta, 
                                              truth = label))) |> 
   select(-preds) |> 
   unnest(auroc) |> 
-  select(-.estimator)
+  select(outer_split_num, roc_auc = .estimate)
 ```
 
-And then secondary metrics
-```{r}
-# function to get  other metrics at Youdens j
-get_other_metrics <- function(preds) {
-  
-  j_thres <- preds |>  
-    roc_curve(prob_beta, truth = label) |> 
-    mutate(j = sensitivity + specificity - 1) |>
-    slice_max(j) |>
-    pull(.threshold)
-  
-  split_num <- preds |> 
-    pull(outer_split_num) |> 
-    head(1)  
-  
-  preds |>
-    mutate(estimate = if_else(prob_beta > j_thres, "Lapse", "No lapse"),
-           estimate = factor(estimate, levels = c("Lapse", "No lapse"))) |>
-    conf_mat(truth = label, estimate = estimate) |>
-    summary() |>
-    select(-.estimator) |>
-    filter(.metric %in% c("sens", "spec", "ppv", "npv", "bal_accuracy")) |>
-    mutate(outer_split_num = split_num) |> 
-    relocate(outer_split_num, .metric, .estimate)
-}
 
-other_metrics <- preds_out |>  
-  mutate(split_num = outer_split_num) |> # need to have it in preds
-  nest(.by = split_num, .key = "preds") |> 
-  mutate(metrics = map(preds, \(preds) get_other_metrics(preds))) |>  
-  select(-preds) |> 
-  unnest(metrics) |> 
-  select(-split_num)
-```
-
-Bind and save
-```{r}
-metrics_test <- auroc |> 
-  bind_rows(other_metrics) |>
-  arrange(outer_split_num) |> 
-  write_csv(here::here(path_models, str_c("test_metrics_", window, "_", 
-                                                      lead, "_", version, "_", 
-                                                      cv, ".csv")))  
-```
-
-Median metric stats
+Median auROC
 ```{r}
 metrics_test |> 
-  group_by(.metric) |> 
-  summarize(median = median(.estimate), IQR = IQR(.estimate))
+  summarize(median = median(roc_auc), IQR = IQR(roc_auc))
 ```
 
-Mean metric stats
+Mean auROC
 ```{r}
 metrics_test |> 
-  group_by(.metric) |> 
-  summarize(mean = mean(.estimate), sd = sd(.estimate))
+  summarize(mean = mean(roc_auc), sd = sd(roc_auc))
 ```
 
 Table for each outer fold
 ```{r metrics_out_kbl}
-metrics_test |>
-  pivot_wider(names_from = .metric,
-              values_from = .estimate) |> 
-  print_kbl()
+metrics_test
 ```
 
 #### ROC curve
+
 - This is single ROC by concatenating all outer folds.
 - Could consider reporting this AUC though likely median/mean of outer fold AUCs is more appropriate
 -Could also plot ROC by fold but maybe too confusing?
@@ -285,87 +235,6 @@ preds_out %>%
 ```
 
 
-#### Confusion matrices based on concatenated test folds
-
-Confusion matrix using .5 threshold
-```{r default_cm}
-(cm <- preds_out |> 
-   mutate(estimate = if_else(prob_beta > .5, "Lapse", "No lapse"),
-          estimate = factor(estimate, levels = c("Lapse", "No lapse"))) |> 
-   conf_mat(truth = label, estimate = estimate))
-
-cm %>% 
-  autoplot() +
-  theme(axis.text = element_text(size = rel(1.50)), 
-        axis.title = element_text(size = rel(1.75)))
-
-cm %>% summary()
-
-# save plot for presentations
-# ggsave(file.choose(), width = 7.5, height = 6.5, units = "in", device = "png",  dpi = 100)
-```
-
-
-Confusion matrix at optimal cut-point (based on Youdens J index)
-
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1444894/
-https://pubmed.ncbi.nlm.nih.gov/15405679/
-
-```{r youden_cm}
-j_thres_roc <- roc_data |> 
-  mutate(j = sensitivity + specificity - 1) |> 
-  slice_max(j) |> 
-  print() |> 
-  pull(.threshold)
-
-(cm <- preds_out |> 
-   mutate(estimate = if_else(prob_beta > j_thres_roc, "Lapse", "No lapse"),
-          estimate = factor(estimate, levels = c("Lapse", "No lapse"))) |> 
-   conf_mat(truth = label, estimate = estimate))
-
-cm %>% 
-  autoplot() +
-  theme(axis.text = element_text(size = rel(1.50)), 
-        axis.title = element_text(size = rel(1.75)))
-
-cm %>% summary()
-```
-
-#### PR Curve
-Here is precision/recall by concatenating all folds.  Same approach as above for ROC
-```{r pr_info}
-preds_out %>%
-  pr_auc(prob_beta, truth = label)
-
-pr_data <- preds_out %>% 
-  pr_curve(prob_beta, truth = label)
-
-pr_data %>% 
-  ggplot(aes(x = recall, y = precision, color = .threshold)) +
-  geom_path(linewidth = 2) +
-  geom_hline(lty = 3, yintercept = mean(preds_out$label == "Lapse")) +
-  coord_fixed(xlim = c(0, 1), ylim = c(0, 1)) +
-  scale_color_gradient(low="blue", high="red") +
-  labs(x = "Recall (Sensitivity)",
-       y = "Precision (PPV)")
-```
-
-Sensitivity at min PPV of .7
-```{r}
-pr_data |> 
-  filter(precision >= .7) |> 
-  arrange(desc(recall)) |> 
-  slice(1) |> 
-  print()
-```
-
-Sensitivity at best F
-```{r}
-f <- pr_data |> 
-  mutate(f =  (2 * precision * recall) / (precision + recall)) |> 
-  slice_max(f) |> 
-  print()
-```
 
 
 ### Feature Importance
