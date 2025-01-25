@@ -9,6 +9,8 @@ format:
     embed-resources: true
     toc: true 
     toc_depth: 5
+execute:
+  echo: false
 editor_options: 
   chunk_output_type: console
 ---
@@ -472,7 +474,7 @@ panel_shap_local_0 <- shap_feat_0 |>
   ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
   geom_hline(yintercept = 0) +
   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (0 Hour Lag)") +
+  ylab("Shapley Value (No lag)") +
   xlab(NULL) +
   scale_color_gradientn(colors = c("#240e31", "#cb6bce"),
                         breaks = c(.1, .9),
@@ -490,7 +492,7 @@ panel_shap_local_24 <- shap_feat_24 |>
   ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
   geom_hline(yintercept = 0) +
   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (24 Hour Lag)") +
+  ylab("Shapley Value (1-day lag)") +
   xlab(NULL) +
   scale_color_gradientn(colors = c("#240e31", "#922488"),
                         breaks = c(.1, .9),
@@ -508,7 +510,7 @@ panel_shap_local_72 <- shap_feat_72 |>
   ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
   geom_hline(yintercept = 0) +
   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (72 Hour Lag)") +
+  ylab("Shapley Value (3-day lag)") +
   xlab(NULL) +
   scale_color_gradientn(colors = c("#240e31", "#458892"),
                         breaks = c(.1, .9),
@@ -526,7 +528,7 @@ panel_shap_local_168 <- shap_feat_168 |>
   ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
   geom_hline(yintercept = 0) +
   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (168 Hour Lag)") +
+  ylab("Shapley Value (1-week lag)") +
   xlab(NULL) +
   scale_color_gradientn(colors = c("#240e31", "#75f3d3"),
                         breaks = c(.1, .9),
@@ -545,7 +547,7 @@ panel_shap_local_336 <- shap_feat_336 |>
   ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
   geom_hline(yintercept = 0) +
   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (336 Hour Lag)") +
+  ylab("Shapley Value (2-week lag)") +
   xlab(NULL) +
   scale_color_gradientn(colors = c("#240e31", "#f9e79f"),
                         breaks = c(.1, .9),

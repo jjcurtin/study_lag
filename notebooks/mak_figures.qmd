@@ -14,6 +14,8 @@ format:
     toc-depth: 4
 editor_options: 
   chunk_output_type: console
+execute:
+  echo: false
 html-table-processing: none
 ---
 
@@ -83,7 +85,7 @@ fig_2a <- test_metrics_all_pp_perf |>
   geom_segment(mapping = aes(x = model_numeric, y = pp_lower, yend = pp_upper)) +
   scale_y_continuous("auROC", limits = c(.50, 1.0)) +
   scale_x_continuous("Model Lag", breaks = c(0, 24, 72, 168, 336), 
-                     labels = c("0", "1 day", "3 days", "1 week",
+                     labels = c("No lag", "1 day", "3 days", "1 week",
                                 "2 weeks")) +
   theme_classic() +
   theme(legend.position = "none",
@@ -128,7 +130,7 @@ pp_dem_a <- pp_dem |>
   geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = group)) +
   facet_wrap(~ contrast) +
   scale_y_continuous("auROC", limits = c(.50, 1.0)) +
-  scale_x_discrete(NULL, labels = c("0", "2 weeks")) +
+  scale_x_discrete(NULL, labels = c("No lag", "2 weeks")) +
   theme_classic() +
   theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   scale_color_manual(values = c("#240e31", "#cb6bce")) +
@@ -144,7 +146,7 @@ pp_dem_b <- pp_dem |>
   geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = group)) +
   facet_wrap(~ contrast) +
   scale_y_continuous(NULL, limits = c(.50, 1.0)) +
-  scale_x_discrete("Model Lag", labels = c("0", "2 weeks")) +
+  scale_x_discrete("Model Lag", labels = c("No lag", "2 weeks")) +
   theme_classic() +
   theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   scale_color_manual(values = c("#240e31", "#cb6bce")) +
@@ -160,7 +162,7 @@ pp_dem_c <- pp_dem |>
   geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = group)) +
   facet_wrap(~ contrast) +
   scale_y_continuous(NULL, limits = c(.50, 1.0)) +
-  scale_x_discrete(NULL, labels = c("0", "2 weeks")) +
+  scale_x_discrete(NULL, labels = c("No lag", "2 weeks")) +
   theme_classic() +
   theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   scale_color_manual(values = c("#240e31", "#cb6bce")) +
@@ -258,7 +260,7 @@ panel_shap_local_336 <- shap_feat_336 |>
 #| label: fig-3
 #| fig-cap: "Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B-C display the local feature importance for the no lag and 2-week lag models, respectively."
 #| fig-width: 8
-#| fig-height: 6
+#| fig-height: 5
 
 global_panel + panel_shap_local_0 + panel_shap_local_336  + 
   plot_annotation(tag_levels = "A") 

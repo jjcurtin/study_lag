@@ -138,7 +138,7 @@ batch_name <- batch_names[str_detect(batch_names, "train") &
 
 source(here::here(path_input, batch_name, "input", "training_controls.R"))
                     
-d <- read_csv(here::here(path_batch, "input", "data_train.csv"), 
+d <- read_csv(here::here(path_batch, "input", "data_trn.csv"), 
               show_col_types = FALSE) 
 
 d <- format_data(d) |> 
@@ -155,61 +155,94 @@ splits <- d |>
 
 Fit model and get beta probabilities for split 27
 ```{r function_2}
+
+split_num <- 27
+
 d_in <- training(splits$splits[[split_num]]) |> 
-    select(-id_obs)  # not used for training; only needed in d_out to tag for later joins 
-  d_out <- testing(splits$splits[[split_num]])
+    select(-id_obs) 
   
-  config_best <- configs_best |> 
-    slice(split_num) |> 
-    rename(n_jobs_in = n_jobs, accuracy_in = accuracy, 
-           bal_accuracy_in = bal_accuracy,
-           roc_auc_in = roc_auc, sens_in =  sens, spec_in = spec, 
-           ppv_in = ppv, npv_in = npv)
+d_out <- testing(splits$splits[[split_num]])
+  
+config_best <- configs_best |> 
+  slice(split_num)
     
-  rec <- build_recipe(d = d_in, config = config_best)
-  rec_prepped <- rec |> 
-    prep(training = d_in, strings_as_factors = FALSE)
+rec <- build_recipe(d = d_in, config = config_best)
   
-  feat_in <- rec_prepped |> 
-    bake(new_data = NULL)
+rec_prepped <- rec |> 
+  prep(training = d_in, strings_as_factors = FALSE)
   
-  model_best <- fit_best_model(config_best, feat = feat_in, "classification")
+feat_in <- rec_prepped |> 
+  bake(new_data = NULL)
   
-  feat_out <- rec_prepped |> 
-    bake(new_data = d_out)   # no id_obs because not included in d_in
+model_best <- fit_best_model(config_best, feat = feat_in, "classification")
+  
+feat_out <- rec_prepped |> 
+  bake(new_data = d_out)   # no id_obs because not included in d_in
     
-  preds_prob <- predict(model_best, feat_out,
-                        type = "prob")
+preds_prob <- predict(model_best, feat_out,
+                      type = "prob")
 
 
-  # train calibration model train/test split on held in data
+# train calibration model train/test split on held in data
 
-  set.seed(2468)
-  cal_split <- d_in |> 
-    group_initial_split(group = all_of(cv_group), prop = 3/4)
-  d_cal_in <- training(cal_split) 
-  d_cal_out <- testing(cal_split)
+set.seed(2468)
+cal_split <- d_in |> 
+  group_initial_split(group = all_of(cv_group), prop = 3/4)
+
+d_cal_in <- training(cal_split) 
   
-  feat_cal_in <- rec |> 
-      prep(training = d_cal_in, strings_as_factors = FALSE) %>% 
-      bake(new_data = NULL) 
+d_cal_out <- testing(cal_split)
   
-  feat_cal_out <- rec |>
-      prep(training = d_cal_in, strings_as_factors = FALSE) %>% 
-      bake(new_data = d_cal_out) 
+feat_cal_in <- rec |> 
+    prep(training = d_cal_in, strings_as_factors = FALSE) %>% 
+    bake(new_data = NULL) 
+  
+feat_cal_out <- rec |>
+    prep(training = d_cal_in, strings_as_factors = FALSE) %>% 
+    bake(new_data = d_cal_out) 
 
     
-  model_cal <- fit_best_model(config_best, feat = feat_cal_in, "classification")
+model_cal <- fit_best_model(config_best, feat = feat_cal_in, "classification")
   
 
-  # beta calibration
-  beta <- predict(model_cal, feat_cal_out,
-                   type = "prob") |>
-      mutate(truth = feat_cal_out$y) |>
+# beta calibration
+beta <- predict(model_cal, feat_cal_out,
+                type = "prob") |>
+   mutate(truth = feat_cal_out$y) 
+
+
+# new way
+beta_model <- betacal::beta_calibration(p = beta$.pred_yes,
+                          y = beta$truth) 
+
+preds_prob_beta <- betacal::beta_predict(p = preds_prob$.pred_yes,
+                                    calib = beta_model) |> 
+  enframe(name = NULL,value = ".pred_yes")
+
+
+# old way
+beta_model_old <- beta |>
       cal_estimate_beta(truth = truth,
                              estimate = dplyr::starts_with(".pred_"),
                              smooth = TRUE)
-  preds_prob_beta <- preds_prob |>
-      cal_apply(beta)
+
+preds_prob_beta_old <- preds_prob |>
+      cal_apply(beta_model_old)
+
+# third way
+
+beta_probs <- function(x, model) {
+  alpha <- model$alpha
+  beta <- model$beta
+  intercept <- model$intercept
+  
+  # Calibrate probabilities
+  stats::pbeta(x, alpha, beta) ^ (1 / (1 + exp(-intercept)))
+}
+
+# Calibrate the probabilities
+preds_prob$preds_beta <- beta_probs(preds_prob$.pred_yes, beta_model_old)
 ```
 
+
+Testing above matches other method for beta calibration in split that worked

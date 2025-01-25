@@ -15,36 +15,22 @@ params:
   lead: 336
   version: "v3"
   cv: "nested"
-  model: "main" # "main" or "baseline"
+  model: "main" # "main" or "dem"
 editor_options: 
   chunk_output_type: console
 ---
 
 ### Code Status
 
-In use for EMA study
+In use for Lag study
 
 ### Notes
-This script reads in CHTC performance metrics from the inner loops of CV, selects the best model configuration for each outer loop, trains those models and predicts into the outer held-out folds.  Returns metrics, predictions (probabilities) and SHAPs
+This script reads in CHTC performance metrics from the inner loops of CV, selects the best model configuration for each outer loop, trains those models and predicts into the outer held-out folds.  It returns raw and calibrated predicted probabilities. AuROCs based on calibrated probabilities are also returned.
 
 This script creates the following files in the `models` folder
 
 * outer_preds_*.rds
-* outer_shaps_*.rds
-* outer_shapsgrp_*.rds
-
-where * = window_lead_version_cv
-
-
-### To Do
-
-SHAPS
-
-* We get SHAPS in this script with 30 outer folds (3x10fold).   It will be SHAPS from different models BUT they are currently all XGBoost and regardless, SHAP could work with any algorithm.  We could ALSO average across same person for 3 repeats or just have 3x sample size SHAPs for each feature.  We choose to **average across repeats**.  
-
-* Could get SHAPS when we did simple 3x10-fold on full sample to figure out the ONE best configuration.  First run on CHTC to get best config.  Then use that best config to predict into 30  held out folds and combine.
-
-* Could train that ONE best config on full sample and use it for SHAPS in the full sample.   
+* test_auroc_*.csv
 
 
 
@@ -111,62 +97,10 @@ options(tibble.print_max = Inf)
 
 ### Script Functions
 
-Function to clean up poor choices for feature names for SHAPs!!
-```{r function_1}
-clean_feature_names <- function(feat_name){
-  new_name <- gsub(".l0", "", feat_name)
-  new_name <- gsub("rratecount.count", "raw_count", new_name)
-  new_name <- gsub("dratecount.count", "diff_count", new_name)
-  new_name <- gsub("drecent_response", "diff_recent", new_name)
-  new_name <- gsub("rrecent_response", "raw_recent", new_name)
-  new_name <- gsub("dmin_response", "diff_min", new_name)
-  new_name <- gsub("rmin_response", "raw_min", new_name)
-  new_name <- gsub("dmax_response", "diff_max", new_name)
-  new_name <- gsub("rmax_response", "raw_max", new_name)
-  new_name <- gsub("dmedian_response", "diff_median", new_name)
-  new_name <- gsub("rmedian_response", "raw_median", new_name)
-  new_name <- gsub("label_", "", new_name)
-  new_name <- gsub("demo_", "", new_name)
-  new_name <- gsub("High.school.or.less", "high.school", new_name)
-  new_name <- gsub("Some.college", "some.college", new_name)
-  new_name <- gsub("Mon", "mon", new_name)
-  new_name <- gsub("Tue", "tue", new_name)
-  new_name <- gsub("Wed", "wed", new_name)
-  new_name <- gsub("Thu", "thu", new_name)
-  new_name <- gsub("Fri", "fri", new_name)
-  new_name <- gsub("Sat", "sat", new_name)
-  new_name <- gsub("Sun", "sun", new_name)
-  new_name <- gsub("Never.Married", "never.married", new_name)
-  new_name <- gsub("Never.Other", "never.other", new_name)
-  new_name <- gsub("White.Caucasian", "caucasian", new_name)
-  new_name <- gsub("Male", "male", new_name)
-  new_name <- gsub("p12.raw_count.lapse", "lapse.p12.raw_count", new_name)
-  new_name <- gsub("p24.raw_count.lapse", "lapse.p24.raw_count", new_name)
-  new_name <- gsub("p48.raw_count.lapse", "lapse.p48.raw_count", new_name)
-  new_name <- gsub("p72.raw_count.lapse", "lapse.p72.raw_count", new_name)
-  new_name <- gsub("p168.raw_count.lapse", "lapse.p168.raw_count", new_name)
-  new_name <- gsub("p12.diff_count.lapse", "lapse.p12.diff_count", new_name)
-  new_name <- gsub("p24.diff_count.lapse", "lapse.p24.diff_count", new_name)
-  new_name <- gsub("p48.diff_count.lapse", "lapse.p48.diff_count", new_name)
-  new_name <- gsub("p72.diff_count.lapse", "lapse.p72.diff_count", new_name)
-  new_name <- gsub("p168.diff_count.lapse", "lapse.p168.diff_count", new_name)
-  new_name <- gsub("p12.raw_count.ema", "missing.p12.raw_count", new_name)
-  new_name <- gsub("p24.raw_count.ema", "missing.p24.raw_count", new_name)
-  new_name <- gsub("p48.raw_count.ema", "missing.p48.raw_count", new_name)
-  new_name <- gsub("p72.raw_count.ema", "missing.p72.raw_count", new_name)
-  new_name <- gsub("p168.raw_count.ema", "missing.p168.raw_count", new_name)
-  new_name <- gsub("p12.diff_count.ema", "missing.p12.diff_count", new_name)
-  new_name <- gsub("p24.diff_count.ema", "missing.p24.diff_count", new_name)
-  new_name <- gsub("p48.diff_count.ema", "missing.p48.diff_count", new_name)
-  new_name <- gsub("p72.diff_count.ema", "missing.p72.diff_count", new_name)
-  new_name <- gsub("p168.diff_count.ema", "missing.p168.diff_count", new_name)
-  return(new_name) 
-}
-```
-
-Function to fit, predict, and calc metrics, preds, shaps
+Function to fit and predict
 ```{r function_2}
-fit_predict_eval <- function(split_num, splits, configs_best){
+fit_predict_eval <- function(split_num, splits, configs_best, 
+                             calibration == TRUE){
 
   # write tmp file to repo to track progress through loop
   # delete this file when script is complete.  
@@ -202,7 +136,7 @@ fit_predict_eval <- function(split_num, splits, configs_best){
   preds_prob <- predict(model_best, feat_out,
                         type = "prob")
 
-  if (model != "baseline") {
+  if (calibration == TRUE) {
     # train calibration model train/test split on held in data
     # Skip for baseline models
     set.seed(2468)
@@ -260,17 +194,7 @@ fit_predict_eval <- function(split_num, splits, configs_best){
                         label = d_out$y) |> 
       mutate(label = fct_recode(label, "No lapse" = "no",
                                 "Lapse" = "yes"))
-  
-    # SHAP in held out fold
-    shaps_out <- SHAPforxgboost::shap.prep(xgb_model = extract_fit_engine(model_best),
-                       X_train = feat_out |> select(-y) |>  as.matrix()) |>
-     # add id_obs by multiple of number of features
-      mutate(id_obs = rep(d_out$id_obs, times = ncol(feat_out) - 1),
-             split_num = split_num) |>
-      relocate(id_obs, split_num)
 
-    return(list(probs_out = probs_out, 
-                shaps_out = shaps_out))
   } else {
     probs_out <- tibble(id_obs = d_out$id_obs,
                         outer_split_num = rep(split_num, nrow(preds_prob)),
@@ -278,8 +202,9 @@ fit_predict_eval <- function(split_num, splits, configs_best){
                         label = d_out$y) |> 
     mutate(label = fct_recode(label, "No lapse" = "no",
                                 "Lapse" = "yes"))
-    return(list(probs_out = probs_out))
   }
+  
+  return(list(probs_out = probs_out))
 }
 
 ```
@@ -331,7 +256,7 @@ configs_best |>
   geom_histogram(bins = 10)
 ```
 
-### Fit best model for each outer fold and get/save preds, SHAPs
+### Fit best model for each outer fold and get/save preds
 
 Get data from ANY batch (all same) and make splits
 
@@ -345,9 +270,11 @@ Map over all outer splits to get predicted probabilities and SHAPs from held out
 
 NOTE: Delete `outer_metrics_*` or this code chunk won't run!
 ```{r eval_outer_folds}
-if(!file.exists(here::here(path_models, str_c("outer_metrics_", 
-                                  window, "_", lead, "_", version, "_", 
-                                  cv, "_", model, ".rds")))){ 
+if(!file.exists(here::here(path_models, str_c("outer_preds_", 
+                                              cv_outer_resample,
+                                              "_", window, "_", lead, "_", 
+                                              version, "_", cv, "_", model,
+                                              ".rds")))){ 
   
   # can source any training control given assumptions above
   batch_names <- list.dirs(path_input, full.names = FALSE, recursive = FALSE)
@@ -355,12 +282,10 @@ if(!file.exists(here::here(path_models, str_c("outer_metrics_",
                                str_detect(batch_names, cv) &
                                str_detect(batch_names, version) &
                                str_detect(batch_names, window) &
+                               str_detect(batch_names, model) &
                                str_detect(batch_names, 
                                           str_c(as.character(lead), "lag"))]
-    if (model == "main") {
-      batch_names <- batch_names[!str_detect(batch_names, "baseline")]
-    }
- 
+  
   batch_name <- batch_names[1] # can source any batch given assumptions above
   path_batch <- here::here(path_input, batch_name)
   source(here::here(path_batch, "input", "training_controls.R"))
@@ -384,6 +309,11 @@ if(!file.exists(here::here(path_models, str_c("outer_metrics_",
     arrange(label_num) |> 
     mutate(id_obs = 1:nrow(d))  # tmp add for linking obs
   
+  if (model == "dem") {
+    # update outer resampling splits
+    cv_outer_resample <- "6_x_5"
+  }
+  
   splits <- d %>% 
     make_splits(cv_resample_type, cv_resample, cv_outer_resample, 
                 cv_inner_resample, cv_group, seed_splits)
@@ -392,43 +322,13 @@ if(!file.exists(here::here(path_models, str_c("outer_metrics_",
     map(\(split_num) fit_predict_eval(split_num, splits, configs_best)) 
   
   
-  rm(splits)  # save a bit of memory!
-  
-  write_csv(tibble(stage = "probs_save",
-                   outer_split_num = NA, 
-                   start_time = Sys.time()),
-            here::here(path_models, str_c("tmp_metrics_outer_progress_",window)),
-            append = TRUE)  
   probs_out <- all |> 
     map(\(l) pluck(l, "probs_out")) |> 
     list_rbind() |> 
-    write_rds(here::here(path_models, str_c("outer_preds_", 
-                                           window, "_", lead, "_", version, "_", 
-                                           cv, "_", model, ".rds")))
-
-    write_csv(tibble(stage = "shaps_save",
-                   outer_split_num = NA, 
-                   start_time = Sys.time()),
-            here::here(path_models, str_c("tmp_metrics_outer_progress_", window)),
-            append = TRUE)    
-  if (model != "baseline") {
-    # Don't save out shapley values for baseline model
-    shaps_out <- all |>
-      map(\(l) pluck(l, "shaps_out")) |>
-      list_rbind() |>
-      # clean feature names;  See function above
-      mutate(variable = fct_relabel(variable, clean_feature_names)) |>
-      # average SHAP metrics across repeats for same id_obs
-      group_by(id_obs, variable) |>
-      summarize(value = mean(value),
-                # rfvalue is same across repeats but want included
-                rfvalue =  mean(rfvalue),
-                mean_value = mean(mean_value)) |>
-      write_rds(here::here(path_models, str_c("outer_shaps_",
-                                             window, "_", lead, "_", version, "_",
-                                             cv, "_", model, ".rds")))
-    }
-    
+    write_rds(here::here(path_models, str_c("outer_preds_", cv_outer_resample,
+                                           "_", window, "_", lead, "_", 
+                                           version, "_", cv, "_", model,
+                                           ".rds")))
 } else {
   message("Resampled performance from nested CV previously calculated")
   
@@ -436,21 +336,16 @@ if(!file.exists(here::here(path_models, str_c("outer_metrics_",
                                                      window, "_", lead, "_",
                                                      version, "_",
                                                      cv, "_", model, ".rds")))
-
-  if (model != "baseline") {
-    shaps_out <- read_rds(here::here(path_models, str_c("outer_shaps_",
-                                                     window, "_", lead, "_",
-                                                     version, "_",
-                                                     cv, "_", model, ".rds")))
-  }
 }
 ```
 
-Get test auROCs     
+Get test auROCs for main models    
+
 This calculates auROC using test sets (out loop held out folds). Uses probability corrected (prob_beta) probabilities.
 
 ```{r}
-metrics_test <- probs_out |> 
+if (model == "main") {
+ metrics_test <- probs_out |> 
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_beta, 
                                              truth = label))) |> 
@@ -458,129 +353,23 @@ metrics_test <- probs_out |>
   unnest(auroc) |> 
   select(outer_split_num, roc_auc = .estimate)
 
-metrics_test |> 
+ metrics_test |> 
   arrange(outer_split_num) |> 
-  write_csv(here::here(path_models, str_c("test_auroc_3_x_10_", window, "_", 
-                                                      lead, "_", version, "_", 
-                                                      cv, "_", model, ".csv"))) 
+  write_csv(here::here(path_models, str_c("test_auroc_", cv_outer_resample,
+                                          "_", window, "_", lead, "_", 
+                                          version, "_", cv, "_", model, 
+                                          ".csv"))) 
 
-median(metrics_test$roc_auc)
-```
-
-
-
-Now group SHAPs
-
-- NOTE: Delete `outer_shapsgrp_*` or this code chunk won't run!
-- NOTE: not run for baseline models
-
-```{r calc_grouped_shaps}
-if(!file.exists(here::here(path_models, str_c("outer_shapsgrp_",
-                                            window, "_", lead, "_", version, "_",
-                                            cv, "_", model, ".rds"))) & model != "baseline"){
-
-  message("Calculating grouped SHAPs")
-  write_csv(tibble(stage = "shapsgrp_save",
-                   outer_split_num = NA, 
-                   start_time = Sys.time()),
-            here::here(path_models, str_c("tmp_metrics_outer_progress_",window)),
-            append = TRUE)
-  
-  shaps_out_grp <- shaps_out %>% 
-    mutate(variable_grp = if_else(str_detect(variable, ".lapse"), 
-                           "past use (EMA item)", 
-                           variable),
-           variable_grp = if_else(str_detect(variable_grp, "ema_2"), 
-                           "craving (EMA item)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "ema_3"), 
-                           "past risky situation (EMA item)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "ema_4"), 
-                           "past stressful event (EMA item)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "ema_5"), 
-                           "past pleasant event (EMA item)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "ema_6"), 
-                           "valence (EMA item)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "ema_7"), 
-                           "arousal (EMA item)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "ema_8"), 
-                           "future risky situation (EMA item)",
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "ema_9"), 
-                           "future stressful event (EMA item)",
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "ema_10"), 
-                           "future efficacy (EMA item)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "count.ema"), 
-                           "missing surveys (other)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "day"), 
-                           "lapse day (other)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "hour"), 
-                           "lapse hour (other)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "age"), 
-                           "age (demographic)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "sex"), 
-                           "sex (demographic)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "marital"), 
-                           "marital (demographic)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "race"), 
-                           "race (demographic)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "educ"), 
-                           "education (demographic)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "income"), 
-                           "income (demographic)", 
-                           variable_grp),
-           variable_grp = if_else(str_detect(variable_grp, "employ"), 
-                           "employment (demographic)", 
-                           variable_grp)) %>%
-    mutate(variable_grp = factor(variable_grp)) %>% 
-    group_by(id_obs, variable_grp) %>% # values are already averaged across repeats
-    summarize(value = sum(value))
-  
-  shaps_out_grp %>% write_rds(here::here(path_models,
-                                          str_c("outer_shapsgrp_", window, "_",
-                                                lead, "_", version, "_",
-                                                cv, "_", model, ".rds")))
-} else {
-   message("Grouped SHAPs previously calculated")
+ median(metrics_test$roc_auc) 
 }
 ```
 
 
-### Final Review performance eval from outer loop
 
-Done more in depth later script but here is a quick look
-```{r print_metrics}
-metrics_out |> 
-  print_kbl()
-
-metrics_out |> 
-  summarize(median(roc_auc), mean(roc_auc), min(roc_auc), max(roc_auc))
-
-metrics_out |> 
-  ggplot(aes(x = roc_auc)) +
-  geom_histogram(bins = 10)
-```
-
+Delete tracking file
 ```{r}
-# delete tracking file
-# if(file.exists(here::here(path_models, str_c("tmp_metrics_outer_progress_", window)))) {
-#   file.remove(here::here(path_models, str_c("tmp_metrics_outer_progress_", window)))
-# }
+if(file.exists(here::here(path_models, str_c("tmp_metrics_outer_progress_", window)))) {
+  file.remove(here::here(path_models, str_c("tmp_metrics_outer_progress_", window)))
+}
 ```
 
-IMPORTANT:  We still need to select ONE final best config using the inner resampling approach AND then we need to fit that best config to ALL the data.

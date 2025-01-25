@@ -30,34 +30,29 @@ options(knitr.kable.NA = '')
 
 ```{r}
 test_metrics_0 <- read_csv(here::here(path_models_lag, 
-                                        "test_metrics_1week_0_v1_nested.csv"), 
+                                      "test_auroc_3_x_10_1day_0_v3_nested_main.csv"), 
                               col_types = cols()) |> 
-  filter(.metric == "roc_auc") |> 
-  select(outer_split_num, "lag0" = .estimate)
+  select(outer_split_num, "lag0" = roc_auc)
 
 test_metrics_24 <- read_csv(here::here(path_models_lag, 
-                                       "test_metrics_1week_24_v1_nested.csv"),
+                                       "test_auroc_3_x_10_1day_24_v3_nested_main.csv"),
                              col_types = cols()) |> 
-  filter(.metric == "roc_auc") |> 
-  select(outer_split_num, "lag24" = .estimate)
+  select(outer_split_num, "lag24" = roc_auc)
 
 test_metrics_72 <- read_csv(here::here(path_models_lag, 
-                                        "test_metrics_1week_72_v1_nested.csv"),
+                                       "test_auroc_3_x_10_1day_72_v3_nested_main.csv"),
                               col_types = cols()) |> 
-  filter(.metric == "roc_auc") |> 
-  select(outer_split_num, "lag72" = .estimate)
+  select(outer_split_num, "lag72" = roc_auc)
 
 test_metrics_168 <- read_csv(here::here(path_models_lag, 
-                                        "test_metrics_1week_168_v1_nested.csv"), 
+                                        "test_auroc_3_x_10_1day_168_v3_nested_main.csv"), 
                               col_types = cols()) |> 
-  filter(.metric == "roc_auc") |> 
-  select(outer_split_num, "lag168" = .estimate)
+  select(outer_split_num, "lag168" = roc_auc)
 
 test_metrics_336 <- read_csv(here::here(path_models_lag, 
-                                       "test_metrics_1week_336_v1_nested.csv"),
+                                       "test_auroc_3_x_10_1day_336_v3_nested_main.csv"),
                              col_types = cols()) |> 
-  filter(.metric == "roc_auc") |> 
-  select(outer_split_num, "lag336" = .estimate)
+  select(outer_split_num, "lag336" = roc_auc)
 
 test_metrics_all <- test_metrics_0 |> 
   left_join(test_metrics_24, by = c("outer_split_num")) |> 
@@ -84,7 +79,7 @@ pp <- test_metrics_all |>
          id2 = repeat_num) |> 
   perf_mod(formula = statistic ~ model + (1 | id2/id),
          transform = tidyposterior::logit_trans,  # for skewed & bounded AUC
-         iter = 3000, chains = 4, adapt_delta = .99, # increased iteration from 2000 to fix divergence issues
+         iter = 4000, chains = 4, adapt_delta = .999, # increased iteration from 2000 to fix divergence issues
          family = gaussian, 
 )  
 
@@ -95,7 +90,7 @@ pp_tidy <- pp |>
   tidy(seed = 123) 
 
 q = c(.025, .5, .975)
-test_metrics_all_pp_perf <- pp_tidy |> 
+pp_perf_tibble <- pp_tidy |> 
   group_by(model) |> 
   summarize(pp_median = quantile(posterior, probs = q[2]),
             pp_lower = quantile(posterior, probs = q[1]), 
@@ -104,53 +99,14 @@ test_metrics_all_pp_perf <- pp_tidy |>
                         labels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"))) |> 
   arrange(model)
 
-test_metrics_all_pp_perf |> 
-  write_csv(here::here(path_models_lag, "test_metrics_all_pp_perf.csv"))
+pp_perf_tibble |> 
+  write_csv(here::here(path_models_lag, "pp_perf_tibble.csv"))
 
 pp_tidy |> 
-  write_csv(here::here(path_models_lag, "pp_tidy.csv"))
+  write_csv(here::here(path_models_lag, "posteriors.csv"))
 
-test_metrics_all_pp_perf
+pp_perf_tibble
 ```
-
-
-
-See if brms replicates
-```{r}
-# library(brms)
-# 
-# data <- test_metrics_all |> 
-#   rename(id = fold_num,
-#          id2 = repeat_num) |> 
-#   pivot_longer(cols = starts_with("lag"), 
-#                names_to = "model", 
-#                values_to = "statistic")
-# 
-# pp_brm <-  brm(
-#   formula = statistic ~ model + (1 | id2/id), # folds nested in repeats
-#   data = data,
-#   family = gaussian(link = "logit"), # normal distribution w/auroc bounded between 0 and 1
-#   chains = 4,
-#   control = list(adapt_delta = 0.99), 
-#   iter = 3000,
-#   seed = 101
-# )
-# 
-# pp_tidy <- posterior_predict(pp_brm, type = "response") |>  # rows observation, columns observations
-#   as_tibble(.name_repair = "unique") |> 
-#   pivot_longer(cols = everything(), 
-#                names_to = "draw", 
-#                values_to = "posterior") |>
-#   bind_cols(data$model)
-
-
-# Calculate AUC
-# roc_result <- roc(your_data$outcome, rowMeans(predictions))
-# auc_value <- auc(roc_result)
-# 
-# print(auc_value)
-```
-
 
 
 
@@ -187,7 +143,7 @@ ci_baseline <- ci_baseline |>
   left_join(ci_median_baseline, by = c("contrast")) 
 
 ci_baseline |> 
-  write_csv(here::here(path_models_lag, "ci_baseline.csv"))
+  write_csv(here::here(path_models_lag, "contrast_baseline.csv"))
 
 ci_baseline
 
@@ -221,7 +177,7 @@ ci_lag <- ci_lag |>
   arrange(contrast)
 
 ci_lag |> 
-  write_csv(here::here(path_models_lag, "ci_lag.csv"))
+  write_csv(here::here(path_models_lag, "constrast_adjacent.csv"))
 
 ci_lag
 ```

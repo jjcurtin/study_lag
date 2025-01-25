@@ -1,0 +1,448 @@
+---
+title: "Calculates Shapley Values for best model configs for `r params$study` study across `r params$model` models in outer loop of nested for `r params$window` window and `r params$lead` lead and `r params$version`"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+params:
+  study: "lag"
+  window: "1day"
+  lead: 0
+  version: "v3"
+  cv: "nested"
+  model: "main" # "main" 
+editor_options: 
+  chunk_output_type: console
+---
+
+### Code Status
+
+In use for Lag study
+
+### Notes
+This script reads in CHTC performance metrics from the inner loops of CV, selects the best model configuration for each outer loop, trains those models and calculates SHAPs
+
+This script creates the following files in the `models` folder
+
+* outer_shaps_*.rds
+* outer_shapsgrp_*.rds
+
+
+BASH CHUNK FOR CONCATENATION CURRENTLY HARDCODED - WILL UPDATE 
+
+
+
+### To Do
+
+SHAPS
+
+* We get SHAPS in this script with 30 outer folds (3x10fold).   It will be SHAPS from different models BUT they are currently all XGBoost and regardless, SHAP could work with any algorithm.  We could ALSO average across same person for 3 repeats or just have 3x sample size SHAPs for each feature.  We choose to **average across repeats**.  
+
+* Could get SHAPS when we did simple 3x10-fold on full sample to figure out the ONE best configuration.  First run on CHTC to get best config.  Then use that best config to predict into 30  held out folds and combine.
+
+* Could train that ONE best config on full sample and use it for SHAPS in the full sample.   
+
+
+
+### Set Up Environment
+
+```{r set_params}
+study <- params$study
+data_type <- params$data_type
+window <- params$window
+lead <- params$lead 
+version <- params$version
+cv <- params$cv
+model <- params$model
+```
+
+Function conflicts
+```{r, packages_workflow}
+#| message: false
+#| warning: false
+
+# handle conflicts
+options(conflicts.policy = "depends.ok")
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_ml.R?raw=true")
+tidymodels_conflictRules()
+```
+
+Packages for script
+```{r, packages_script}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(tidymodels)
+```
+
+Source support functions
+```{r source_functions}
+# EDA
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_eda.R?raw=true")
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
+
+# CHTC support functions
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/chtc/static_files/fun_chtc.R?raw=true")
+```
+
+Absolute paths
+```{r, absolute_paths}
+path_processed <- format_path(str_c("studydata/risk/data_processed/", study))
+path_input <- format_path(str_c("studydata/risk/chtc/", study))
+path_models <- format_path(str_c("studydata/risk/models/", study))
+```
+
+
+Chunk Defaults
+```{r defaults}
+#| include: false
+
+knitr::opts_chunk$set(attr.output='style="max-height: 500px;"')
+
+options(tibble.width = Inf)
+options(tibble.print_max = Inf)
+```
+
+### Script Functions
+
+Function to clean up poor choices for feature names for SHAPs!!
+```{r function_1}
+clean_feature_names <- function(feat_name){
+  new_name <- gsub(".l0", "", feat_name)
+  new_name <- gsub("rratecount.count", "raw_count", new_name)
+  new_name <- gsub("dratecount.count", "diff_count", new_name)
+  new_name <- gsub("drecent_response", "diff_recent", new_name)
+  new_name <- gsub("rrecent_response", "raw_recent", new_name)
+  new_name <- gsub("dmin_response", "diff_min", new_name)
+  new_name <- gsub("rmin_response", "raw_min", new_name)
+  new_name <- gsub("dmax_response", "diff_max", new_name)
+  new_name <- gsub("rmax_response", "raw_max", new_name)
+  new_name <- gsub("dmedian_response", "diff_median", new_name)
+  new_name <- gsub("rmedian_response", "raw_median", new_name)
+  new_name <- gsub("label_", "", new_name)
+  new_name <- gsub("demo_", "", new_name)
+  new_name <- gsub("High.school.or.less", "high.school", new_name)
+  new_name <- gsub("Some.college", "some.college", new_name)
+  new_name <- gsub("Mon", "mon", new_name)
+  new_name <- gsub("Tue", "tue", new_name)
+  new_name <- gsub("Wed", "wed", new_name)
+  new_name <- gsub("Thu", "thu", new_name)
+  new_name <- gsub("Fri", "fri", new_name)
+  new_name <- gsub("Sat", "sat", new_name)
+  new_name <- gsub("Sun", "sun", new_name)
+  new_name <- gsub("Never.Married", "never.married", new_name)
+  new_name <- gsub("Never.Other", "never.other", new_name)
+  new_name <- gsub("White.Caucasian", "caucasian", new_name)
+  new_name <- gsub("Male", "male", new_name)
+  new_name <- gsub("p12.raw_count.lapse", "lapse.p12.raw_count", new_name)
+  new_name <- gsub("p24.raw_count.lapse", "lapse.p24.raw_count", new_name)
+  new_name <- gsub("p48.raw_count.lapse", "lapse.p48.raw_count", new_name)
+  new_name <- gsub("p72.raw_count.lapse", "lapse.p72.raw_count", new_name)
+  new_name <- gsub("p168.raw_count.lapse", "lapse.p168.raw_count", new_name)
+  new_name <- gsub("p12.diff_count.lapse", "lapse.p12.diff_count", new_name)
+  new_name <- gsub("p24.diff_count.lapse", "lapse.p24.diff_count", new_name)
+  new_name <- gsub("p48.diff_count.lapse", "lapse.p48.diff_count", new_name)
+  new_name <- gsub("p72.diff_count.lapse", "lapse.p72.diff_count", new_name)
+  new_name <- gsub("p168.diff_count.lapse", "lapse.p168.diff_count", new_name)
+  new_name <- gsub("p12.raw_count.ema", "missing.p12.raw_count", new_name)
+  new_name <- gsub("p24.raw_count.ema", "missing.p24.raw_count", new_name)
+  new_name <- gsub("p48.raw_count.ema", "missing.p48.raw_count", new_name)
+  new_name <- gsub("p72.raw_count.ema", "missing.p72.raw_count", new_name)
+  new_name <- gsub("p168.raw_count.ema", "missing.p168.raw_count", new_name)
+  new_name <- gsub("p12.diff_count.ema", "missing.p12.diff_count", new_name)
+  new_name <- gsub("p24.diff_count.ema", "missing.p24.diff_count", new_name)
+  new_name <- gsub("p48.diff_count.ema", "missing.p48.diff_count", new_name)
+  new_name <- gsub("p72.diff_count.ema", "missing.p72.diff_count", new_name)
+  new_name <- gsub("p168.diff_count.ema", "missing.p168.diff_count", new_name)
+  return(new_name) 
+}
+```
+
+Function to fit, predict, and calc metrics, preds, shaps
+```{r function_2}
+fit_predict_eval <- function(split_num, splits, configs_best){
+
+  
+  d_in <- training(splits$splits[[split_num]]) |> 
+    select(-id_obs)  # not used for training; only needed in d_out to tag for later joins 
+  d_out <- testing(splits$splits[[split_num]])
+  
+  config_best <- configs_best |> 
+    slice(split_num) |> 
+    rename(n_jobs_in = n_jobs, accuracy_in = accuracy, 
+           bal_accuracy_in = bal_accuracy,
+           roc_auc_in = roc_auc, sens_in =  sens, spec_in = spec, 
+           ppv_in = ppv, npv_in = npv)
+    
+  rec <- build_recipe(d = d_in, config = config_best)
+  rec_prepped <- rec |> 
+    prep(training = d_in, strings_as_factors = FALSE)
+  
+  feat_in <- rec_prepped |> 
+    bake(new_data = NULL)
+  
+  model_best <- fit_best_model(config_best, feat = feat_in, "classification")
+  
+  feat_out <- rec_prepped |> 
+    bake(new_data = d_out)   # no id_obs because not included in d_in
+    
+  # SHAP in held out fold
+  shaps_out <- SHAPforxgboost::shap.prep(xgb_model = extract_fit_engine(model_best),
+                       X_train = feat_out |> select(-y) |>  as.matrix()) |>
+     # add id_obs by multiple of number of features
+      mutate(id_obs = rep(d_out$id_obs, times = ncol(feat_out) - 1),
+             split_num = split_num) |>
+      relocate(id_obs, split_num)
+
+  shaps_out |> 
+    # clean feature names;  See function above
+    mutate(variable = fct_relabel(variable, clean_feature_names)) |>
+    write_csv(here::here(path_models, str_c("shap_results_", lag, "_", version), 
+                         str_c("outer_shaps_", split_num, ".csv")))
+}
+
+```
+
+### Read in aggregate CHTC metrics for inner folds
+```{r read_inner_metrics}
+metrics_raw <- 
+  read_csv(here::here(path_models, str_c("inner_metrics_", window, 
+                                   "_", lead, "_", version, "_", cv, "_", model, ".csv")), 
+           col_types = "iiiiccdddcdddddddi") |> 
+  glimpse()
+```
+
+
+### Identify best config for each outer fold (i.e., across inner folds)
+
+Average metrics for each configuration across inner folds for each outer fold (XGBOOST only)
+```{r best_model_1}
+metrics_avg <- metrics_raw |> 
+  filter(algorithm == "xgboost") |> 
+  group_by(algorithm, feature_set, hp1, hp2, hp3, resample, outer_split_num) |> 
+   summarize(across(c(accuracy, bal_accuracy, roc_auc, sens, spec, ppv, npv),
+                     median),
+              n_jobs = n(), .groups = "drop") |> 
+  relocate(outer_split_num, n_jobs) |> 
+  arrange(outer_split_num, desc(roc_auc))
+```
+
+Best configuration for each outer fold
+```{r best_model_2}
+configs_best <- metrics_avg |> 
+  group_by(outer_split_num) |> 
+  arrange(desc(roc_auc)) |> 
+  slice(1) |> 
+  ungroup() |> 
+  relocate(roc_auc, .before = accuracy)
+```
+
+
+### Make Directory to store tmp results
+```{r}
+dir.create(here::here(path_models, str_c("shap_results_", lag, "_", version)))
+```
+
+
+### Fit best model for each outer fold and get/save SHAPs
+
+saves individual shap files per fold
+```{r eval_outer_folds}
+if(!file.exists(here::here(path_models, str_c("outer_shaps_", 
+                                  window, "_", lead, "_", version, "_", 
+                                  cv, "_", model, ".rds")))){ 
+  
+  # can source any training control given assumptions above
+  batch_names <- list.dirs(path_input, full.names = FALSE, recursive = FALSE)
+  batch_names <- batch_names[str_detect(batch_names, "train") & 
+                               str_detect(batch_names, cv) &
+                               str_detect(batch_names, version) &
+                               str_detect(batch_names, window) &
+                               str_detect(batch_names, model) &
+                               str_detect(batch_names, 
+                                          str_c(as.character(lead), "lag"))]
+  
+  batch_name <- batch_names[1] # can source any batch given assumptions above
+  path_batch <- here::here(path_input, batch_name)
+  source(here::here(path_batch, "input", "training_controls.R"))
+  # NOTE: training controls overwrites path_batch but it matches   
+                    
+  chunks <- str_split_fixed(data_trn, "\\.", n = Inf) # parse name from extensions
+  if (length(chunks) == 2) {
+    fn <- str_c("data_trn.", chunks[[2]])
+  } else {
+    fn <- str_c("data_trn.", chunks[[2]], ".", chunks[[3]])
+  }
+    
+  # open based on file type
+  if (str_detect(fn, "csv")) {
+    d <- read_csv(here::here(path_batch, "input", fn), show_col_types = FALSE) 
+  } else {
+    d <- read_rds(here::here(path_batch, "input", fn))
+  }
+  
+  d <- format_data(d) |> 
+    arrange(label_num) |> 
+    mutate(id_obs = 1:nrow(d))  # tmp add for linking obs
+  
+  if (model == "dem") {
+    # update outer resampling splits
+    cv_outer_resample <- "6_x_5"
+  }
+  
+  splits <- d %>% 
+    make_splits(cv_resample_type, cv_resample, cv_outer_resample, 
+                cv_inner_resample, cv_group, seed_splits)
+    
+  all <- configs_best$outer_split_num |> 
+    map(\(split_num) fit_predict_eval(split_num, splits, configs_best)) 
+    
+} else {
+  message("Shaps from nested CV previously calculated")
+  
+  shaps_out <- read_rds(here::here(path_models, str_c("outer_shaps_",
+                                                     window, "_", lead, "_",
+                                                     version, "_",
+                                                     cv, "_", model, ".rds")))
+  }
+}
+```
+
+Concatenate individual files
+FIX: CURRENTLY PATH IS HARD CODED
+```{bash}
+
+head -n +1 P:/studydata/risk/models/shap_results_336_v3/outer_shaps_1.csv > P:/studydata/risk/models/shap_results_336_v3/batch_shaps.csv; ls P:/studydata/risk/models/shap_results_336_v3/outer_shaps_*.csv | xargs awk 'FNR>1' >> batch_shaps.csv
+```
+
+
+Read in all shaps and average across repeats
+```{r}
+shaps_out <- read_csv(here::here(path_models, 
+                                 str_c("shap_results_", lag, "_", version),
+                                 "batch_shaps.csv"),
+                      show_col_types = FALSE)
+
+shaps_out <- shaps_out
+      # average SHAP metrics across repeats for same id_obs
+      group_by(id_obs, variable) |>
+      summarize(value = mean(value),
+                # rfvalue is same across repeats but want included
+                rfvalue =  mean(rfvalue),
+                mean_value = mean(mean_value)) |>
+      write_rds(here::here(path_models, str_c("outer_shaps_",
+                                             window, "_", lead, "_", version, "_",
+                                             cv, "_", model, ".rds")))
+    }
+```
+
+```{bash}
+# rm -r P:/studydata/risk/models/shap_results_336_v3
+```
+
+
+Group Shaps
+```{r calc_grouped_shaps}
+if(!file.exists(here::here(path_models, str_c("outer_shapsgrp_", window, "_", 
+                                              lead, "_", version, "_", cv, "_", 
+                                              model, ".rds"))) & model != "baseline"){
+
+  message("Calculating grouped SHAPs")
+  
+  shaps_out_grp <- shaps_out |>
+    mutate(variable_grp = if_else(str_detect(variable, ".lapse"), 
+                           "past use (EMA item)", 
+                           variable),
+           variable_grp = if_else(str_detect(variable_grp, "ema_2"), 
+                           "craving (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_3"), 
+                           "past risky situation (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_4"), 
+                           "past stressful event (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_5"), 
+                           "past pleasant event (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_6"), 
+                           "valence (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_7"), 
+                           "arousal (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_8"), 
+                           "future risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_9"), 
+                           "future stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_10"), 
+                           "future efficacy (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "count.ema"), 
+                           "missing surveys (other)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "day"), 
+                           "lapse day (other)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "hour"), 
+                           "lapse hour (other)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "age"), 
+                           "age (demographic)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "sex"), 
+                           "sex (demographic)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "marital"), 
+                           "marital (demographic)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "race"), 
+                           "race (demographic)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "educ"), 
+                           "education (demographic)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "income"), 
+                           "income (demographic)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "employ"), 
+                           "employment (demographic)", 
+                           variable_grp)) |>
+    mutate(variable_grp = factor(variable_grp)) |> 
+    group_by(id_obs, variable_grp) |> # values are already averaged across repeats
+    summarize(value = sum(value))
+  
+  shaps_out_grp |>
+    write_rds(here::here(path_models, str_c("outer_shapsgrp_", window, "_",
+                                            lead, "_", version, "_",cv, "_", 
+                                            model, ".rds")))
+} else {
+   message("Grouped SHAPs previously calculated")
+}
+```
+
+### Look at Shaps as check
+
+Global importance SHAP plot for grouped features
+```{r shap_grouped_plot}
+shapsgrp_out |>
+  group_by(variable_grp) |>
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |>
+  arrange(mean_value) |>
+  mutate(variable_grp = factor(variable_grp),
+         variable_grp = fct_inorder(variable_grp)) |>
+  ggplot(mapping = aes(x = variable_grp, y = mean_value)) +
+  geom_point(size = 2, color = "red") +
+  geom_segment(aes(x = variable_grp, y = mean_value, xend = variable_grp),
+               yend = 0, colour = "grey50")  +
+  ylab("Mean |SHAP| value") +
+  coord_flip()
+```

@@ -22,7 +22,7 @@ keywords:
   - Substance use disorders
   - Precision mental health 
 abstract: |
-  We evaluated machine learning models predicting future alcohol lapses within 24-hour prediction windows that were systematically lagged further into the future (1 day, 3 days, 1 week, and 2 weeks). We engineered features from 4x daily ecological momentary assessment. Participants (N=151; 51% male; mean age=41; 87% White, 97% Non-Hispanic) in early recovery from alcohol use disorder provided data for up to three months. We used nested cross-validation to select and evaluate models. Median auROCs were high (0.85– 0.89), but performance declined with increasing lags (probabilities > .95). Models also performed worse for disadvantaged groups (not White vs. non-Hispanic White, below poverty vs. above poverty, female vs. male; probabilities > .99). This study demonstrates the feasibility of predicting next-day alcohol lapses up to two weeks into the future. This advanced notice offers time to implement support options not immediately available. However, fairness concerns remain and are discussed further in the paper.
+  We evaluated machine learning models predicting future alcohol lapses within 24-hour prediction windows that were systematically lagged further into the future (1 day, 3 days, 1 week, and 2 weeks). We engineered features from 4x daily ecological momentary assessment. Participants (N=151; 51% male; mean age=41; 87% White, 97% Non-Hispanic) in early recovery from alcohol use disorder provided data for up to three months. We used nested cross-validation to select and evaluate models. Median posterior probabilities for auROCs were high (0.84–0.90). Still, performance declined with increasing lags (probabilities > .99). Models also performed worse for disadvantaged groups (not White vs. non-Hispanic White, below poverty vs. above poverty, female vs. male; probabilities > .99). This study demonstrates the feasibility of predicting next-day alcohol lapses up to two weeks into the future. This advanced notice offers time to implement support options not immediately available. However, fairness concerns remain and are discussed further in the paper.
 
 date: last-modified
 bibliography: references.bib
@@ -60,13 +60,15 @@ options(knitr.kable.NA = '')
 ```{r}
 # read in tibbles for in-line code
 
-test_metrics_all_pp_perf <- read_csv(here::here(path_models_lag, "test_metrics_all_pp_perf.csv"), 
+test_metrics_all_pp_perf <- read_csv(here::here(path_models_lag, 
+                                                "pp_perf_tibble.csv"), 
                                      col_types = cols())
 
-ci_baseline <- read_csv(here::here(path_models_lag, "ci_baseline.csv"), 
+ci_baseline <- read_csv(here::here(path_models_lag, "contrast_baseline.csv"), 
                         col_types = cols())
 
-ci_lag <- read_csv(here::here(path_models_lag, "ci_lag.csv"), col_types = cols())
+ci_lag <- read_csv(here::here(path_models_lag, "constrast_adjacent.csv"), 
+                   col_types = cols())
 
 pp_dem <- read_csv(here::here(path_models_lag, "pp_dem_all.csv"), col_types = cols())
 
@@ -251,9 +253,9 @@ Panels B-C of @fig-3 show the local feature importance plots for the no lag and 
 
 ## Model Performance
 
-Our models performed exceptionally well with median posterior probabilities for auROCs of .85 - .89<!--KW: update-->. This suggests we can achieve clinically meaningful performance up to two weeks out. Our rigorous resampling methods (grouped, nested, k-fold cross-validation) make us confident that these are valid estimates of how our models would perform with new individuals.  
+Our models performed exceptionally well with median posterior probabilities for auROCs of .84 - .90<!--KW: double check-->. This suggests we can achieve clinically meaningful performance up to two weeks out. Our rigorous resampling methods (grouped, nested, k-fold cross-validation) make us confident that these are valid estimates of how our models would perform with new individuals.  
 
-Nevertheless, model performance did decrease as models predicted further into the future. This is unsurprising given what we know about prediction and substance use. Many important relapse risk factors are fluctuating processes that can change day-by-day, if not more frequently. As lag time increases, features become less proximal to the prediction time point. Still, we wish to emphasize that our lowest auROC (.85<!--KW: update-->) is still excellent, and the benefit of advanced notice likely outweighs the cost to performance.
+Nevertheless, model performance did decrease as models predicted further into the future. This is unsurprising given what we know about prediction and substance use. Many important relapse risk factors are fluctuating processes that can change day-by-day, if not more frequently. As lag time increases, features become less proximal to the prediction time point. Still, we wish to emphasize that our lowest auROC (.84<!--KW: double check-->) is still excellent, and the benefit of advanced notice likely outweighs the cost to performance.
 
 The relative ordering of important features remained somewhat consistent across models. Past use and future efficacy were the top two features for all models. However the magnitude of their importance varried somewhat by lag time. Additionally, for the two-week model future risky situations emerged as an important feature (surpassing past risky situations) whereas for the no lag model future and past risky situations held similar weight. We saw a similar, although much smaller, trend with future vs past stressful events. This may suggest there could be added utility to the lagged models by asking future-facing questions in addition to questions about current and recent past experiences.  
 

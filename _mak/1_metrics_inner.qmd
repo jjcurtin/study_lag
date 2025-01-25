@@ -12,7 +12,7 @@ format:
 params:
   study: "lag"
   window: "1day"
-  lead: 72
+  lead: 24
   version: "v3"
   cv: "nested"
   algorithms: "all"   # "all" or name of specific algorithm
