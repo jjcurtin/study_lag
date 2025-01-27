@@ -177,7 +177,7 @@ ci_lag <- ci_lag |>
   arrange(contrast)
 
 ci_lag |> 
-  write_csv(here::here(path_models_lag, "constrast_adjacent.csv"))
+  write_csv(here::here(path_models_lag, "contrast_adjacent.csv"))
 
 ci_lag
 ```

@@ -39,7 +39,7 @@ path_processed <- format_path("studydata/risk/data_processed/lag")
 Data for figures
 ```{r}
 test_metrics_all_pp_perf <- read_csv(here::here(path_models_lag,
-                                                "test_metrics_all_pp_perf.csv"),
+                                                "pp_perf_tibble.csv"),
                                      show_col_types = FALSE)
 
 pp_dem <- read_csv(here::here(path_models_lag, "pp_dem_all.csv"),
@@ -129,7 +129,7 @@ pp_dem_a <- pp_dem |>
   geom_point(aes(x = lag, y = pp_median, color = group)) +
   geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = group)) +
   facet_wrap(~ contrast) +
-  scale_y_continuous("auROC", limits = c(.50, 1.0)) +
+  scale_y_continuous("auROC", limits = c(.35, 1.0)) +
   scale_x_discrete(NULL, labels = c("No lag", "2 weeks")) +
   theme_classic() +
   theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
@@ -145,7 +145,7 @@ pp_dem_b <- pp_dem |>
   geom_point(aes(x = lag, y = pp_median, color = group)) +
   geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = group)) +
   facet_wrap(~ contrast) +
-  scale_y_continuous(NULL, limits = c(.50, 1.0)) +
+  scale_y_continuous(NULL, limits = c(.35, 1.0)) +
   scale_x_discrete("Model Lag", labels = c("No lag", "2 weeks")) +
   theme_classic() +
   theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
@@ -161,7 +161,7 @@ pp_dem_c <- pp_dem |>
   geom_point(aes(x = lag, y = pp_median, color = group)) +
   geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = group)) +
   facet_wrap(~ contrast) +
-  scale_y_continuous(NULL, limits = c(.50, 1.0)) +
+  scale_y_continuous(NULL, limits = c(.35, 1.0)) +
   scale_x_discrete(NULL, labels = c("No lag", "2 weeks")) +
   theme_classic() +
   theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
@@ -206,27 +206,23 @@ global_panel <- global_all |>
 ```
 
 ```{r}
-shap_feat_0 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1week_0_v1_nested_main_downsized.rds")) |> 
+shap_feat_0 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_0_v3_nested_main_downsized.rds")) |> 
   filter(str_detect(variable_grp, "EMA")) |> 
   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
          variable_grp = factor(variable_grp, levels = shap_levels))
 
-shap_feat_336 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1week_336_v1_nested_main_downsized.rds")) |> 
+shap_feat_336 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_336_v3_nested_main_downsized.rds")) |> 
   filter(str_detect(variable_grp, "EMA")) |> 
   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
          variable_grp = factor(variable_grp, levels = shap_levels))
 
 panel_shap_local_0 <- shap_feat_0 |>
-  ggplot(mapping = aes(x = variable_grp, y = shapley_value, 
-                       color = feature_value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .7) +
+  ggplot(mapping = aes(x = variable_grp, y = value)) +
+  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .7,  color = "#52144d") +
   geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+  scale_y_continuous(limits = c(-2, 6), breaks = seq(-2, 6)) +
   ylab("Shapley Value (No Lag)") +
   xlab(NULL) +
-  scale_color_gradientn(colors = c("#52144d", "#f0c1ec"),
-                        breaks = c(.1, .9),
-                        labels = c("low", "high")) +
   labs(color = NULL) +
   theme(legend.position = "right",
         legend.key.size = unit(0.25, "cm"),
@@ -236,16 +232,12 @@ panel_shap_local_0 <- shap_feat_0 |>
   coord_flip()
 
 panel_shap_local_336 <- shap_feat_336 |>
-  ggplot(mapping = aes(x = variable_grp, y = shapley_value, 
-                       color = feature_value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .7) +
+  ggplot(mapping = aes(x = variable_grp, y = value)) +
+  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .7, color = "#295157") +
   geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
+  scale_y_continuous(limits = c(-2, 5.5), breaks = seq(-2, 5)) +
   ylab("Shapley Value (2-week Lag)") +
   xlab(NULL) +
-  scale_color_gradientn(colors = c("#295157", "#cbe3e7"),
-                        breaks = c(.1, .9),
-                        labels = c("low", "high")) +
   labs(color = NULL) +
   theme(legend.position = "right",
         legend.key.size = unit(0.25, "cm"),

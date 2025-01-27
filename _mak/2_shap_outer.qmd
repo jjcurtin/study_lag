@@ -33,9 +33,6 @@ This script creates the following files in the `models` folder
 * outer_shapsgrp_*.rds
 
 
-BASH CHUNK FOR CONCATENATION CURRENTLY HARDCODED - WILL UPDATE 
-
-
 
 ### To Do
 
@@ -200,11 +197,7 @@ fit_predict_eval <- function(split_num, splits, configs_best){
              split_num = split_num) |>
       relocate(id_obs, split_num)
 
-  shaps_out |> 
-    # clean feature names;  See function above
-    mutate(variable = fct_relabel(variable, clean_feature_names)) |>
-    write_csv(here::here(path_models, str_c("shap_results_", lag, "_", version), 
-                         str_c("outer_shaps_", split_num, ".csv")))
+ return(list(shaps_out = shaps_out))
 }
 
 ```
@@ -243,11 +236,6 @@ configs_best <- metrics_avg |>
   relocate(roc_auc, .before = accuracy)
 ```
 
-
-### Make Directory to store tmp results
-```{r}
-dir.create(here::here(path_models, str_c("shap_results_", lag, "_", version)))
-```
 
 
 ### Fit best model for each outer fold and get/save SHAPs
@@ -296,12 +284,31 @@ if(!file.exists(here::here(path_models, str_c("outer_shaps_",
     cv_outer_resample <- "6_x_5"
   }
   
-  splits <- d %>% 
+  splits <- d |>
     make_splits(cv_resample_type, cv_resample, cv_outer_resample, 
                 cv_inner_resample, cv_group, seed_splits)
     
-  all <- configs_best$outer_split_num |> 
+  all <- 1:15 |> 
     map(\(split_num) fit_predict_eval(split_num, splits, configs_best)) 
+  
+   shaps_out <- all |> 
+    map(\(l) pluck(l, "shaps_out")) |> 
+    list_rbind() 
+   
+   rm(all)
+    
+   shaps_out <- shaps_out |> 
+     # clean feature names;  See function above
+     mutate(variable = fct_relabel(variable, clean_feature_names)) |> 
+     # average SHAP metrics across repeats for same id_obs
+     group_by(id_obs, variable) |>
+     summarize(value = mean(value),
+               # rfvalue is same across repeats but want included
+               rfvalue =  mean(rfvalue),
+               mean_value = mean(mean_value)) |>
+     write_rds(here::here(path_models, str_c("outer_shaps_",
+                                               window, "_", lead, "_", version, "_",
+                                               cv, "_", model, "_1.rds")))
     
 } else {
   message("Shaps from nested CV previously calculated")
@@ -310,40 +317,31 @@ if(!file.exists(here::here(path_models, str_c("outer_shaps_",
                                                      window, "_", lead, "_",
                                                      version, "_",
                                                      cv, "_", model, ".rds")))
-  }
 }
-```
 
-Concatenate individual files
-FIX: CURRENTLY PATH IS HARD CODED
-```{bash}
-
-head -n +1 P:/studydata/risk/models/shap_results_336_v3/outer_shaps_1.csv > P:/studydata/risk/models/shap_results_336_v3/batch_shaps.csv; ls P:/studydata/risk/models/shap_results_336_v3/outer_shaps_*.csv | xargs awk 'FNR>1' >> batch_shaps.csv
 ```
 
 
 Read in all shaps and average across repeats
 ```{r}
-shaps_out <- read_csv(here::here(path_models, 
-                                 str_c("shap_results_", lag, "_", version),
-                                 "batch_shaps.csv"),
-                      show_col_types = FALSE)
+if(!file.exists(here::here(path_models, str_c("outer_shaps_", 
+                                  window, "_", lead, "_", version, "_", 
+                                  cv, "_", model, ".rds")))){ 
 
-shaps_out <- shaps_out
-      # average SHAP metrics across repeats for same id_obs
-      group_by(id_obs, variable) |>
-      summarize(value = mean(value),
-                # rfvalue is same across repeats but want included
-                rfvalue =  mean(rfvalue),
-                mean_value = mean(mean_value)) |>
-      write_rds(here::here(path_models, str_c("outer_shaps_",
-                                             window, "_", lead, "_", version, "_",
-                                             cv, "_", model, ".rds")))
-    }
-```
+  shaps_out <- read_csv(here::here(path_models, "batch_shaps.csv"),
+                        show_col_types = FALSE)
 
-```{bash}
-# rm -r P:/studydata/risk/models/shap_results_336_v3
+  shaps_out <- shaps_out |> 
+        # average SHAP metrics across repeats for same id_obs
+        group_by(id_obs, variable) |>
+        summarize(value = mean(value),
+                  # rfvalue is same across repeats but want included
+                  rfvalue =  mean(rfvalue),
+                  mean_value = mean(mean_value)) |>
+        write_rds(here::here(path_models, str_c("outer_shaps_",
+                                               window, "_", lead, "_", version, "_",
+                                               cv, "_", model, ".rds")))
+}
 ```
 
 
@@ -433,7 +431,7 @@ if(!file.exists(here::here(path_models, str_c("outer_shapsgrp_", window, "_",
 
 Global importance SHAP plot for grouped features
 ```{r shap_grouped_plot}
-shapsgrp_out |>
+shaps_out_grp |>
   group_by(variable_grp) |>
   summarize(mean_value = mean(abs(value)), .groups = "drop") |>
   arrange(mean_value) |>

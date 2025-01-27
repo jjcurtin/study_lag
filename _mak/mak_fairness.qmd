@@ -13,10 +13,10 @@ params:
   
   study: "lag"
   cv: "nested"
-  window: "1week"
-  model: "main" 
+  window: "1day"
+  model: "dem" 
   lead: 336
-  version: "v1"
+  version: "v3"
 editor_options: 
   chunk_output_type: console
 ---
@@ -61,7 +61,7 @@ path_models <- format_path(str_c("studydata/risk/models/", study))
 ### Load model predictions
 
 ```{r}
-preds_out <- read_rds(here::here(path_models, str_c("outer_preds_dem_6_x_5_", window, "_", 
+preds_out <- read_rds(here::here(path_models, str_c("outer_preds_6_x_5_", window, "_", 
                                                     lead, "_", version, "_", 
                                                     cv, "_", model, ".rds")))
 ```
@@ -70,7 +70,7 @@ preds_out <- read_rds(here::here(path_models, str_c("outer_preds_dem_6_x_5_", wi
 
 ```{r}
 feat <- read_csv(here::here(path_processed, str_c("features_", lead, "lag_",
-                                                  version, ".csv.xz")),
+                                                  version, ".csv")),
                  col_types = cols()) |> 
   select(label_num, subid, dttm_label, lapse, demo_age, demo_sex, demo_income, demo_race) |> 
   arrange(label_num) 
@@ -87,7 +87,7 @@ feat_preds <- feat |>
   mutate(label = factor(label, levels = c("Lapse", "No lapse")))
 
 # nrow(feat)
-# nrow(preds_out) # should be nrow(feat) * 3
+# nrow(preds_out) # should be nrow(feat) * 6 (number of outer repeats)
 # nrow(feat_preds) # should be same as nrow(preds_out)
 ```
 
@@ -155,6 +155,7 @@ auroc_dem <- get_auroc_by_dem(df = feat_preds, var = "demo_sex") |>
 Save auroc_dem
 ```{r}
 auroc_dem |> 
-  write_csv(here::here(path_models, str_c("test_auroc_dem_6_x_5_", window, "_", lead, 
-                                          "_", version, "_", cv, ".csv")))  
+  write_csv(here::here(path_models, str_c("test_auroc_6_x_5_", window, "_", lead, 
+                                          "_", version, "_", cv, "_",
+                                          model, ".csv")))  
 ```

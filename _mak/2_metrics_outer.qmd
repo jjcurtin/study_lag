@@ -15,7 +15,7 @@ params:
   lead: 336
   version: "v3"
   cv: "nested"
-  model: "main" # "main" or "dem"
+  model: "main" # "main" 
 editor_options: 
   chunk_output_type: console
 ---
@@ -100,7 +100,7 @@ options(tibble.print_max = Inf)
 Function to fit and predict
 ```{r function_2}
 fit_predict_eval <- function(split_num, splits, configs_best, 
-                             calibration == TRUE){
+                             calibration = TRUE){
 
   # write tmp file to repo to track progress through loop
   # delete this file when script is complete.  
@@ -309,9 +309,10 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
     arrange(label_num) |> 
     mutate(id_obs = 1:nrow(d))  # tmp add for linking obs
   
-  if (model == "dem") {
-    # update outer resampling splits
+  if (TRUE) {
+    # update outer resampling splits and model to dem
     cv_outer_resample <- "6_x_5"
+    model <- "dem"
   }
   
   splits <- d %>% 

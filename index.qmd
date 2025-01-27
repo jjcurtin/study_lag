@@ -67,7 +67,7 @@ test_metrics_all_pp_perf <- read_csv(here::here(path_models_lag,
 ci_baseline <- read_csv(here::here(path_models_lag, "contrast_baseline.csv"), 
                         col_types = cols())
 
-ci_lag <- read_csv(here::here(path_models_lag, "constrast_adjacent.csv"), 
+ci_lag <- read_csv(here::here(path_models_lag, "contrast_adjacent.csv"), 
                    col_types = cols())
 
 pp_dem <- read_csv(here::here(path_models_lag, "pp_dem_all.csv"), col_types = cols())

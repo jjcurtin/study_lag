@@ -44,10 +44,10 @@ path_processed <- format_path(str_c("studydata/risk/data_processed/lag"))
 #| echo: false
 
 
-pp_tidy <- read_csv(here::here(path_models_lag, "pp_tidy.csv"), 
+pp_tidy <- read_csv(here::here(path_models_lag, "posteriors.csv"), 
                                  show_col_types = FALSE) 
 
-ci <- read_csv(here::here(path_models_lag, "test_metrics_all_pp_perf.csv"), 
+ci <- read_csv(here::here(path_models_lag, "pp_perf_tibble.csv"), 
                                  show_col_types = FALSE) |> 
   mutate(model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"),
                         labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
@@ -182,13 +182,13 @@ panel_shap_global
 
 ```{r}
 feat <- read_csv(here::here(path_processed, 
-                            "1week_window/features_0lag_v1.csv.xz"),
+                            "features_0lag_v3.csv"),
                  col_types = cols()) |> 
   select(label_num, subid, dttm_label, lapse, demo_age, demo_sex, 
          demo_income, demo_race) |> 
   arrange(label_num) 
 
-shaps <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1week_0_v1_nested_main.rds"))
+shaps <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_0_v3_nested_main.rds"))
 ```
 
 
@@ -210,7 +210,7 @@ baseline_sex <- global_feat_0 |>
                                           "advantaged group (non-Hispanic White, male, above poverty)")),
          model = "No Lag") |> 
   group_by(model, group, variable_grp) |> 
-  summarize(mean_value = mean(abs(shapley_value)), .groups = "drop") |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
   arrange(mean_value) |> 
   mutate(variable_grp = factor(variable_grp),
          variable_grp = fct_inorder(variable_grp)) |> 
@@ -242,7 +242,7 @@ baseline_race <- global_feat_0 |>
          group = factor(group, levels = c("disadvantaged group (not White, female, below poverty)",
                                           "advantaged group (non-Hispanic White, male, above poverty)"))) |> 
   group_by(group, variable_grp) |> 
-  summarize(mean_value = mean(abs(shapley_value)), .groups = "drop") |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
   arrange(mean_value) |> 
   mutate(variable_grp = factor(variable_grp),
          variable_grp = fct_inorder(variable_grp)) |> 
@@ -273,7 +273,7 @@ baseline_income <- global_feat_0 |>
          group = factor(group, levels = c("disadvantaged group (not White, female, below poverty)",
                                           "advantaged group (non-Hispanic White, male, above poverty)"))) |> 
   group_by(group, variable_grp) |> 
-  summarize(mean_value = mean(abs(shapley_value)), .groups = "drop") |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
   arrange(mean_value) |> 
   mutate(variable_grp = factor(variable_grp),
          variable_grp = fct_inorder(variable_grp)) |> 
@@ -303,13 +303,13 @@ no_lag <- baseline_sex + baseline_race + baseline_income
 
 ```{r}
 feat_336 <- read_csv(here::here(path_processed, 
-                            "1week_window/features_336lag_v1.csv.xz"),
+                            "features_336lag_v3.csv"),
                  col_types = cols()) |> 
   select(label_num, subid, dttm_label, lapse, demo_age, demo_sex, 
          demo_income, demo_race) |> 
   arrange(label_num) 
 
-shaps_336 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1week_336_v1_nested_main.rds"))
+shaps_336 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_336_v3_nested_main.rds"))
 ```
 
 
@@ -332,7 +332,7 @@ twoweek_sex <- global_feat_336 |>
                                           "advantaged group (non-Hispanic White, male, above poverty)")),
          model = "2-Week Lag") |> 
   group_by(model, group, variable_grp) |> 
-  summarize(mean_value = mean(abs(shapley_value)), .groups = "drop") |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
   arrange(mean_value) |> 
   mutate(variable_grp = factor(variable_grp),
          variable_grp = fct_inorder(variable_grp)) |> 
@@ -363,7 +363,7 @@ twoweek_race <- global_feat_336 |>
          group = factor(group, levels = c("disadvantaged group (not White, female, below poverty)",
                                           "advantaged group (non-Hispanic White, male, above poverty)"))) |> 
   group_by(group, variable_grp) |> 
-  summarize(mean_value = mean(abs(shapley_value)), .groups = "drop") |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
   arrange(mean_value) |> 
   mutate(variable_grp = factor(variable_grp),
          variable_grp = fct_inorder(variable_grp)) |> 
@@ -393,7 +393,7 @@ twoweek_income <- global_feat_336 |>
          group = factor(group, levels = c("disadvantaged group (not White, female, below poverty)",
                                           "advantaged group (non-Hispanic White, male, above poverty)"))) |> 
   group_by(group, variable_grp) |> 
-  summarize(mean_value = mean(abs(shapley_value)), .groups = "drop") |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
   arrange(mean_value) |> 
   mutate(variable_grp = factor(variable_grp),
          variable_grp = fct_inorder(variable_grp)) |> 
@@ -438,27 +438,27 @@ no_lag/twoweek_lag
 ```{r}
 #| echo: false 
 
-shap_feat_0 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1week_0_v1_nested_main_downsized.rds")) |> 
+shap_feat_0 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_0_v3_nested_main.rds")) |> 
   filter(str_detect(variable_grp, "EMA")) |> 
   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
          variable_grp = factor(variable_grp, levels = shap_levels))
   
-shap_feat_24 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1week_24_v1_nested_main_downsized.rds")) |> 
+shap_feat_24 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_24_v3_nested_main.rds")) |> 
   filter(str_detect(variable_grp, "EMA")) |> 
   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
          variable_grp = factor(variable_grp, levels = shap_levels))
 
-shap_feat_72 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1week_72_v1_nested_main_downsized.rds")) |> 
+shap_feat_72 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_72_v3_nested_main.rds")) |> 
   filter(str_detect(variable_grp, "EMA")) |> 
   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
          variable_grp = factor(variable_grp, levels = shap_levels))
 
-shap_feat_168 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1week_168_v1_nested_main_downsized.rds")) |> 
+shap_feat_168 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_168_v3_nested_main.rds")) |> 
   filter(str_detect(variable_grp, "EMA")) |> 
   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
          variable_grp = factor(variable_grp, levels = shap_levels))
 
-shap_feat_336 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1week_336_v1_nested_main_downsized.rds")) |> 
+shap_feat_336 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_336_v3_nested_main.rds")) |> 
   filter(str_detect(variable_grp, "EMA")) |> 
   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
          variable_grp = factor(variable_grp, levels = shap_levels))
@@ -469,16 +469,12 @@ shap_feat_336 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1week_336_
 #| echo: false
 
 panel_shap_local_0 <- shap_feat_0 |>
-  ggplot(mapping = aes(x = variable_grp, y = shapley_value, 
-                       color = feature_value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
+  ggplot(mapping = aes(x = variable_grp, y = value)) +
+  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4, color = "#cb6bce") +
   geom_hline(yintercept = 0) +
   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
   ylab("Shapley Value (No lag)") +
   xlab(NULL) +
-  scale_color_gradientn(colors = c("#240e31", "#cb6bce"),
-                        breaks = c(.1, .9),
-                        labels = c("low", "high")) +
   labs(color = NULL) +
   theme(legend.position = "right",
         legend.key.size = unit(0.25, "cm"),
@@ -487,16 +483,12 @@ panel_shap_local_0 <- shap_feat_0 |>
   coord_flip()
 
 panel_shap_local_24 <- shap_feat_24 |>
-  ggplot(mapping = aes(x = variable_grp, y = shapley_value, 
-                       color = feature_value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
+  ggplot(mapping = aes(x = variable_grp, y = value)) +
+  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4, color = "#922488") +
   geom_hline(yintercept = 0) +
   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
   ylab("Shapley Value (1-day lag)") +
   xlab(NULL) +
-  scale_color_gradientn(colors = c("#240e31", "#922488"),
-                        breaks = c(.1, .9),
-                        labels = c("low", "high")) +
   labs(color = NULL) +
   theme(legend.position = "right",
         legend.key.size = unit(0.25, "cm"),
@@ -505,16 +497,12 @@ panel_shap_local_24 <- shap_feat_24 |>
   coord_flip()
 
 panel_shap_local_72 <- shap_feat_72 |>
-  ggplot(mapping = aes(x = variable_grp, y = shapley_value, 
-                       color = feature_value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
+  ggplot(mapping = aes(x = variable_grp, y = value)) +
+  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4, color = "#458892") +
   geom_hline(yintercept = 0) +
   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
   ylab("Shapley Value (3-day lag)") +
   xlab(NULL) +
-  scale_color_gradientn(colors = c("#240e31", "#458892"),
-                        breaks = c(.1, .9),
-                        labels = c("low", "high")) +
   labs(color = NULL) +
   theme(legend.position = "right",
         legend.key.size = unit(0.25, "cm"),
@@ -523,16 +511,12 @@ panel_shap_local_72 <- shap_feat_72 |>
   coord_flip()
 
 panel_shap_local_168 <- shap_feat_168 |>
-  ggplot(mapping = aes(x = variable_grp, y = shapley_value, 
-                       color = feature_value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
+  ggplot(mapping = aes(x = variable_grp, y = value)) +
+  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4, color = "#75f3d3") +
   geom_hline(yintercept = 0) +
   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
   ylab("Shapley Value (1-week lag)") +
   xlab(NULL) +
-  scale_color_gradientn(colors = c("#240e31", "#75f3d3"),
-                        breaks = c(.1, .9),
-                        labels = c("low", "high")) +
   labs(color = NULL) +
   theme(legend.position = "right",
         legend.key.size = unit(0.25, "cm"),
@@ -542,16 +526,12 @@ panel_shap_local_168 <- shap_feat_168 |>
 
 
 panel_shap_local_336 <- shap_feat_336 |>
-  ggplot(mapping = aes(x = variable_grp, y = shapley_value, 
-                       color = feature_value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4) +
+  ggplot(mapping = aes(x = variable_grp, y = value)) +
+  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4, color = "#240e31") +
   geom_hline(yintercept = 0) +
   scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
   ylab("Shapley Value (2-week lag)") +
   xlab(NULL) +
-  scale_color_gradientn(colors = c("#240e31", "#f9e79f"),
-                        breaks = c(.1, .9),
-                        labels = c("low", "high")) +
   labs(color = NULL) +
   theme(legend.position = "right",
         legend.key.size = unit(0.25, "cm"),
