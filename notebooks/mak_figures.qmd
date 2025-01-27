@@ -255,5 +255,7 @@ panel_shap_local_336 <- shap_feat_336 |>
 #| fig-height: 5
 
 global_panel + panel_shap_local_0 + panel_shap_local_336  + 
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom") &
   plot_annotation(tag_levels = "A") 
 ```

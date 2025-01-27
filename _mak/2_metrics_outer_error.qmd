@@ -156,7 +156,7 @@ splits <- d |>
 Fit model and get beta probabilities for split 27
 ```{r function_2}
 
-split_num <- 27
+split_num <- 25
 
 d_in <- training(splits$splits[[split_num]]) |> 
     select(-id_obs) 
