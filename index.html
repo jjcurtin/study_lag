@@ -65,7 +65,7 @@ div.csl-indent {
 
 
 <meta name="citation_title" content="Lagged Predictions of Next Day Alcohol Use for Adaptive and Personalized Continuing Care">
-<meta name="citation_abstract" content="We evaluated machine learning models predicting future alcohol lapses within 24-hour prediction windows that were systematically lagged further into the future (1 day, 3 days, 1 week, and 2 weeks). We engineered features from 4x daily ecological momentary assessment. Participants (N=151; 51% male; mean age=41; 87% White, 97% Non-Hispanic) in early recovery from alcohol use disorder provided data for up to three months. We used nested cross-validation to select and evaluate models. Median posterior probabilities for auROCs were high (0.84–0.90). Still, performance declined with increasing lags (probabilities &amp;amp;gt; .99). Models also performed worse for disadvantaged groups (not White vs. non-Hispanic White, below poverty vs. above poverty, female vs. male; probabilities > .99). This study demonstrates the feasibility of predicting next-day alcohol lapses up to two weeks into the future. This advanced notice offers time to implement support options not immediately available. However, fairness concerns remain and are discussed further in the paper.
+<meta name="citation_abstract" content="We evaluated machine learning models predicting future alcohol lapses within 24-hour prediction windows that were systematically lagged further into the future (1 day, 3 days, 1 week, and 2 weeks). We engineered features from 4x daily ecological momentary assessment. Participants (N=151; 51% male; mean age=41; 87% White, 97% Non-Hispanic) in early recovery from alcohol use disorder provided data for up to three months. We used nested cross-validation to select and evaluate models. Median posterior probabilities for auROCs were high (0.83–0.90). Still, performance declined with increasing lags (probabilities &amp;amp;gt; .99). Models also performed worse for disadvantaged groups (not White vs. non-Hispanic White, below poverty vs. above poverty, female vs. male; probabilities > .99). This study demonstrates the feasibility of predicting next-day alcohol lapses up to two weeks into the future. This advanced notice offers time to implement support options not immediately available. However, fairness concerns remain and are discussed further in the paper.
 ">
 <meta name="citation_keywords" content="Substance use disorders,Precision mental health">
 <meta name="citation_author" content="Kendra Wyant">
@@ -226,7 +226,7 @@ div.csl-indent {
     <div>
       <div class="abstract">
         <div class="block-title">Abstract</div>
-        <p>We evaluated machine learning models predicting future alcohol lapses within 24-hour prediction windows that were systematically lagged further into the future (1 day, 3 days, 1 week, and 2 weeks). We engineered features from 4x daily ecological momentary assessment. Participants (N=151; 51% male; mean age=41; 87% White, 97% Non-Hispanic) in early recovery from alcohol use disorder provided data for up to three months. We used nested cross-validation to select and evaluate models. Median posterior probabilities for auROCs were high (0.84–0.90). Still, performance declined with increasing lags (probabilities &gt; .99). Models also performed worse for disadvantaged groups (not White vs.&nbsp;non-Hispanic White, below poverty vs.&nbsp;above poverty, female vs.&nbsp;male; probabilities &gt; .99). This study demonstrates the feasibility of predicting next-day alcohol lapses up to two weeks into the future. This advanced notice offers time to implement support options not immediately available. However, fairness concerns remain and are discussed further in the paper.</p>
+        <p>We evaluated machine learning models predicting future alcohol lapses within 24-hour prediction windows that were systematically lagged further into the future (1 day, 3 days, 1 week, and 2 weeks). We engineered features from 4x daily ecological momentary assessment. Participants (N=151; 51% male; mean age=41; 87% White, 97% Non-Hispanic) in early recovery from alcohol use disorder provided data for up to three months. We used nested cross-validation to select and evaluate models. Median posterior probabilities for auROCs were high (0.83–0.90). Still, performance declined with increasing lags (probabilities &gt; .99). Models also performed worse for disadvantaged groups (not White vs.&nbsp;non-Hispanic White, below poverty vs.&nbsp;above poverty, female vs.&nbsp;male; probabilities &gt; .99). This study demonstrates the feasibility of predicting next-day alcohol lapses up to two weeks into the future. This advanced notice offers time to implement support options not immediately available. However, fairness concerns remain and are discussed further in the paper.</p>
       </div>
     </div>
 
@@ -799,27 +799,11 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 </section>
 <section id="model-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="model-evaluation">Model Evaluation</h2>
-<p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.901 (baseline), 0.881 (24 hour lag), 0.869 (72 hour lag), 0.858 (168 hour lag), and 0.837 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline [0.884-0.916], 24 hour lag [0.861-0.899], 72 hour lag [0.847-0.889], 168 hour lag [0.835-0.880], 336 hour lag [0.811-0.862]. Panel A in <a href="#fig-2" class="quarto-xref">Figure&nbsp;2</a> displays these median auROCs and 95% Bayesian CIs by model. A description of feature importance by model is available in the supplement.</p>
-<div class="quarto-embed-nb-cell">
-<div id="cell-fig-2" class="cell" data-fig-width="8" data-fig-height="6">
-<div class="cell-output cell-output-display">
-<div id="fig-2" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/notebooks-mak_figures-fig-2-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Panel A displays the median posterior probability for area under ROC curve (auROC) and 95% Bayesian CI for each lagged model (0, 1-day, 3-day, 1-week, and 2-week lag). Dashed line represents a random classifier with an auROC of .5. Panels B-D display the median auROC and Bayesian credible interval for the 0 and 2-week lag models by fairness contrast. The darker lines represent the advantaged groups (non-Hispanic White, male, above poverty) and the lighter lines represent the disadvantaged groups (not White, female, below poverty). Dashed lines represent a random classifier with an auROC of .5."><img src="index_files/figure-html/notebooks-mak_figures-fig-2-output-1.png" width="768" height="576" class="figure-img"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Panel A displays the median posterior probability for area under ROC curve (auROC) and 95% Bayesian CI for each lagged model (0, 1-day, 3-day, 1-week, and 2-week lag). Dashed line represents a random classifier with an auROC of .5. Panels B-D display the median auROC and Bayesian credible interval for the 0 and 2-week lag models by fairness contrast. The darker lines represent the advantaged groups (non-Hispanic White, male, above poverty) and the lighter lines represent the disadvantaged groups (not White, female, below poverty). Dashed lines represent a random classifier with an auROC of .5.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</div>
+<p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.90 (baseline), 0.88 (24 hour lag), 0.87 (72 hour lag), 0.85 (168 hour lag), and 0.83 (336 hour lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: baseline [0.88-0.92], 24 hour lag [0.86-0.90], 72 hour lag [0.84-0.89], 168 hour lag [0.83-0.87], 336 hour lag [0.80-0.85].</p>
 </section>
 <section id="model-comparisons" class="level2">
 <h2 class="anchored" data-anchor-id="model-comparisons">Model Comparisons</h2>
-<p><a href="#tbl-contrast" class="quarto-xref">Table&nbsp;2</a> presents the median difference in auROC, 95% Bayesian CI, and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts. There was strong evidence (probabilities &gt; .99) that the lagged models performed worse than the baseline (no lag) model, with average drops in auROC ranging from 0.020-0.064, and previous adjacent lagged model, with average drops in auROC ranging from 0.010-0.021.</p>
+<p><a href="#tbl-contrast" class="quarto-xref">Table&nbsp;2</a> presents the median difference in auROC, 95% Bayesian CI, and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts. There was strong evidence (probabilities &gt; .99) that the lagged models performed worse than the baseline (no lag) model, with average drops in auROC ranging from 0.02-0.06, and previous adjacent lagged model, with average drops in auROC ranging from 0.01-0.02.</p>
 <div class="quarto-embed-nb-cell">
 <div class="cell">
 <div id="tbl-contrast" class="cell quarto-float quarto-figure quarto-figure-center anchored">
@@ -846,25 +830,25 @@ Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), a
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">0 vs.&nbsp;24</td>
+<td style="text-align: left;">No lag vs.&nbsp;1 day</td>
 <td style="text-align: left;">0.02</td>
 <td style="text-align: left;">[0.013, 0.027]</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">0 vs.&nbsp;72</td>
+<td style="text-align: left;">No lag vs.&nbsp;3 days</td>
 <td style="text-align: left;">0.032</td>
 <td style="text-align: left;">[0.025, 0.04]</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">0 vs.&nbsp;168</td>
+<td style="text-align: left;">No lag vs.&nbsp;1 week</td>
 <td style="text-align: left;">0.043</td>
 <td style="text-align: left;">[0.035, 0.051]</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">0 vs.&nbsp;336</td>
+<td style="text-align: left;">No lag vs.&nbsp;2 weeks</td>
 <td style="text-align: left;">0.064</td>
 <td style="text-align: left;">[0.054, 0.074]</td>
 <td style="text-align: left;">1</td>
@@ -876,22 +860,70 @@ Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), a
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">24 vs.&nbsp;72</td>
+<td style="text-align: left;">1 day vs.&nbsp;3 days</td>
 <td style="text-align: left;">0.012</td>
 <td style="text-align: left;">[0.005, 0.02]</td>
 <td style="text-align: left;">0.998</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">72 vs.&nbsp;168</td>
+<td style="text-align: left;">3 days vs.&nbsp;1 week</td>
 <td style="text-align: left;">0.01</td>
 <td style="text-align: left;">[0.003, 0.018]</td>
 <td style="text-align: left;">0.986</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">168 vs.&nbsp;336</td>
+<td style="text-align: left;">1 week vs.&nbsp;2 weeks</td>
 <td style="text-align: left;">0.021</td>
 <td style="text-align: left;">[0.012, 0.03]</td>
 <td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fairness Contrasts (No Lag)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">male vs.&nbsp;female</td>
+<td style="text-align: left;">0.042</td>
+<td style="text-align: left;">[0.027, 0.058]</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">non-Hispanic White vs.&nbsp;not White</td>
+<td style="text-align: left;">0.215</td>
+<td style="text-align: left;">[0.057, 0.422]</td>
+<td style="text-align: left;">0.991</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">above poverty vs.&nbsp;below poverty</td>
+<td style="text-align: left;">0.042</td>
+<td style="text-align: left;">[0.007, 0.078]</td>
+<td style="text-align: left;">0.978</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fairness Contrasts (2-week Lag)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">male vs.&nbsp;female</td>
+<td style="text-align: left;">0.097</td>
+<td style="text-align: left;">[0.074, 0.12]</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">non-Hispanic White vs.&nbsp;not White</td>
+<td style="text-align: left;">0.116</td>
+<td style="text-align: left;">[0.069, 0.169]</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">above poverty vs.&nbsp;below poverty</td>
+<td style="text-align: left;">0.107</td>
+<td style="text-align: left;">[0.059, 0.157]</td>
+<td style="text-align: left;">0.999</td>
 </tr>
 </tbody>
 </table>
@@ -904,22 +936,21 @@ Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), a
 </section>
 <section id="fairness-analyses-1" class="level2">
 <h2 class="anchored" data-anchor-id="fairness-analyses-1">Fairness Analyses</h2>
-<p>Panels B-D in <a href="#fig-2" class="quarto-xref">Figure&nbsp;2</a> shows the median auROC and credible intervals for the no lag and two-week lag models separately by race/ethnicity (not White; <em>N</em> = 20 vs.&nbsp;Non-Hispanic White; <em>N</em> = 131), sex at birth (female; <em>N</em> = 74 vs.&nbsp;male; <em>N</em> = 77), and income (below poverty; <em>N</em> = 18 vs.&nbsp;above poverty; <em>N</em> = 133). There was strong evidence (probabilities &gt; .98) that our models performed better for the advantaged groups (White, male, above poverty) compared to the disadvantaged groups (not-White, female, below poverty). On average there was a median decrease in auROC of 0.150 (range 0.111-0.270) for participants who were not White compared to non-Hispanic White participants. On average there was a median decrease in auROC of 0.049 (range 0.042-0.097) for female participants compared to male participants. On average there was a median decrease in auROC of 0.064 (range 0.042-0.107) for participants below the federal poverty line compared to participants above the federal poverty line. Individual Bayesian fairness contrasts for all five models are available in the supplement.</p>
+<p><a href="#tbl-contrast" class="quarto-xref">Table&nbsp;2</a> presents the median difference in auROC, 95% Bayesian CI, and posterior probability that that the auROC difference was greater than 0 for our no lag and 2-week lag models for the three fairness contrasts: race/ethnicity (not White; <em>N</em> = 20 vs.&nbsp;Non-Hispanic White; <em>N</em> = 131), sex at birth (female; <em>N</em> = 74 vs.&nbsp;male; <em>N</em> = 77), and income (below poverty; <em>N</em> = 18 vs.&nbsp;above poverty; <em>N</em> = 133). Individual Bayesian fairness contrasts for all five models are available in the supplement. There was strong evidence (probabilities &gt; .97) that our models performed better for the advantaged groups (White, male, above poverty) compared to the disadvantaged groups (not-White, female, below poverty). On average there was a median decrease in auROC of 0.15 (range 0.11-0.27) for participants who were not White compared to non-Hispanic White participants. On average there was a median decrease in auROC of 0.05 (range 0.04-0.10) for female participants compared to male participants. On average there was a median decrease in auROC of 0.06 (range 0.04-0.11) for participants below the federal poverty line compared to participants above the federal poverty line.</p>
 </section>
 <section id="feature-importance-1" class="level2">
 <h2 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h2>
-<p>The top three globally important (i.e., highest mean |Shapley value|) feature categories for all models were past use, future efficacy, and craving. This was also consistent across demographic groups (plots of global feature importance by demographic group are availble for the no lag and two week lag models in the supplement). Panel A of <a href="#fig-3" class="quarto-xref">Figure&nbsp;3</a> shows the relative ranking of feature categories for the no lag and 2-week lag models (global feature importance plots for all 5 models are available in the supplement). While future efficacy was the 2nd most important feature for both the no lag and 2-week lag models, the feature importance score is notably higher for the no lag model. On the other hand, future risky situations appears to be a relatively more important features for the two-week lag model compared to the no lag model.</p>
-<p>Panels B-C of <a href="#fig-3" class="quarto-xref">Figure&nbsp;3</a> show the local feature importance plots for the no lag and 2-week lag models, respectively. Local feature importance plots for all 5 models are available in the supplement. Future abstinence efficacy, future risky situations, and income appear to have a linear relationship to lapse prediction. Higher efficacy, fewer future risky situations, and higher income were associated with a lower likelihood that the model would predict a lapse.</p>
+<p>The top three globally important (i.e., highest mean |Shapley value|) feature categories for all models were past use, future efficacy, and craving. This was also consistent across demographic groups (plots of global feature importance by demographic group are availble for the no lag and two week lag models in the supplement). Panel A of <a href="#fig-3" class="quarto-xref">Figure&nbsp;2</a> shows the relative ranking of feature categories for the no lag and 2-week lag models. Global feature importance plots for all 5 modes is included in the supplement. In the supplement we also provide global feature importance plots for the no lag and 2-week lag model separately by fairness contrast. Panels B-C of <a href="#fig-3" class="quarto-xref">Figure&nbsp;2</a> show the local feature importance plots for the no lag and 2-week lag models, respectively.</p>
 <div class="quarto-embed-nb-cell">
 <div id="cell-fig-3" class="cell" data-fig-width="8" data-fig-height="5">
 <div class="cell-output cell-output-display">
 <div id="fig-3" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/notebooks-mak_figures-fig-3-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B-C display the local feature importance for the no lag and 2-week lag models, respectively."><img src="index_files/figure-html/notebooks-mak_figures-fig-3-output-1.png" width="768" height="480" class="figure-img"></a>
+<a href="index_files/figure-html/notebooks-mak_figures-fig-3-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B-C display the local feature importance for the no lag and 2-week lag models, respectively."><img src="index_files/figure-html/notebooks-mak_figures-fig-3-output-1.png" width="768" height="480" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B-C display the local feature importance for the no lag and 2-week lag models, respectively.
+Figure&nbsp;2: Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B-C display the local feature importance for the no lag and 2-week lag models, respectively.
 </figcaption>
 </figure>
 </div>
@@ -932,9 +963,9 @@ Figure&nbsp;3: Panel A displays the global importance (mean |Shapley value|) for
 </section>
 <section id="model-performance" class="level2">
 <h2 class="anchored" data-anchor-id="model-performance">Model Performance</h2>
-<p>Our models performed exceptionally well with median posterior probabilities for auROCs of .84 - .90<!--KW: double check-->. This suggests we can achieve clinically meaningful performance up to two weeks out. Our rigorous resampling methods (grouped, nested, k-fold cross-validation) make us confident that these are valid estimates of how our models would perform with new individuals.</p>
-<p>Nevertheless, model performance did decrease as models predicted further into the future. This is unsurprising given what we know about prediction and substance use. Many important relapse risk factors are fluctuating processes that can change day-by-day, if not more frequently. As lag time increases, features become less proximal to the prediction time point. Still, we wish to emphasize that our lowest auROC (.84<!--KW: double check-->) is still excellent, and the benefit of advanced notice likely outweighs the cost to performance.</p>
-<!-- KW: Update if we keep SHAPS in. This is no longer accurate with day level model. The relative ordering of important features remained somewhat consistent across models. Past use and future efficacy were the top two features for all models. However the magnitude of their importance varried somewhat by lag time. Additionally, for the two-week model future risky situations emerged as an important feature (surpassing past risky situations) whereas for the no lag model future and past risky situations held similar weight. We saw a similar, although much smaller, trend with future vs past stressful events. This may suggest there could be added utility to the lagged models by asking future-facing questions in addition to questions about current and recent past experiences.   -->
+<p>Our models performed exceptionally well with median posterior probabilities for auROCs of .83 - .90. This suggests we can achieve clinically meaningful performance up to two weeks out. Our rigorous resampling methods (grouped, nested, k-fold cross-validation) make us confident that these are valid estimates of how our models would perform with new individuals.</p>
+<p>Nevertheless, model performance did decrease as models predicted further into the future. This is unsurprising given what we know about prediction and substance use. Many important relapse risk factors are fluctuating processes that can change day-by-day, if not more frequently. As lag time increases, features become less proximal to the prediction time point. Still, we wish to emphasize that our lowest auROC (.83) is still excellent, and the benefit of advanced notice likely outweighs the cost to performance.</p>
+<p>The relative ordering of important features remained somewhat consistent across models. Past use, future efficacy, and craving were the top three features for all models. However the magnitude of their importance varried somewhat by lag time. Additionally, for the two-week model future risky situations emerged as an important feature, whereas with the no lag model past stressful events were more important. <!--KW: John, not sure how to interpret these differences. The difference in importance of future efficacy seems the most noteworthy difference--></p>
 </section>
 <section id="model-fairness" class="level2">
 <h2 class="anchored" data-anchor-id="model-fairness">Model Fairness</h2>
