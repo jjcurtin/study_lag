@@ -100,8 +100,6 @@ auroc_dem_168 <- read_csv(here::here(path_models_lag,
 auroc_dem_336 <- read_csv(here::here(path_models_lag, 
                                      "test_auroc_6_x_5_1day_336_v3_nested_dem.csv"),
                       col_types = cols())  |> 
-  add_row(outer_split_num = 12) |>
-  add_row(outer_split_num = 28) |>
   arrange(outer_split_num) |>
   mutate(across(everything(), ~if_else(.x == 0, .0000001, .x))) |> 
   mutate(fold_num = rep(1:5, 6),

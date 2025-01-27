@@ -206,43 +206,39 @@ global_panel <- global_all |>
 ```
 
 ```{r}
-shap_feat_0 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_0_v3_nested_main_downsized.rds")) |> 
+shap_feat_0 <- read_rds(here::here(path_models_lag, 
+                                   "outer_shapsgrp_1day_0_v3_nested_main.rds")) |> 
   filter(str_detect(variable_grp, "EMA")) |> 
   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels))
+         variable_grp = factor(variable_grp, levels = shap_levels)) |> 
+  group_by(variable_grp) |> 
+  summarize(min(value), max(value)) |> 
+  mutate(model = "No lag")
 
-shap_feat_336 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_336_v3_nested_main_downsized.rds")) |> 
+shap_feat_336 <- read_rds(here::here(path_models_lag, 
+                                     "outer_shapsgrp_1day_336_v3_nested_main.rds")) |> 
   filter(str_detect(variable_grp, "EMA")) |> 
   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels))
+         variable_grp = factor(variable_grp, levels = shap_levels))  |> 
+  group_by(variable_grp) |> 
+  summarize(min(value), max(value)) |> 
+  mutate(model = "2 weeks")
 
-panel_shap_local_0 <- shap_feat_0 |>
-  ggplot(mapping = aes(x = variable_grp, y = value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .7,  color = "#52144d") +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 6), breaks = seq(-2, 6)) +
-  ylab("Shapley Value (No Lag)") +
+panel_shap_local <- shap_feat_0 |>
+  bind_rows(shap_feat_336) |> 
+  mutate(model = factor(model, levels = c("2 weeks", "No lag"))) |> 
+  rename(min = `min(value)`,
+         max = `max(value)`) |> 
+  ggplot() +
+  geom_segment(aes(x = variable_grp, y = min, yend = max, group = model,
+                   color = model),
+               position = position_dodge(width = .5)) +
+  ylab("Raw Shapley Value") +
   xlab(NULL) +
   labs(color = NULL) +
-  theme(legend.position = "right",
-        legend.key.size = unit(0.25, "cm"),
+  scale_color_manual(values = c("#458892", "#751c6d")) +
+  theme(legend.position = "none",
         axis.text=element_text(size=9.5),
-        axis.text.y = element_blank(),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  coord_flip()
-
-panel_shap_local_336 <- shap_feat_336 |>
-  ggplot(mapping = aes(x = variable_grp, y = value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .7, color = "#295157") +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5.5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (2-week Lag)") +
-  xlab(NULL) +
-  labs(color = NULL) +
-  theme(legend.position = "right",
-        legend.key.size = unit(0.25, "cm"),
-        axis.text=element_text(size=9.5),
-        axis.text.y = element_blank(),
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
   coord_flip()
 ```
@@ -250,12 +246,11 @@ panel_shap_local_336 <- shap_feat_336 |>
 
 ```{r}
 #| label: fig-3
-#| fig-cap: "Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B-C display the local feature importance for the no lag and 2-week lag models, respectively."
+#| fig-cap: "Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B displays the variation (min and max Shapley values) in local feature importance for the no lag and 2-week lag models."
 #| fig-width: 8
 #| fig-height: 5
 
-global_panel + panel_shap_local_0 + panel_shap_local_336  + 
+global_panel + panel_shap_local + 
   plot_layout(guides = "collect") &
-  theme(legend.position = "bottom") &
   plot_annotation(tag_levels = "A") 
 ```

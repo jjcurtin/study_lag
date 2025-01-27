@@ -104,7 +104,7 @@ feat_preds <- feat_preds |>
 
 ### Calculate auROCs by group
 
-This calculates auROC using test sets and probability corrected (prob_beta) probabilities.   
+This calculates auROC using test sets and raw probabilities.   
 
 function
 ```{r}
@@ -128,7 +128,7 @@ get_auroc_by_dem <- function(df, var) {
      auroc_level <- df |>
        filter(get(var) == level) |> 
        nest(.by = outer_split_num, .key = "preds") |> 
-       mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_beta, 
+       mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 
        select(-preds) |> 
        unnest(auroc) |> 
