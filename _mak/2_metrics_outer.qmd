@@ -12,7 +12,7 @@ format:
 params:
   study: "lag"
   window: "1day"
-  lead: 336
+  lead: 168
   version: "v3"
   cv: "nested"
   model: "main" # "main" 
@@ -270,27 +270,27 @@ Map over all outer splits to get predicted probabilities and SHAPs from held out
 
 NOTE: Delete `outer_metrics_*` or this code chunk won't run!
 ```{r eval_outer_folds}
+# can source any training control given assumptions above
+batch_names <- list.dirs(path_input, full.names = FALSE, recursive = FALSE)
+batch_names <- batch_names[str_detect(batch_names, "train") & 
+                           str_detect(batch_names, cv) &
+                           str_detect(batch_names, version) &
+                           str_detect(batch_names, window) &
+                           str_detect(batch_names, model) &
+                           str_detect(batch_names, 
+                                      str_c(as.character(lead), "lag"))]
+  
+batch_name <- batch_names[1] # can source any batch given assumptions above
+path_batch <- here::here(path_input, batch_name)
+source(here::here(path_batch, "input", "training_controls.R"))
+# NOTE: training controls overwrites path_batch but it matches   
+  
 if(!file.exists(here::here(path_models, str_c("outer_preds_", 
                                               cv_outer_resample,
                                               "_", window, "_", lead, "_", 
                                               version, "_", cv, "_", model,
                                               ".rds")))){ 
   
-  # can source any training control given assumptions above
-  batch_names <- list.dirs(path_input, full.names = FALSE, recursive = FALSE)
-  batch_names <- batch_names[str_detect(batch_names, "train") & 
-                               str_detect(batch_names, cv) &
-                               str_detect(batch_names, version) &
-                               str_detect(batch_names, window) &
-                               str_detect(batch_names, model) &
-                               str_detect(batch_names, 
-                                          str_c(as.character(lead), "lag"))]
-  
-  batch_name <- batch_names[1] # can source any batch given assumptions above
-  path_batch <- here::here(path_input, batch_name)
-  source(here::here(path_batch, "input", "training_controls.R"))
-  # NOTE: training controls overwrites path_batch but it matches   
-                    
   chunks <- str_split_fixed(data_trn, "\\.", n = Inf) # parse name from extensions
   if (length(chunks) == 2) {
     fn <- str_c("data_trn.", chunks[[2]])
@@ -309,7 +309,10 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
     arrange(label_num) |> 
     mutate(id_obs = 1:nrow(d))  # tmp add for linking obs
   
-  if (TRUE) {
+  # manually update for now if running dem 
+  dem <- FALSE
+  
+  if (dem == TRUE) {
     # update outer resampling splits and model to dem
     cv_outer_resample <- "6_x_5"
     model <- "dem"
@@ -334,6 +337,7 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
   message("Resampled performance from nested CV previously calculated")
   
   probs_out <- read_rds(here::here(path_models, str_c("outer_preds_",
+                                                    cv_outer_resample, "_",
                                                      window, "_", lead, "_",
                                                      version, "_",
                                                      cv, "_", model, ".rds")))
@@ -342,13 +346,13 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
 
 Get test auROCs for main models    
 
-This calculates auROC using test sets (out loop held out folds). Uses probability corrected (prob_beta) probabilities.
+This calculates auROC using test sets (out loop held out folds). Uses probability corrected (prob_logi) probabilities.
 
 ```{r}
 if (model == "main") {
  metrics_test <- probs_out |> 
   nest(.by = outer_split_num, .key = "preds") |> 
-  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_beta, 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_logi, 
                                              truth = label))) |> 
   select(-preds) |> 
   unnest(auroc) |> 

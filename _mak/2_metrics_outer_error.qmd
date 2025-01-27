@@ -223,26 +223,13 @@ preds_prob_beta <- betacal::beta_predict(p = preds_prob$.pred_yes,
 # old way
 beta_model_old <- beta |>
       cal_estimate_beta(truth = truth,
-                             estimate = dplyr::starts_with(".pred_"),
+                             estimate = dplyr::starts_with(".pred_yes"),
                              smooth = TRUE)
 
 preds_prob_beta_old <- preds_prob |>
-      cal_apply(beta_model_old)
-
-# third way
-
-beta_probs <- function(x, model) {
-  alpha <- model$alpha
-  beta <- model$beta
-  intercept <- model$intercept
-  
-  # Calibrate probabilities
-  stats::pbeta(x, alpha, beta) ^ (1 / (1 + exp(-intercept)))
-}
-
-# Calibrate the probabilities
-preds_prob$preds_beta <- beta_probs(preds_prob$.pred_yes, beta_model_old)
+  select(.pred_yes) |> 
+  cal_apply(beta_model_old)
 ```
 
 
-Testing above matches other method for beta calibration in split that worked
+Does not match!

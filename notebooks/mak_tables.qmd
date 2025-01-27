@@ -210,6 +210,13 @@ ci_baseline <- read_csv(here::here(path_models_lag, "contrast_baseline.csv"),
 
 ci_lag <- read_csv(here::here(path_models_lag, "contrast_adjacent.csv"), 
                    col_types = cols())
+ci_fairness_0 <- read_csv(here::here(path_models_lag, "pp_dem_contrast_all.csv"), 
+                   col_types = cols()) |> 
+  filter(lag == 0)
+
+ci_fairness_336 <- read_csv(here::here(path_models_lag, "pp_dem_contrast_all.csv"), 
+                   col_types = cols()) |> 
+  filter(lag == 336)
 
 table_ci <- ci_baseline |> 
   mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
@@ -222,7 +229,12 @@ table_ci <- ci_baseline |>
                                       "0 vs. 24",
                                       "0 vs. 72",
                                       "0 vs. 168",
-                                      "0 vs. 336"))) |> 
+                                      "0 vs. 336"),
+                           labels = c("Baseline Contrasts",
+                                      "No lag vs. 1 day",
+                                      "No lag vs. 3 days",
+                                      "No lag vs. 1 week",
+                                      "No lag vs. 2 weeks"))) |> 
   arrange(contrast) |> 
   rbind(ci_lag |> 
           mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
@@ -235,7 +247,45 @@ table_ci <- ci_baseline |>
                            levels = c("Adjacent Contrasts",
                                       "24 vs. 72",
                                       "72 vs. 168",
-                                      "168 vs. 336"))) |> 
+                                      "168 vs. 336"),
+                           labels = c("Adjacent Contrasts",
+                                      "1 day vs. 3 days",
+                                      "3 days vs. 1 week",
+                                      "1 week vs. 2 weeks"))) |> 
+          arrange(contrast)) |> 
+  rbind(ci_fairness_0 |> 
+          mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
+                  median = as.character(round(median, 3)),
+         probability = as.character(round(probability, 3))) |>
+          select(contrast, median, ci, probability) |> 
+          add_row(contrast = "Fairness Contrasts (No Lag)", median = "", ci = "", 
+                  probability = "") |> 
+          mutate(contrast = factor(contrast,
+                           levels = c("Fairness Contrasts (No Lag)",
+                                      "male vs female",
+                                      "non-hispanic white vs not white",
+                                      "above poverty vs below poverty"),
+                           labels = c("Fairness Contrasts (No Lag)",
+                                      "male vs. female",
+                                      "non-Hispanic White vs. not White",
+                                      "above poverty vs. below poverty"))) |> 
+          arrange(contrast)) |> 
+    rbind(ci_fairness_336 |> 
+          mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
+                  median = as.character(round(median, 3)),
+         probability = as.character(round(probability, 3))) |>
+          select(contrast, median, ci, probability) |> 
+          add_row(contrast = "Fairness Contrasts (2-week Lag)", median = "", ci = "", 
+                  probability = "") |> 
+          mutate(contrast = factor(contrast,
+                           levels = c("Fairness Contrasts (2-week Lag)",
+                                      "male vs female",
+                                      "non-hispanic white vs not white",
+                                      "above poverty vs below poverty"),
+                           labels = c("Fairness Contrasts (2-week Lag)",
+                                      "male vs. female",
+                                      "non-Hispanic White vs. not White",
+                                      "above poverty vs. below poverty"))) |> 
           arrange(contrast)) |> 
   rename(Contrast = contrast,
          Median = median,

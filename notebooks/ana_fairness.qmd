@@ -121,13 +121,13 @@ calc_pp <- function (lag, dem_var) {
   data <- 
     if (dem_var == "sex") {
     get(data_name) |> 
-    select(id = repeat_num, id2 = fold_num, female, male)
+    select(id = repeat_num, id2 = fold_num, male, female)
   } else if (dem_var == "income") {
     get(data_name) |> 
-    select(id = repeat_num, id2 = fold_num, `below poverty`,`above poverty`)
+    select(id = repeat_num, id2 = fold_num, `above poverty`, `below poverty`)
   } else if (dem_var == "race") {
     get(data_name) |> 
-    select(id = repeat_num, id2 = fold_num, `not white`, `non-hispanic white` = white)
+    select(id = repeat_num, id2 = fold_num, `non-hispanic white` = white, `not white`)
   } else {
     stop(dem_var, " not in data")
   }
@@ -156,11 +156,11 @@ calc_pp <- function (lag, dem_var) {
   
   contrast_lists <- 
     if (dem_var == "sex") {
-    c(list("female"), list("male"))
+    c(list("male"), list("female"))
   } else if (dem_var == "income") {
-    c(list("below poverty"), list("above poverty"))
+    c(list("above poverty"), list("below poverty"))
   } else if (dem_var == "race") {
-    c(list("not white"), list("non-hispanic white"))
+    c(list("non-hispanic white"), list("not white"))
   } else {
     stop(dem_var, " not in data")
   }
