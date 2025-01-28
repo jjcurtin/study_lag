@@ -232,21 +232,26 @@ panel_shap_local <- shap_feat_0 |>
   ggplot() +
   geom_segment(aes(x = variable_grp, y = min, yend = max, group = model,
                    color = model),
-               position = position_dodge(width = .5)) +
+               position = position_dodge(width = .5), 
+               linewidth = 1) +
   ylab("Raw Shapley Value") +
   xlab(NULL) +
   labs(color = NULL) +
   scale_color_manual(values = c("#458892", "#751c6d")) +
   theme(legend.position = "none",
         axis.text=element_text(size=9.5),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
+        panel.border = element_rect(colour = "black", fill = NA, 
+                                    linewidth = 1))+
+  geom_hline(aes(yintercept = 0), linetype = "dashed",
+             linewidth = .5) +
+  scale_y_continuous(limits = c(-2, 6), breaks = seq(-2, 6, 2)) +
   coord_flip()
 ```
 
 
 ```{r}
 #| label: fig-3
-#| fig-cap: "Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B displays the variation (min and max Shapley values) in local feature importance for the no lag and 2-week lag models."
+#| fig-cap: "Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B displays the variation in local feature importance for the no lag and 2-week lag models. Lines start at minimum Shapley value and end at maximum Shapley value."
 #| fig-width: 8
 #| fig-height: 5
 
