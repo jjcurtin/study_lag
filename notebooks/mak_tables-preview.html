@@ -3741,20 +3741,21 @@ Attaching package: &#39;kableExtra&#39;</code></pre>
 <div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>table_dem <span class="sc">|&gt;</span> </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">3</span>, <span class="at">end_row =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">6</span>, <span class="at">end_row =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">12</span>, <span class="at">end_row =</span> <span class="dv">13</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">15</span>, <span class="at">end_row =</span> <span class="dv">20</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">22</span>, <span class="at">end_row =</span> <span class="dv">30</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">33</span>, <span class="at">end_row =</span> <span class="dv">37</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">40</span>, <span class="at">end_row =</span> <span class="dv">41</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_classic</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">3</span>, <span class="at">end_row =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">6</span>, <span class="at">end_row =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">12</span>, <span class="at">end_row =</span> <span class="dv">13</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">15</span>, <span class="at">end_row =</span> <span class="dv">20</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">22</span>, <span class="at">end_row =</span> <span class="dv">30</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">33</span>, <span class="at">end_row =</span> <span class="dv">37</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">40</span>, <span class="at">end_row =</span> <span class="dv">41</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Demographic and Lapse Characteristics
 </figcaption>
 <div aria-describedby="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table>
+<table class="lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
  <thead>
   <tr>
    <th style="text-align:left;"> var </th>
@@ -3782,7 +3783,7 @@ Demographic and Lapse Characteristics
    <td style="text-align:left;">  </td>
    <td style="text-align:left;">  </td>
   </tr>
-  <tr grouplength="2"><td colspan="6" style="border-bottom: 1px solid;"><strong></strong></td></tr>
+  <tr grouplength="2"><td colspan="6" style="border-bottom: 0;"><strong></strong></td></tr>
 <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Female </td>
    <td style="text-align:right;"> 74 </td>
@@ -3807,7 +3808,7 @@ Demographic and Lapse Characteristics
    <td style="text-align:left;">  </td>
    <td style="text-align:left;">  </td>
   </tr>
-  <tr grouplength="5"><td colspan="6" style="border-bottom: 1px solid;"><strong></strong></td></tr>
+  <tr grouplength="5"><td colspan="6" style="border-bottom: 0;"><strong></strong></td></tr>
 <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> American Indian/Alaska Native </td>
    <td style="text-align:right;"> 3 </td>
@@ -3856,7 +3857,7 @@ Demographic and Lapse Characteristics
    <td style="text-align:left;">  </td>
    <td style="text-align:left;">  </td>
   </tr>
-  <tr grouplength="2"><td colspan="6" style="border-bottom: 1px solid;"><strong></strong></td></tr>
+  <tr grouplength="2"><td colspan="6" style="border-bottom: 0;"><strong></strong></td></tr>
 <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Yes </td>
    <td style="text-align:right;"> 4 </td>
@@ -3881,7 +3882,7 @@ Demographic and Lapse Characteristics
    <td style="text-align:left;">  </td>
    <td style="text-align:left;">  </td>
   </tr>
-  <tr grouplength="6"><td colspan="6" style="border-bottom: 1px solid;"><strong></strong></td></tr>
+  <tr grouplength="6"><td colspan="6" style="border-bottom: 0;"><strong></strong></td></tr>
 <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Less than high school or GED degree </td>
    <td style="text-align:right;"> 1 </td>
@@ -3938,7 +3939,7 @@ Demographic and Lapse Characteristics
    <td style="text-align:left;">  </td>
    <td style="text-align:left;">  </td>
   </tr>
-  <tr grouplength="9"><td colspan="6" style="border-bottom: 1px solid;"><strong></strong></td></tr>
+  <tr grouplength="9"><td colspan="6" style="border-bottom: 0;"><strong></strong></td></tr>
 <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Employed full-time </td>
    <td style="text-align:right;"> 72 </td>
@@ -4027,7 +4028,7 @@ Demographic and Lapse Characteristics
    <td style="text-align:left;">  </td>
    <td style="text-align:left;">  </td>
   </tr>
-  <tr grouplength="5"><td colspan="6" style="border-bottom: 1px solid;"><strong></strong></td></tr>
+  <tr grouplength="5"><td colspan="6" style="border-bottom: 0;"><strong></strong></td></tr>
 <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Never married </td>
    <td style="text-align:right;"> 67 </td>
@@ -4084,7 +4085,7 @@ Demographic and Lapse Characteristics
    <td style="text-align:left;">  </td>
    <td style="text-align:left;">  </td>
   </tr>
-  <tr grouplength="2"><td colspan="6" style="border-bottom: 1px solid;"><strong></strong></td></tr>
+  <tr grouplength="2"><td colspan="6" style="border-bottom: 0;"><strong></strong></td></tr>
 <tr>
    <td style="text-align:left;padding-left: 2em;" indentlevel="1"> Yes </td>
    <td style="text-align:right;"> 84 </td>

@@ -585,20 +585,21 @@ Figure&nbsp;1: Panel A shows the prediction time points at which our model calcu
 
 <div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>table_dem <span class="op">|&gt;</span> </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  knitr::kable() <span class="op">|&gt;</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">3</span>, end_row <span class="op">=</span> <span class="dv">4</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">6</span>, end_row <span class="op">=</span> <span class="dv">10</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">12</span>, end_row <span class="op">=</span> <span class="dv">13</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">15</span>, end_row <span class="op">=</span> <span class="dv">20</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">22</span>, end_row <span class="op">=</span> <span class="dv">30</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">33</span>, end_row <span class="op">=</span> <span class="dv">37</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">40</span>, end_row <span class="op">=</span> <span class="dv">41</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  kable_classic() <span class="op">|&gt;</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">3</span>, end_row <span class="op">=</span> <span class="dv">4</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">6</span>, end_row <span class="op">=</span> <span class="dv">10</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">12</span>, end_row <span class="op">=</span> <span class="dv">13</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">15</span>, end_row <span class="op">=</span> <span class="dv">20</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">22</span>, end_row <span class="op">=</span> <span class="dv">30</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">33</span>, end_row <span class="op">=</span> <span class="dv">37</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">40</span>, end_row <span class="op">=</span> <span class="dv">41</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: Demographic and Lapse Characteristics
 </figcaption>
 <div aria-describedby="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<table class="lightable-classic do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">var</th>
@@ -627,7 +628,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd" data-grouplength="2">
-<td colspan="6" style="text-align: left; border-bottom: 1px solid;"><strong></strong></td>
+<td colspan="6" style="text-align: left; border-bottom: 0;"><strong></strong></td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Female</td>
@@ -654,7 +655,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd" data-grouplength="5">
-<td colspan="6" style="text-align: left; border-bottom: 1px solid;"><strong></strong></td>
+<td colspan="6" style="text-align: left; border-bottom: 0;"><strong></strong></td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">American Indian/Alaska Native</td>
@@ -705,7 +706,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even" data-grouplength="2">
-<td colspan="6" style="text-align: left; border-bottom: 1px solid;"><strong></strong></td>
+<td colspan="6" style="text-align: left; border-bottom: 0;"><strong></strong></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Yes</td>
@@ -732,7 +733,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even" data-grouplength="6">
-<td colspan="6" style="text-align: left; border-bottom: 1px solid;"><strong></strong></td>
+<td colspan="6" style="text-align: left; border-bottom: 0;"><strong></strong></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Less than high school or GED degree</td>
@@ -791,7 +792,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even" data-grouplength="9">
-<td colspan="6" style="text-align: left; border-bottom: 1px solid;"><strong></strong></td>
+<td colspan="6" style="text-align: left; border-bottom: 0;"><strong></strong></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Employed full-time</td>
@@ -882,7 +883,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even" data-grouplength="5">
-<td colspan="6" style="text-align: left; border-bottom: 1px solid;"><strong></strong></td>
+<td colspan="6" style="text-align: left; border-bottom: 0;"><strong></strong></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Never married</td>
@@ -941,7 +942,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even" data-grouplength="2">
-<td colspan="6" style="text-align: left; border-bottom: 1px solid;"><strong></strong></td>
+<td colspan="6" style="text-align: left; border-bottom: 0;"><strong></strong></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">Yes</td>
