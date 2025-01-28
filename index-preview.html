@@ -968,20 +968,28 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
 
 <div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>table_ci <span class="op">|&gt;</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  knitr::kable()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-contrast" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  knitr::kable() <span class="op">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  kable_classic() <span class="op">|&gt;</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">2</span>, end_row <span class="op">=</span> <span class="dv">5</span>) <span class="op">|&gt;</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">7</span>, end_row <span class="op">=</span> <span class="dv">9</span>) <span class="op">|&gt;</span> </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">11</span>, end_row <span class="op">=</span> <span class="dv">13</span>) <span class="op">|&gt;</span> </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">15</span>, end_row <span class="op">=</span> <span class="dv">17</span>) <span class="op">|&gt;</span> </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  kableExtra::row_spec(<span class="dv">5</span>, extra_css <span class="op">=</span> <span class="st">"border-bottom: 1px solid"</span>) <span class="op">|&gt;</span> </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  kableExtra::row_spec(<span class="dv">9</span>, extra_css <span class="op">=</span> <span class="st">"border-bottom: 1px solid"</span>) <span class="op">|&gt;</span>     </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  kableExtra::row_spec(<span class="dv">13</span>, extra_css <span class="op">=</span> <span class="st">"border-bottom: 1px solid"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-contrast" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-contrast-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts.
 </figcaption>
 <div aria-describedby="tbl-contrast-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display cell-output-markdown">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<div class="cell-output cell-output-display">
+<table class="lightable-classic do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
-<th style="text-align: left;">Contrast</th>
-<th style="text-align: left;">Median</th>
-<th style="text-align: left;">Bayesian CI</th>
-<th style="text-align: left;">Probability</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Contrast</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Median</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Bayesian CI</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Probability</th>
 </tr>
 </thead>
 <tbody>
@@ -991,53 +999,59 @@ Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), a
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">No lag vs.&nbsp;1 day</td>
+<tr class="even" data-grouplength="4">
+<td colspan="4" style="text-align: left; border-bottom: 0;"><strong></strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">No lag vs. 1 day</td>
 <td style="text-align: left;">0.02</td>
 <td style="text-align: left;">[0.013, 0.027]</td>
 <td style="text-align: left;">1</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">No lag vs.&nbsp;3 days</td>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">No lag vs. 3 days</td>
 <td style="text-align: left;">0.032</td>
 <td style="text-align: left;">[0.025, 0.04]</td>
 <td style="text-align: left;">1</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">No lag vs.&nbsp;1 week</td>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">No lag vs. 1 week</td>
 <td style="text-align: left;">0.043</td>
-<td style="text-align: left;">[0.035, 0.051]</td>
+<td style="text-align: left;">[0.035, 0.052]</td>
 <td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em; border-bottom: 1px solid;" data-indentlevel="1">No lag vs. 2 weeks</td>
+<td style="text-align: left; border-bottom: 1px solid;">0.063</td>
+<td style="text-align: left; border-bottom: 1px solid;">[0.053, 0.073]</td>
+<td style="text-align: left; border-bottom: 1px solid;">1</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">No lag vs.&nbsp;2 weeks</td>
-<td style="text-align: left;">0.064</td>
-<td style="text-align: left;">[0.054, 0.074]</td>
-<td style="text-align: left;">1</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">Adjacent Contrasts</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 </tr>
+<tr class="even" data-grouplength="3">
+<td colspan="4" style="text-align: left; border-bottom: 0;"><strong></strong></td>
+</tr>
 <tr class="odd">
-<td style="text-align: left;">1 day vs.&nbsp;3 days</td>
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">1 day vs. 3 days</td>
 <td style="text-align: left;">0.012</td>
 <td style="text-align: left;">[0.005, 0.02]</td>
-<td style="text-align: left;">0.998</td>
+<td style="text-align: left;">0.999</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">3 days vs.&nbsp;1 week</td>
-<td style="text-align: left;">0.01</td>
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">3 days vs. 1 week</td>
+<td style="text-align: left;">0.011</td>
 <td style="text-align: left;">[0.003, 0.018]</td>
-<td style="text-align: left;">0.986</td>
+<td style="text-align: left;">0.989</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1 week vs.&nbsp;2 weeks</td>
-<td style="text-align: left;">0.021</td>
-<td style="text-align: left;">[0.012, 0.03]</td>
-<td style="text-align: left;">1</td>
+<td style="text-align: left; padding-left: 2em; border-bottom: 1px solid;" data-indentlevel="1">1 week vs. 2 weeks</td>
+<td style="text-align: left; border-bottom: 1px solid;">0.02</td>
+<td style="text-align: left; border-bottom: 1px solid;">[0.011, 0.029]</td>
+<td style="text-align: left; border-bottom: 1px solid;">1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Fairness Contrasts (No Lag)</td>
@@ -1045,47 +1059,53 @@ Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), a
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">male vs.&nbsp;female</td>
+<tr class="odd" data-grouplength="3">
+<td colspan="4" style="text-align: left; border-bottom: 0;"><strong></strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">male vs. female</td>
 <td style="text-align: left;">0.042</td>
 <td style="text-align: left;">[0.027, 0.058]</td>
 <td style="text-align: left;">1</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">non-Hispanic White vs.&nbsp;not White</td>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">non-Hispanic White vs. not White</td>
 <td style="text-align: left;">0.215</td>
 <td style="text-align: left;">[0.057, 0.422]</td>
 <td style="text-align: left;">0.991</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">above poverty vs.&nbsp;below poverty</td>
-<td style="text-align: left;">0.042</td>
-<td style="text-align: left;">[0.007, 0.078]</td>
-<td style="text-align: left;">0.978</td>
-</tr>
 <tr class="even">
+<td style="text-align: left; padding-left: 2em; border-bottom: 1px solid;" data-indentlevel="1">above poverty vs. below poverty</td>
+<td style="text-align: left; border-bottom: 1px solid;">0.042</td>
+<td style="text-align: left; border-bottom: 1px solid;">[0.007, 0.078]</td>
+<td style="text-align: left; border-bottom: 1px solid;">0.978</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">Fairness Contrasts (2-week Lag)</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 </tr>
+<tr class="even" data-grouplength="3">
+<td colspan="4" style="text-align: left; border-bottom: 0;"><strong></strong></td>
+</tr>
 <tr class="odd">
-<td style="text-align: left;">male vs.&nbsp;female</td>
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">male vs. female</td>
 <td style="text-align: left;">0.097</td>
-<td style="text-align: left;">[0.074, 0.12]</td>
+<td style="text-align: left;">[0.076, 0.119]</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">non-Hispanic White vs.&nbsp;not White</td>
-<td style="text-align: left;">0.116</td>
-<td style="text-align: left;">[0.069, 0.169]</td>
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">non-Hispanic White vs. not White</td>
+<td style="text-align: left;">0.109</td>
+<td style="text-align: left;">[0.064, 0.16]</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">above poverty vs.&nbsp;below poverty</td>
-<td style="text-align: left;">0.107</td>
-<td style="text-align: left;">[0.059, 0.157]</td>
-<td style="text-align: left;">0.999</td>
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">above poverty vs. below poverty</td>
+<td style="text-align: left;">0.114</td>
+<td style="text-align: left;">[0.067, 0.162]</td>
+<td style="text-align: left;">1</td>
 </tr>
 </tbody>
 </table>
