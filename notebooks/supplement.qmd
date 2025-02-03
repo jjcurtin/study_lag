@@ -123,62 +123,147 @@ pp_tidy |>
   ggplot() + 
   geom_histogram(aes(x = posterior), fill = "light grey", color = "black", alpha = .4, 
                  bins = 30) +
-  geom_segment(mapping = aes(y = 1200, yend = 1600, x = pp_median, xend = pp_median),
+  geom_segment(mapping = aes(y = 2200, yend = 2600, x = pp_median, xend = pp_median),
                data = ci) +
-  geom_segment(mapping = aes(y = 1400, yend = 1400, x = pp_lower, xend = pp_upper),
+  geom_segment(mapping = aes(y = 2400, yend = 2400, x = pp_lower, xend = pp_upper),
                 data = ci) +
   facet_wrap(~model, ncol = 1) +
-  scale_y_continuous("Posterior Probability", breaks = c(0, 500, 1000, 1500)) +
+  scale_y_continuous("Posterior Probability") +
   xlab("Area Under ROC Curve") +
   theme_classic() +
   theme(legend.position = "none")
 ```
 
-### Figure S2: Global Shapley Plot for All Models
+### Figure S2: Calibration Plots for Baseline and 2-Week Lag Models
+
+```{r}
+preds_0 <- read_rds(here::here(path_models_lag, 
+                               "outer_preds_3_x_10_1day_0_v3_nested_main.rds"))
+
+preds_336 <- read_rds(here::here(path_models_lag, 
+                               "outer_preds_3_x_10_1day_336_v3_nested_main.rds"))
+```
+
+#### Logistic Calibration
+
+```{r}
+bin_width = 0.10
+
+fig_cal_0 <- preds_0 |> 
+  mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+         lapse = if_else(label == "Lapse", 1, 0)) |> 
+  group_by(bins)  |> 
+  summarize(mean_lapse = mean(lapse),
+            .groups = "drop") |>
+  mutate(bins = as.numeric(bins),
+         midpoints = bin_width/2 + bin_width * (bins - 1))  |> 
+  ggplot(data = _, aes(x = midpoints, y = mean_lapse)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dotted") +
+  geom_line() +
+  geom_point() +
+  labs(x = "Predicted Lapse Probability (bin mid-point)",
+       y = "Observed Lapse Probability",
+       title = "No Lag") +
+  scale_x_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1)) +
+  scale_y_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1)) 
+
+
+fig_cal_336 <- preds_336 |> 
+  mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+         lapse = if_else(label == "Lapse", 1, 0)) |> 
+  group_by(bins)  |> 
+  summarize(mean_lapse = mean(lapse),
+            .groups = "drop") |>
+  mutate(bins = as.numeric(bins),
+         midpoints = bin_width/2 + bin_width * (bins - 1))  |> 
+  ggplot(data = _, aes(x = midpoints, y = mean_lapse)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dotted") +
+  geom_line() +
+  geom_point() +
+  labs(x = "Predicted Lapse Probability (bin mid-point)",
+       y = "Observed Lapse Probability",
+       title = "2-week Lag") +
+  scale_x_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1)) +
+  scale_y_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1))
+```
+
+```{r}
+fig_cal_0 + fig_cal_336
+```
+
+#### No Calibration (raw probabilities)
+
+```{r}
+bin_width = 0.10
+
+fig_cal_0 <- preds_0 |> 
+  mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
+         lapse = if_else(label == "Lapse", 1, 0)) |> 
+  group_by(bins)  |> 
+  summarize(mean_lapse = mean(lapse),
+            .groups = "drop") |>
+  mutate(bins = as.numeric(bins),
+         midpoints = bin_width/2 + bin_width * (bins - 1))  |> 
+  ggplot(data = _, aes(x = midpoints, y = mean_lapse)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dotted") +
+  geom_line() +
+  geom_point() +
+  labs(x = "Predicted Lapse Probability (bin mid-point)",
+       y = "Observed Lapse Probability",
+       title = "No Lag") +
+  scale_x_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1)) +
+  scale_y_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1)) 
+
+
+fig_cal_336 <- preds_336 |> 
+  mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
+         lapse = if_else(label == "Lapse", 1, 0)) |> 
+  group_by(bins)  |> 
+  summarize(mean_lapse = mean(lapse),
+            .groups = "drop") |>
+  mutate(bins = as.numeric(bins),
+         midpoints = bin_width/2 + bin_width * (bins - 1))  |> 
+  ggplot(data = _, aes(x = midpoints, y = mean_lapse)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dotted") +
+  geom_line() +
+  geom_point() +
+  labs(x = "Predicted Lapse Probability (bin mid-point)",
+       y = "Observed Lapse Probability",
+       title = "2-week Lag") +
+  scale_x_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1)) +
+  scale_y_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1))
+```
+
+```{r}
+fig_cal_0 + fig_cal_336
+```
+
+
+
+### Figure S3: Global Shapley Plots for Baseline and 2-Week Lag Model by Demographic Group
+
 
 ```{r}
 global_all <- read_rds(here::here(path_models_lag, "shap_global_all.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
    mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
           variable_grp = reorder(variable_grp, mean_value, sum),
-          model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"),
-                         labels = c("2 weeks", "1 week", "3 days", "1 day", "No lag" )))
+          model = factor(model, levels = c("0 lag", "336 lag"),
+                         labels = c("No lag", "2 weeks")))
 
 shap_levels <- global_all |>
   mutate(variable_grp = reorder(variable_grp, mean_value, sum)) |>
   pull(variable_grp) |>
   levels()
 ```
-
-
-```{r}
-color_codes <- c("#240e31","#75f3d3", "#458892", "#751c6d", "#cb6bce")
-
-panel_shap_global <- global_all |>
-  ggplot() +
-  geom_bar(aes(x = variable_grp, y = mean_value, fill = model), stat = "identity") +
-  ylab("Mean(|Shapley Value|)") +
-  xlab("") +
-  labs(fill = "Model Lag") +
-  scale_color_manual(values = color_codes) +
-  scale_fill_manual(values = color_codes) +
-  theme(axis.text=element_text(size=9.5),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
-        legend.position = "right") +
-  coord_flip()
-```
-
-```{r}
-#| label: fig-shap
-#| fig-cap: "Global importance (mean |Shapley value|) for feature categories for each model. Feature categories are ordered by their aggregate global importance (i.e., total bar length) across the five models. The importance of each feature category for specific models is displayed separately by color."
-#| fig-height: 5.5
-#| fig-width: 7
-
-panel_shap_global
-
-```
-
-### Figure S3: Global Shapley Plots for Baseline and 2-Week Lag Model by Demographic Group
 
 ```{r}
 feat <- read_csv(here::here(path_processed, 
@@ -189,14 +274,12 @@ feat <- read_csv(here::here(path_processed,
   arrange(label_num) 
 
 shaps <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_0_v3_nested_main.rds"))
-```
 
-
-```{r}
 global_feat_0 <- feat |> 
   rename(id_obs = label_num) |>
   right_join(shaps, by = c("id_obs")) 
 ```
+
 
 ```{r}
 baseline_sex <- global_feat_0 |> 
@@ -310,15 +393,14 @@ feat_336 <- read_csv(here::here(path_processed,
   arrange(label_num) 
 
 shaps_336 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_336_v3_nested_main.rds"))
-```
 
 
-```{r}
 global_feat_336 <- feat_336 |> 
   rename(id_obs = label_num) |>
-  right_join(shaps_336, by = c("id_obs")) |> 
-  filter(model == "336 lag")
+  right_join(shaps_336, by = c("id_obs")) 
 ```
+
+
 
 ```{r}
 twoweek_sex <- global_feat_336 |> 
@@ -432,135 +514,6 @@ no_lag/twoweek_lag
 
 
 
-### Figure S4: Local Shapley Plots by Model
-
-
-```{r}
-#| echo: false 
-
-shap_feat_0 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_0_v3_nested_main.rds")) |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels))
-  
-shap_feat_24 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_24_v3_nested_main.rds")) |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels))
-
-shap_feat_72 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_72_v3_nested_main.rds")) |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels))
-
-shap_feat_168 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_168_v3_nested_main.rds")) |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels))
-
-shap_feat_336 <- read_rds(here::here(path_models_lag, "outer_shapsgrp_1day_336_v3_nested_main.rds")) |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels))
-```
-
-
-```{r}
-#| echo: false
-
-panel_shap_local_0 <- shap_feat_0 |>
-  ggplot(mapping = aes(x = variable_grp, y = value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4, color = "#cb6bce") +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (No lag)") +
-  xlab(NULL) +
-  labs(color = NULL) +
-  theme(legend.position = "right",
-        legend.key.size = unit(0.25, "cm"),
-        axis.text=element_text(size=9.5),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  coord_flip()
-
-panel_shap_local_24 <- shap_feat_24 |>
-  ggplot(mapping = aes(x = variable_grp, y = value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4, color = "#922488") +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (1-day lag)") +
-  xlab(NULL) +
-  labs(color = NULL) +
-  theme(legend.position = "right",
-        legend.key.size = unit(0.25, "cm"),
-        axis.text=element_text(size=9.5),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  coord_flip()
-
-panel_shap_local_72 <- shap_feat_72 |>
-  ggplot(mapping = aes(x = variable_grp, y = value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4, color = "#458892") +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (3-day lag)") +
-  xlab(NULL) +
-  labs(color = NULL) +
-  theme(legend.position = "right",
-        legend.key.size = unit(0.25, "cm"),
-        axis.text=element_text(size=9.5),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  coord_flip()
-
-panel_shap_local_168 <- shap_feat_168 |>
-  ggplot(mapping = aes(x = variable_grp, y = value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4, color = "#75f3d3") +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (1-week lag)") +
-  xlab(NULL) +
-  labs(color = NULL) +
-  theme(legend.position = "right",
-        legend.key.size = unit(0.25, "cm"),
-        axis.text=element_text(size=9.5),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  coord_flip()
-
-
-panel_shap_local_336 <- shap_feat_336 |>
-  ggplot(mapping = aes(x = variable_grp, y = value)) +
-  ggforce::geom_sina(method = "counts", maxwidth = .7, alpha = .4, color = "#240e31") +
-  geom_hline(yintercept = 0) +
-  scale_y_continuous(limits = c(-2, 5), breaks = seq(-2, 5)) +
-  ylab("Shapley Value (2-week lag)") +
-  xlab(NULL) +
-  labs(color = NULL) +
-  theme(legend.position = "right",
-        legend.key.size = unit(0.25, "cm"),
-        axis.text=element_text(size=9.5),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))+
-  coord_flip()
-```
-
-
-
-```{r}
-#| label: fig-shap-local
-#| fig-cap: "Local feature importance plots by model."
-#| fig-height: 8
-#| fig-width: 10
-
-cowplot::plot_grid(panel_shap_local_0,
-                   panel_shap_local_24,
-                   panel_shap_local_72, 
-                   panel_shap_local_168,
-                   panel_shap_local_336, 
-                   ncol = 2, labels = c("A", "B", "C", "D", "E"), 
-                   align = "hv")
-
-```
-
-
-
-
 ## Supplemental Tables
 
 ### Table S1: Demographic Contrasts for all Models
@@ -571,7 +524,7 @@ cowplot::plot_grid(panel_shap_local_0,
 
 
 pp_sex <- pp_dem_contrast |> 
-  filter(contrast == "female vs male") |> 
+  filter(contrast == "male vs female") |> 
    mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
          median = as.character(round(median, 3)),
          probability = as.character(round(probability, 3))) |> 
@@ -582,7 +535,7 @@ pp_sex <- pp_dem_contrast |>
          Probability = probability)
 
 pp_income <- pp_dem_contrast |> 
-  filter(contrast == "below poverty vs above poverty") |> 
+  filter(contrast == "above poverty vs below poverty") |> 
    mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
          median = as.character(round(median, 3)),
          probability = as.character(round(probability, 3))) |> 
@@ -593,7 +546,7 @@ pp_income <- pp_dem_contrast |>
          `Probability ` = probability)
 
 pp_race <- pp_dem_contrast |> 
-  filter(contrast == "not white vs non-hispanic white") |> 
+  filter(contrast == "non-hispanic white vs not white") |> 
    mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
          median = as.character(round(median, 3)),
          probability = as.character(round(probability, 3))) |> 

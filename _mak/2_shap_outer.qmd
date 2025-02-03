@@ -12,7 +12,7 @@ format:
 params:
   study: "lag"
   window: "1day"
-  lead: 0
+  lead: 24
   version: "v3"
   cv: "nested"
   model: "main" # "main" 
@@ -279,21 +279,17 @@ if(!file.exists(here::here(path_models, str_c("outer_shaps_",
     arrange(label_num) |> 
     mutate(id_obs = 1:nrow(d))  # tmp add for linking obs
   
-  if (model == "dem") {
-    # update outer resampling splits
-    cv_outer_resample <- "6_x_5"
-  }
-  
   splits <- d |>
     make_splits(cv_resample_type, cv_resample, cv_outer_resample, 
                 cv_inner_resample, cv_group, seed_splits)
     
-  all <- 1:15 |> 
+  all <- 1:10 |> 
     map(\(split_num) fit_predict_eval(split_num, splits, configs_best)) 
   
    shaps_out <- all |> 
     map(\(l) pluck(l, "shaps_out")) |> 
-    list_rbind() 
+    list_rbind() |> 
+     glimpse()
    
    rm(all)
     
