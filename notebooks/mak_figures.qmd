@@ -63,7 +63,7 @@ shap_levels <- global_all |>
 ## Figure 1: Prediction Methods
 ```{r}
 #| label: fig-methods
-#| fig-cap: "Panel A shows the prediction time points at which our model calculated a predicted probability of a lapse. All available data up until, but not including, the prediction timepoint was used to generate these predictions. Features were created for varying feature scoring epochs before the prediction timepoint (i.e., 12, 24, 48, 72, and 168 hours). Prediction timepoints were updated hourly. Panel B shows how the prediction window (i.e., window in which a lapse might occur) rolls forward hour-by-hour with the prediction timepoint. The prediction window width for all models was 24 hours. Additionally, there were five possible lag times between the prediction time point and start of the prediction window. A prediction window either started immediately after the prediction time point (no lag) or was lagged by 1 day, 3 days, 1 week, or 2 weeks."
+#| fig-cap: "Panel A shows the prediction timepoints at which our model calculated a predicted probability of a lapse. All available data up until, but not including, the prediction timepoint was used to generate these predictions. Features were created for varying feature scoring epochs before the prediction timepoint (i.e., 12, 24, 48, 72, and 168 hours). Prediction timepoints were updated hourly. Panel B shows how the prediction window (i.e., window in which a lapse might occur) rolls forward hour-by-hour with the prediction timepoint. The prediction window width for all models was 24 hours. Additionally, there were five possible lag times between the prediction timepoint and start of the prediction window. A prediction window either started immediately after the prediction timepoint (no lag) or was lagged by 1 day, 3 days, 1 week, or 2 weeks."
 
 knitr::include_graphics(path = here::here("figures/methods.png"), error = FALSE)
 ```
@@ -179,7 +179,7 @@ fig_2 <- (fig_2a / fig_2b) &
 
 ```{r}
 #| label: fig-2
-#| fig-cap: "Panel A displays the median posterior probability for area under ROC curve (auROC) and 95% Bayesian CI for each lagged model (0, 1-day, 3-day, 1-week, and 2-week lag). Dashed line represents a random classifier with an auROC of .5. Panels B-D display the median auROC and Bayesian credible interval for the 0 and 2-week lag models by fairness contrast. The darker lines represent the advantaged groups (non-Hispanic White, male, above poverty) and the lighter lines represent the disadvantaged groups (not White, female, below poverty). Dashed lines represent a random classifier with an auROC of .5."
+#| fig-cap: "Panel A displays the median posterior probability for area under ROC curve (auROC) and 95% Bayesian credible intervals (CI) for each lagged model (0, 1-day, 3-day, 1-week, and 2-week lag). Dashed line represents a random classifier with an auROC of .5. Panels B-D display the median auROC and Bayesian CI for the 0 and 2-week lag models by fairness contrast. The darker lines represent the advantaged groups (non-Hispanic White, male, above poverty) and the lighter lines represent the disadvantaged groups (not White, female, below poverty). Dashed lines represent a random classifier with an auROC of .5."
 #| fig-width: 8
 #| fig-height: 6
 
