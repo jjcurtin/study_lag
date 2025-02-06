@@ -244,7 +244,7 @@ Histograms of the full posterior probability distributions for auROC for each mo
 
 ## Feature Importance
 
-The top three globally important (i.e., highest mean |Shapley value|) feature categories for all models were past use, future efficacy, and craving. This was also consistent across demographic groups (plots of global feature importance by demographic group are availble for the no lag and two week lag models in the supplement). Panel A of @fig-3 shows the relative ranking of feature categories for the no lag and 2-week lag models. Global feature importance plots for all 5 modes is included in the supplement. In the supplement we also provide global feature importance plots for the no lag and 2-week lag model separately by fairness contrast. Panel B of @fig-3 shows the variation (min and max) in local feature importance for each EMA item for the no lag and 2-week lag models. 
+The top three globally important (i.e., highest mean |Shapley value|) feature categories for all models were past use, future efficacy, and craving. This was also consistent across demographic groups (plots of global feature importance by demographic group are availble for the no lag and two week lag models in the supplement). Panel A of @fig-3 shows the relative ranking of feature categories for the no lag and 2-week lag models. Panel B of @fig-3 shows the variation (min and max) in local feature importance for each EMA item for the no lag and 2-week lag models. 
 
 {{< embed notebooks/mak_figures.qmd#fig-3 >}} 
 
