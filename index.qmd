@@ -108,8 +108,6 @@ We adhere to research transparency principles that are crucial for robust and re
 
 ## Participants
 
-<!-- Put enrollment and disposition info here?  In supplement?-->
-<!--KW: John, I put enrollment and disposition in this section. I am not sure if it is confusing to put before the study procedure section. Let me know your thoughts-->
 We recruited participants in early recovery (1-8 weeks of abstinence) from moderate to severe alcohol use disorder in Madison, Wisconsin, US for a three month longitudinal study. Participants were recruited through print and targeted digital advertisements and partnerships with treatment centers. We required that participants:   
 
 1.  were age 18 or older,
