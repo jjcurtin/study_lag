@@ -116,7 +116,7 @@ We recruited participants in early recovery (1-8 weeks of abstinence) from moder
 4.  were abstinent from alcohol for 1-8 weeks, and
 5.  were willing to use a single smartphone (personal or study provided) while on study.
 
-We also excluded participants exhibiting severe symptoms of psychosis or paranoia.^[defined as scores >2.2 or 2.8, respectively, on the psychosis or paranoia scales of the Symptom Checklist–90 [@derogatislBriefSymptomInventory]]
+We also excluded participants exhibiting severe symptoms of psychosis or paranoia.^[Defined as scores >2.2 or 2.8, respectively, on the psychosis or paranoia scales of the Symptom Checklist–90 [@derogatislBriefSymptomInventory]]
 
 One hundred ninety-two participants were eligible. Of these, 191 consented to participate in the study at the screening visit, and 169 subsequently enrolled in the study at the enrollment visit, which occurred approximately one week later. Fifteen participants discontinued before the first monthly follow-up visit. We excluded data from one participant who did not maintain a goal of abstinence during their participation. We also excluded data from two participants due to evidence of careless responding and unusually low compliance. Our final sample consisted of 151 participants. This sample size was determined based on traditional power analysis methods for logistic regression [@hsiehSampleSizeTables1989] because comparable approaches for machine learning models have not yet been validated.
 
