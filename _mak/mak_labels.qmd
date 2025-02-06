@@ -27,9 +27,9 @@ This script makes labels based on the cleaned lapses. See conclusions for import
 24 hour rule when sampling non-lapses. That is we will not sample non-lapses in the 
 24 hours following the onset of the lapse with no end time.  
 
-- with all lapses we will not sample no_lapses +/- *6* hours from lapse   
+- with all lapses we will not sample no_lapses +/- *24* hours from lapse   
 
-- invalid lapses were also not sampled from for no_lapses within *6* hours of invalid lapse  
+- invalid lapses were also not sampled from for no_lapses within *24* hours of invalid lapse  
 
 - Our exclusion criteria can be summarized as:
 

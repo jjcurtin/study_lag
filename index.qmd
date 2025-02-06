@@ -109,6 +109,7 @@ We adhere to research transparency principles that are crucial for robust and re
 ## Participants
 
 <!-- Put enrollment and disposition info here?  In supplement?-->
+<!--KW: John, I put enrollment and disposition in this section. I am not sure if it is confusing to put before the study procedure section. Let me know your thoughts-->
 We recruited participants in early recovery (1-8 weeks of abstinence) from moderate to severe alcohol use disorder in Madison, Wisconsin, US for a three month longitudinal study. One hundred fifty one participants were included in our analyses. We used data from all participants included in our previous study (see [@wyantMachineLearningModels2023] for enrollment and disposition information). This sample size was determined based on traditional power analysis methods for logistic regression [@hsiehSampleSizeTables1989] because comparable approaches for machine learning models have not yet been validated. Participants were recruited through print and targeted digital advertisements and partnerships with treatment centers. We required that participants:
 1.  were age 18 or older,
 2.  could write and read in English,
@@ -116,7 +117,9 @@ We recruited participants in early recovery (1-8 weeks of abstinence) from moder
 4.  were abstinent from alcohol for 1-8 weeks, and
 5.  were willing to use a single smartphone (personal or study provided) while on study.
 
-We also excluded participants exhibiting severe symptoms of psychosis or paranoia. <!--how defined?-->
+We also excluded participants exhibiting severe symptoms of psychosis or paranoia.^[defined as scores >2.2 or 2.8, respectively, on the psychosis or paranoia scales of the Symptom Checklist–90 [@derogatislBriefSymptomInventory]]
+
+One hundred ninety-two participants were eligible. Of these, 191 consented to participate in the study at the screening visit, and 169 subsequently enrolled in the study at the enrollment visit, which occurred approximately one week later. Fifteen participants discontinued before the first monthly follow-up visit. We excluded data from one participant who did not maintain a goal of abstinence during their participation. We also excluded data from two participants due to evidence of careless responding and unusually low compliance. Our final sample consisted of 151 participants.
 
 ## Procedure
 
@@ -135,23 +138,24 @@ On the first EMA each day, participants also rated the likelihood of encounterin
 
 ### Individual Characteristics
 
-We collected self-report information about demographics (age, sex, race, ethnicity, education, marital status, employment, and income) and AUD symptom count to characterize our sample. Demographic information was also included as features in our models and a subset (sex, race, ethnicity, and income) were used for model fairness analyses. <!-- why this subset?-->
+We collected self-report information about demographics (age, sex at birth, race, ethnicity, education, marital status, employment, and income) and AUD symptom count to characterize our sample. Demographic information was included as features in our models. A subset of these variables (sex at birth, race, ethnicity, and income) were used for model fairness analyses, as they have documented disparities in treatment access and outcomes.
 
 As part of the aims of the parent project we collected many other trait and state measures throughout the study. A complete list of all measures can be found on our study's OSF page.
 
 <!--other measures that we report for characterizing the sample?-->
+<!--KW: We only uses symtom count, demographics, and lapse counts to characterize the sample in our table/results. We do use Brief Symptom Inventory for exclusion criteria - I now cite that in earlier section - should I add it here too? We could also discuss adding some more characterization.-->
 
 ## Data Analytic Strategy
 
 Data preprocessing, modeling, and Bayesian analyses were done in R using the tidymodels ecosystem [@kuhnTidymodelsCollectionPackages2020; @kuhnTidyposteriorBayesianAnalysis2022; @goodrichRstanarmBayesianApplied2023]. Models were trained and evaluated using high-throughput computing resources provided by the University of Wisconsin Center for High Throughput Computing [@chtc].
 
 ### Predictions
-<!--changed to "feature" scoring epoch for more clarity.  Update in fig.  Also removed space in time point = timepoint-->
+
 A *prediction timepoint* (@fig-methods, Panel A) is the hour at which our model calculates a predicted probability of a lapse within a future 24-hour prediction window for any specific individual. We calculated the features used to make predictions at each prediction timepoint within a feature scoring epoch that included all available EMAs up until, but not including, the prediction timepoint. The first prediction timepoint for each participant was 24 hours from midnight on their study start date. This ensured at least 24 hours of past EMAs were available in the feature scoring epoch. Subsequent prediction timepoints for each participant repeatedly rolled forward hour-by-hour until the end of their study participation.
 
 The *prediction window* (@fig-methods, Panel B) spans a period of time in which a lapse might occur. The prediction window width for all models was 24 hours (i.e., models predicted the probability of a lapse occurring within a specific 24-hour period). Prediction windows rolled forward hour-by-hour with the prediction timepoint. However, there were five possible *lag times* between the prediction timepoint and start of the associated prediction window. A prediction window either started immediately after the prediction time point (no lag) or was lagged by 1 day, 3 days, 1 week, or 2 weeks into the future. 
 
-Given this structure, our models provided hour-by-hour predicted probabilities of an alcohol lapse in a future 24 hour period.  Depending on the model, that future period (the prediction window) might start immediately after the prediction timepoint or up to 2 weeks into the future.  For example, at midnight on the 30th day of participation, the feature scoring epoch would include the past 30 days of EMAs.  Separate models would predict the probability of lapse for 24 hour periods staring at midnight that day, or similar 24 hour periods starting 1 day, 3 days, one week or two weeks after midnight on day 30.  
+Given this structure, our models provided hour-by-hour predicted probabilities of an alcohol lapse in a future 24 hour period.  Depending on the model, that future period (the prediction window) might start immediately after the prediction timepoint or up to 2 weeks into the future.  For example, at midnight on the 30th day of participation, the feature scoring epoch would include the past 30 days of EMAs.  Separate models would predict the probability of lapse for 24 hour periods staring at midnight that day, or similar 24 hour periods starting 1 day, 3 days, 1 week or 2 weeks after midnight on day 30.  
 
 
 {{< embed notebooks/mak_figures.qmd#fig-methods >}}
@@ -171,11 +175,9 @@ A total of 285 features were derived from three data sources:
 
 1. *Prediction window*: We dummy-coded features for day of the week for the start of the prediction window.
 
-2. *Demographics*: We created quantitative features for age and personal income, and dummy-coded features for sex, race/ethnicity, marital status, education, and employment. 
-<!--more detail?  age (in years?), income (in dollars?), sex (at birth male vs. female?) for  race/enthnity, maritial status, etc which categories were used?-->
+2. *Demographics*: We created quantitative features for age (in years) and personal income (in dollars), and dummy-coded features for sex at birth (male vs. female), race/ethnicity (non-Hispanic White vs. not White), marital status (married vs. not married vs. other), education (high school or less vs. some college vs. college degree), and employment (employed vs. unemployed). 
 
 3. *Previous EMA responses*: We created raw and change features using EMAs in varying feature scoring epochs (i.e., 12, 24, 48, 72, and 168 hours) before the prediction timepoint for all EMA items. Raw features included min, max, and median scores for each EMA item across all EMAs in each epoch for that participant. We calculated change features by subtracting each participant's baseline mean score for each EMA item from their raw feature.  These baseline mean scores were calculated using all of their EMAs collected from the start of their participation until the start of the prediction window. We also created raw and change features based on the most recent response for each EMA question and raw and change rate features from previously reported lapses and number of completed EMAs. 
-
 
 Other generic feature engineering steps included imputing missing data (median imputation for numeric features, mode imputation for nominal features) and removing zero and near-zero variance features as determined from held-in data (see Cross-validation section below). 
 
@@ -202,9 +204,10 @@ We then conducted Bayesian model comparisons using our two sets of contrasts - b
 
 #### Fairness Analyses
 
-We calculated the median posterior probability and 95% Bayesian CI for auROC for each model separately by race/ethnicity (not White vs. non-Hispanic White), income (below poverty vs. above poverty^[The poverty cutoff was defined from the 2024 federal poverty line for the 48 contiguous United States. Participants at or below $1560 annual income were categorized as below poverty.]), and sex at birth (female vs. male). We conducted Bayesian group comparisons to assess the likelihood that each model performs differently by group. We summarize the differences in posterior probabilities for auROC across models. Individual Bayesian fairness contrasts for all five models are available in the supplement.^[For our fairness analyses, we altered our outer loop resampling method from 3 x 10 cross-validation to 6 x 5 cross-validation. This method still gave us 30 held out tests sets, but by splitting the data across fewer folds (i.e., 5 vs. 10) we were able to reduce the likelihood of the disadvantaged group being absent in any single fold.] 
+We calculated the median posterior probability and 95% Bayesian CI for auROC for each model separately by race/ethnicity (not White vs. non-Hispanic White), income (below poverty vs. above poverty^[The poverty cutoff was defined from the 2024 federal poverty line for the 48 contiguous United States. Participants at or below $15,060 annual income were categorized as below poverty.]), and sex at birth (female vs. male). We conducted Bayesian group comparisons to assess the likelihood that each model performs differently by group. We summarize the differences in posterior probabilities for auROC across models. Individual Bayesian fairness contrasts for all five models are available in the supplement.^[For our fairness analyses, we altered our outer loop resampling method from 3 x 10 cross-validation to 6 x 5 cross-validation. This method still gave us 30 held out tests sets, but by splitting the data across fewer folds (i.e., 5 vs. 10) we were able to reduce the likelihood of the disadvantaged group being absent in any single fold.] 
 
 <!--is that income cut above correct?  Seems VERY low!-->
+<!--KW: OMG I forgot a 0! Thanks for catching that! I actually had to rerun the fairness analyses. Numbers changed slightly but still same conclusion.-->
 
 #### Feature Importance
 
@@ -238,7 +241,7 @@ Histograms of the full posterior probability distributions for auROC for each mo
 
 ## Fairness Analyses
 
-@tbl-contrast presents the median difference in auROC, 95% Bayesian CI, and posterior probability that that the auROC difference was greater than 0 for our no lag and 2-week lag models for the three fairness contrasts: race/ethnicity (not White; *N* = 20 vs. Non-Hispanic White; *N* = 131), sex at birth (female; *N* = 74 vs. male; *N* = 77), and income (below poverty; *N* = 18 vs. above poverty; *N* = 133). Individual Bayesian fairness contrasts for all five models are available in the supplement. There was strong evidence (probabilities > .97) that our models performed better for the advantaged groups (White, male, above poverty) compared to the disadvantaged groups (not-White, female, below poverty). On average there was a median decrease in auROC of `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median) |>  abs()) |> median()` (range `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median)) |> min()`-`r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median)) |> max()`) for participants who were not White compared to non-Hispanic White participants. On average there was a median decrease in auROC of `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> median()` (range `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> min()`-`r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> max()`) for female participants compared to male participants. On average there was a median decrease in auROC of `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> median()` (range `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> min()`-`r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> max()`) for participants below the federal poverty line compared to participants above the federal poverty line. 
+@tbl-contrast presents the median difference in auROC, 95% Bayesian CI, and posterior probability that that the auROC difference was greater than 0 for our no lag and 2-week lag models for the three fairness contrasts: race/ethnicity (not White; *N* = 20 vs. Non-Hispanic White; *N* = 131), sex at birth (female; *N* = 74 vs. male; *N* = 77), and income (below poverty; *N* = 49 vs. above poverty; *N* = 102). Individual Bayesian fairness contrasts for all five models are available in the supplement. There was strong evidence (probabilities > .96) that our models performed better for the advantaged groups (White, male, above poverty) compared to the disadvantaged groups (not-White, female, below poverty). On average there was a median decrease in auROC of `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median) |>  abs()) |> median()` (range `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median)) |> min()`-`r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median)) |> max()`) for participants who were not White compared to non-Hispanic White participants. On average there was a median decrease in auROC of `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> median()` (range `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> min()`-`r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> max()`) for female participants compared to male participants. On average there was a median decrease in auROC of `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> median()` (range `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> min()`-`r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> max()`) for participants below the federal poverty line compared to participants above the federal poverty line. 
 
 ## Feature Importance
 

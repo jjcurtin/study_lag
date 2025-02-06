@@ -15,7 +15,7 @@ params:
   cv: "nested"
   window: "1day"
   model: "dem" 
-  lead: 336
+  lead: 24
   version: "v3"
 editor_options: 
   chunk_output_type: console
@@ -98,7 +98,7 @@ Income, Gender, Race
 feat_preds <- feat_preds |> 
   mutate(demo_sex = if_else(demo_sex == "Female", "female", "male"),
          demo_race = if_else(demo_race == "White/Caucasian", "white", "not white"),
-         demo_income = if_else(demo_income < 1560, "below poverty", "above poverty"))
+         demo_income = if_else(demo_income < 15060, "below poverty", "above poverty"))
 ```
 
 
