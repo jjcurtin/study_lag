@@ -213,7 +213,7 @@ We calculated Shapley values in log-odds units for binary classification models 
 
 ## Demographic and Lapse Characteristics
 
-[@tbl-demohtml] provides a detailed breakdown of the demographic and lapse characteristics of our sample (N = 151).
+[@tbl-demohtml] provides a detailed breakdown of the demographic and clinical characteristics of our sample (N = 151).
 
 
 {{< embed notebooks/mak_tables.qmd#tbl-demohtml >}} 

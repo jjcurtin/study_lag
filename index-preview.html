@@ -580,28 +580,33 @@ Figure&nbsp;1: Panel A shows the prediction timepoints at which our model calcul
 <h1>Results</h1>
 <section id="demographic-and-lapse-characteristics" class="level2">
 <h2 class="anchored" data-anchor-id="demographic-and-lapse-characteristics">Demographic and Lapse Characteristics</h2>
-<p><a href="#tbl-demohtml" class="quarto-xref">Table&nbsp;1</a> provides a detailed breakdown of the demographic and lapse characteristics of our sample (N = 151).</p>
+<p><a href="#tbl-demohtml" class="quarto-xref">Table&nbsp;1</a> provides a detailed breakdown of the demographic and clinical characteristics of our sample (N = 151).</p>
 <div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_tables.qmd" data-notebook-title="Make All Tables for Main Manuscript" data-notebook-cellid="cell-tbl-demohtml">
 <div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
 
-<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>table_dem <span class="op">|&gt;</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  knitr::kable() <span class="op">|&gt;</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  kable_classic() <span class="op">|&gt;</span> </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">3</span>, end_row <span class="op">=</span> <span class="dv">4</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">6</span>, end_row <span class="op">=</span> <span class="dv">10</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">12</span>, end_row <span class="op">=</span> <span class="dv">13</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">15</span>, end_row <span class="op">=</span> <span class="dv">20</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">22</span>, end_row <span class="op">=</span> <span class="dv">30</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">33</span>, end_row <span class="op">=</span> <span class="dv">37</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Alcohol Use Disorder Milestones"</span>, </span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">39</span>, end_row <span class="op">=</span> <span class="dv">42</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Lifetime History of Treatment (Can choose more than 1)"</span>, </span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">44</span>, end_row <span class="op">=</span> <span class="dv">50</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Received Medication for Alcohol Use Disorder"</span>, </span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">51</span>, end_row <span class="op">=</span> <span class="dv">52</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Current (Past 3 Month) Drug Use"</span>, </span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">53</span>, end_row <span class="op">=</span> <span class="dv">60</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">62</span>, end_row <span class="op">=</span> <span class="dv">63</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_a <span class="op">&lt;-</span> <span class="st">"N = 151"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_b <span class="op">&lt;-</span> <span class="st">"Two participants reported 100 or more quit attempts. We removed these outliers prior"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_c <span class="op">&lt;-</span> <span class="st">"to calculating the mean (M), standard deviation (SD), and range."</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>table_dem <span class="op">|&gt;</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  knitr::kable() <span class="op">|&gt;</span> </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  kable_classic() <span class="op">|&gt;</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">3</span>, end_row <span class="op">=</span> <span class="dv">4</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">6</span>, end_row <span class="op">=</span> <span class="dv">10</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">12</span>, end_row <span class="op">=</span> <span class="dv">13</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">15</span>, end_row <span class="op">=</span> <span class="dv">20</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">22</span>, end_row <span class="op">=</span> <span class="dv">30</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">33</span>, end_row <span class="op">=</span> <span class="dv">37</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Alcohol Use Disorder Milestones"</span>, </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">39</span>, end_row <span class="op">=</span> <span class="dv">42</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Lifetime History of Treatment (Can choose more than 1)"</span>, </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">44</span>, end_row <span class="op">=</span> <span class="dv">50</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Received Medication for Alcohol Use Disorder"</span>, </span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">51</span>, end_row <span class="op">=</span> <span class="dv">52</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Current (Past 3 Month) Drug Use"</span>, </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">53</span>, end_row <span class="op">=</span> <span class="dv">60</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">62</span>, end_row <span class="op">=</span> <span class="dv">63</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  kableExtra::footnote(general <span class="op">=</span> c(footnote_table_dem_a, footnote_table_dem_b, footnote_table_dem_c), escape<span class="op">=</span>FALSE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: Demographic and Lapse Characteristics
@@ -978,7 +983,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;">15-65</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Number of Quit Attempts^[Two participants reported 100 or more quit attempts. We removed these outliers prior to calculating the mean (M), standard deviation (SD), and range.]</td>
+<td style="text-align: left;">Number of Quit Attempts</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 <td style="text-align: left;">5.5</td>
@@ -1165,7 +1170,41 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;">12</td>
 <td style="text-align: left;">0-75</td>
 </tr>
-</tbody>
+</tbody><tfoot>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><span style="font-style: italic;">Note: </span></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> N = 151</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><sup></sup> Two participants reported 100 or more quit attempts. We removed these outliers prior</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> to calculating the mean (M), standard deviation (SD), and range.</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tfoot>
+
 </table>
 </div>
 </div>
