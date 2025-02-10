@@ -585,8 +585,8 @@ Figure&nbsp;1: Panel A shows the prediction timepoints at which our model calcul
 <div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
 
 <div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_a <span class="op">&lt;-</span> <span class="st">"N = 151"</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_b <span class="op">&lt;-</span> <span class="st">"Two participants reported 100 or more quit attempts. We removed these outliers prior"</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_c <span class="op">&lt;-</span> <span class="st">"to calculating the mean (M), standard deviation (SD), and range."</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_b <span class="op">&lt;-</span> <span class="st">"*Two participants reported 100 or more quit attempts. We removed these outliers prior to calculating the mean (M), standard deviation (SD), and range."</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>table_dem <span class="op">|&gt;</span> </span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  knitr::kable() <span class="op">|&gt;</span> </span>
@@ -606,10 +606,10 @@ Figure&nbsp;1: Panel A shows the prediction timepoints at which our model calcul
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Current (Past 3 Month) Drug Use"</span>, </span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">53</span>, end_row <span class="op">=</span> <span class="dv">60</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">62</span>, end_row <span class="op">=</span> <span class="dv">63</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  kableExtra::footnote(general <span class="op">=</span> c(footnote_table_dem_a, footnote_table_dem_b, footnote_table_dem_c), escape<span class="op">=</span>FALSE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  kableExtra::footnote(general <span class="op">=</span> c(footnote_table_dem_a, footnote_table_dem_b), escape<span class="op">=</span>FALSE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;1: Demographic and Lapse Characteristics
+Table&nbsp;1: Demographic and Clinical Characteristics
 </figcaption>
 <div aria-describedby="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display">
@@ -983,7 +983,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;">15-65</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Number of Quit Attempts</td>
+<td style="text-align: left;">Number of Quit Attempts*</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 <td style="text-align: left;">5.5</td>
@@ -1188,15 +1188,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; padding: 0;"><sup></sup> Two participants reported 100 or more quit attempts. We removed these outliers prior</td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left; padding: 0;"><sup></sup> to calculating the mean (M), standard deviation (SD), and range.</td>
+<td style="text-align: left; padding: 0;"><sup></sup> *Two participants reported 100 or more quit attempts. We removed these outliers prior to calculating the mean (M), standard deviation (SD), and range.</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 <td style="text-align: left;"></td>

@@ -1577,7 +1577,7 @@ Attaching package: &#39;janitor&#39;</code></pre>
 <span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>            <span class="at">SD =</span> <span class="fu">sd</span>(auh_5, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a>            <span class="at">min =</span> <span class="fu">min</span>(auh_5, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>            <span class="at">max =</span> <span class="fu">max</span>(auh_5, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">var =</span> <span class="st">&quot;Number of Quit Attempts&quot;</span>,</span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">var =</span> <span class="st">&quot;Number of Quit Attempts*&quot;</span>,</span>
 <span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>        <span class="at">n =</span> <span class="fu">as.numeric</span>(<span class="st">&quot;&quot;</span>),</span>
 <span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a>        <span class="at">perc =</span> <span class="fu">as.numeric</span>(<span class="st">&quot;&quot;</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(var, n, perc, <span class="fu">everything</span>()), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;var&quot;</span>, <span class="st">&quot;n&quot;</span>, <span class="st">&quot;perc&quot;</span>, <span class="st">&quot;mean&quot;</span>, <span class="st">&quot;SD&quot;</span>,</span>
@@ -1866,8 +1866,8 @@ Attaching package: &#39;janitor&#39;</code></pre>
 
 <div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_a <span class="ot">&lt;-</span> <span class="st">&quot;N = 151&quot;</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_b <span class="ot">&lt;-</span> <span class="st">&quot;Two participants reported 100 or more quit attempts. We removed these outliers prior&quot;</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_c <span class="ot">&lt;-</span> <span class="st">&quot;to calculating the mean (M), standard deviation (SD), and range.&quot;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_b <span class="ot">&lt;-</span> <span class="st">&quot;*Two participants reported 100 or more quit attempts. We removed these outliers prior to calculating the mean (M), standard deviation (SD), and range.&quot;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>table_dem <span class="sc">|&gt;</span> </span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
@@ -1887,10 +1887,10 @@ Attaching package: &#39;janitor&#39;</code></pre>
 <span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="st">&quot;Current (Past 3 Month) Drug Use&quot;</span>, </span>
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>                         <span class="at">start_row =</span> <span class="dv">53</span>, <span class="at">end_row =</span> <span class="dv">60</span>, <span class="at">bold =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">group_rows</span>(<span class="at">start_row =</span> <span class="dv">62</span>, <span class="at">end_row =</span> <span class="dv">63</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">footnote</span>(<span class="at">general =</span> <span class="fu">c</span>(footnote_table_dem_a, footnote_table_dem_b, footnote_table_dem_c), <span class="at">escape=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">footnote</span>(<span class="at">general =</span> <span class="fu">c</span>(footnote_table_dem_a, footnote_table_dem_b), <span class="at">escape=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Demographic and Lapse Characteristics
+Demographic and Clinical Characteristics
 </figcaption>
 <div aria-describedby="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -2250,7 +2250,7 @@ Demographic and Lapse Characteristics
    <td style="text-align:left;"> 15-65 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> Number of Quit Attempts </td>
+   <td style="text-align:left;"> Number of Quit Attempts* </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:left;"> 5.5 </td>
@@ -2435,9 +2435,7 @@ Demographic and Lapse Characteristics
 <tr><td style="padding: 0; " colspan="100%">
 <sup></sup> N = 151</td></tr>
 <tr><td style="padding: 0; " colspan="100%">
-<sup></sup> Two participants reported 100 or more quit attempts. We removed these outliers prior</td></tr>
-<tr><td style="padding: 0; " colspan="100%">
-<sup></sup> to calculating the mean (M), standard deviation (SD), and range.</td></tr>
+<sup></sup> *Two participants reported 100 or more quit attempts. We removed these outliers prior to calculating the mean (M), standard deviation (SD), and range.</td></tr>
 </tfoot>
 </table>
 
