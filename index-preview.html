@@ -601,10 +601,7 @@ Figure&nbsp;1: Panel A shows the prediction timepoints at which our model calcul
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">51</span>, end_row <span class="op">=</span> <span class="dv">52</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Current (Past 3 Month) Drug Use"</span>, </span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">53</span>, end_row <span class="op">=</span> <span class="dv">60</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">62</span>, end_row <span class="op">=</span> <span class="dv">63</span>) <span class="op">|&gt;</span> </span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  kableExtra::add_footnote(<span class="st">"*Two participants reported 100 or more quit attempts. We removed these outliers prior</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="er">to calculating the mean </span>(M), standard deviation (SD), <span class="kw">and</span> <span class="bu">range</span>.<span class="st">",</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="er">                           notation = "none")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">62</span>, end_row <span class="op">=</span> <span class="dv">63</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: Demographic and Lapse Characteristics
@@ -612,14 +609,6 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <div aria-describedby="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display">
 <table class="lightable-classic do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-postprocess="true">
-<colgroup>
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">var</th>
@@ -989,7 +978,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;">15-65</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Number of Quit Attempts*</td>
+<td style="text-align: left;">Number of Quit Attempts^[Two participants reported 100 or more quit attempts. We removed these outliers prior to calculating the mean (M), standard deviation (SD), and range.]</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 <td style="text-align: left;">5.5</td>
@@ -1176,18 +1165,7 @@ Table&nbsp;1: Demographic and Lapse Characteristics
 <td style="text-align: left;">12</td>
 <td style="text-align: left;">0-75</td>
 </tr>
-</tbody><tfoot>
-<tr class="odd">
-<td style="text-align: left; padding: 0; border: 0;"><sup></sup> *Two participants reported 100 or more quit attempts. We removed these outliers prior<br>
-to calculating the mean (M), standard deviation (SD), and range.</td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-</tr>
-</tfoot>
-
+</tbody>
 </table>
 </div>
 </div>
