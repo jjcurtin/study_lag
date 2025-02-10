@@ -116,7 +116,7 @@ We recruited participants in early recovery (1-8 weeks of abstinence) from moder
 4.  were abstinent from alcohol for 1-8 weeks, and
 5.  were willing to use a single smartphone (personal or study provided) while on study.
 
-We also excluded participants exhibiting severe symptoms of psychosis or paranoia.^[defined as scores >2.2 or 2.8, respectively, on the psychosis or paranoia scales of the Symptom Checklist–90 [@derogatislBriefSymptomInventory]]
+We also excluded participants exhibiting severe symptoms of psychosis or paranoia.^[Defined as scores >2.2 or 2.8, respectively, on the psychosis or paranoia scales of the Symptom Checklist–90 [@derogatislBriefSymptomInventory]]
 
 One hundred ninety-two participants were eligible. Of these, 191 consented to participate in the study at the screening visit, and 169 subsequently enrolled in the study at the enrollment visit, which occurred approximately one week later. Fifteen participants discontinued before the first monthly follow-up visit. We excluded data from one participant who did not maintain a goal of abstinence during their participation. We also excluded data from two participants due to evidence of careless responding and unusually low compliance. Our final sample consisted of 151 participants. This sample size was determined based on traditional power analysis methods for logistic regression [@hsiehSampleSizeTables1989] because comparable approaches for machine learning models have not yet been validated.
 
@@ -137,12 +137,10 @@ On the first EMA each day, participants also rated the likelihood of encounterin
 
 ### Individual Characteristics
 
-We collected self-report information about demographics (age, sex at birth, race, ethnicity, education, marital status, employment, and income) and AUD symptom count to characterize our sample. Demographic information was included as features in our models. A subset of these variables (sex at birth, race, ethnicity, and income) were used for model fairness analyses, as they have documented disparities in treatment access and outcomes.
+We collected self-report information about demographics (age, sex at birth, race, ethnicity, education, marital status, employment, and income) and clinical characteristics (AUD milestones, number of quit attempts, lifetime AUD treatment history, lifetime receipt of AUD medication, DSM-5 AUD symptom count, current drug use [@whoassistworkinggroupAlcoholSmokingSubstance2002], and presence of psychological symptoms [@derogatislBriefSymptomInventory]) to characterize our sample. DSM-5 AUD symptom count and presence of psychological symptoms were also used to determine eligibility. Demographic information was included as features in our models. A subset of these variables (sex at birth, race, ethnicity, and income) were used for model fairness analyses, as they have documented disparities in treatment access and outcomes. 
 
 As part of the aims of the parent project we collected many other trait and state measures throughout the study. A complete list of all measures can be found on our study's OSF page.
 
-<!--other measures that we report for characterizing the sample?-->
-<!--KW: We only uses symtom count, demographics, and lapse counts to characterize the sample in our table/results. We do use Brief Symptom Inventory for exclusion criteria - I now cite that in earlier section - should I add it here too? We could also discuss adding some more characterization.-->
 
 ## Data Analytic Strategy
 
@@ -205,8 +203,6 @@ We then conducted Bayesian model comparisons using our two sets of contrasts - b
 
 We calculated the median posterior probability and 95% Bayesian CI for auROC for each model separately by race/ethnicity (not White vs. non-Hispanic White), income (below poverty vs. above poverty^[The poverty cutoff was defined from the 2024 federal poverty line for the 48 contiguous United States. Participants at or below $15,060 annual income were categorized as below poverty.]), and sex at birth (female vs. male). We conducted Bayesian group comparisons to assess the likelihood that each model performs differently by group. We summarize the differences in posterior probabilities for auROC across models. Individual Bayesian fairness contrasts for all five models are available in the supplement.^[For our fairness analyses, we altered our outer loop resampling method from 3 x 10 cross-validation to 6 x 5 cross-validation. This method still gave us 30 held out tests sets, but by splitting the data across fewer folds (i.e., 5 vs. 10) we were able to reduce the likelihood of the disadvantaged group being absent in any single fold.] 
 
-<!--is that income cut above correct?  Seems VERY low!-->
-<!--KW: OMG I forgot a 0! Thanks for catching that! I actually had to rerun the fairness analyses. Numbers changed slightly but still same conclusion.-->
 
 #### Feature Importance
 
@@ -217,7 +213,7 @@ We calculated Shapley values in log-odds units for binary classification models 
 
 ## Demographic and Lapse Characteristics
 
-[@tbl-demohtml] provides a detailed breakdown of the demographic and lapse characteristics of our sample (N = 151).
+[@tbl-demohtml] provides a detailed breakdown of the demographic and clinical characteristics of our sample (N = 151).
 
 
 {{< embed notebooks/mak_tables.qmd#tbl-demohtml >}} 

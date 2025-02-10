@@ -25,6 +25,7 @@ suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
 suppressPackageStartupMessages(library(tidyposterior))
 library(kableExtra)
+library(janitor)
 
 path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
 path_shared <- format_path("studydata/risk/data_processed/shared")
@@ -146,12 +147,196 @@ dem_marital <- screen |>
   mutate(perc = (n / sum(n)) * 100) |> 
   add_row(var = "Marital Status", .before = 1)
 
+auh <- screen |>
+  summarise(mean = mean(auh_1, na.rm = TRUE),
+            SD = sd(auh_1, na.rm = TRUE),
+            min = min(auh_1, na.rm = TRUE),
+            max = max(auh_1, na.rm = TRUE)) |>
+  mutate(var = "Age of first drink",
+        n = as.numeric(""),
+        perc = as.numeric("")) |>
+  select(var, n, perc, everything()) |>
+  full_join(screen |>
+  summarise(mean = mean(auh_2, na.rm = TRUE),
+            SD = sd(auh_2, na.rm = TRUE),
+            min = min(auh_2, na.rm = TRUE),
+            max = max(auh_2, na.rm = TRUE)) |>
+  mutate(var = "Age of regular drinking",
+        n = as.numeric(""),
+        perc = as.numeric("")) |>
+  select(var, n, perc, everything()), by = c("var", "n", "perc", "mean", "SD",
+                                             "min", "max")) |>
+  full_join(screen |>
+  summarise(mean = mean(auh_3, na.rm = TRUE),
+            SD = sd(auh_3, na.rm = TRUE),
+            min = min(auh_3, na.rm = TRUE),
+            max = max(auh_3, na.rm = TRUE)) |>
+  mutate(var = "Age at which drinking became problematic",
+        n = as.numeric(""),
+        perc = as.numeric("")) |>
+  select(var, n, perc, everything()), by = c("var", "n", "perc", "mean", "SD",
+                                             "min", "max")) |>
+  full_join(screen |>
+  summarise(mean = mean(auh_4, na.rm = TRUE),
+            SD = sd(auh_4, na.rm = TRUE),
+            min = min(auh_4, na.rm = TRUE),
+            max = max(auh_4, na.rm = TRUE)) |>
+  mutate(var = "Age of first quit attempt",
+        n = as.numeric(""),
+        perc = as.numeric("")) |>
+  select(var, n, perc, everything()), by = c("var", "n", "perc", "mean", "SD",
+                                             "min", "max")) |>
+  full_join(screen |>
+  # filter out 2 people with 100 and 365 reported quit attempts - will make footnote in table
+  filter(auh_5 < 100) |>
+  summarise(mean = mean(auh_5, na.rm = TRUE),
+            SD = sd(auh_5, na.rm = TRUE),
+            min = min(auh_5, na.rm = TRUE),
+            max = max(auh_5, na.rm = TRUE)) |>
+  mutate(var = "Number of Quit Attempts*",
+        n = as.numeric(""),
+        perc = as.numeric("")) |>
+  select(var, n, perc, everything()), by = c("var", "n", "perc", "mean", "SD",
+                                             "min", "max")) |>
+  full_join(screen |>
+  select(var = auh_6_1) |>
+  mutate(var = case_when(var == "Long-Term Residential Treatment (more than 6 months)" ~ "Long-term residential (6+ months)",
+                         TRUE ~ var)) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_6_2) |>
+  mutate(var = case_when(var == "Short-Term Residential Treatment (less than 6 months)" ~ "Short-term residential (< 6 months)",
+                         TRUE ~ var)) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_6_3) |>
+  mutate(var = case_when(var == "Outpatient Treatment" ~ "Outpatient",
+                         TRUE ~ var)) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_6_4) |>
+  mutate(var = case_when(var == "Individual Counseling" ~ "Individual counseling",
+                         TRUE ~ var)) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_6_5) |>
+  mutate(var = case_when(var == "Group Counseling" ~ "Group counseling",
+                         TRUE ~ var)) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_6_6) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_6_7) |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = auh_7) |>
+  mutate(var = fct_relevel(factor(var, c("Yes", "No")))) |>
+  group_by(var) |>
+  summarise(n = n()) |>
+  mutate(perc = (n / sum(n)) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_1) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Tobacco products (cigarettes, chewing tobacco, cigars, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_2) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Cannabis (marijuana, pot, grass, hash, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_3) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Cocaine (coke, crack, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_4) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Amphetamine type stimulants (speed, diet pills, ecstasy, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_5) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Inhalants (nitrous, glue, petrol, paint thinner, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_6) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Sedatives or sleeping pills (Valium, Serepax, Rohypnol, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_7) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Hallucinogens (LSD, acid, mushrooms, PCP, Special K, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |>
+  full_join(screen |>
+  select(var = assist_2_8) |>
+  filter(var != "Never" & !is.na(var)) |>
+  mutate(var = "Opioids (heroin, morphine, methadone, codeine, etc.)") |>
+  group_by(var) |>
+  drop_na() |>
+  summarise(n = n()) |>
+  mutate(perc = (n / n_total) * 100), by = c("var", "n", "perc")) |> 
+  mutate(across(perc:SD, ~round(., 1))) |> 
+  mutate(across(mean:max, ~as.character(.)))
+
+lapses_per_subid <- screen |>
+  select(subid) |>
+  left_join(lapses |>
+  tabyl(subid) |>
+  select(-percent), by = "subid") |>
+  mutate(n = if_else(is.na(n), 0, n),
+         lapse = if_else(n > 0, "yes", "no"))
+
 dem_aud <- screen |>
   summarise(mean = as.character(round(mean(dsm5_total, na.rm = TRUE), 1)),
             SD = as.character(round(sd(dsm5_total, na.rm = TRUE), 1)),
             min = as.character(min(dsm5_total, na.rm = TRUE)),
             max = as.character(max(dsm5_total, na.rm = TRUE))) |>
-  mutate(var = "DSM-5 AUD Symptom Count",
+  mutate(var = "DSM-5 Alcohol Use Disorder Symptom Count",
          n = as.numeric(""),
          perc = as.numeric("")) |>
   select(var, n, perc, everything()) 
@@ -192,11 +377,13 @@ table_dem <- dem_age |>
   bind_rows(dem_income) |> 
   bind_rows(dem_marital) |> 
   bind_rows(dem_aud) |> 
+  bind_rows(auh) |> 
   bind_rows(lapse_info) |> 
   mutate(range = str_c(min, "-", max),
          perc = round(perc, 1)) |> 
   select(-c(min, max)) |> 
-  rename(N = n,
+  rename(` ` = var,
+         N = n,
          `%` = perc,
          M = mean, 
          Range = range)
@@ -300,7 +487,11 @@ table_ci <- ci_baseline |>
 
 ```{r tbl-demhtml}
 #| label: tbl-demohtml
-#| tbl-cap: "Demographic and Lapse Characteristics"
+#| tbl-cap: "Demographic and Clinical Characteristics"
+
+footnote_table_dem_a <- "N = 151"
+footnote_table_dem_b <- "*Two participants reported 100 or more quit attempts. We removed these outliers prior to calculating the mean (M), standard deviation (SD), and range."
+
 
 table_dem |> 
   knitr::kable() |> 
@@ -311,8 +502,16 @@ table_dem |>
   kableExtra::group_rows(start_row = 15, end_row = 20) |> 
   kableExtra::group_rows(start_row = 22, end_row = 30) |> 
   kableExtra::group_rows(start_row = 33, end_row = 37) |> 
-  kableExtra::group_rows(start_row = 40, end_row = 41)
-
+  kableExtra::group_rows("Alcohol Use Disorder Milestones", 
+                         start_row = 39, end_row = 42, bold = FALSE) |> 
+  kableExtra::group_rows("Lifetime History of Treatment (Can choose more than 1)", 
+                         start_row = 44, end_row = 50, bold = FALSE) |> 
+  kableExtra::group_rows("Received Medication for Alcohol Use Disorder", 
+                         start_row = 51, end_row = 52, bold = FALSE) |> 
+  kableExtra::group_rows("Current (Past 3 Month) Drug Use", 
+                         start_row = 53, end_row = 60, bold = FALSE) |> 
+  kableExtra::group_rows(start_row = 62, end_row = 63) |> 
+  kableExtra::footnote(general = c(footnote_table_dem_a, footnote_table_dem_b), escape=FALSE)
 ```
 
 ### Table 2: Model Comparisons
