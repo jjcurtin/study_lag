@@ -1766,10 +1766,11 @@ Attaching package: &#39;janitor&#39;</code></pre>
 <span id="cb8-340"><a href="#cb8-340" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">range =</span> <span class="fu">str_c</span>(min, <span class="st">&quot;-&quot;</span>, max),</span>
 <span id="cb8-341"><a href="#cb8-341" aria-hidden="true" tabindex="-1"></a>         <span class="at">perc =</span> <span class="fu">round</span>(perc, <span class="dv">1</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb8-342"><a href="#cb8-342" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(min, max)) <span class="sc">|&gt;</span> </span>
-<span id="cb8-343"><a href="#cb8-343" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">N =</span> n,</span>
-<span id="cb8-344"><a href="#cb8-344" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">%</span><span class="st">`</span> <span class="ot">=</span> perc,</span>
-<span id="cb8-345"><a href="#cb8-345" aria-hidden="true" tabindex="-1"></a>         <span class="at">M =</span> mean, </span>
-<span id="cb8-346"><a href="#cb8-346" aria-hidden="true" tabindex="-1"></a>         <span class="at">Range =</span> range)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-343"><a href="#cb8-343" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at"> </span><span class="st">`</span> <span class="ot">=</span> var,</span>
+<span id="cb8-344"><a href="#cb8-344" aria-hidden="true" tabindex="-1"></a>         <span class="at">N =</span> n,</span>
+<span id="cb8-345"><a href="#cb8-345" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">%</span><span class="st">`</span> <span class="ot">=</span> perc,</span>
+<span id="cb8-346"><a href="#cb8-346" aria-hidden="true" tabindex="-1"></a>         <span class="at">M =</span> mean, </span>
+<span id="cb8-347"><a href="#cb8-347" aria-hidden="true" tabindex="-1"></a>         <span class="at">Range =</span> range)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
 <p>Table 2</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
@@ -1897,7 +1898,7 @@ Demographic and Clinical Characteristics
 <table class="lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;border-bottom: 0;">
  <thead>
   <tr>
-   <th style="text-align:left;"> var </th>
+   <th style="text-align:left;">  </th>
    <th style="text-align:right;"> N </th>
    <th style="text-align:right;"> % </th>
    <th style="text-align:left;"> M </th>
