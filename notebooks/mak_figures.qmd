@@ -38,12 +38,13 @@ path_processed <- format_path("studydata/risk/data_processed/lag")
 
 Data for figures
 ```{r}
-test_metrics_all_pp_perf <- read_csv(here::here(path_models_lag,
-                                                "pp_perf_tibble.csv"),
-                                     show_col_types = FALSE)
+pp_tidy <- read_csv(here::here(path_models_lag, "posteriors.csv"), 
+                                 show_col_types = FALSE) 
 
-pp_dem <- read_csv(here::here(path_models_lag, "pp_dem_all.csv"),
-                            show_col_types = FALSE)
+ci <- read_csv(here::here(path_models_lag, "pp_perf_tibble.csv"), 
+                                 show_col_types = FALSE) |> 
+  mutate(model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"),
+                        labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
 
 global_all <- read_rds(here::here(path_models_lag, "shap_global_all.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
@@ -70,120 +71,30 @@ knitr::include_graphics(path = here::here("figures/methods.png"), error = FALSE)
 
 
 
-## Figure 2: Posterior probability for auROC by model and demographic group differences
-```{r}
-
-fig_2a <- test_metrics_all_pp_perf |>
-  mutate(model_numeric = case_when(model == "336 lag" ~ as.numeric(336),
-                                   model == "168 lag" ~ as.numeric(168),
-                                   model == "72 lag" ~ as.numeric(72),
-                                   model == "24 lag" ~ as.numeric(24),
-                                   model == "0 lag" ~ as.numeric(0))) |> 
-  ggplot() + 
-  geom_point(aes(x = model_numeric, y = pp_median), color = "black") +
-  geom_line(aes(x = model_numeric, y = pp_median)) +
-  geom_segment(mapping = aes(x = model_numeric, y = pp_lower, yend = pp_upper)) +
-  scale_y_continuous("auROC", limits = c(.50, 1.0)) +
-  scale_x_continuous("Model Lag", breaks = c(0, 24, 72, 168, 336), 
-                     labels = c("No lag", "1 day", "3 days", "1 week",
-                                "2 weeks")) +
-  theme_classic() +
-  theme(legend.position = "none",
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
-  geom_hline(yintercept = 0.5, linetype = "dashed", color = "black")
-  
-```
+## Figure 2: Posterior probabilities for auROC by model 
 
 ```{r}
-pp_dem <- pp_dem |>
-  mutate(contrast = factor(model, levels = c("not white", 
-                                             "non-hispanic white",
-                                             "female",
-                                             "male",
-                                             "below poverty",
-                                             "above poverty"),
-                           labels = c("Not White vs. Non-Hispanic White",
-                                      "Not White vs. Non-Hispanic White",
-                                      "Female vs. Male",
-                                      "Female vs. Male",
-                                      "Below Poverty vs. Above Poverty",
-                                      "Below Poverty vs. Above Poverty")),
-         group = factor(model, levels = c("non-hispanic white",
-                                          "not white", 
-                                          "female",
-                                          "male",
-                                          "below poverty",
-                                          "above poverty"),
-                        labels = c("advantaged group (non-Hispanic White, male, above poverty)", 
-                                   "disadvantaged group (not White, female, below poverty)",
-                                   "disadvantaged group (not White, female, below poverty)",
-                                   "advantaged group (non-Hispanic White, male, above poverty)",
-                                   "disadvantaged group (not White, female, below poverty)",
-                                   "advantaged group (non-Hispanic White, male, above poverty)"))) 
-
-pp_dem_a <- pp_dem |> 
-  filter(contrast == "Not White vs. Non-Hispanic White" & lag %in% c(0, 336)) |> 
-  mutate(lag = factor(lag),
-         contrast = "Race/Ethnicity") |> 
-  ggplot() + 
-  geom_point(aes(x = lag, y = pp_median, color = group)) +
-  geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = group)) +
-  facet_wrap(~ contrast) +
-  scale_y_continuous("auROC", limits = c(.35, 1.0)) +
-  scale_x_discrete(NULL, labels = c("No lag", "2 weeks")) +
-  theme_classic() +
-  theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
-  scale_color_manual(values = c("#240e31", "#cb6bce")) +
-  geom_hline(yintercept = 0.5, linetype = "dashed", color = "black") +
-  labs(color = NULL)
-
-pp_dem_b <- pp_dem |> 
-  filter(contrast == "Female vs. Male" & lag %in% c(0, 336)) |> 
-  mutate(lag = factor(lag),
-         contrast = "Sex at birth") |> 
-  ggplot() + 
-  geom_point(aes(x = lag, y = pp_median, color = group)) +
-  geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = group)) +
-  facet_wrap(~ contrast) +
-  scale_y_continuous(NULL, limits = c(.35, 1.0)) +
-  scale_x_discrete("Model Lag", labels = c("No lag", "2 weeks")) +
-  theme_classic() +
-  theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
-  scale_color_manual(values = c("#240e31", "#cb6bce")) +
-  geom_hline(yintercept = 0.5, linetype = "dashed", color = "black") +
-  labs(color = NULL)
-
-pp_dem_c <- pp_dem |> 
-  filter(contrast == "Below Poverty vs. Above Poverty" & lag %in% c(0, 336)) |> 
-  mutate(lag = factor(lag),
-         contrast = "Income") |> 
-  ggplot() + 
-  geom_point(aes(x = lag, y = pp_median, color = group)) +
-  geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = group)) +
-  facet_wrap(~ contrast) +
-  scale_y_continuous(NULL, limits = c(.35, 1.0)) +
-  scale_x_discrete(NULL, labels = c("No lag", "2 weeks")) +
-  theme_classic() +
-  theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
-  scale_color_manual(values = c("#240e31", "#cb6bce")) +
-  geom_hline(yintercept = 0.5, linetype = "dashed", color = "black") +
-  labs(color = NULL)
-
-fig_2b <- pp_dem_a + pp_dem_b + pp_dem_c + plot_layout(guides = "collect") &
-  theme(legend.position = "bottom", legend.direction = "vertical") 
-
-fig_2 <- (fig_2a / fig_2b) &
-  plot_annotation(tag_levels = "A")
-```
-
-
-```{r}
-#| label: fig-2
-#| fig-cap: "Panel A displays the median posterior probability for area under ROC curve (auROC) and 95% Bayesian credible intervals (CI) for each lagged model (0, 1-day, 3-day, 1-week, and 2-week lag). Dashed line represents a random classifier with an auROC of .5. Panels B-D display the median auROC and Bayesian CI for the 0 and 2-week lag models by fairness contrast. The darker lines represent the advantaged groups (non-Hispanic White, male, above poverty) and the lighter lines represent the disadvantaged groups (not White, female, below poverty). Dashed lines represent a random classifier with an auROC of .5."
-#| fig-width: 8
+#| label: fig-pp
+#| fig-cap: "Posterior probability distributions for area under ROC curve (auROC) for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Horizonatal lines depict 95% Bayesian credible intervals (CI) and vertical solid lines depict median posterior probability for auROC. Vertical dashed line represents expected performance from a random classifier (.5 auROC)."
+#| fig-width: 7
 #| fig-height: 6
 
-fig_2 
+pp_tidy |> 
+  mutate(model = factor(model, levels = c("lag0", "lag24", "lag72", "lag168", "lag336"),
+                        labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks"))) |>
+  ggplot() + 
+  geom_histogram(aes(x = posterior), fill = "light grey", color = "black", linewidth = .5,  
+                 bins = 60) +
+  geom_segment(mapping = aes(y = 3400, yend = 3800, x = pp_median, xend = pp_median),
+               linewidth = .5, data = ci) +
+  geom_segment(mapping = aes(y = 3600, yend = 3600, x = pp_lower, xend = pp_upper),
+                linewidth = .5, data = ci) +
+  facet_wrap(~model, ncol = 1) +
+  geom_vline(xintercept = .5, linewidth = .5, linetype = "dashed") +
+  scale_y_continuous("Posterior Probability") +
+  xlab("Area Under ROC Curve") +
+  expand_limits(x = c(.5, 1)) +
+  theme_classic() 
 ```
 
 

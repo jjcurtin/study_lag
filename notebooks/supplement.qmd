@@ -113,28 +113,7 @@ The following have been made publicly available…
 
 ## Supplemental Figures
 
-### Figure S1: Full Posterior Distributions for auROC by Model
-
-```{r}
-#| echo: false
-pp_tidy |> 
-  mutate(model = factor(model, levels = c("lag0", "lag24", "lag72", "lag168", "lag336"),
-                        labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks"))) |>
-  ggplot() + 
-  geom_histogram(aes(x = posterior), fill = "light grey", color = "black", alpha = .4, 
-                 bins = 30) +
-  geom_segment(mapping = aes(y = 2200, yend = 2600, x = pp_median, xend = pp_median),
-               data = ci) +
-  geom_segment(mapping = aes(y = 2400, yend = 2400, x = pp_lower, xend = pp_upper),
-                data = ci) +
-  facet_wrap(~model, ncol = 1) +
-  scale_y_continuous("Posterior Probability") +
-  xlab("Area Under ROC Curve") +
-  theme_classic() +
-  theme(legend.position = "none")
-```
-
-### Figure S2: Calibration Plots for Baseline and 2-Week Lag Models
+### Figure S1: Calibration Plots for Baseline and 2-Week Lag Models
 
 ```{r}
 preds_0 <- read_rds(here::here(path_models_lag, 
@@ -248,7 +227,7 @@ fig_cal_0 + fig_cal_336
 
 
 
-### Figure S3: Global Shapley Plots for Baseline and 2-Week Lag Model by Demographic Group
+### Figure S2: Global Shapley Plots for Baseline and 2-Week Lag Model by Demographic Group
 
 
 ```{r}
