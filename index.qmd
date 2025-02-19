@@ -245,9 +245,10 @@ We calculated Shapley values in log-odds units for binary classification models 
 {{< embed notebooks/mak_tables.qmd#tbl-fairness >}} 
 
 ## Feature Importance
- <!--JJC: Explain a bit more about why we care about global and local importance-->
 
-The top three globally important (i.e., highest mean |Shapley value|) feature categories for all models were past use, future efficacy, and craving. This was also consistent across demographic groups (plots of global feature importance by demographic group are availble for the no lag and two week lag models in the supplement). Panel A of @fig-3 shows the relative ranking of feature categories for the no lag and 2-week lag models. Panel B of @fig-3 shows the variation (min and max) in local feature importance for each EMA item for the no lag and 2-week lag models. 
+Global feature importance is an indicator of how important a feature category was to the model's predictions, on average (i.e., across all participants and all observations). The top three globally important feature categories (i.e., highest mean |Shapley value|) for all models were past use, future efficacy, and craving. This was also consistent across demographic groups (plots of global feature importance by demographic group are availble for the no lag and 2-week lag models in the supplement). Panel A of @fig-3 shows the relative ranking of feature categories for the no lag and 2-week lag models. 
+
+Local feature importance is an indicator of how important a feature category is to a specific prediction timepoint (i.e., for a single individual at a single moment in time). Local importance can be used to map feature categories onto clinical interventions and recommendations (e.g., What does this individual need right now?). Panel B of @fig-3 shows the range of local feature importance (minimum Shapley value and maximum Shapley value) for each EMA feature category for the no lag and 2-week lag models. This plot suggests that even feature categories with low global importance (e.g., past pleasant event) have a wide range of local importance values, suggesting that for seem people at some moments in time these features are clinically important.
 
 {{< embed notebooks/mak_figures.qmd#fig-3 >}} 
 
