@@ -9,7 +9,7 @@
     <meta name="author" content="Gaylen E. Fronk">
     <meta name="author" content="Jiachen Yu">
     <meta name="author" content="John J. Curtin">
-    <meta name="dcterms.date" content="2025-02-10">
+    <meta name="dcterms.date" content="2025-02-19">
     <meta name="keywords" content="Substance use disorders, Precision mental health">
 
     <title>Lagged Predictions of Next Day Alcohol Use for Adaptive and Personalized Continuing Care</title>
@@ -194,10 +194,10 @@
 <meta name="citation_author" content="Gaylen E. Fronk">
 <meta name="citation_author" content="Jiachen Yu">
 <meta name="citation_author" content="John J. Curtin">
-<meta name="citation_publication_date" content="2025-02-10">
-<meta name="citation_cover_date" content="2025-02-10">
+<meta name="citation_publication_date" content="2025-02-19">
+<meta name="citation_cover_date" content="2025-02-19">
 <meta name="citation_year" content="2025">
-<meta name="citation_online_date" content="2025-02-10">
+<meta name="citation_online_date" content="2025-02-19">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Disparities in the Treatment of Substance Use Disorders: Does Where You Live Matter?;,citation_abstract=This study focused on (1) whether disparities in timely receipt of substance use services can be explained in part by the characteristics of the community in which the clients reside and (2) whether the effect of community characteristics on timely receipt of services was similar across racial/ethnic groups. The sample was composed of adults receiving publicly funded outpatient treatment in Washington State. Treatment data were linked to data from the US census. The outcome studied was “Initiation and Engagement” in treatment (IET), a measure noting timely receipt of services at the beginning of treatment. Community characteristics studied included community level economic disadvantage and concentration of American Indian, Latino, and Black residents in the community. Black and American Indian clients were less likely to initiate or engage in treatment compared to non-Latino white clients, and American Indian clients living in economically disadvantaged communities were at even greater risk of not initiating treatment. Community economic disadvantage and racial/ethnic makeup of the community were associated with treatment initiation, but not engagement, although they did not entirely explain the disparities found in IET.;,citation_author=Andrea Acevedo;,citation_author=Lee Panas;,citation_author=Deborah Garnick;,citation_author=Dolores Acevedo-Garcia;,citation_author=Jennifer Miles;,citation_author=Grant Ritter;,citation_author=Kevin Campbell;,citation_publication_date=2018-10;,citation_cover_date=2018-10;,citation_year=2018;,citation_issue=4;,citation_doi=10.1007/s11414-018-9586-y;,citation_issn=1556-3308;,citation_volume=45;,citation_language=en-US;,citation_journal_title=The Journal of Behavioral Health Services &amp;amp;amp; Research;">
 <meta name="citation_reference" content="citation_title=ARDI Alcohol-Attributable Deaths, US  CDC;,citation_publisher=https://nccd.cdc.gov/DPH_ARDI/Default/Report.aspx?T=AAM&amp;amp;amp;P=F1F85724-AEC5-4421-BC88-3E8899866842&amp;R=EACE3036-77C9-4893-9F93-17A5E1FEBE01&amp;M=7F40785C-D481-440A-970F-50EFBD21B35B&amp;F=&amp;D=;">
@@ -342,7 +342,7 @@
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">February 10, 2025</p>
+              <p class="date">February 19, 2025</p>
             </div>
           </div>
           
@@ -1207,25 +1207,55 @@ Table&nbsp;1: Demographic and Clinical Characteristics
 </section>
 <section id="model-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="model-evaluation">Model Evaluation</h2>
-<p>Histograms of the full posterior probability distributions for auROC for each model are available in the supplement. The median auROCs from these posterior distributions were 0.90 (no lag), 0.88 (1-day lag), 0.87 (3-day hour lag), 0.86 (1-week lag), and 0.84 (2-week lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: no lag [0.88-0.92], 1-day lag [0.86-0.90], 3-day lag [0.85-0.89], 1-week lag [0.84-0.88], 2-week lag [0.81-0.86].</p>
+<p><a href="#fig-2" class="quarto-xref">Figure&nbsp;2</a> presents the full posterior probability distributions for auROC for each model. The median auROCs from these posterior distributions were 0.90 (no lag), 0.88 (1-day lag), 0.87 (3-day hour lag), 0.86 (1-week lag), and 0.84 (2-week lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: no lag [0.88-0.92], 1-day lag [0.86-0.90], 3-day lag [0.85-0.89], 1-week lag [0.84-0.88], 2-week lag [0.81-0.86].</p>
 <!--KW: Refer to calibration plots in supplement after those are created-->
+<div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-2">
+<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="cell-fig-2" class="cell" data-fig-width="8" data-fig-height="6">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="op">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  mutate(model <span class="op">=</span> factor(model, levels <span class="op">=</span> c(<span class="st">"lag0"</span>, <span class="st">"lag24"</span>, <span class="st">"lag72"</span>, <span class="st">"lag168"</span>, <span class="st">"lag336"</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                        labels <span class="op">=</span> c(<span class="st">"No lag"</span>, <span class="st">"1 day"</span>, <span class="st">"3 days"</span>, <span class="st">"1 week"</span>, <span class="st">"2 weeks"</span>))) <span class="op">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  ggplot() <span class="op">+</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  geom_histogram(aes(x <span class="op">=</span> posterior), fill <span class="op">=</span> <span class="st">"light grey"</span>, color <span class="op">=</span> <span class="st">"black"</span>, alpha <span class="op">=</span> <span class="fl">.4</span>, </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                 bins <span class="op">=</span> <span class="dv">60</span>) <span class="op">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> <span class="dv">2600</span>, yend <span class="op">=</span> <span class="dv">3000</span>, x <span class="op">=</span> pp_median, xend <span class="op">=</span> pp_median),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>               data <span class="op">=</span> ci) <span class="op">+</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> <span class="dv">2800</span>, yend <span class="op">=</span> <span class="dv">2800</span>, x <span class="op">=</span> pp_lower, xend <span class="op">=</span> pp_upper),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                data <span class="op">=</span> ci) <span class="op">+</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  facet_wrap(<span class="op">~</span>model, ncol <span class="op">=</span> <span class="dv">1</span>) <span class="op">+</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  geom_vline(xintercept <span class="op">=</span> <span class="fl">.5</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>) <span class="op">+</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  scale_y_continuous(<span class="st">"Posterior Probability"</span>) <span class="op">+</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  xlab(<span class="st">"Area Under ROC Curve"</span>) <span class="op">+</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  expand_limits(x <span class="op">=</span> c(<span class="fl">.5</span>, <span class="dv">1</span>)) <span class="op">+</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  theme_classic() <span class="op">+</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  theme(legend.position <span class="op">=</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="fig-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
+<a href="index_files/figure-html/notebooks-mak_figures-fig-2-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Posterior probability distributions for area under ROC curve (auROC) for each model (0, 1-day, 3-day, 1-week, and 2-week lag). Horizonatal lines depict 95% Bayesian credible intervals (CI) and vertical lines depict median posterior probability for auROC. Dashed line represents expected performance from a random classifier (auROC of .5)."><img src="index_files/figure-html/notebooks-mak_figures-fig-2-output-1.png" width="768" height="576" class="figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Posterior probability distributions for area under ROC curve (auROC) for each model (0, 1-day, 3-day, 1-week, and 2-week lag). Horizonatal lines depict 95% Bayesian credible intervals (CI) and vertical lines depict median posterior probability for auROC. Dashed line represents expected performance from a random classifier (auROC of .5).
+</figcaption>
+</figure>
+</div>
+</div>
+</div></div>
+</div>
 </section>
 <section id="model-comparisons" class="level2">
 <h2 class="anchored" data-anchor-id="model-comparisons">Model Comparisons</h2>
 <p><a href="#tbl-model" class="quarto-xref">Table&nbsp;2</a> presents the median difference in auROC, 95% Bayesian CI, and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts. There was strong evidence (probabilities &gt; .98) that the lagged models performed worse than the baseline (no lag) model, with average drops in auROC ranging from 0.02-0.06, and previous adjacent lagged model, with average drops in auROC ranging from 0.01-0.02.</p>
+<!--JJC: NEED A NOTE TO DESCRIBE HOW THE CONTRASTS WORK AND HOW TO INTERPRET THE PROBBILITY COLUMN-->
 <div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_tables.qmd" data-notebook-title="Make All Tables for Main Manuscript" data-notebook-cellid="cell-tbl-model">
-<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
+<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div class="cell">
 
-<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>table_ci <span class="op">|&gt;</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  knitr::kable() <span class="op">|&gt;</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  kable_classic() <span class="op">|&gt;</span> </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">2</span>, end_row <span class="op">=</span> <span class="dv">5</span>) <span class="op">|&gt;</span> </span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">7</span>, end_row <span class="op">=</span> <span class="dv">9</span>) <span class="op">|&gt;</span> </span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">11</span>, end_row <span class="op">=</span> <span class="dv">13</span>) <span class="op">|&gt;</span> </span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">15</span>, end_row <span class="op">=</span> <span class="dv">17</span>) <span class="op">|&gt;</span> </span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  kableExtra::row_spec(<span class="dv">5</span>, extra_css <span class="op">=</span> <span class="st">"border-bottom: 1px solid"</span>) <span class="op">|&gt;</span> </span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  kableExtra::row_spec(<span class="dv">9</span>, extra_css <span class="op">=</span> <span class="st">"border-bottom: 1px solid"</span>) <span class="op">|&gt;</span>     </span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  kableExtra::row_spec(<span class="dv">13</span>, extra_css <span class="op">=</span> <span class="st">"border-bottom: 1px solid"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-model" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>table_ci <span class="op">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  knitr::kable() <span class="op">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  kable_classic() <span class="op">|&gt;</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">2</span>, end_row <span class="op">=</span> <span class="dv">5</span>) <span class="op">|&gt;</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">7</span>, end_row <span class="op">=</span> <span class="dv">9</span>) <span class="op">|&gt;</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  kableExtra::row_spec(<span class="dv">5</span>, extra_css <span class="op">=</span> <span class="st">"border-bottom: 1px solid"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-model" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts.
@@ -1297,40 +1327,50 @@ Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), a
 <td style="text-align: left;">0.989</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; padding-left: 2em; border-bottom: 1px solid;" data-indentlevel="1">1 week vs. 2 weeks</td>
-<td style="text-align: left; border-bottom: 1px solid;">0.02</td>
-<td style="text-align: left; border-bottom: 1px solid;">[0.011, 0.029]</td>
-<td style="text-align: left; border-bottom: 1px solid;">1</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Fairness Contrasts (No Lag)</td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd" data-grouplength="3">
-<td colspan="4" style="text-align: left; border-bottom: 0;"><strong></strong></td>
-</tr>
-<tr class="even">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">male vs. female</td>
-<td style="text-align: left;">0.042</td>
-<td style="text-align: left;">[0.027, 0.058]</td>
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">1 week vs. 2 weeks</td>
+<td style="text-align: left;">0.02</td>
+<td style="text-align: left;">[0.011, 0.029]</td>
 <td style="text-align: left;">1</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">non-Hispanic White vs. not White</td>
-<td style="text-align: left;">0.215</td>
-<td style="text-align: left;">[0.057, 0.422]</td>
-<td style="text-align: left;">0.991</td>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div></div></div>
+</div></div>
+</div>
+</section>
+<section id="fairness-analyses-1" class="level2">
+<h2 class="anchored" data-anchor-id="fairness-analyses-1">Fairness Analyses</h2>
+<p><a href="#tbl-fairness" class="quarto-xref">Table&nbsp;3</a> presents the median difference in auROC, 95% Bayesian CI, and posterior probability that the auROC difference (advantaged group auROC - disadvantaged group auROC) was greater than 0 for the three fairness contrasts: race/ethnicity (not White; <em>N</em> = 20 vs.&nbsp;Non-Hispanic White; <em>N</em> = 131), sex at birth (female; <em>N</em> = 74 vs.&nbsp;male; <em>N</em> = 77), and income (below poverty; <em>N</em> = 49 vs.&nbsp;above poverty; <em>N</em> = 102). In this table we present these analyses for our baseline no lag model and for the 2-week lag model, as we believe this is our most clinically useful lagged model for providing advanced warning of lapse risk. Fairness analyses for all five models are available in the supplement. There was strong evidence (probabilities &gt; .96) that our models performed better for the advantaged groups (White, male, above poverty) compared to the disadvantaged groups (not-White, female, below poverty). On average, across all five models, there was a median decrease in auROC of 0.15 (range 0.11-0.27) for participants who were not White compared to non-Hispanic White participants. On average, across all five models, there was a median decrease in auROC of 0.05 (range 0.04-0.10) for female participants compared to male participants. On average, across all five models, there was a median decrease in auROC of 0.04 (range 0.03-0.06) for participants below the federal poverty line compared to participants above the federal poverty line.</p>
+<div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_tables.qmd" data-notebook-title="Make All Tables for Main Manuscript" data-notebook-cellid="cell-tbl-fairness">
+<div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div class="cell">
+
+<div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>table_ci_fair <span class="op">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  knitr::kable() <span class="op">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  kable_classic() <span class="op">|&gt;</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">2</span>, end_row <span class="op">=</span> <span class="dv">4</span>) <span class="op">|&gt;</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">6</span>, end_row <span class="op">=</span> <span class="dv">8</span>) <span class="op">|&gt;</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  kableExtra::row_spec(<span class="dv">4</span>, extra_css <span class="op">=</span> <span class="st">"border-bottom: 1px solid"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-fairness" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fairness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3: Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts.
+</figcaption>
+<div aria-describedby="tbl-fairness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display">
+<table class="lightable-classic do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Contrast</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Median</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Bayesian CI</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Probability</th>
 </tr>
-<tr class="even">
-<td style="text-align: left; padding-left: 2em; border-bottom: 1px solid;" data-indentlevel="1">above poverty vs. below poverty</td>
-<td style="text-align: left; border-bottom: 1px solid;">0.026</td>
-<td style="text-align: left; border-bottom: 1px solid;">[0.003, 0.051]</td>
-<td style="text-align: left; border-bottom: 1px solid;">0.966</td>
-</tr>
+</thead>
+<tbody>
 <tr class="odd">
-<td style="text-align: left;">Fairness Contrasts (2-week Lag)</td>
+<td style="text-align: left;">Fairness Contrasts (No Lag)</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
@@ -1340,17 +1380,44 @@ Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), a
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">male vs. female</td>
+<td style="text-align: left;">0.042</td>
+<td style="text-align: left;">[0.027, 0.058]</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">non-Hispanic White vs. not White</td>
+<td style="text-align: left;">0.215</td>
+<td style="text-align: left;">[0.057, 0.422]</td>
+<td style="text-align: left;">0.991</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em; border-bottom: 1px solid;" data-indentlevel="1">above poverty vs. below poverty</td>
+<td style="text-align: left; border-bottom: 1px solid;">0.026</td>
+<td style="text-align: left; border-bottom: 1px solid;">[0.003, 0.051]</td>
+<td style="text-align: left; border-bottom: 1px solid;">0.966</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fairness Contrasts (2-week Lag)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd" data-grouplength="3">
+<td colspan="4" style="text-align: left; border-bottom: 0;"><strong></strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">male vs. female</td>
 <td style="text-align: left;">0.097</td>
 <td style="text-align: left;">[0.076, 0.119]</td>
 <td style="text-align: left;">1</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">non-Hispanic White vs. not White</td>
 <td style="text-align: left;">0.109</td>
 <td style="text-align: left;">[0.064, 0.16]</td>
 <td style="text-align: left;">1</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">above poverty vs. below poverty</td>
 <td style="text-align: left;">0.057</td>
 <td style="text-align: left;">[0.025, 0.09]</td>
@@ -1365,26 +1432,23 @@ Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), a
 </div></div>
 </div>
 </section>
-<section id="fairness-analyses-1" class="level2">
-<h2 class="anchored" data-anchor-id="fairness-analyses-1">Fairness Analyses</h2>
-<p><a href="#tbl-model" class="quarto-xref">Table&nbsp;2</a> presents the median difference in auROC, 95% Bayesian CI, and posterior probability that that the auROC difference was greater than 0 for our no lag and 2-week lag models for the three fairness contrasts: race/ethnicity (not White; <em>N</em> = 20 vs.&nbsp;Non-Hispanic White; <em>N</em> = 131), sex at birth (female; <em>N</em> = 74 vs.&nbsp;male; <em>N</em> = 77), and income (below poverty; <em>N</em> = 49 vs.&nbsp;above poverty; <em>N</em> = 102). Individual Bayesian fairness contrasts for all five models are available in the supplement. There was strong evidence (probabilities &gt; .96) that our models performed better for the advantaged groups (White, male, above poverty) compared to the disadvantaged groups (not-White, female, below poverty). On average there was a median decrease in auROC of 0.15 (range 0.11-0.27) for participants who were not White compared to non-Hispanic White participants. On average there was a median decrease in auROC of 0.05 (range 0.04-0.10) for female participants compared to male participants. On average there was a median decrease in auROC of 0.04 (range 0.03-0.06) for participants below the federal poverty line compared to participants above the federal poverty line.</p>
-</section>
 <section id="feature-importance-1" class="level2">
 <h2 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h2>
-<p>The top three globally important (i.e., highest mean |Shapley value|) feature categories for all models were past use, future efficacy, and craving. This was also consistent across demographic groups (plots of global feature importance by demographic group are availble for the no lag and two week lag models in the supplement). Panel A of <a href="#fig-3" class="quarto-xref">Figure&nbsp;2</a> shows the relative ranking of feature categories for the no lag and 2-week lag models. Panel B of <a href="#fig-3" class="quarto-xref">Figure&nbsp;2</a> shows the variation (min and max) in local feature importance for each EMA item for the no lag and 2-week lag models.</p>
+<p><!--JJC: Explain a bit more about why we care about global and local importance--></p>
+<p>The top three globally important (i.e., highest mean |Shapley value|) feature categories for all models were past use, future efficacy, and craving. This was also consistent across demographic groups (plots of global feature importance by demographic group are availble for the no lag and two week lag models in the supplement). Panel A of <a href="#fig-3" class="quarto-xref">Figure&nbsp;3</a> shows the relative ranking of feature categories for the no lag and 2-week lag models. Panel B of <a href="#fig-3" class="quarto-xref">Figure&nbsp;3</a> shows the variation (min and max) in local feature importance for each EMA item for the no lag and 2-week lag models.</p>
 <div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-3">
-<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div id="cell-fig-3" class="cell" data-fig-width="8" data-fig-height="5">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>global_panel <span class="op">+</span> panel_shap_local <span class="op">+</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  plot_layout(guides <span class="op">=</span> <span class="st">"collect"</span>) <span class="op">&amp;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  plot_annotation(tag_levels <span class="op">=</span> <span class="st">"A"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [11]:</pre></div><div id="cell-fig-3" class="cell" data-fig-width="8" data-fig-height="5">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>global_panel <span class="op">+</span> panel_shap_local <span class="op">+</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  plot_layout(guides <span class="op">=</span> <span class="st">"collect"</span>) <span class="op">&amp;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  plot_annotation(tag_levels <span class="op">=</span> <span class="st">"A"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-3" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
-<a href="index_files/figure-html/notebooks-mak_figures-fig-3-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B displays the variation in local feature importance for the no lag and 2-week lag models. Lines start at minimum Shapley value and end at maximum Shapley value."><img src="index_files/figure-html/notebooks-mak_figures-fig-3-output-1.png" width="768" height="480" class="figure-img"></a>
+<a href="index_files/figure-html/notebooks-mak_figures-fig-3-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B displays the variation in local feature importance for the no lag and 2-week lag models. Lines start at minimum Shapley value and end at maximum Shapley value."><img src="index_files/figure-html/notebooks-mak_figures-fig-3-output-1.png" width="768" height="480" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B displays the variation in local feature importance for the no lag and 2-week lag models. Lines start at minimum Shapley value and end at maximum Shapley value.
+Figure&nbsp;3: Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B displays the variation in local feature importance for the no lag and 2-week lag models. Lines start at minimum Shapley value and end at maximum Shapley value.
 </figcaption>
 </figure>
 </div>
