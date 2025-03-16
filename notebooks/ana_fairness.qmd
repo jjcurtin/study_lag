@@ -140,7 +140,8 @@ calc_pp <- function (lag, dem_var) {
              family = gaussian) 
 
   pp_tidy <- pp |> 
-    tidy(seed = 123)
+    tidy(seed = 123) |> 
+    mutate(lag = lag)
 
   q = c(.025, .5, .975)
   ci <- pp_tidy |> 
