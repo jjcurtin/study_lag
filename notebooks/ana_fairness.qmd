@@ -135,8 +135,8 @@ calc_pp <- function (lag, dem_var) {
   pp <- data |> 
     perf_mod(formula = statistic ~ model + (1 | id2/id),
              transform = tidyposterior::logit_trans,  
-             iter = 4000, chains = 4,  
-             adapt_delta = .99,
+             iter = 6000, chains = 4,  
+             adapt_delta = .999,
              family = gaussian) 
 
   pp_tidy <- pp |> 
@@ -179,7 +179,7 @@ ci_contrast <- ci_contrast |>
     left_join(ci_median_contrast, by = c("contrast")) |> 
     select(contrast, probability, median, lower, upper, lag) 
   
-  list(ci = ci, ci_contrast = ci_contrast)
+  list(pp = pp_tidy, ci = ci, ci_contrast = ci_contrast)
 }
 ```
 
@@ -188,10 +188,13 @@ sex
 sex <- c(0, 24,72,168,336) |> 
   map(\(lag) calc_pp(lag, "sex")) 
 
-(pp_sex <- map(sex, 1) |> 
+(posteriors_sex <- map(sex, 1) |> 
   bind_rows())
 
-(contrast_sex <- map(sex, 2) |> 
+(pp_sex <- map(sex, 2) |> 
+  bind_rows())
+
+(contrast_sex <- map(sex, 3) |> 
   bind_rows())
 ```
 
@@ -200,10 +203,13 @@ income
 income <- c(0, 24,72,168,336) |> 
   map(\(lag) calc_pp(lag, "income")) 
 
-(pp_income <- map(income, 1) |> 
+(posteriors_income <- map(income, 1) |> 
   bind_rows())
 
-(contrast_income <- map(income, 2) |> 
+(pp_income <- map(income, 2) |> 
+  bind_rows())
+
+(contrast_income <- map(income, 3) |> 
   bind_rows())
 ```
 
@@ -212,16 +218,24 @@ race
 race <- c(0, 24,72,168,336) |> 
   map(\(lag) calc_pp(lag, "race")) 
 
-(pp_race <- map(race, 1) |> 
+(posteriors_race <- map(race, 1) |> 
   bind_rows())
 
-(contrast_race <- map(race, 2) |> 
+(pp_race <- map(race, 2) |> 
+  bind_rows())
+
+(contrast_race <- map(race, 3) |> 
   bind_rows())
 ```
 
 
 Bind all pp/contrast tibbles and save
 ```{r}
+posteriors_sex |> 
+  bind_rows(posteriors_income) |> 
+  bind_rows(posteriors_race) |> 
+  write_csv(here::here(path_models_lag, "posteriors_dem.csv"))
+
 pp_sex |> 
   bind_rows(pp_income) |> 
   bind_rows(pp_race) |> 
