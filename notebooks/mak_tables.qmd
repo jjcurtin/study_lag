@@ -534,7 +534,9 @@ table_ci |>
   kableExtra::group_rows(start_row = 2, end_row = 5) |> 
   kableExtra::group_rows(start_row = 7, end_row = 9) |> 
   kableExtra::row_spec(5, extra_css = "border-bottom: 1px solid") |> 
-  kableExtra::footnote(general = c(footnote_table_model), escape=FALSE)
+  kableExtra::add_footnote(label = footnote_table_model,
+                           notation = "none",
+                           escape = FALSE)
 ```
 
 ### Table 3: Fairness Comparisons
@@ -552,5 +554,7 @@ table_ci_fair |>
   kableExtra::group_rows(start_row = 2, end_row = 4) |> 
   kableExtra::group_rows(start_row = 6, end_row = 8) |> 
   kableExtra::row_spec(4, extra_css = "border-bottom: 1px solid")  |> 
-  kableExtra::footnote(general = c(footnote_table_fair), escape=FALSE)
+  kableExtra::add_footnote(label = footnote_table_fair,
+                           notation = "none",
+                           escape = FALSE)
 ```
