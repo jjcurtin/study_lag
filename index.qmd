@@ -31,7 +31,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-<!-- 4/2/25 - At 8,258 words. 
+<!-- 4/2/25 - At 8,264 words. 
 
 
 <!--Notes:
@@ -268,7 +268,7 @@ We believe our lapse prediction models will be most effective when embedded in a
 
 Our no lag models can be used to guide individuals to take immediate actionable steps to maintain their recovery goals and support them in implementing these steps (e.g., pointing them to a specific module in an app). For example, recommending an urge surfing activity when someone's immediate risk is driven by strong craving, recommending a guided relaxation video when someone is reporting recent stressful events, or encouraging individuals to reflect on recent past successes or reasons for choosing abstinence or moderation when self-efficacy is low.
 
-The 2-week lagged model provides individuals with advanced warning of their lapse risk. These models are well-suited to support recovery needs that cannot be addressed within an app, such as scheduling an appointment or attending a support group. To be clear, we do not believe an app alone is sufficient to deliver continuing care. We expect individuals will require additional support throughout their recovery from a mental health provider (e.g., motivational enhancement, crisis management, skill building), a peer (e.g., sponsor, support group), or family member. Importantly, these types of supports take time to set up; highlighting the value of this lagged week model.
+The 2-week lagged model provides individuals with advanced warning of their lapse risk. These models are well-suited to support recovery needs that cannot be addressed within an app, such as scheduling positive or pleasant activities, increasing social engagement, or attending a peer-led recovery meeting. To be clear, we do not believe an app alone is sufficient to deliver continuing care. We expect individuals will require additional support throughout their recovery from a mental health provider (e.g., motivational enhancement, crisis management, skill building), a peer (e.g., sponsor, support group), or family member. Importantly, these types of supports take time to set up; highlighting the value of this lagged week model.
 
 
 ## Model Fairness
