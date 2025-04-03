@@ -35,8 +35,8 @@ theme_set(theme_classic())
 
 options(knitr.kable.NA = '')
 
-path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
-path_processed <- format_path(str_c("studydata/risk/data_processed/lag"))
+path_models_lag <- format_path(str_c("risk/models/lag"))
+path_processed <- format_path(str_c("risk/data_processed/lag"))
 ```
 
 
@@ -59,6 +59,15 @@ pp_dem_contrast <- read_csv(here::here(path_models_lag, "pp_dem_contrast_all.csv
                                  show_col_types = FALSE) |> 
   mutate(lag = factor(lag, levels = c("0", "24", "72", "168", "336"),
                         labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
+
+labels <- read_csv(here::here(path_processed, "labels_1day_0lag.csv"),
+                   show_col_types = FALSE)
+
+dem_tbl <- read_csv(here::here(path_processed, "dem_tibble.csv"),
+                   show_col_types = FALSE)
+
+labels_dem <- labels |> 
+  left_join(dem_tbl, by = "subid")
 ```
 
 ## Transparency Report 1.0 (full, 36 items; Aczel et al., 2019)
@@ -495,6 +504,7 @@ no_lag/twoweek_lag
 
 ## Supplemental Tables
 
+
 ### Table S1: Demographic Contrasts for all Models
 
 ```{r}
@@ -542,4 +552,35 @@ pp_sex |>
   add_header_above(c(" " = 1, "Race" = 3, "Sex" = 3, "Income" = 3))
 ```
 
+
+
+### Table S2: Percentage of lapse Reports by Demographic Groups
+
+```{r}
+#| label: tbl-lapses
+#| tbl-cap: "This table reports the percentage of lapse labels relative to all labels (lapse and no lapse combined) for each demographic group. We calculated percentages using labels created for the no lag baseline model."
+
+labels_race <- labels_dem |> 
+  janitor::tabyl(race_di, lapse) |> 
+  janitor::adorn_percentages() |> 
+  mutate(race_di = if_else(race_di == "not white", "not White", "non-Hispanic White")) |> 
+  select(-no, `Demographic group` = race_di, `% lapses` = yes)
+
+labels_income <- labels_dem |> 
+  janitor::tabyl(income_di, lapse) |> 
+  janitor::adorn_percentages() |> 
+  select(-no, `Demographic group` = income_di, `% lapses` = yes)
+
+labels_sex <- labels_dem |> 
+  janitor::tabyl(dem_2, lapse) |> 
+  janitor::adorn_percentages() |> 
+  select(-no, `Demographic group` = dem_2, `% lapses` = yes)
+
+labels_race |> 
+  bind_rows(labels_income) |> 
+  bind_rows(labels_sex) |> 
+  kbl() |> 
+  kableExtra::row_spec(2, extra_css = "border-bottom: 1px solid") |> 
+  kableExtra::row_spec(4, extra_css = "border-bottom: 1px solid") 
+```
 
