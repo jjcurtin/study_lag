@@ -1,5 +1,5 @@
 ---
-title: Lagged Predictions of Next Day Alcohol Use for Adaptive and Personalized Continuing Care 
+title: Lagged Predictions of Next Day Alcohol Lapse Risk for Adaptive and Personalized Continuing Care 
 author:
   - name: Kendra Wyant 
     corresponding: false
@@ -272,7 +272,7 @@ The 2-week lagged model provides individuals with advanced warning of their laps
 
 
 ## Model Fairness
-In our previous study [@wyantMachineLearningModels2023], we failed to assess model fairness. In recent years, the machine learning field has begun to understand the critical importance of evaluating model fairness when algorithms are used to inform important decisions (e.g., healthcare services offered, eligibility for loans, early parole). Algorithms that perform favorably for only a single majority group could widen existing disparities in access to resources and important clinical outcomes. Therefore, we are committed to continuing to improve our understanding of and methods for evaluating model fairness. In this study, we assessed model fairness by comparing model performance across important subgroups with known disparities in substance use treatment access and/or outcomes - race/ethnicity (not White vs. non-Hispanic White), income (below poverty vs. above poverty), and sex at birth (female vs. male). 
+In our previous study [@wyantMachineLearningModels2023], we failed to assess model fairness. In recent years, the machine learning field has begun to understand the critical importance of evaluating model fairness when algorithms are used to inform important decisions (e.g., healthcare services offered, eligibility for loans, early parole). Algorithms that perform favorably for only a single majority group could widen existing disparities in access to resources and important clinical outcomes [@veinotGoodIntentionsAre2018]. Therefore, we are committed to continuing to improve our understanding of and methods for evaluating model fairness. In this study, we assessed model fairness by comparing model performance across important subgroups with known disparities in substance use treatment access and/or outcomes - race/ethnicity (not White vs. non-Hispanic White), income (below poverty vs. above poverty), and sex at birth (female vs. male). 
 
 All models performed worse for people who were not White, and for people who had an income below the poverty line. The largest contributing factor is likely the lack of diversity in our training data. Our sample was majority non-Hispanic White (*N*=131, 87%) with an average income of \$34,000. As a result, even with our coarse combination of race/ethnicity, the not White group was severely underrepresented relative to the non-Hispanic White group. Similarly, our below poverty group was underrepresented relative to the above poverty group.
 
