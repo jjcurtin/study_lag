@@ -15,7 +15,7 @@ params:
   lead: 336
   version: "v3"
   cv: "nested"
-  model: "main" # "main" 
+  model: "main_stratify" # "main" 
 editor_options: 
   chunk_output_type: console
 ---
@@ -321,7 +321,9 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
   
   splits <- d %>% 
     make_splits(cv_resample_type, cv_resample, cv_outer_resample, 
-                cv_inner_resample, cv_group, seed_splits)
+              cv_inner_resample, cv_group, cv_strat = stratify,
+              the_seed = seed_splits)
+
     
   all <- configs_best$outer_split_num |> 
     map(\(split_num) fit_predict_eval(split_num, splits, configs_best)) 
