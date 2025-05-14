@@ -52,8 +52,8 @@ devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/chtc/sta
 ```
 
 ```{r, absolute_paths}
-path_processed <- format_path(str_c("studydata/risk/data_processed/lag"))
-path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
+path_processed <- format_path(str_c("risk/data_processed/lag"))
+path_models_lag <- format_path(str_c("risk/models/lag"))
 ```
 
 
@@ -135,7 +135,7 @@ calc_pp <- function (lag, dem_var) {
   pp <- data |> 
     perf_mod(formula = statistic ~ model + (1 | id2/id),
              transform = tidyposterior::logit_trans,  
-             iter = 6000, chains = 4,  
+             iter = 4000, chains = 4,  
              adapt_delta = .999,
              family = gaussian) 
 

@@ -8,7 +8,6 @@ format:
     embed-resources: true
 number-sections: true
 bibliography: paper\_lag.bib
-
 ---
 
 ```{r}
