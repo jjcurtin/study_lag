@@ -15,7 +15,9 @@ params:
   lead: 336
   version: "v3"
   cv: "nested"
-  model: "main_stratify" # "main" 
+  model: "main_stratify"
+  dem: FALSE #set true to use 6 repeats of 5 fold cv for outer fits
+  
 editor_options: 
   chunk_output_type: console
 ---
