@@ -35,8 +35,8 @@ theme_set(theme_classic())
 
 options(knitr.kable.NA = '')
 
-path_models_lag <- format_path(str_c("risk/models/lag"))
-path_processed <- format_path(str_c("risk/data_processed/lag"))
+path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
+path_processed <- format_path(str_c("studydata/risk/data_processed/lag"))
 ```
 
 
