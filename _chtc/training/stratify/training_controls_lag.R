@@ -103,7 +103,7 @@ name_batch <- str_c("train_", algorithm, "_", window, "_", lead, "lag_", cv_name
 # the path to the batch of jobs to put the folder name
 path_batch <- format_path(str_c("studydata/risk/chtc/", study, "/", name_batch)) 
 # location of data set
-path_data <- format_path(str_c("studydata/risk/data_processed/", study)) 
+path_data <- format_path(str_c("studydata/risk/data_processed/shared")) 
 
 # ALGORITHM-SPECIFIC HYPERPARAMETERS-----------
 hp1_glmnet <- c(0.05, seq(.1, 1, length.out = 10)) # alpha (mixture)
