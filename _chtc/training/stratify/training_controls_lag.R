@@ -49,7 +49,7 @@ window <- "1day"
 lead <- 0
 version <- "v3" #feature version (v1 = 24 hour fence, v2 = 6 hour fence, v3 = 1day/24 hour fence)
 algorithm <- "xgboost"
-model <- "main_stratify"
+model <- "dem_stratify"
 
 feature_set <- c("all") # EMA Features set names
 data_trn <- str_c("features_", lead, "lag_", version, ".csv")  
@@ -87,9 +87,10 @@ y_level_neg <- "no"
 cv_resample_type <- "nested" # can be boot, kfold, or nested
 cv_resample = NULL # can be repeats_x_folds (e.g., 1_x_10, 10_x_10) or number of bootstraps (e.g., 100)
 cv_inner_resample <- "1_x_10" # can also be a single number for bootstrapping (i.e., 100)
-cv_outer_resample <- "3_x_10" # outer resample will always be kfold
+cv_outer_resample <- "6_x_5" # outer resample will always be kfold
 cv_group <- "subid" # set to NULL if not grouping
-stratify <- "any_lapse"
+cv_strat <- "strat_yn"
+cv_strat_file_name <- "lapse_strat.csv" 
 
 cv_name <- if_else(cv_resample_type == "nested",
                    str_c(cv_resample_type, "_", cv_inner_resample, "_",
@@ -130,16 +131,31 @@ hp2_nnet <- seq(0, 0.1, length.out = 15) # penalty
 hp3_nnet <- seq(5, 30, length.out = 5) # hidden units
 
 # FORMAT DATA-----------------------------------------
-format_data <- function (df){
+format_data <- function (df, lapse_strat = NULL){
   
-  df |> 
-    rename(y = !!y_col_name) |> 
-    mutate(y = factor(y, levels = c(!!y_level_pos, !!y_level_neg)), # set pos class first
-           across(where(is.character), factor)) |>
-    select(-c(dttm_label)) |> 
-    mutate(any_lapse = if_else(subid %in% subset(df, lapse == "yes")$subid, "yes", "no"),
-           any_lapse = factor(any_lapse))
+  if(!is.null(lapse_strat)) {
+    df <- df |> 
+      rename(y = !!y_col_name) |> 
+      # set pos class first
+      mutate(y = factor(y, levels = c(!!y_level_pos, !!y_level_neg)), 
+             across(where(is.character), factor)) |>
+      select(-c(dttm_label)) |> 
+      left_join(lapse_strat |> 
+                  select(subid, all_of(cv_strat)), by = "subid")
+  }
+  
+  if(is.null(lapse_strat)) {
+    df <- df |> 
+      rename(y = !!y_col_name) |> 
+      # set pos class first
+      mutate(y = factor(y, levels = c(!!y_level_pos, !!y_level_neg)), 
+             across(where(is.character), factor)) |>
+      select(-c(dttm_label)) 
+  }
+  
+  return(df)
 }
+
 
 
 # BUILD RECIPE---------------------------------------
@@ -160,7 +176,7 @@ build_recipe <- function(d, config) {
   
   # Set recipe steps generalizable to all model configurations
   rec <- recipe(y ~ ., data = d) |>
-    step_rm(subid, label_num) |>  # needed to retain until now for grouped CV in splits
+    step_rm(subid, label_num, matches(cv_strat)) |>  # needed to retain until now for grouped CV in splits
     step_impute_median(all_numeric_predictors()) |> 
     step_impute_mode(all_nominal_predictors()) |> 
     step_dummy(all_factor_predictors()) |> 
