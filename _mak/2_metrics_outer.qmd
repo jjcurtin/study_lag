@@ -12,12 +12,11 @@ format:
 params:
   study: "lag"
   window: "1day"
-  lead: 336
+  lead: 0
   version: "v3"
   cv: "nested"
   model: "main_stratify"
-  dem: FALSE #set true to use 6 repeats of 5 fold cv for outer fits
-  
+
 editor_options: 
   chunk_output_type: console
 ---
@@ -287,14 +286,6 @@ path_batch <- here::here(path_input, batch_name)
 source(here::here(path_batch, "input", "training_controls.R"))
 # NOTE: training controls overwrites path_batch but it matches   
 
-  # manually update for now if running dem 
-  dem <- FALSE
-  
-  if (dem == TRUE) {
-    # update outer resampling splits and model to dem
-    cv_outer_resample <- "6_x_5"
-    model <- "dem"
-  }
   
 if(!file.exists(here::here(path_models, str_c("outer_preds_", 
                                               cv_outer_resample,
@@ -316,14 +307,20 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
     d <- read_rds(here::here(path_batch, "input", fn))
   }
   
-  d <- format_data(d) |> 
+  if(!is.null(cv_strat)) {
+  lapse_strat <- read_csv(here::here(path_batch, "input/lapse_strat.csv"), show_col_types = FALSE)
+  } else {
+    lapse_strat <- NULL
+  }
+  
+  d <- format_data(d, lapse_strat) |> 
     arrange(label_num) |> 
     mutate(id_obs = 1:nrow(d))  # tmp add for linking obs
 
   
   splits <- d %>% 
     make_splits(cv_resample_type, cv_resample, cv_outer_resample, 
-              cv_inner_resample, cv_group, cv_strat = stratify,
+              cv_inner_resample, cv_group, cv_strat = cv_strat,
               the_seed = seed_splits)
 
     
