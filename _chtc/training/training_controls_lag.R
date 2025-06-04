@@ -40,7 +40,9 @@
 # xgboost 168 lead (batch made)
 # xgboost 336 lead (batch made)
 
-# source format_path
+# FORMAT PATH FUNCTION------
+library(stringr)
+library(dplyr)
 source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
 
 # SET GLOBAL PARAMETERS--------------------
@@ -49,7 +51,7 @@ window <- "1day"
 lead <- 0
 version <- "v3" #feature version (v1 = 24 hour fence, v2 = 6 hour fence, v3 = 1day/24 hour fence)
 algorithm <- "xgboost"
-model <- "main"
+model <- "dem_stratify"
 
 feature_set <- c("all") # EMA Features set names
 data_trn <- str_c("features_", lead, "lag_", version, ".csv")  
@@ -68,16 +70,14 @@ resample <- c("none", "up_1", "up_2", "up_3", "up_4", "up_5",
 # different these will need to be run as separate batch IF we want to look at performance with SMOTE
 
 # CHTC SPECIFIC CONTROLS----------------------------
-# tar <- c("train.tar.gz") # name of tar packages for submit file - does not transfer these anywhere 
 username <- "kpaquette2" # for setting staging directory (until we have group staging folder)
-stage_data <- FALSE
+stage_data <- FALSE # If FALSE .sif will still be staged, just not data_trn
 max_idle <- 1000
 request_cpus <- 1 
 request_memory <- "45000MB"
 request_disk <- "1600MB"
 want_campus_pools <- TRUE # previously flock
 want_ospool <- TRUE # previously glide
-
 
 # OUTCOME-------------------------------------
 y_col_name <- "lapse" 
@@ -91,7 +91,8 @@ cv_resample = NULL # can be repeats_x_folds (e.g., 1_x_10, 10_x_10) or number of
 cv_inner_resample <- "1_x_10" # can also be a single number for bootstrapping (i.e., 100)
 cv_outer_resample <- "6_x_5" # outer resample will always be kfold
 cv_group <- "subid" # set to NULL if not grouping
-cv_strat <- NULL
+cv_strat <- "strat_yn"
+cv_strat_file_name <- "lapse_strat.csv" 
 
 cv_name <- if_else(cv_resample_type == "nested",
                    str_c(cv_resample_type, "_", cv_inner_resample, "_",
@@ -158,6 +159,7 @@ format_data <- function (df, lapse_strat = NULL){
 }
 
 
+
 # BUILD RECIPE---------------------------------------
 # Script should have a single build_recipe function to be compatible with fit script. 
 build_recipe <- function(d, config) {
@@ -176,7 +178,14 @@ build_recipe <- function(d, config) {
   
   # Set recipe steps generalizable to all model configurations
   rec <- recipe(y ~ ., data = d) |>
-    step_rm(subid, label_num) |>  # needed to retain until now for grouped CV in splits
+    step_rm(subid, label_num) 
+  
+  if(!is.null(cv_strat)) {
+    rec <- rec |> 
+      step_rm(matches(cv_strat)) # remove strat variable
+  }
+  
+  rec <- rec |>  # needed to retain until now for grouped CV in splits
     step_impute_median(all_numeric_predictors()) |> 
     step_impute_mode(all_nominal_predictors()) |> 
     step_dummy(all_factor_predictors()) |> 
@@ -210,5 +219,4 @@ build_recipe <- function(d, config) {
   
   return(rec)
 }
-
 

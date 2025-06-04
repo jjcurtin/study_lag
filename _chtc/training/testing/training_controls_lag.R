@@ -41,6 +41,8 @@
 # xgboost 336 lead (batch made)
 
 # FORMAT PATH FUNCTION------
+library(stringr)
+library(dplyr)
 source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
 
 # SET GLOBAL PARAMETERS--------------------
@@ -49,7 +51,7 @@ window <- "1day"
 lead <- 0
 version <- "v3" #feature version (v1 = 24 hour fence, v2 = 6 hour fence, v3 = 1day/24 hour fence)
 algorithm <- "xgboost"
-model <- "dem_stratify"
+model <- "strat_nlh"
 
 feature_set <- c("all") # EMA Features set names
 data_trn <- str_c("features_", lead, "lag_", version, ".csv")  
@@ -84,12 +86,12 @@ y_level_neg <- "no"
 
 
 # CV SETTINGS---------------------------------
-cv_resample_type <- "nested" # can be boot, kfold, or nested
-cv_resample = NULL # can be repeats_x_folds (e.g., 1_x_10, 10_x_10) or number of bootstraps (e.g., 100)
-cv_inner_resample <- "1_x_10" # can also be a single number for bootstrapping (i.e., 100)
-cv_outer_resample <- "6_x_5" # outer resample will always be kfold
+cv_resample_type <- "kfold" # can be boot, kfold, or nested
+cv_resample = "6_x_5" # can be repeats_x_folds (e.g., 1_x_10, 10_x_10) or number of bootstraps (e.g., 100)
+cv_inner_resample <- NULL # can also be a single number for bootstrapping (i.e., 100)
+cv_outer_resample <- NULL # outer resample will always be kfold
 cv_group <- "subid" # set to NULL if not grouping
-cv_strat <- "strat_yn"
+cv_strat <- model
 cv_strat_file_name <- "lapse_strat.csv" 
 
 cv_name <- if_else(cv_resample_type == "nested",
@@ -176,7 +178,14 @@ build_recipe <- function(d, config) {
   
   # Set recipe steps generalizable to all model configurations
   rec <- recipe(y ~ ., data = d) |>
-    step_rm(subid, label_num, matches(cv_strat)) |>  # needed to retain until now for grouped CV in splits
+    step_rm(subid, label_num) 
+  
+  if(!is.null(cv_strat)) {
+    rec <- rec |> 
+      step_rm(matches(cv_strat)) # remove strat variable
+  }
+  
+  rec <- rec |>  # needed to retain until now for grouped CV in splits
     step_impute_median(all_numeric_predictors()) |> 
     step_impute_mode(all_nominal_predictors()) |> 
     step_dummy(all_factor_predictors()) |> 
