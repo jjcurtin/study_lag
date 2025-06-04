@@ -31,25 +31,25 @@ theme_set(theme_classic())
 
 devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
 
-path_chtc <- format_path(str_c("risk/chtc/gps"))
+path_chtc <- format_path(str_c("studydata/risk/chtc/lag"))
 ```
 
 
 ```{r}
 strat_none <- read_csv(here::here(path_chtc, 
-                                "train_xgboost_kfold_3_x_10_v8_no_strat/output/batch_results.csv"),
+                       "train_xgboost_1day_0lag_kfold_6_x_5_v3_no_strat/output/batch_results.csv"),
                      show_col_types = FALSE) 
 
 strat_yn <- read_csv(here::here(path_chtc, 
-                                "train_xgboost_kfold_3_x_10_v8_strat_yn/output/batch_results.csv"),
+                     "train_xgboost_1day_0lag_kfold_6_x_5_v3_strat_yn/output/batch_results.csv"),
                      show_col_types = FALSE) 
 
 strat_lh <- read_csv(here::here(path_chtc, 
-                                "train_xgboost_kfold_3_x_10_v8_strat_lh/output/batch_results.csv"),
+                     "train_xgboost_1day_0lag_kfold_6_x_5_v3_strat_lh/output/batch_results.csv"),
                      show_col_types = FALSE)
 
 strat_nlh <- read_csv(here::here(path_chtc, 
-                                "train_xgboost_kfold_3_x_10_v8_strat_nlh/output/batch_results.csv"),
+                      "train_xgboost_1day_0lag_kfold_6_x_5_v3_strat_nlh/output/batch_results.csv"),
                      show_col_types = FALSE) 
 ```
 
