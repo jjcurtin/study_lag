@@ -12,11 +12,11 @@ format:
 params:
   study: "lag"
   window: "1day"
-  lead: 336
+  lead: 0
   version: "v3"
   cv: "nested"
   algorithms: "all"   # "all" or name of specific algorithm
-  model: "main_stratify" # "main" or "baseline"
+  model: "main" # "main" or "baseline"
 editor_options: 
   chunk_output_type: console
 ---

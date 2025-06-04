@@ -31,7 +31,7 @@ theme_set(theme_classic())
 
 devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
 
-path_chtc <- format_path(str_c("risk/chtc/gps"))
+path_chtc <- format_path(str_c("studydata/risk/chtc/gps"))
 ```
 
 
@@ -93,7 +93,7 @@ strat_yn |>
            resample == strat_yn_best$resample) |> 
   ggplot() +
   geom_histogram(aes(x = roc_auc), bins = 15, color = "black", fill = "light grey")  +
-  geom_vline(aes(xintercept = median(strat_yn$roc_auc)), color = "red")
+  geom_vline(aes(xintercept = median(strat_yn_best$roc_auc)), color = "red")
 ```
 
 ### low/high stratification
@@ -113,7 +113,7 @@ strat_lh |>
            resample == strat_lh_best$resample) |> 
   ggplot() +
   geom_histogram(aes(x = roc_auc), bins = 15, color = "black", fill = "light grey")  +
-  geom_vline(aes(xintercept = median(strat_lh$roc_auc)), color = "red")
+  geom_vline(aes(xintercept = median(strat_lh_best$roc_auc)), color = "red")
 ```
 
 ### none/low/high stratification
@@ -133,6 +133,6 @@ strat_nlh |>
            resample == strat_nlh_best$resample) |> 
   ggplot() +
   geom_histogram(aes(x = roc_auc), bins = 15, color = "black", fill = "light grey")  +
-  geom_vline(aes(xintercept = median(strat_nlh$roc_auc)), color = "red")
+  geom_vline(aes(xintercept = median(strat_nlh_best$roc_auc)), color = "red")
 ```
 
