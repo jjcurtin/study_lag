@@ -48,6 +48,10 @@ strat_lh <- read_csv(here::here(path_chtc,
                      "train_xgboost_1day_0lag_kfold_6_x_5_v3_strat_lh/output/batch_results.csv"),
                      show_col_types = FALSE)
 
+strat_lh_3_x_10 <- read_csv(here::here(path_chtc, 
+                     "train_xgboost_1day_0lag_kfold_3_x_10_v3_strat_lh/output/batch_results.csv"),
+                     show_col_types = FALSE)
+
 strat_nlh <- read_csv(here::here(path_chtc, 
                       "train_xgboost_1day_0lag_kfold_6_x_5_v3_strat_nlh/output/batch_results.csv"),
                      show_col_types = FALSE) 
@@ -73,7 +77,7 @@ strat_none |>
            resample == strat_none_best$resample) |> 
   ggplot() +
   geom_histogram(aes(x = roc_auc), bins = 15, color = "black", fill = "light grey")  +
-  geom_vline(aes(xintercept = median(strat_none$roc_auc)), color = "red")
+  geom_vline(aes(xintercept = strat_none_best$median_roc_auc), color = "red")
 ```
 
 ### yes/no stratification
@@ -93,7 +97,28 @@ strat_yn |>
            resample == strat_yn_best$resample) |> 
   ggplot() +
   geom_histogram(aes(x = roc_auc), bins = 15, color = "black", fill = "light grey")  +
-  geom_vline(aes(xintercept = median(strat_yn_best$roc_auc)), color = "red")
+  geom_vline(aes(xintercept = strat_yn_best$median_roc_auc), color = "red")
+```
+
+
+### none/low/high stratification
+```{r}
+strat_nlh_best <- strat_nlh |> 
+  group_by(algorithm, feature_set, hp1, hp2, hp3, resample) |> 
+   summarize(median_roc_auc = median(roc_auc),
+             n_folds = n(), .groups = "drop") |> 
+  relocate(n_folds) |> 
+  arrange(desc(median_roc_auc)) |> 
+  ungroup() |> 
+  slice_max(median_roc_auc) |> 
+  glimpse()
+
+strat_nlh |> 
+  filter(hp1 == strat_nlh_best$hp1 & hp2 == strat_nlh_best$hp2 & hp3 == strat_nlh_best$hp3 &
+           resample == strat_nlh_best$resample) |> 
+  ggplot() +
+  geom_histogram(aes(x = roc_auc), bins = 15, color = "black", fill = "light grey")  +
+  geom_vline(aes(xintercept = strat_nlh_best$median_roc_auc), color = "red")
 ```
 
 ### low/high stratification
@@ -113,12 +138,12 @@ strat_lh |>
            resample == strat_lh_best$resample) |> 
   ggplot() +
   geom_histogram(aes(x = roc_auc), bins = 15, color = "black", fill = "light grey")  +
-  geom_vline(aes(xintercept = median(strat_lh_best$roc_auc)), color = "red")
+  geom_vline(aes(xintercept = strat_lh_best$median_roc_auc), color = "red")
 ```
 
-### none/low/high stratification
+### low/high stratification 3 x 10
 ```{r}
-strat_nlh_best <- strat_nlh |> 
+strat_lh_best_3_x_10 <- strat_lh_3_x_10 |> 
   group_by(algorithm, feature_set, hp1, hp2, hp3, resample) |> 
    summarize(median_roc_auc = median(roc_auc),
              n_folds = n(), .groups = "drop") |> 
@@ -128,11 +153,10 @@ strat_nlh_best <- strat_nlh |>
   slice_max(median_roc_auc) |> 
   glimpse()
 
-strat_nlh |> 
-  filter(hp1 == strat_nlh_best$hp1 & hp2 == strat_nlh_best$hp2 & hp3 == strat_nlh_best$hp3 &
-           resample == strat_nlh_best$resample) |> 
+strat_lh_3_x_10 |> 
+  filter(hp1 == strat_lh_best$hp1 & hp2 == strat_lh_best$hp2 & hp3 == strat_lh_best$hp3 &
+           resample == strat_lh_best$resample) |> 
   ggplot() +
   geom_histogram(aes(x = roc_auc), bins = 15, color = "black", fill = "light grey")  +
-  geom_vline(aes(xintercept = median(strat_nlh_best$roc_auc)), color = "red")
+  geom_vline(aes(xintercept = strat_lh_best_3_x_10$median_roc_auc), color = "red")
 ```
-
