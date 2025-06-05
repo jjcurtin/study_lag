@@ -16,8 +16,7 @@ params:
   lead: 0
   version: "v3"
   cv: "nested"
-  model: "dem_main"
-  dem: TRUE #set true to use 6 repeats of 5 fold cv for outer fits
+  model: "strat_lh"
 editor_options: 
   chunk_output_type: console
 ---
@@ -27,18 +26,20 @@ editor_options:
 In use for Lag study
 
 ### Notes
-This script reads in CHTC performance metrics from the inner loops of CV, selects the best model configuration for each outer loop, trains those models and predicts into the outer held-out folds.  It returns raw and calibrated predicted probabilities. AuROCs based on calibrated probabilities are also returned.
+This script reads in CHTC performance metrics from the inner loops of CV, selects the best model configuration for each outer loop, trains those models and predicts into the outer held-out folds.  It returns raw and calibrated predicted probabilities and Shapley values. AuROCs based on calibrated probabilities are also returned.
 
 This script creates the following files in the `models` folder
 
 * outer_preds_*.rds
 * test_auroc_*.csv
+* outer_shaps_*.rds
+* outer_shapsgrp_*.rds
 
 
 
 ### Set Up Environment
 
-```{r set_params}
+```{r}
 study <- params$study
 data_type <- params$data_type
 window <- params$window
@@ -49,7 +50,7 @@ model <- params$model
 ```
 
 Function conflicts
-```{r, packages_workflow}
+```{r}
 #| message: false
 #| warning: false
 
@@ -60,7 +61,7 @@ tidymodels_conflictRules()
 ```
 
 Packages for script
-```{r, packages_script}
+```{r}
 #| message: false
 #| warning: false
 
@@ -70,7 +71,7 @@ library(probably)
 ```
 
 Source support functions
-```{r source_functions}
+```{r}
 # EDA
 devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_eda.R?raw=true")
 devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
@@ -80,7 +81,7 @@ devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/chtc/sta
 ```
 
 Absolute paths
-```{r, absolute_paths}
+```{r}
 path_processed <- format_path(str_c("studydata/risk/data_processed/", study))
 path_input <- format_path(str_c("studydata/risk/chtc/", study))
 path_models <- format_path(str_c("studydata/risk/models/", study))
@@ -88,7 +89,7 @@ path_models <- format_path(str_c("studydata/risk/models/", study))
 
 
 Chunk Defaults
-```{r defaults}
+```{r}
 #| include: false
 
 knitr::opts_chunk$set(attr.output='style="max-height: 500px;"')
@@ -99,8 +100,61 @@ options(tibble.print_max = Inf)
 
 ### Script Functions
 
+Function to clean up poor choices for feature names for SHAPs!!
+```{r function_1}
+clean_feature_names <- function(feat_name){
+  new_name <- gsub(".l0", "", feat_name)
+  new_name <- gsub("rratecount.count", "raw_count", new_name)
+  new_name <- gsub("dratecount.count", "diff_count", new_name)
+  new_name <- gsub("drecent_response", "diff_recent", new_name)
+  new_name <- gsub("rrecent_response", "raw_recent", new_name)
+  new_name <- gsub("dmin_response", "diff_min", new_name)
+  new_name <- gsub("rmin_response", "raw_min", new_name)
+  new_name <- gsub("dmax_response", "diff_max", new_name)
+  new_name <- gsub("rmax_response", "raw_max", new_name)
+  new_name <- gsub("dmedian_response", "diff_median", new_name)
+  new_name <- gsub("rmedian_response", "raw_median", new_name)
+  new_name <- gsub("label_", "", new_name)
+  new_name <- gsub("demo_", "", new_name)
+  new_name <- gsub("High.school.or.less", "high.school", new_name)
+  new_name <- gsub("Some.college", "some.college", new_name)
+  new_name <- gsub("Mon", "mon", new_name)
+  new_name <- gsub("Tue", "tue", new_name)
+  new_name <- gsub("Wed", "wed", new_name)
+  new_name <- gsub("Thu", "thu", new_name)
+  new_name <- gsub("Fri", "fri", new_name)
+  new_name <- gsub("Sat", "sat", new_name)
+  new_name <- gsub("Sun", "sun", new_name)
+  new_name <- gsub("Never.Married", "never.married", new_name)
+  new_name <- gsub("Never.Other", "never.other", new_name)
+  new_name <- gsub("White.Caucasian", "caucasian", new_name)
+  new_name <- gsub("Male", "male", new_name)
+  new_name <- gsub("p12.raw_count.lapse", "lapse.p12.raw_count", new_name)
+  new_name <- gsub("p24.raw_count.lapse", "lapse.p24.raw_count", new_name)
+  new_name <- gsub("p48.raw_count.lapse", "lapse.p48.raw_count", new_name)
+  new_name <- gsub("p72.raw_count.lapse", "lapse.p72.raw_count", new_name)
+  new_name <- gsub("p168.raw_count.lapse", "lapse.p168.raw_count", new_name)
+  new_name <- gsub("p12.diff_count.lapse", "lapse.p12.diff_count", new_name)
+  new_name <- gsub("p24.diff_count.lapse", "lapse.p24.diff_count", new_name)
+  new_name <- gsub("p48.diff_count.lapse", "lapse.p48.diff_count", new_name)
+  new_name <- gsub("p72.diff_count.lapse", "lapse.p72.diff_count", new_name)
+  new_name <- gsub("p168.diff_count.lapse", "lapse.p168.diff_count", new_name)
+  new_name <- gsub("p12.raw_count.ema", "missing.p12.raw_count", new_name)
+  new_name <- gsub("p24.raw_count.ema", "missing.p24.raw_count", new_name)
+  new_name <- gsub("p48.raw_count.ema", "missing.p48.raw_count", new_name)
+  new_name <- gsub("p72.raw_count.ema", "missing.p72.raw_count", new_name)
+  new_name <- gsub("p168.raw_count.ema", "missing.p168.raw_count", new_name)
+  new_name <- gsub("p12.diff_count.ema", "missing.p12.diff_count", new_name)
+  new_name <- gsub("p24.diff_count.ema", "missing.p24.diff_count", new_name)
+  new_name <- gsub("p48.diff_count.ema", "missing.p48.diff_count", new_name)
+  new_name <- gsub("p72.diff_count.ema", "missing.p72.diff_count", new_name)
+  new_name <- gsub("p168.diff_count.ema", "missing.p168.diff_count", new_name)
+  return(new_name) 
+}
+```
+
 Function to fit and predict
-```{r function_2}
+```{r}
 fit_predict_eval <- function(split_num, splits, configs_best, 
                              calibration = TRUE){
 
@@ -138,77 +192,75 @@ fit_predict_eval <- function(split_num, splits, configs_best,
   preds_prob <- predict(model_best, feat_out,
                         type = "prob")
 
-  if (calibration == TRUE) {
-    # train calibration model train/test split on held in data
-    # Skip for baseline models
-    set.seed(2468)
-    cal_split <- d_in |> 
-      group_initial_split(group = all_of(cv_group), prop = 3/4)
-    d_cal_in <- training(cal_split) 
-    d_cal_out <- testing(cal_split)
+  # train calibration model train/test split on held in data
+  set.seed(2468)
+  cal_split <- d_in |> 
+    group_initial_split(group = all_of(cv_group), prop = 3/4)
+  d_cal_in <- training(cal_split) 
+  d_cal_out <- testing(cal_split)
   
-    feat_cal_in <- rec %>% 
-      prep(training = d_cal_in, strings_as_factors = FALSE) %>% 
-      bake(new_data = NULL) 
+  feat_cal_in <- rec |> 
+    prep(training = d_cal_in, strings_as_factors = FALSE) |> 
+    bake(new_data = NULL) 
   
-    feat_cal_out <- rec %>% 
-      prep(training = d_cal_in, strings_as_factors = FALSE) %>% 
-      bake(new_data = d_cal_out) 
+  feat_cal_out <- rec |> 
+    prep(training = d_cal_in, strings_as_factors = FALSE) |> 
+    bake(new_data = d_cal_out) 
 
-    model_cal <- fit_best_model(config_best, feat = feat_cal_in, "classification")
+  model_cal <- fit_best_model(config_best, feat = feat_cal_in, "classification")
   
-    # iso calibration
-    iso <- predict(model_cal, feat_cal_out,
-                   type = "prob") |> 
-      mutate(truth = feat_cal_out$y) |> 
-      cal_estimate_isotonic(truth = truth,
+  # iso calibration
+  iso <- predict(model_cal, feat_cal_out,
+                 type = "prob") |> 
+    mutate(truth = feat_cal_out$y) |> 
+    cal_estimate_isotonic(truth = truth,
                             estimate = dplyr::starts_with(".pred_"))
-    preds_prob_iso <- preds_prob |> 
-      cal_apply(iso)
+  preds_prob_iso <- preds_prob |> 
+    cal_apply(iso)
   
-    # logistic calibration
-    logi <- predict(model_cal, feat_cal_out,
-                   type = "prob") |>
-      mutate(truth = feat_cal_out$y) |>
-      cal_estimate_logistic(truth = truth,
-                             estimate = dplyr::starts_with(".pred_"),
+  # logistic calibration
+  logi <- predict(model_cal, feat_cal_out,
+                  type = "prob") |>
+    mutate(truth = feat_cal_out$y) |>
+    cal_estimate_logistic(truth = truth,
+                          estimate = dplyr::starts_with(".pred_"),
                              smooth = TRUE)
-    preds_prob_logi <- preds_prob |>
-      cal_apply(logi)
+  preds_prob_logi <- preds_prob |>
+    cal_apply(logi)
 
-    # beta calibration
-    # beta <- predict(model_cal, feat_cal_out,
-    #                type = "prob") |>
-    #   mutate(truth = feat_cal_out$y) |>
-    #   cal_estimate_beta(truth = truth,
-    #                          estimate = dplyr::starts_with(".pred_"),
-    #                          smooth = TRUE)
-    # preds_prob_beta <- preds_prob |>
-    #   cal_apply(beta)
+  # beta calibration
+  beta <- predict(model_cal, feat_cal_out,
+                  type = "prob") |>
+    mutate(truth = feat_cal_out$y) |>
+    cal_estimate_beta(truth = truth,
+                      estimate = dplyr::starts_with(".pred_"),
+                      smooth = TRUE)
+  preds_prob_beta <- preds_prob |>
+    cal_apply(beta)
 
-    # combine raw and calibrated probs
-    probs_out <- tibble(id_obs = d_out$id_obs,
-                        outer_split_num = rep(split_num, nrow(preds_prob)),
-                        prob_raw = preds_prob[[str_c(".pred_", y_level_pos)]],
-                        prob_iso = preds_prob_iso[[str_c(".pred_", y_level_pos)]],
-                        prob_logi = preds_prob_logi[[str_c(".pred_", y_level_pos)]],
-                        prob_beta = NA,
-                        label = d_out$y) |> 
-      mutate(label = fct_recode(label, "No lapse" = "no",
-                                "Lapse" = "yes"))
-
-  } else {
-    probs_out <- tibble(id_obs = d_out$id_obs,
-                        outer_split_num = rep(split_num, nrow(preds_prob)),
-                        prob_raw = preds_prob[[str_c(".pred_", y_level_pos)]],
-                        label = d_out$y) |> 
+  # combine raw and calibrated probs
+  probs_out <- tibble(id_obs = d_out$id_obs,
+                      outer_split_num = rep(split_num, nrow(preds_prob)),
+                      prob_raw = preds_prob[[str_c(".pred_", y_level_pos)]],
+                      prob_iso = preds_prob_iso[[str_c(".pred_", y_level_pos)]],
+                      prob_logi = preds_prob_logi[[str_c(".pred_", y_level_pos)]],
+                      prob_beta = preds_prob_beta[[str_c(".pred_", y_level_pos)]],
+                      label = d_out$y) |> 
     mutate(label = fct_recode(label, "No lapse" = "no",
-                                "Lapse" = "yes"))
-  }
-  
-  return(list(probs_out = probs_out))
-}
+                              "Lapse" = "yes"))
 
+ # SHAP in held out fold
+  shaps_out <- SHAPforxgboost::shap.prep(xgb_model = extract_fit_engine(model_best),
+                     X_train = feat_out |> select(-y) |>  as.matrix()) |> 
+    # add id_obs by multiple of number of features
+    mutate(id_obs = rep(d_out$id_obs, times = ncol(feat_out) - 1),
+           split_num = split_num) |>  
+    relocate(id_obs, split_num)
+  
+  return(list(probs_out = probs_out, 
+              metrics_out = metrics_out, 
+              shaps_out = shaps_out))
+}
 ```
 
 ### Read in aggregate CHTC metrics for inner folds
@@ -271,7 +323,7 @@ ASSUMPTIONS:
 Map over all outer splits to get predicted probabilities and SHAPs from held out outer folds.  Then save predicted probs and SHAPs
 
 NOTE: Delete `outer_metrics_*` or this code chunk won't run!
-```{r eval_outer_folds}
+```{r}
 # can source any training control given assumptions above
 batch_names <- list.dirs(path_input, full.names = FALSE, recursive = FALSE)
 batch_names <- batch_names[str_detect(batch_names, "train") & 
@@ -286,16 +338,6 @@ batch_name <- batch_names[2] # can source any batch given assumptions above
 path_batch <- here::here(path_input, batch_name)
 source(here::here(path_batch, "input", "training_controls.R"))
 # NOTE: training controls overwrites path_batch but it matches   
-
-  # manually update for now if running dem 
-  dem <- params$dem
-  
-  if (dem == TRUE) {
-    # update outer resampling splits and model to dem
-    cv_outer_resample <- "6_x_5"
-    model <- "dem_stratify"
-    lapse_strat <- read_csv(file.path(path_batch, "input/lapse_strat.csv"))
-  }
   
 if(!file.exists(here::here(path_models, str_c("outer_preds_", 
                                               cv_outer_resample,
@@ -318,12 +360,12 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
   }
   
   
-  d <- format_data(d, lapse_strat = NULL) |> 
+  d <- format_data(d) |> 
     arrange(label_num) |> 
     mutate(id_obs = 1:nrow(d))  # tmp add for linking obs
 
   
-  splits <- d %>% 
+  splits <- d |> 
     make_splits(cv_resample_type, cv_resample, cv_outer_resample, 
               cv_inner_resample, cv_group, cv_strat = cv_strat,
               the_seed = seed_splits)
@@ -340,6 +382,21 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
                                            "_", window, "_", lead, "_", 
                                            version, "_", cv, "_", model,
                                            ".rds")))
+  shaps_out <- all |> 
+      map(\(l) pluck(l, "shaps_out")) |>
+      list_rbind() |> 
+      # clean feature names;  See function above
+      mutate(variable = fct_relabel(variable, clean_feature_names)) |> 
+      # average SHAP metrics across repeats for same id_obs
+      group_by(id_obs, variable) |> 
+      summarize(value = mean(value), 
+                # rfvalue is same across repeats but want included 
+                rfvalue =  mean(rfvalue),  
+                mean_value = mean(mean_value)) |> 
+      write_rds(here::here(path_models, str_c("outer_shaps_", 
+                                             cv_outer_resample, "_",
+                                             window, "_", lead, "_", version, "_", 
+                                             cv, "_", model, ".rds")))
 } else {
   message("Resampled performance from nested CV previously calculated")
   
@@ -348,16 +405,55 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
                                                      window, "_", lead, "_",
                                                      version, "_",
                                                      cv, "_", model, ".rds")))
+  
+  shaps_out <- read_rds(here::here(path_models, str_c("outer_shaps_", 
+                                                     cv_outer_resample, "_",
+                                                     window, "_", lead, "_", 
+                                                     version, "_", 
+                                                     cv, "_", model, ".rds")))
 }
 ```
+
+Check probabilities
+```{r}
+probs_out |> 
+  hist(prob_raw)
+```
+
+
+Check calibration
+```{r}
+bin_width = 0.10
+
+probs_out |> 
+  mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+         lapse = if_else(label == "Lapse", 1, 0)) |> 
+  group_by(bins)  |> 
+  summarize(mean_lapse = mean(lapse),
+            .groups = "drop") |>
+  mutate(bins = as.numeric(bins),
+         midpoints = bin_width/2 + bin_width * (bins - 1))  |> 
+  ggplot(data = _, aes(x = midpoints, y = mean_lapse)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dotted") +
+  geom_line() +
+  geom_point() +
+  labs(x = "Predicted Lapse Probability (bin mid-point)",
+       y = "Observed Lapse Probability",
+       title = "No Lag") +
+  scale_x_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1)) +
+  scale_y_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1)) 
+```
+
+
 
 Get test auROCs for main models    
 
 This calculates auROC using test sets (out loop held out folds). Uses raw probabilities.
 
 ```{r}
-if (model == "main") {
- metrics_test <- probs_out |> 
+metrics_test <- probs_out |> 
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 
@@ -365,15 +461,116 @@ if (model == "main") {
   unnest(auroc) |> 
   select(outer_split_num, roc_auc = .estimate)
 
- metrics_test |> 
+metrics_test |> 
   arrange(outer_split_num) |> 
   write_csv(here::here(path_models, str_c("test_auroc_", cv_outer_resample,
                                           "_", window, "_", lead, "_", 
                                           version, "_", cv, "_", model, 
                                           ".csv"))) 
 
- median(metrics_test$roc_auc) 
+median(metrics_test$roc_auc) 
+```
+
+
+Group Shaps
+```{r}
+if(!file.exists(here::here(path_models, str_c("outer_shapsgrp_", cv_outer_resample,
+                                              "_", window, "_", lead, "_", version, 
+                                              "_", cv, "_",  model, ".rds")))){
+
+  message("Calculating grouped SHAPs")
+  
+  shaps_out_grp <- shaps_out |>
+    mutate(variable_grp = if_else(str_detect(variable, ".lapse"), 
+                           "past use (EMA item)", 
+                           variable),
+           variable_grp = if_else(str_detect(variable_grp, "ema_2"), 
+                           "craving (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_3"), 
+                           "past/future risky situation (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_4"), 
+                           "past/future stressful event (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_5"), 
+                           "past pleasant event (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_6"), 
+                           "valence/arousal (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_7"), 
+                           "valence/arousal (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_8"), 
+                           "past/future risky situation (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_9"), 
+                           "past/future stressful event (EMA item)",
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "ema_10"), 
+                           "future efficacy (EMA item)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "count.ema"), 
+                           "missing surveys (other)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "day"), 
+                           "lapse day (other)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "hour"), 
+                           "lapse hour (other)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "age"), 
+                           "age (demographic)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "sex"), 
+                           "sex (demographic)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "marital"), 
+                           "marital (demographic)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "race"), 
+                           "race (demographic)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "educ"), 
+                           "education (demographic)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "income"), 
+                           "income (demographic)", 
+                           variable_grp),
+           variable_grp = if_else(str_detect(variable_grp, "employ"), 
+                           "employment (demographic)", 
+                           variable_grp)) |>
+    mutate(variable_grp = factor(variable_grp)) |> 
+    group_by(id_obs, variable_grp) |> # values are already averaged across repeats
+    summarize(value = sum(value))
+  
+  shaps_out_grp |>
+    write_rds(here::here(path_models, str_c("outer_shapsgrp_", 
+                                            cv_outer_resample, "_",
+                                            window, "_", lead, "_", version, 
+                                            "_",cv, "_", model, ".rds")))
+} else {
+   message("Grouped SHAPs previously calculated")
 }
+```
+
+Look at Shaps as check  
+
+Global importance SHAP plot for grouped features
+```{r shap_grouped_plot}
+shaps_out_grp |>
+  group_by(variable_grp) |>
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |>
+  arrange(mean_value) |>
+  mutate(variable_grp = factor(variable_grp),
+         variable_grp = fct_inorder(variable_grp)) |>
+  ggplot(mapping = aes(x = variable_grp, y = mean_value)) +
+  geom_point(size = 2, color = "red") +
+  geom_segment(aes(x = variable_grp, y = mean_value, xend = variable_grp),
+               yend = 0, colour = "grey50")  +
+  ylab("Mean |SHAP| value") +
+  coord_flip()
 ```
 
 

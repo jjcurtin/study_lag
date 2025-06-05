@@ -14,8 +14,8 @@ params:
   study: "lag"
   cv: "nested"
   window: "1day"
-  model: "dem" 
-  lead: 336
+  model: "dem_stratify" 
+  lead: 0
   version: "v3"
 editor_options: 
   chunk_output_type: console

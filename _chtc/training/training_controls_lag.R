@@ -40,14 +40,18 @@
 # xgboost 168 lead (batch made)
 # xgboost 336 lead (batch made)
 
+# FORMAT PATH FUNCTION------
+library(stringr)
+library(dplyr)
+source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
 
 # SET GLOBAL PARAMETERS--------------------
 study <- "lag"
 window <- "1day"
-lead <- 0
+lead <- 168
 version <- "v3" #feature version (v1 = 24 hour fence, v2 = 6 hour fence, v3 = 1day/24 hour fence)
 algorithm <- "xgboost"
-model <- "main"
+model <- "strat_lh"
 
 feature_set <- c("all") # EMA Features set names
 data_trn <- str_c("features_", lead, "lag_", version, ".csv")  
@@ -66,14 +70,14 @@ resample <- c("none", "up_1", "up_2", "up_3", "up_4", "up_5",
 # different these will need to be run as separate batch IF we want to look at performance with SMOTE
 
 # CHTC SPECIFIC CONTROLS----------------------------
-# tar <- c("train.tar.gz") # name of tar packages for submit file - does not transfer these anywhere 
+username <- "kpaquette2" # for setting staging directory (until we have group staging folder)
+stage_data <- FALSE # If FALSE .sif will still be staged, just not data_trn
 max_idle <- 1000
 request_cpus <- 1 
-request_memory <- "30000MB"
+request_memory <- "45000MB"
 request_disk <- "1600MB"
-flock <- TRUE
-glide <- TRUE
-
+want_campus_pools <- TRUE # previously flock
+want_ospool <- TRUE # previously glide
 
 # OUTCOME-------------------------------------
 y_col_name <- "lapse" 
@@ -84,9 +88,11 @@ y_level_neg <- "no"
 # CV SETTINGS---------------------------------
 cv_resample_type <- "nested" # can be boot, kfold, or nested
 cv_resample = NULL # can be repeats_x_folds (e.g., 1_x_10, 10_x_10) or number of bootstraps (e.g., 100)
-cv_inner_resample <- "1_x_10" # can also be a single number for bootstrapping (i.e., 100)
-cv_outer_resample <- "3_x_10" # outer resample will always be kfold
+cv_inner_resample <- "2_x_5" # can also be a single number for bootstrapping (i.e., 100)
+cv_outer_resample <- "6_x_5" # outer resample will always be kfold
 cv_group <- "subid" # set to NULL if not grouping
+cv_strat <- model
+cv_strat_file_name <- "lapse_strat.csv" 
 
 cv_name <- if_else(cv_resample_type == "nested",
                    str_c(cv_resample_type, "_", cv_inner_resample, "_",
@@ -97,9 +103,9 @@ cv_name <- if_else(cv_resample_type == "nested",
 # the name of the batch of jobs to set folder name
 name_batch <- str_c("train_", algorithm, "_", window, "_", lead, "lag_", cv_name, "_", version, "_", model) 
 # the path to the batch of jobs to put the folder name
-path_batch <- str_c("studydata/risk/chtc/", study, "/", name_batch) 
+path_batch <- format_path(str_c("studydata/risk/chtc/", study, "/", name_batch)) 
 # location of data set
-path_data <- str_c("studydata/risk/data_processed/", study) 
+path_data <- format_path(str_c("studydata/risk/data_processed/shared")) 
 
 # ALGORITHM-SPECIFIC HYPERPARAMETERS-----------
 hp1_glmnet <- c(0.05, seq(.1, 1, length.out = 10)) # alpha (mixture)
@@ -127,17 +133,31 @@ hp2_nnet <- seq(0, 0.1, length.out = 15) # penalty
 hp3_nnet <- seq(5, 30, length.out = 5) # hidden units
 
 # FORMAT DATA-----------------------------------------
-format_data <- function (df){
+format_data <- function (df, lapse_strat = NULL){
   
-  df |> 
-    rename(y = !!y_col_name) |> 
-    mutate(y = factor(y, levels = c(!!y_level_pos, !!y_level_neg)), # set pos class first
-           across(where(is.character), factor)) |>
-    select(-c(dttm_label))
-    # previously select(-label_num, -dttm_label)
-  # Now include additional mutates to change classes for columns as needed
-  # see https://jjcurtin.github.io/dwt/file_and_path_management.html#using-a-separate-mutate
+  if(!is.null(lapse_strat)) {
+    df <- df |> 
+      rename(y = !!y_col_name) |> 
+      # set pos class first
+      mutate(y = factor(y, levels = c(!!y_level_pos, !!y_level_neg)), 
+             across(where(is.character), factor)) |>
+      select(-c(dttm_label)) |> 
+      left_join(lapse_strat |> 
+                  select(subid, all_of(cv_strat)), by = "subid")
+  }
+  
+  if(is.null(lapse_strat)) {
+    df <- df |> 
+      rename(y = !!y_col_name) |> 
+      # set pos class first
+      mutate(y = factor(y, levels = c(!!y_level_pos, !!y_level_neg)), 
+             across(where(is.character), factor)) |>
+      select(-c(dttm_label)) 
+  }
+  
+  return(df)
 }
+
 
 
 # BUILD RECIPE---------------------------------------
@@ -158,7 +178,14 @@ build_recipe <- function(d, config) {
   
   # Set recipe steps generalizable to all model configurations
   rec <- recipe(y ~ ., data = d) |>
-    step_rm(subid, label_num) |>  # needed to retain until now for grouped CV in splits
+    step_rm(subid, label_num) 
+  
+  if(!is.null(cv_strat)) {
+    rec <- rec |> 
+      step_rm(matches(cv_strat)) # remove strat variable
+  }
+  
+  rec <- rec |>  # needed to retain until now for grouped CV in splits
     step_impute_median(all_numeric_predictors()) |> 
     step_impute_mode(all_nominal_predictors()) |> 
     step_dummy(all_factor_predictors()) |> 
@@ -193,12 +220,3 @@ build_recipe <- function(d, config) {
   return(rec)
 }
 
-# Update paths for OS--------------------------------
-# This does NOT need to be edited.  This will work for Windows, Mac and Linux OSs
-path_batch <- case_when(Sys.info()[["sysname"]] == "Windows" ~str_c("P:/", path_batch),
-                        Sys.info()[["sysname"]] == "Linux" ~str_c("~/mnt/private/", path_batch),
-                        .default = str_c("/Volumes/private/", path_batch))
-
-path_data <- case_when(Sys.info()[["sysname"]] == "Windows" ~str_c("P:/", path_data),
-                       Sys.info()[["sysname"]] == "Linux" ~str_c("~/mnt/private/", path_data),
-                       .default = str_c("/Volumes/private/", path_data))
