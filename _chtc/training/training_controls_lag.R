@@ -51,7 +51,7 @@ window <- "1day"
 lead <- 0
 version <- "v3" #feature version (v1 = 24 hour fence, v2 = 6 hour fence, v3 = 1day/24 hour fence)
 algorithm <- "xgboost"
-model <- "dem_stratify"
+model <- "strat_lh"
 
 feature_set <- c("all") # EMA Features set names
 data_trn <- str_c("features_", lead, "lag_", version, ".csv")  
@@ -88,10 +88,10 @@ y_level_neg <- "no"
 # CV SETTINGS---------------------------------
 cv_resample_type <- "nested" # can be boot, kfold, or nested
 cv_resample = NULL # can be repeats_x_folds (e.g., 1_x_10, 10_x_10) or number of bootstraps (e.g., 100)
-cv_inner_resample <- "1_x_10" # can also be a single number for bootstrapping (i.e., 100)
+cv_inner_resample <- "2_x_5" # can also be a single number for bootstrapping (i.e., 100)
 cv_outer_resample <- "6_x_5" # outer resample will always be kfold
 cv_group <- "subid" # set to NULL if not grouping
-cv_strat <- "strat_yn"
+cv_strat <- model
 cv_strat_file_name <- "lapse_strat.csv" 
 
 cv_name <- if_else(cv_resample_type == "nested",
