@@ -428,8 +428,6 @@ probs_out |>
 
 
 Check calibration
-
-Average across folds first?
 ```{r}
 bin_width = 0.10
 
@@ -453,7 +451,6 @@ probs_out |>
   scale_y_continuous(breaks = seq(0, 1, bin_width),
                      limits = c(0, 1)) 
 ```
-
 
 
 
@@ -497,25 +494,25 @@ if(!file.exists(here::here(path_models, str_c("outer_shapsgrp_", cv_outer_resamp
                            "craving (EMA item)", 
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "ema_3"), 
-                           "past risky situation (EMA item)", 
+                           "past/future risky situation (EMA item)", 
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "ema_4"), 
-                           "past stressful event (EMA item)", 
+                           "past/future stressful event (EMA item)", 
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "ema_5"), 
                            "past pleasant event (EMA item)", 
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "ema_6"), 
-                           "valence (EMA item)", 
+                           "valence/arousal (EMA item)", 
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "ema_7"), 
-                           "arousal (EMA item)", 
+                           "valence/arousal (EMA item)", 
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "ema_8"), 
-                           "future risky situation (EMA item)",
+                           "past/future risky situation (EMA item)",
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "ema_9"), 
-                           "future stressful event (EMA item)",
+                           "past/future stressful event (EMA item)",
                            variable_grp),
            variable_grp = if_else(str_detect(variable_grp, "ema_10"), 
                            "future efficacy (EMA item)", 

@@ -48,7 +48,7 @@ source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true
 # SET GLOBAL PARAMETERS--------------------
 study <- "lag"
 window <- "1day"
-lead <- 0
+lead <- 168
 version <- "v3" #feature version (v1 = 24 hour fence, v2 = 6 hour fence, v3 = 1day/24 hour fence)
 algorithm <- "xgboost"
 model <- "strat_lh"
