@@ -48,10 +48,10 @@ source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true
 # SET GLOBAL PARAMETERS--------------------
 study <- "lag"
 window <- "1day"
-lead <- 0
+lead <- 336
 version <- "v3" #feature version (v1 = 24 hour fence, v2 = 6 hour fence, v3 = 1day/24 hour fence)
 algorithm <- "xgboost"
-model <- "dem_stratify"
+model <- "test"
 
 feature_set <- c("all") # EMA Features set names
 data_trn <- str_c("features_", lead, "lag_", version, ".csv")  
@@ -88,11 +88,10 @@ y_level_neg <- "no"
 # CV SETTINGS---------------------------------
 cv_resample_type <- "nested" # can be boot, kfold, or nested
 cv_resample = NULL # can be repeats_x_folds (e.g., 1_x_10, 10_x_10) or number of bootstraps (e.g., 100)
-cv_inner_resample <- "1_x_10" # can also be a single number for bootstrapping (i.e., 100)
+cv_inner_resample <- "2_x_5" # can also be a single number for bootstrapping (i.e., 100)
 cv_outer_resample <- "6_x_5" # outer resample will always be kfold
 cv_group <- "subid" # set to NULL if not grouping
-cv_strat <- "strat_yn"
-cv_strat_file_name <- "lapse_strat.csv" 
+cv_strat <- TRUE
 
 cv_name <- if_else(cv_resample_type == "nested",
                    str_c(cv_resample_type, "_", cv_inner_resample, "_",
@@ -132,33 +131,18 @@ hp1_nnet <- seq(10, 50, length.out = 5)  # epochs
 hp2_nnet <- seq(0, 0.1, length.out = 15) # penalty
 hp3_nnet <- seq(5, 30, length.out = 5) # hidden units
 
-# FORMAT DATA-----------------------------------------
+# FORMAT DATA------
 format_data <- function (df, lapse_strat = NULL){
   
-  if(!is.null(lapse_strat)) {
-    df <- df |> 
-      rename(y = !!y_col_name) |> 
-      # set pos class first
-      mutate(y = factor(y, levels = c(!!y_level_pos, !!y_level_neg)), 
-             across(where(is.character), factor)) |>
-      select(-c(dttm_label)) |> 
-      left_join(lapse_strat |> 
-                  select(subid, all_of(cv_strat)), by = "subid")
-  }
-  
-  if(is.null(lapse_strat)) {
-    df <- df |> 
-      rename(y = !!y_col_name) |> 
-      # set pos class first
-      mutate(y = factor(y, levels = c(!!y_level_pos, !!y_level_neg)), 
-             across(where(is.character), factor)) |>
-      select(-c(dttm_label)) 
-  }
+  df <- df |> 
+    rename(y = !!y_col_name) |> 
+    # set pos class first
+    mutate(y = factor(y, levels = c(!!y_level_pos, !!y_level_neg)), 
+           across(where(is.character), factor)) |>
+    select(-c(dttm_label)) 
   
   return(df)
 }
-
-
 
 # BUILD RECIPE---------------------------------------
 # Script should have a single build_recipe function to be compatible with fit script. 
@@ -180,9 +164,9 @@ build_recipe <- function(d, config) {
   rec <- recipe(y ~ ., data = d) |>
     step_rm(subid, label_num) 
   
-  if(!is.null(cv_strat)) {
+  if(cv_strat) {
     rec <- rec |> 
-      step_rm(matches(cv_strat)) # remove strat variable
+      step_rm(strat) # remove strat variable
   }
   
   rec <- rec |>  # needed to retain until now for grouped CV in splits

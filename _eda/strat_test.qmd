@@ -48,6 +48,10 @@ strat_lh <- read_csv(here::here(path_chtc,
                      "train_xgboost_1day_0lag_kfold_6_x_5_v3_strat_lh/output/batch_results.csv"),
                      show_col_types = FALSE)
 
+strat_lh_3_x_10 <- read_csv(here::here(path_chtc, 
+                     "train_xgboost_1day_0lag_kfold_3_x_10_v3_strat_lh/output/batch_results.csv"),
+                     show_col_types = FALSE)
+
 strat_nlh <- read_csv(here::here(path_chtc, 
                       "train_xgboost_1day_0lag_kfold_6_x_5_v3_strat_nlh/output/batch_results.csv"),
                      show_col_types = FALSE) 
@@ -100,6 +104,7 @@ strat_yn |>
   geom_vline(aes(xintercept = strat_yn_best$median_roc_auc), color = "red")
 ```
 
+
 ### none/low/high stratification
 ```{r}
 strat_nlh_best <- strat_nlh |> 
@@ -142,6 +147,7 @@ strat_lh |>
   geom_vline(aes(xintercept = strat_lh_best$median_roc_auc), color = "red")
 ```
 
+
 ### low/high stratification 3 x 10 CV
 ```{r}
 strat_lh_3_x_10_best <- strat_lh_3_x_10 |> 
@@ -161,3 +167,4 @@ strat_lh_3_x_10 |>
   geom_histogram(aes(x = roc_auc), bins = 15, color = "black", fill = "light grey")  +
   geom_vline(aes(xintercept = strat_lh_3_x_10_best$median_roc_auc), color = "red")
 ```
+
