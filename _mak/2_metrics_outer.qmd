@@ -258,7 +258,6 @@ fit_predict_eval <- function(split_num, splits, configs_best,
     relocate(id_obs, split_num)
   
   return(list(probs_out = probs_out, 
-              metrics_out = metrics_out, 
               shaps_out = shaps_out))
 }
 ```
@@ -337,6 +336,7 @@ batch_names <- batch_names[str_detect(batch_names, "train") &
 batch_name <- batch_names[2] # can source any batch given assumptions above
 path_batch <- here::here(path_input, batch_name)
 source(here::here(path_batch, "input", "training_controls.R"))
+source(here::here(path_batch, "input", "fun_chtc.R"))
 # NOTE: training controls overwrites path_batch but it matches   
   
 if(!file.exists(here::here(path_models, str_c("outer_preds_", 
@@ -360,12 +360,25 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
   }
   
   
+<<<<<<< HEAD
   d <- format_data(d) |> 
+=======
+
+  # Read in lapse_strat.csv if stratifying
+  if(!is.null(cv_strat)) {
+    lapse_strat <- read_csv(here::here(path_batch, "input/lapse_strat.csv"),
+                            show_col_types = FALSE)
+  } else {
+    lapse_strat <- NULL
+  }
+
+ d <- format_data(d, lapse_strat) |> 
+>>>>>>> 2edd42c4414ba9fd67dbf17d033e3a1f410ab63f
     arrange(label_num) |> 
     mutate(id_obs = 1:nrow(d))  # tmp add for linking obs
-
   
-  splits <- d |> 
+  
+ splits <- d |> 
     make_splits(cv_resample_type, cv_resample, cv_outer_resample, 
               cv_inner_resample, cv_group, cv_strat = cv_strat,
               the_seed = seed_splits)

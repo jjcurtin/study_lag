@@ -1,0 +1,301 @@
+---
+title: "Evaluate model performance"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+
+## Set Up Environment
+
+
+```{r, packages_workflow}
+#| message: false
+#| warning: false
+
+# handle conflicts
+options(conflicts.policy = "depends.ok")
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_ml.R?raw=true")
+tidymodels_conflictRules()
+```
+
+
+```{r, packages_script}
+#| message: false
+#| warning: false
+
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(tidymodels))
+suppressPackageStartupMessages(library(tidyposterior))
+library(kableExtra, exclude = "group_rows")
+library(Rcpp, exclude = "populate")
+library(brms, exclude = c("ar", "mixture"))
+library(patchwork)
+
+
+theme_set(theme_classic()) 
+```
+
+
+```{r source_functions}
+#| output: false
+
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
+# CHTC support functions
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/chtc/static_files/fun_chtc.R?raw=true")
+```
+
+```{r, absolute_paths}
+path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
+path_processed <- format_path(str_c("studydata/risk/data_processed/lag"))
+path_shared <- format_path(str_c("studydata/risk/data_processed/shared"))
+```
+
+
+## Read in Data
+
+```{r}
+auroc_0 <- read_csv(here::here(path_models_lag, 
+                                   "test_auroc_6_x_5_1day_0_v3_nested_strat_lh.csv"),
+                      col_types = cols()) 
+
+
+probs_0 <- read_rds(here::here(path_models_lag, "outer_preds_6_x_5_1day_0_v3_nested_strat_lh.rds"))
+
+auroc_0_dem <- read_csv(here::here(path_models_lag, 
+                                   "test_auroc_6_x_5_1day_0_v3_nested_strat_lh_fairness.csv"),
+                      col_types = cols()) 
+
+feat <- read_csv(here::here(path_processed, str_c("features_0lag_v3.csv")),
+                 col_types = cols()) |> 
+  select(label_num, subid, dttm_label, lapse, demo_age, demo_sex, demo_income, demo_race) |> 
+  arrange(label_num) 
+
+pp_tidy_dem <- read_csv(here::here(path_models_lag, "posteriors_dem.csv"), 
+                        show_col_types = FALSE) |> 
+  mutate(lag = factor(lag, levels = c(0, 336),
+                      labels = c("No lag", "2 weeks")),
+         model = factor(model)) |> 
+  mutate(group = case_when(model %in% c("female", "male") ~ "Sex (female, male)",
+                           model %in% c("not white", "non-hispanic white") ~ "Race (not White, White)",
+                           model %in% c("below poverty", "above poverty") ~ "Income (below poverty, above poverty)")) |> 
+  filter(!is.na(lag))
+
+ci_dem <- read_csv(here::here(path_models_lag, "pp_dem_all.csv"), 
+                   show_col_types = FALSE) |> 
+  mutate(lag = factor(lag, levels = c(0, 336),
+                      labels = c("No lag", "2 weeks")),
+         model = factor(model)) |> 
+  mutate(group = case_when(model %in% c("female", "male") ~ "Sex (female, male)",
+                           model %in% c("not white", "non-hispanic white") ~ "Race (not White, White)",
+                           model %in% c("below poverty", "above poverty") ~ "Income (below poverty, above poverty)")) |> 
+  filter(!is.na(lag))
+
+lapses <- auroc_0 <- read_csv(here::here(path_shared, 
+                                   "lapses.csv"),
+                      col_types = cols()) 
+```
+
+## No Lag Model
+
+
+### Overall performance
+```{r}
+median(auroc_0$roc_auc)
+```
+
+### Probabilities
+```{r}
+hist(probs_0$prob_raw)
+```
+
+### Calibration
+
+Using beta calibration without issues
+```{r}
+bin_width = 0.10
+
+probs_0 |> 
+  mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+         lapse = if_else(label == "Lapse", 1, 0)) |> 
+  group_by(bins)  |> 
+  summarize(mean_lapse = mean(lapse),
+            .groups = "drop") |>
+  mutate(bins = as.numeric(bins),
+         midpoints = bin_width/2 + bin_width * (bins - 1))  |> 
+  ggplot(data = _, aes(x = midpoints, y = mean_lapse)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dotted") +
+  geom_line() +
+  geom_point() +
+  labs(x = "Predicted Lapse Probability (bin mid-point)",
+       y = "Observed Lapse Probability") +
+  scale_x_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1)) +
+  scale_y_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1)) 
+```
+
+### Fairness
+Only one fold missing
+```{r}
+naniar::miss_var_summary(auroc_0_dem)
+```
+
+median auroc for groups
+```{r}
+auroc_0_dem |> 
+  summarise(across(c(female:`below poverty`), ~median(.x, na.rm = TRUE)))
+```
+
+Problem is a few folds in Not White condition are extra low
+```{r}
+auroc_0_dem |> 
+  ggplot(aes(x = `not white`)) +
+  geom_histogram(fill = "light grey", color = "black")
+```
+
+Look at breakdown of groups in splits with low auROC
+```{r}
+feat_preds <- feat |> 
+  mutate(label = if_else(lapse == "yes", "Lapse", "No lapse"),
+         id_obs = label_num) |>
+  right_join(probs_0, by = c("id_obs", "label")) |> 
+  select(-c(label_num, lapse)) |> 
+  mutate(label = factor(label, levels = c("Lapse", "No lapse")))
+
+feat_preds <- feat_preds |> 
+  mutate(demo_sex = if_else(demo_sex == "Female", "female", "male"),
+         demo_race = if_else(demo_race == "White/Caucasian", "white", "not white"),
+         demo_income = if_else(demo_income < 15060, "below poverty", "above poverty"))
+```
+
+Splits below .1
+```{r}
+(outer_splits <- auroc_0_dem |> 
+  filter(`not white` < .1) |> 
+  pull(outer_split_num))
+
+feat_preds |> 
+  filter(outer_split_num %in% outer_splits) |> 
+  group_by(subid, outer_split_num) |> 
+  slice_head(n = 1) |> 
+  ungroup() |> 
+  count(outer_split_num, demo_race) 
+```
+
+Check how many lapses from not white participants in each outer split
+```{r}
+(subids_4 <- feat_preds |> 
+  filter(outer_split_num == 4 & demo_race == "not white") |> 
+  pull(subid) |> 
+  unique())
+
+lapses |> 
+  filter(subid %in% subids_4)
+
+(subids_23 <- feat_preds |> 
+  filter(outer_split_num == 23 & demo_race == "not white") |> 
+  pull(subid) |> 
+  unique())
+
+lapses |> 
+  filter(subid %in% subids_23)
+```
+
+
+
+
+Bayseian
+
+```{r}
+ci_dem
+```
+
+
+```{r}
+#| code-fold: true
+
+race_no_lag <- pp_tidy_dem |>
+  filter(lag == "No lag") |> 
+  filter(str_detect(group, "Race")) |> 
+  mutate(model = factor(model, levels = c("not white", "non-hispanic white"))) |> 
+  ggplot() + 
+  geom_histogram(aes(x = posterior, fill = model), color = "black", linewidth = .5,  
+                 bins = 60, fill = "light grey") +
+  geom_segment(mapping = aes(y = 3400, yend = 3800, x = pp_median, xend = pp_median),
+               linewidth = .5, color = "black", data = ci_dem |> filter(str_detect(group, "Race") & lag == "No lag") |> 
+                 mutate(model = factor(model, levels = c("not white", "non-hispanic white"))) ) +
+  geom_segment(mapping = aes(y = 3600, yend = 3600, x = pp_lower, xend = pp_upper),
+               linewidth = .5, color = "black", data = ci_dem |> filter(str_detect(group, "Race") & lag == "No lag")  |> 
+                 mutate(model = factor(model, levels = c("not white", "non-hispanic white"))) ) +
+  facet_grid(model~group) +
+  geom_vline(xintercept = .5, linewidth = .5, linetype = "dashed") +
+  scale_y_continuous("Posterior Probability") +
+  xlab(NULL) +
+  expand_limits(x = c(.5, 1)) +
+  theme_classic() +
+  theme(legend.position = "none",
+        text = element_text(size = 15),
+        strip.text.y = element_blank())
+
+income_no_lag <- pp_tidy_dem |>
+  filter(lag == "No lag") |> 
+  filter(str_detect(group, "Income")) |> 
+  mutate(model = factor(model, levels = c("below poverty", "above poverty"))) |> 
+  ggplot() + 
+  geom_histogram(aes(x = posterior, fill = model), color = "black", linewidth = .5,  
+                 bins = 60, fill = "light grey") +
+  geom_segment(mapping = aes(y = 3400, yend = 3800, x = pp_median, xend = pp_median),
+               linewidth = .5, color = "black", data = ci_dem |> filter(str_detect(group, "Income") & lag == "No lag") |> 
+                 mutate(model = factor(model, levels = c("below poverty", "above poverty"))) ) +
+  geom_segment(mapping = aes(y = 3600, yend = 3600, x = pp_lower, xend = pp_upper),
+               linewidth = .5, color = "black", data = ci_dem |> filter(str_detect(group, "Income") & lag == "No lag")  |> 
+                 mutate(model = factor(model, levels = c("below poverty", "above poverty"))) ) +
+  facet_grid(model~group) +
+  geom_vline(xintercept = .5, linewidth = .5, linetype = "dashed") +
+  scale_y_continuous(NULL) +
+  xlab("Area Under ROC Curve") +
+  expand_limits(x = c(.5, 1)) +
+  theme_classic() +
+  theme(legend.position = "none",
+        text = element_text(size = 15),
+        strip.text.y = element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        axis.line.y = element_blank())
+
+sex_no_lag <- pp_tidy_dem |>
+  filter(lag == "No lag") |> 
+  filter(str_detect(group, "Sex")) |> 
+  ggplot() + 
+  geom_histogram(aes(x = posterior, fill = model), color = "black", linewidth = .5,  
+                 bins = 60, fill = "light grey") +
+  geom_segment(mapping = aes(y = 3400, yend = 3800, x = pp_median, xend = pp_median),
+               linewidth = .5, color = "black", data = ci_dem |> filter(str_detect(group, "Sex") & lag == "No lag") ) +
+  geom_segment(mapping = aes(y = 3600, yend = 3600, x = pp_lower, xend = pp_upper),
+               linewidth = .5, color = "black", data = ci_dem |> filter(str_detect(group, "Sex") & lag == "No lag")  ) +
+  facet_grid(model~group) +
+  geom_vline(xintercept = .5, linewidth = .5, linetype = "dashed") +
+  scale_y_continuous(NULL) +
+  xlab(NULL) +
+  expand_limits(x = c(.5, 1)) +
+  theme_classic() +
+  theme(legend.position = "none",
+        text = element_text(size = 15),
+        strip.text.y = element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        axis.line.y = element_blank())
+
+race_no_lag + income_no_lag + sex_no_lag
+```
+
+
+### Shaps

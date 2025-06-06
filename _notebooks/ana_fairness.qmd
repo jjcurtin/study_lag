@@ -61,52 +61,16 @@ path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
 
 ```{r}
 auroc_dem_0 <- read_csv(here::here(path_models_lag, 
-                                   "test_auroc_6_x_5_1day_0_v3_nested_dem_stratify.csv"),
+                                   "test_auroc_6_x_5_1day_0_v3_nested_strat_lh_fairness.csv"),
                       col_types = cols()) |> 
   mutate(fold_num = rep(1:5, 6),
          repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
-                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
-  mutate(across(everything(), ~if_else(.x == 0, .0000001, .x))) |> 
+                        rep(4, 5), rep(5, 5), rep(6, 5)),
+         `not white` = if_else(`not white` < .001, .001, `not white`)) |>
   select(-outer_split_num)
 
-
-auroc_dem_24 <- read_csv(here::here(path_models_lag, 
-                                    "test_auroc_6_x_5_1day_24_v3_nested_dem.csv"),
-                      col_types = cols())  |> 
-  mutate(across(everything(), ~if_else(.x == 0, .0000001, .x))) |> 
-  mutate(fold_num = rep(1:5, 6),
-         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
-                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
-  select(-outer_split_num)
-
-auroc_dem_72 <- read_csv(here::here(path_models_lag, 
-                                    "test_auroc_6_x_5_1day_72_v3_nested_dem.csv"),
-                      col_types = cols()) |> 
-  mutate(across(everything(), ~if_else(.x == 0, .0000001, .x))) |> 
-  mutate(fold_num = rep(1:5, 6),
-         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
-                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
-  select(-outer_split_num)
-
-auroc_dem_168 <- read_csv(here::here(path_models_lag, 
-                                     "test_auroc_6_x_5_1day_168_v3_nested_dem.csv"),
-                      col_types = cols())  |> 
-  mutate(across(everything(), ~if_else(.x == 0, .0000001, .x))) |> 
-  mutate(fold_num = rep(1:5, 6),
-         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
-                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
-  select(-outer_split_num)
-
-auroc_dem_336 <- read_csv(here::here(path_models_lag, 
-                                     "test_auroc_6_x_5_1day_336_v3_nested_dem.csv"),
-                      col_types = cols())  |> 
-  arrange(outer_split_num) |>
-  mutate(across(everything(), ~if_else(.x == 0, .0000001, .x))) |> 
-  mutate(fold_num = rep(1:5, 6),
-         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
-                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
-  select(-outer_split_num)
 ```
+
 
 
 ### Get Median Posterior Probabilities and contrast analyses
@@ -215,6 +179,18 @@ income <- c(0, 24,72,168,336) |>
 ```
 
 race
+
+```{r}
+auroc_dem_0 |> 
+  filter(is.na(`not white`))
+```
+
+Filter out one NA row prior to race calculation
+```{r}
+auroc_dem_0 <- auroc_dem_0 |> 
+  filter(!is.na(`not white`))
+```
+
 ```{r}
 race <- c(0, 24,72,168,336) |> 
   map(\(lag) calc_pp(lag, "race")) 
