@@ -55,6 +55,7 @@ devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/chtc/sta
 ```{r, absolute_paths}
 path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
 path_processed <- format_path(str_c("studydata/risk/data_processed/lag"))
+path_shared <- format_path(str_c("studydata/risk/data_processed/shared"))
 ```
 
 
@@ -96,6 +97,10 @@ ci_dem <- read_csv(here::here(path_models_lag, "pp_dem_all.csv"),
                            model %in% c("not white", "non-hispanic white") ~ "Race (not White, White)",
                            model %in% c("below poverty", "above poverty") ~ "Income (below poverty, above poverty)")) |> 
   filter(!is.na(lag))
+
+lapses <- auroc_0 <- read_csv(here::here(path_shared, 
+                                   "lapses.csv"),
+                      col_types = cols()) 
 ```
 
 ## No Lag Model
@@ -171,10 +176,10 @@ feat_preds <- feat_preds |>
          demo_income = if_else(demo_income < 15060, "below poverty", "above poverty"))
 ```
 
-Splits below .5
+Splits below .1
 ```{r}
 (outer_splits <- auroc_0_dem |> 
-  filter(`not white` < .5) |> 
+  filter(`not white` < .1) |> 
   pull(outer_split_num))
 
 feat_preds |> 
@@ -185,17 +190,25 @@ feat_preds |>
   count(outer_split_num, demo_race) 
 ```
 
-
-Splits above .5
+Check how many lapses from not white participants in each outer split
 ```{r}
-feat_preds |> 
-  filter(!(outer_split_num %in% outer_splits)) |> 
-  group_by(subid, outer_split_num) |> 
-  slice_head(n = 1) |> 
-  ungroup() |> 
-  count(outer_split_num, demo_race) |> 
-  print(n = Inf)
+(subids_4 <- feat_preds |> 
+  filter(outer_split_num == 4 & demo_race == "not white") |> 
+  pull(subid) |> 
+  unique())
+
+lapses |> 
+  filter(subid %in% subids_4)
+
+(subids_23 <- feat_preds |> 
+  filter(outer_split_num == 23 & demo_race == "not white") |> 
+  pull(subid) |> 
+  unique())
+
+lapses |> 
+  filter(subid %in% subids_23)
 ```
+
 
 
 
