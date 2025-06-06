@@ -13,10 +13,14 @@ params:
   
   study: "lag"
   window: "1day"
-  lead: 0
+  lead: 336
   version: "v3"
   cv: "nested"
   model: "strat_lh"
+<<<<<<< HEAD
+=======
+
+>>>>>>> c71443ec201fcb87f473176bd76f9cfcd963f59a
 editor_options: 
   chunk_output_type: console
 ---
@@ -68,6 +72,7 @@ Packages for script
 library(tidyverse)
 library(tidymodels)
 library(probably)
+library(betacal)
 ```
 
 Source support functions
@@ -229,36 +234,47 @@ fit_predict_eval <- function(split_num, splits, configs_best,
     cal_apply(logi)
 
   # beta calibration
-  beta <- predict(model_cal, feat_cal_out,
-                  type = "prob") |>
-    mutate(truth = feat_cal_out$y) |>
-    cal_estimate_beta(truth = truth,
-                      estimate = dplyr::starts_with(".pred_"),
-                      smooth = TRUE)
-  preds_prob_beta <- preds_prob |>
-    cal_apply(beta)
+  # beta <- predict(model_cal, feat_cal_out,
+  #                 type = "prob") |>
+  #   mutate(truth = feat_cal_out$y) |>
+  #   cal_estimate_beta(truth = truth,
+  #                     estimate = dplyr::starts_with(".pred_"),
+  #                     smooth = TRUE)
+  # preds_prob_beta <- preds_prob |>
+  #   cal_apply(beta)
+  cal_model <- betacal::beta_calibration(feat_cal_out$.pred_yes, feat_cal_out$y, parameters = "abm")
+    # Extract parameters
+    a <- cal_model$map[1]
+    b <- cal_model$map[2]
+    m <- cal_model$map[3]
 
-  # combine raw and calibrated probs
-  probs_out <- tibble(id_obs = d_out$id_obs,
-                      outer_split_num = rep(split_num, nrow(preds_prob)),
-                      prob_raw = preds_prob[[str_c(".pred_", y_level_pos)]],
-                      prob_iso = preds_prob_iso[[str_c(".pred_", y_level_pos)]],
-                      prob_logi = preds_prob_logi[[str_c(".pred_", y_level_pos)]],
-                      prob_beta = preds_prob_beta[[str_c(".pred_", y_level_pos)]],
-                      label = d_out$y) |> 
-    mutate(label = fct_recode(label, "No lapse" = "no",
-                              "Lapse" = "yes"))
+    # Apply calibration formula
+    logit_calibrated <- a * log(preds_prob$.pred_yes) + b * log(1 - preds_prob$.pred_yes) + m
+    beta_d_out <- 1 / (1 + exp(-logit_calibrated))
+    
+    # combine raw and calibrated probs
+    probs_out <- tibble(id_obs = d_out$id_obs,
+                        outer_split_num = rep(split_num, nrow(preds_prob)),
+                        prob_raw = preds_prob[[str_c(".pred_", y_level_pos)]],
+                        prob_iso = preds_prob_iso[[str_c(".pred_", y_level_pos)]],
+                        prob_logi = preds_prob_logi[[str_c(".pred_", y_level_pos)]],
+                        prob_beta = beta_d_out,
+                        # prob_beta = preds_prob_beta[[str_c(".pred_", y_level_pos)]],
+                        label = d_out$y) |> 
+        mutate(label = fct_recode(label, "No lapse" = "no",
+                                  "Lapse" = "yes"))
 
  # SHAP in held out fold
-  shaps_out <- SHAPforxgboost::shap.prep(xgb_model = extract_fit_engine(model_best),
-                     X_train = feat_out |> select(-y) |>  as.matrix()) |> 
-    # add id_obs by multiple of number of features
-    mutate(id_obs = rep(d_out$id_obs, times = ncol(feat_out) - 1),
-           split_num = split_num) |>  
-    relocate(id_obs, split_num)
+  # shaps_out <- SHAPforxgboost::shap.prep(xgb_model = extract_fit_engine(model_best),
+  #                    X_train = feat_out |> select(-y) |>  as.matrix()) |> 
+  #   # add id_obs by multiple of number of features
+  #   mutate(id_obs = rep(d_out$id_obs, times = ncol(feat_out) - 1),
+  #          split_num = split_num) |>  
+  #   relocate(id_obs, split_num)
   
-  return(list(probs_out = probs_out, 
-              shaps_out = shaps_out))
+  return(list(probs_out = probs_out))
+               
+             # shaps_out = shaps_out))
 }
 ```
 
