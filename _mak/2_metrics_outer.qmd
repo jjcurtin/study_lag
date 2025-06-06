@@ -359,10 +359,6 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
     d <- read_rds(here::here(path_batch, "input", fn))
   }
   
-  
-<<<<<<< HEAD
-  d <- format_data(d) |> 
-=======
 
   # Read in lapse_strat.csv if stratifying
   if(!is.null(cv_strat)) {
@@ -373,7 +369,6 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
   }
 
  d <- format_data(d, lapse_strat) |> 
->>>>>>> 2edd42c4414ba9fd67dbf17d033e3a1f410ab63f
     arrange(label_num) |> 
     mutate(id_obs = 1:nrow(d))  # tmp add for linking obs
   
