@@ -12,10 +12,10 @@ format:
 params:
   study: "lag"
   window: "1day"
-  lead: 0
+  lead: 336
   version: "v3"
   cv: "nested"
-  model: "main_stratify"
+  model: "strat_lh"
 
 editor_options: 
   chunk_output_type: console
@@ -425,8 +425,7 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
 
 Check probabilities
 ```{r}
-probs_out |> 
-  hist(prob_raw)
+hist(probs_out$prob_raw)
 ```
 
 
