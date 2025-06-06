@@ -258,7 +258,6 @@ fit_predict_eval <- function(split_num, splits, configs_best,
     relocate(id_obs, split_num)
   
   return(list(probs_out = probs_out, 
-              metrics_out = metrics_out, 
               shaps_out = shaps_out))
 }
 ```
