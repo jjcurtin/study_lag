@@ -38,6 +38,7 @@ Effectiveness of different calibrations in 0 lag model - *Beta clearly seems to 
 **Platt Scaling (logistic)**
 ```{r}
 #| code-fold: true
+#| message: false
 
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(tidymodels))
@@ -153,7 +154,7 @@ probs_336 |>
 ```
 
 
-Odd truncated distribution in split 3 - *May explain weird peaks seeing in histogram of all probabilities*
+Odd truncated distribution in split 1 and 3 - *May explain weird peaks seeing in histogram of all probabilities* - checked and 14/30 splits are like this
 
 
 Beta callibration may not work well when there are sharp spikes at 0 or 1.
@@ -256,6 +257,8 @@ preds_prob <- predict(model_best, feat_out,
 
 Run Calibration
 ```{r}
+#| execute: false
+
 # train calibration model train/test split on held in data
 set.seed(2468)
 cal_split <- d_in |> 
@@ -287,35 +290,13 @@ preds_prob_beta <- preds_prob |>
 preds_prob_beta[[str_c(".pred_", y_level_pos)]]
 ```
 
+`Error in uniroot(function(mh) b * log(1 - mh) - a * log(mh) - inter, c(1e-16,  :` 
+`f() values at end points not of opposite sign`
 
-### Possible Solutions from Chatgpt
 
-1. Try the "ab" parameterization instead of "abm"
-In R’s {betacal} package, beta calibration supports two variants:
-- "abm" (more flexible but harder to fit) *Could explore what harder to fit means*
-- "ab" (simpler, more stable)
+### Working solution
 
-*I wasn't able to change this parameter inside `beta_calibration()` function so this is a work around.* 
-```{r}
-# beta calibration
-library(betacal)
-beta <- predict(model_cal, feat_cal_out,
-                type = "prob")
-
-cal_model <- betacal::beta_calibration(beta$.pred_yes, feat_cal_out$y, parameters = "ab")
-
-class(cal_model) <- "beta_cal"
-
-# I had to manually define the predict() method for "beta_cal" objects
-predict.beta_cal <- function(object, x, ...) {
-  lp <- log(x)
-  l1p <- log(1 - x)
-  pred_lp <- object$map[1] * lp + object$map[2] * l1p
-  1 / (1 + exp(-pred_lp))
-}
-
-beta_d_out <- predict(cal_model, preds_prob$.pred_yes)
-```
+Formula is same formula from betacal package. 
 
 ```{r}
 library(betacal)
@@ -331,12 +312,12 @@ beta_d_out <- 1 / (1 + exp(-logit_calibrated))
 ```
 
 
-It works!!
-
 ```{r}
 hist(beta_d_out)
 ```
 
+
+### Checks
 
 Calibrate fold 3 probabilities and compare to probabilities calibrated old way 
 
@@ -344,16 +325,11 @@ Run new way
 
 New function 
 ```{r}
+#| code-fold: true
+
 fit_predict_eval <- function(split_num, splits, configs_best, 
                              calibration = TRUE){
 
-  # write tmp file to repo to track progress through loop
-  # delete this file when script is complete.  
-  write_csv(tibble(stage = "eval",
-                   outer_split_num = split_num, 
-                   start_time = Sys.time()),
-            here::here(path_models, str_c("tmp_metrics_outer_progress_", window)),
-            append = TRUE)
   
   d_in <- training(splits$splits[[split_num]]) |> 
     select(-id_obs)  # not used for training; only needed in d_out to tag for later joins 
@@ -468,16 +444,10 @@ preds_1_new <- fit_predict_eval(1, splits, configs_best)
 
 Old function
 ```{r}
+#| code-fold: true
+
 fit_predict_eval <- function(split_num, splits, configs_best, 
                              calibration = TRUE){
-
-  # write tmp file to repo to track progress through loop
-  # delete this file when script is complete.  
-  write_csv(tibble(stage = "eval",
-                   outer_split_num = split_num, 
-                   start_time = Sys.time()),
-            here::here(path_models, str_c("tmp_metrics_outer_progress_", window)),
-            append = TRUE)
   
   d_in <- training(splits$splits[[split_num]]) |> 
     select(-id_obs)  # not used for training; only needed in d_out to tag for later joins 
@@ -587,13 +557,14 @@ fit_predict_eval <- function(split_num, splits, configs_best,
 ```
 
 ```{r}
-preds_3_old <- fit_predict_eval(3, splits, configs_best)
+preds_1_old <- fit_predict_eval(1, splits, configs_best)
 ```
 
 
 Compare
 ```{r}
-
+hist(preds_1_new)
+hist(preds_1_old)
 ```
 
 
