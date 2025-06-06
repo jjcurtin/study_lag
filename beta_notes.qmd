@@ -300,7 +300,7 @@ Formula is same formula from betacal package.
 
 ```{r}
 library(betacal)
-cal_model <- betacal::beta_calibration(beta$.pred_yes, feat_cal_out$y, parameters = "abm")
+cal_model <- betacal::beta_calibration(feat_cal_out$.pred_yes, feat_cal_out$y, parameters = "abm")
 # Extract parameters
 a <- cal_model$map[1]
 b <- cal_model$map[2]
@@ -402,7 +402,7 @@ fit_predict_eval <- function(split_num, splits, configs_best,
   #                     smooth = TRUE)
   # preds_prob_beta <- preds_prob |>
   #   cal_apply(beta)
-  cal_model <- betacal::beta_calibration(beta$.pred_yes, feat_cal_out$y, parameters = "abm")
+  cal_model <- betacal::beta_calibration(feat_cal_out$.pred_yes, feat_cal_out$y, parameters = "abm")
     # Extract parameters
     a <- cal_model$map[1]
     b <- cal_model$map[2]
