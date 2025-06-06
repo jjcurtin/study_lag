@@ -14,7 +14,7 @@ params:
   study: "lag"
   cv: "nested"
   window: "1day"
-  model: "dem_stratify" 
+  model: "strat_lh" 
   lead: 0
   version: "v3"
 editor_options: 
@@ -157,5 +157,5 @@ Save auroc_dem
 auroc_dem |> 
   write_csv(here::here(path_models, str_c("test_auroc_6_x_5_", window, "_", lead, 
                                           "_", version, "_", cv, "_",
-                                          model, ".csv")))  
+                                          model, "_fairness.csv")))  
 ```
