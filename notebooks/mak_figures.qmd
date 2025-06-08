@@ -31,9 +31,9 @@ library(patchwork)
 
 theme_set(theme_classic())
 
-path_models_lag <- format_path(str_c("risk/models/lag"))
-path_shared <- format_path("risk/data_processed/shared")
-path_processed <- format_path("risk/data_processed/lag")
+path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
+path_shared <- format_path("studydata/risk/data_processed/shared")
+path_processed <- format_path("studydata/risk/data_processed/lag")
 ```
 
 Data for figures
@@ -46,7 +46,7 @@ ci <- read_csv(here::here(path_models_lag, "pp_perf_tibble.csv"),
   mutate(model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"),
                         labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
 
-global_all <- read_rds(here::here(path_models_lag, "shap_global_all.rds")) |> 
+global_all <- read_rds(here::here(path_models_lag, "archive/shap_global_all.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
    mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
           variable_grp = reorder(variable_grp, mean_value, sum),
@@ -118,7 +118,7 @@ global_panel <- global_all |>
 
 ```{r}
 shap_feat_0 <- read_rds(here::here(path_models_lag, 
-                                   "outer_shapsgrp_1day_0_v3_nested_main.rds")) |> 
+                                   "archive/outer_shapsgrp_1day_0_v3_nested_main.rds")) |> 
   filter(str_detect(variable_grp, "EMA")) |> 
   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
          variable_grp = factor(variable_grp, levels = shap_levels)) |> 
@@ -127,7 +127,7 @@ shap_feat_0 <- read_rds(here::here(path_models_lag,
   mutate(model = "No lag")
 
 shap_feat_336 <- read_rds(here::here(path_models_lag, 
-                                     "outer_shapsgrp_1day_336_v3_nested_main.rds")) |> 
+                                     "archive/outer_shapsgrp_1day_336_v3_nested_main.rds")) |> 
   filter(str_detect(variable_grp, "EMA")) |> 
   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
          variable_grp = factor(variable_grp, levels = shap_levels))  |> 

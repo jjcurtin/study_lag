@@ -30,27 +30,27 @@ options(knitr.kable.NA = '')
 
 ```{r}
 test_metrics_0 <- read_csv(here::here(path_models_lag, 
-                                      "test_auroc_3_x_10_1day_0_v3_nested_main_stratify.csv"), 
+                                      "test_auroc_6_x_5_1day_0_v3_nested_strat_lh.csv"), 
                               col_types = cols()) |> 
   select(outer_split_num, "lag0" = roc_auc)
 
 test_metrics_24 <- read_csv(here::here(path_models_lag, 
-                                       "test_auroc_3_x_10_1day_24_v3_nested_main.csv"),
+                                       "test_auroc_6_x_5_1day_24_v3_nested_strat_lh.csv"),
                              col_types = cols()) |> 
   select(outer_split_num, "lag24" = roc_auc)
 
 test_metrics_72 <- read_csv(here::here(path_models_lag, 
-                                       "test_auroc_3_x_10_1day_72_v3_nested_main.csv"),
+                                       "test_auroc_6_x_5_1day_72_v3_nested_strat_lh.csv"),
                               col_types = cols()) |> 
   select(outer_split_num, "lag72" = roc_auc)
 
 test_metrics_168 <- read_csv(here::here(path_models_lag, 
-                                        "test_auroc_3_x_10_1day_168_v3_nested_main.csv"), 
+                                        "test_auroc_6_x_5_1day_168_v3_nested_strat_lh.csv"), 
                               col_types = cols()) |> 
   select(outer_split_num, "lag168" = roc_auc)
 
 test_metrics_336 <- read_csv(here::here(path_models_lag, 
-                                       "test_auroc_3_x_10_1day_336_v3_nested_main_stratify.csv"),
+                                       "test_auroc_6_x_5_1day_336_v3_nested_strat_lh.csv"),
                              col_types = cols()) |> 
   select(outer_split_num, "lag336" = roc_auc)
 

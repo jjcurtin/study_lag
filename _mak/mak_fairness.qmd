@@ -15,7 +15,7 @@ params:
   cv: "nested"
   window: "1day"
   model: "strat_lh" 
-  lead: 336
+  lead: 168
   version: "v3"
 editor_options: 
   chunk_output_type: console
