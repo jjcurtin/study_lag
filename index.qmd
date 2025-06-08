@@ -230,7 +230,7 @@ We calculated Shapley values in log-odds units for binary classification models 
 <!--KW: Add calibration plots-->
 
 
-{{< embed notebooks/mak_figures.qmd#fig-pp >}} 
+{{< embed notebooks/mak_figures.qmd#fig-pp-all >}} 
 
 
 
@@ -238,7 +238,7 @@ We calculated Shapley values in log-odds units for binary classification models 
 
 @tbl-model presents the median difference in auROC, 95% Bayesian CI, and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts. Median auROC differences greater than 0 indicate the more immediate model, on average, out-performed the more lagged model (e.g., no lag - 1-day lag, 1-day lag - 3-day lag). There was strong evidence (probabilities = 1) that the lagged models performed worse than the baseline (no lag) model, with average drops in auROC ranging from `r sprintf("%1.2f", ci_baseline |> pull(median)  |>  min())`-`r sprintf("%1.2f", ci_baseline |> pull(median)  |>  max())`, and the previous adjacent lagged model, with average drops in auROC ranging from `r sprintf("%1.2f", ci_lag |> pull(median)  |>  min())`-`r sprintf("%1.2f", ci_lag |> pull(median)  |>  max())`.
 
-{{< embed notebooks/mak_tables.qmd#tbl-model >}} 
+{{< embed notebooks/mak_tables.qmd#tbl-model-perf >}} 
 
 
 ## Fairness Analyses
@@ -246,7 +246,7 @@ We calculated Shapley values in log-odds units for binary classification models 
 @tbl-fairness presents the median difference in auROC, 95% Bayesian CI, and posterior probability that the auROC difference was greater than 0 for the three fairness contrasts: race/ethnicity (Non-Hispanic White; *N* = 131 vs. not White; *N* = 20), sex at birth (male; *N* = 77 vs. female; *N* = 74), and income (above poverty; *N* = 102 vs. below poverty; *N* = 49). Median auROC differences greater than 0 indicate the model, on average, performed better for the advantaged group (male, non-Hispanic White, and above poverty) compared to the non-advantaged group (female, not White, below poverty). In @tbl-fairness we present fairness analyses for our baseline model (no lag) and for our longest lagged model (2-week lag), as this is likely the most clinically useful lagged model for providing advanced warning of lapse risk. Fairness analyses for all five models are available in the supplement. There was strong evidence (probabilities > .81) that our models performed better for the advantaged groups compared to the non-advantaged groups. On average, across all five models, there was a median decrease in auROC of `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median) |>  abs()) |> median()` (range `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median)) |> min()`-`r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median)) |> max()`) for participants who were not White compared to non-Hispanic White participants. On average, across all five models, there was a median decrease in auROC of `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> median()` (range `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> min()`-`r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> max()`) for female participants compared to male participants. On average, across all five models, there was a median decrease in auROC of `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> median()` (range `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> min()`-`r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> max()`) for participants below the federal poverty line compared to participants above the federal poverty line. The proportion of positive lapse labels over all labels (lapse and no lapse) for each demographic subgroup were relatively consistent across groups: race/ethnicity (6%, not White vs. 8%, non-Hispanic White), income (12%, below poverty vs. 7%, above poverty), sex at birth (9%, female vs. 7%, male).
 
 
-{{< embed notebooks/mak_tables.qmd#tbl-fairness >}} 
+{{< embed notebooks/mak_tables.qmd#tbl-fair >}} 
 
 ## Feature Importance
 
