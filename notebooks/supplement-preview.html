@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
     <meta name="author" content="Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, and John J. Curtin">
-    <meta name="dcterms.date" content="2025-06-07">
+    <meta name="dcterms.date" content="2025-06-08">
 
     <title>Supplemental Material</title>
     <style>
@@ -3448,7 +3448,7 @@ border: 0;
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">June 7, 2025</p>
+              <p class="date">June 8, 2025</p>
             </div>
           </div>
           
@@ -3484,7 +3484,6 @@ border: 0;
   <li><a href="#supplemental-tables" id="toc-supplemental-tables" class="nav-link" data-scroll-target="#supplemental-tables">Supplemental Tables</a>
   <ul class="collapse">
   <li><a href="#table-s1-demographic-contrasts-for-all-models" id="toc-table-s1-demographic-contrasts-for-all-models" class="nav-link" data-scroll-target="#table-s1-demographic-contrasts-for-all-models">Table S1: Demographic Contrasts for all Models</a></li>
-  <li><a href="#table-s2-percentage-of-lapse-reports-by-demographic-groups" id="toc-table-s2-percentage-of-lapse-reports-by-demographic-groups" class="nav-link" data-scroll-target="#table-s2-percentage-of-lapse-reports-by-demographic-groups">Table S2: Percentage of lapse Reports by Demographic Groups</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -4081,81 +4080,6 @@ Race/Ethnicity
 <td style="text-align: left;">0.131</td>
 <td style="text-align: left;">[0.06, 0.209]</td>
 <td style="text-align: left;">0.999</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-</figure>
-</div></div></div>
-</div></div>
-</section>
-<section id="table-s2-percentage-of-lapse-reports-by-demographic-groups" class="level3">
-<h3 class="anchored" data-anchor-id="table-s2-percentage-of-lapse-reports-by-demographic-groups">Table S2: Percentage of lapse Reports by Demographic Groups</h3>
-<div class="cell-container"><div class="cell-decorator"><pre>In [20]:</pre></div><div class="cell">
-
-<div class="cell-container"><div class="cell-decorator"><pre>In [21]:</pre></div><div><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>labels_race <span class="ot">&lt;-</span> labels_dem <span class="sc">|&gt;</span> </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">tabyl</span>(race_di, lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">adorn_percentages</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">race_di =</span> <span class="fu">if_else</span>(race_di <span class="sc">==</span> <span class="st">&quot;not white&quot;</span>, <span class="st">&quot;not White&quot;</span>, <span class="st">&quot;non-Hispanic White&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>no, <span class="st">`</span><span class="at">Demographic group</span><span class="st">`</span> <span class="ot">=</span> race_di, <span class="st">`</span><span class="at">% lapses</span><span class="st">`</span> <span class="ot">=</span> yes)</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>labels_income <span class="ot">&lt;-</span> labels_dem <span class="sc">|&gt;</span> </span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">tabyl</span>(income_di, lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">adorn_percentages</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>no, <span class="st">`</span><span class="at">Demographic group</span><span class="st">`</span> <span class="ot">=</span> income_di, <span class="st">`</span><span class="at">% lapses</span><span class="st">`</span> <span class="ot">=</span> yes)</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>labels_sex <span class="ot">&lt;-</span> labels_dem <span class="sc">|&gt;</span> </span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">tabyl</span>(dem_2, lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">adorn_percentages</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>no, <span class="st">`</span><span class="at">Demographic group</span><span class="st">`</span> <span class="ot">=</span> dem_2, <span class="st">`</span><span class="at">% lapses</span><span class="st">`</span> <span class="ot">=</span> yes)</span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>labels_race <span class="sc">|&gt;</span> </span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(labels_income) <span class="sc">|&gt;</span> </span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(labels_sex) <span class="sc">|&gt;</span> </span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">row_spec</span>(<span class="dv">2</span>, <span class="at">extra_css =</span> <span class="st">&quot;border-bottom: 1px solid&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">row_spec</span>(<span class="dv">4</span>, <span class="at">extra_css =</span> <span class="st">&quot;border-bottom: 1px solid&quot;</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-lapses" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lapses-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-This table reports the percentage of lapse labels relative to all labels (lapse and no lapse combined) for each demographic group. We calculated percentages using labels created for the no lag baseline model.
-</figcaption>
-<div aria-describedby="tbl-lapses-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Demographic group</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">% lapses</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">not White</td>
-<td style="text-align: right;">0.0645197</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; border-bottom: 1px solid;">non-Hispanic White</td>
-<td style="text-align: right; border-bottom: 1px solid;">0.0788918</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">above poverty</td>
-<td style="text-align: right;">0.0710381</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; border-bottom: 1px solid;">below poverty</td>
-<td style="text-align: right; border-bottom: 1px solid;">0.1214182</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Female</td>
-<td style="text-align: right;">0.0892322</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Male</td>
-<td style="text-align: right;">0.0654273</td>
 </tr>
 </tbody>
 </table>
