@@ -256,9 +256,8 @@ preds_prob <- predict(model_best, feat_out,
 
 
 Run Calibration
-```{r}
-#| execute: false
 
+```{r}
 # train calibration model train/test split on held in data
 set.seed(2468)
 cal_split <- d_in |> 
@@ -275,6 +274,10 @@ feat_cal_out <- rec |>
   bake(new_data = d_cal_out) 
 
 model_cal <- fit_best_model(config_best, feat = feat_cal_in, "classification")
+```
+
+```{r}
+#| eval: false
   
 # beta calibration
 beta <- predict(model_cal, feat_cal_out,

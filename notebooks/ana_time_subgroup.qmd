@@ -61,7 +61,7 @@ path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
 
 ```{r}
 auroc_dem_0 <- read_csv(here::here(path_models_lag, 
-                                   "test_auroc_6_x_5_1day_0_v3_nested_dem.csv"),
+                                   "test_auroc_6_x_5_1day_0_v3_nested_strat_lh_fairness.csv"),
                       col_types = cols()) |> 
   mutate(fold_num = rep(1:5, 6),
          repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
@@ -71,7 +71,7 @@ auroc_dem_0 <- read_csv(here::here(path_models_lag,
 
 
 auroc_dem_24 <- read_csv(here::here(path_models_lag, 
-                                    "test_auroc_6_x_5_1day_24_v3_nested_dem.csv"),
+                                    "test_auroc_6_x_5_1day_24_v3_nested_strat_lh_fairness.csv"),
                       col_types = cols())  |> 
   mutate(across(everything(), ~if_else(.x == 0, .0000001, .x))) |> 
   mutate(fold_num = rep(1:5, 6),
@@ -80,7 +80,7 @@ auroc_dem_24 <- read_csv(here::here(path_models_lag,
   select(-outer_split_num)
 
 auroc_dem_72 <- read_csv(here::here(path_models_lag, 
-                                    "test_auroc_6_x_5_1day_72_v3_nested_dem.csv"),
+                                    "test_auroc_6_x_5_1day_72_v3_nested_strat_lh_fairness.csv"),
                       col_types = cols()) |> 
   mutate(across(everything(), ~if_else(.x == 0, .0000001, .x))) |> 
   mutate(fold_num = rep(1:5, 6),
@@ -89,7 +89,7 @@ auroc_dem_72 <- read_csv(here::here(path_models_lag,
   select(-outer_split_num)
 
 auroc_dem_168 <- read_csv(here::here(path_models_lag, 
-                                     "test_auroc_6_x_5_1day_168_v3_nested_dem.csv"),
+                                     "test_auroc_6_x_5_1day_168_v3_nested_strat_lh_fairness.csv"),
                       col_types = cols())  |> 
   mutate(across(everything(), ~if_else(.x == 0, .0000001, .x))) |> 
   mutate(fold_num = rep(1:5, 6),
@@ -98,10 +98,8 @@ auroc_dem_168 <- read_csv(here::here(path_models_lag,
   select(-outer_split_num)
 
 auroc_dem_336 <- read_csv(here::here(path_models_lag, 
-                                     "test_auroc_6_x_5_1day_336_v3_nested_dem.csv"),
+                                     "test_auroc_6_x_5_1day_336_v3_nested_strat_lh_fairness.csv"),
                       col_types = cols())  |> 
-  add_row(outer_split_num = 12) |>
-  add_row(outer_split_num = 28) |>
   arrange(outer_split_num) |>
   mutate(across(everything(), ~if_else(.x == 0, .0000001, .x))) |> 
   mutate(fold_num = rep(1:5, 6),
