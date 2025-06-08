@@ -502,34 +502,3 @@ pp_sex |>
 ```
 
 
-
-### Table S2: Percentage of lapse Reports by Demographic Groups
-
-```{r}
-#| label: tbl-lapses
-#| tbl-cap: "This table reports the percentage of lapse labels relative to all labels (lapse and no lapse combined) for each demographic group. We calculated percentages using labels created for the no lag baseline model."
-
-labels_race <- labels_dem |> 
-  janitor::tabyl(race_di, lapse) |> 
-  janitor::adorn_percentages() |> 
-  mutate(race_di = if_else(race_di == "not white", "not White", "non-Hispanic White")) |> 
-  select(-no, `Demographic group` = race_di, `% lapses` = yes)
-
-labels_income <- labels_dem |> 
-  janitor::tabyl(income_di, lapse) |> 
-  janitor::adorn_percentages() |> 
-  select(-no, `Demographic group` = income_di, `% lapses` = yes)
-
-labels_sex <- labels_dem |> 
-  janitor::tabyl(dem_2, lapse) |> 
-  janitor::adorn_percentages() |> 
-  select(-no, `Demographic group` = dem_2, `% lapses` = yes)
-
-labels_race |> 
-  bind_rows(labels_income) |> 
-  bind_rows(labels_sex) |> 
-  kbl() |> 
-  kableExtra::row_spec(2, extra_css = "border-bottom: 1px solid") |> 
-  kableExtra::row_spec(4, extra_css = "border-bottom: 1px solid") 
-```
-
