@@ -12,7 +12,7 @@ format:
 params:
   study: "lag"
   window: "1day"
-  lead: 336
+  lead: 168
   version: "v3"
   cv: "nested"
   model: "strat_lh"
@@ -138,6 +138,88 @@ fit_predict_eval <- function(split_num, splits, configs_best,
   preds_prob <- predict(model_best, feat_out,
                         type = "prob")
 
+<<<<<<< HEAD
+=======
+  # train calibration model train/test split on held in data
+  set.seed(2468)
+  cal_split <- d_in |> 
+    group_initial_split(group = all_of(cv_group), prop = 3/4)
+  d_cal_in <- training(cal_split) 
+  d_cal_out <- testing(cal_split)
+  
+  feat_cal_in <- rec |> 
+    prep(training = d_cal_in, strings_as_factors = FALSE) |> 
+    bake(new_data = NULL) 
+  
+  feat_cal_out <- rec |> 
+    prep(training = d_cal_in, strings_as_factors = FALSE) |> 
+    bake(new_data = d_cal_out) 
+
+  model_cal <- fit_best_model(config_best, feat = feat_cal_in, "classification")
+  
+  # iso calibration
+  iso <- predict(model_cal, feat_cal_out,
+                 type = "prob") |> 
+    mutate(truth = feat_cal_out$y) |> 
+    cal_estimate_isotonic(truth = truth,
+                            estimate = dplyr::starts_with(".pred_"))
+  preds_prob_iso <- preds_prob |> 
+    cal_apply(iso)
+  
+  # logistic calibration
+  logi <- predict(model_cal, feat_cal_out,
+                  type = "prob") |>
+    mutate(truth = feat_cal_out$y) |>
+    cal_estimate_logistic(truth = truth,
+                          estimate = dplyr::starts_with(".pred_"),
+                             smooth = TRUE)
+  preds_prob_logi <- preds_prob |>
+    cal_apply(logi)
+
+  # beta calibration
+  # beta <- predict(model_cal, feat_cal_out,
+  #                 type = "prob") |>
+  #   mutate(truth = feat_cal_out$y) |>
+  #   cal_estimate_beta(truth = truth,
+  #                     estimate = dplyr::starts_with(".pred_"),
+  #                     smooth = TRUE)
+  # preds_prob_beta <- preds_prob |>
+  #   cal_apply(beta)
+  # beta <- predict(model_cal, feat_cal_out,
+  #               type = "prob") |>
+  # mutate(truth = feat_cal_out$y) 
+  # 
+  # cal_model <- betacal::beta_calibration(beta$.pred_yes, feat_cal_out$y, parameters = "abm")
+  #   # Extract parameters
+  #   a <- cal_model$map[1]
+  #   b <- cal_model$map[2]
+  #   m <- cal_model$map[3]
+  # 
+  #   # Apply calibration formula
+  #   logit_calibrated <- a * log(preds_prob$.pred_yes) + b * log(1 - preds_prob$.pred_yes) + m
+  #   beta_d_out <- 1 / (1 + exp(-logit_calibrated))
+    
+    # combine raw and calibrated probs
+    probs_out <- tibble(id_obs = d_out$id_obs,
+                        outer_split_num = rep(split_num, nrow(preds_prob)),
+                        prob_raw = preds_prob[[str_c(".pred_", y_level_pos)]],
+                        prob_iso = preds_prob_iso[[str_c(".pred_", y_level_pos)]],
+                        prob_logi = preds_prob_logi[[str_c(".pred_", y_level_pos)]],
+                        prob_beta = NA,
+                        # prob_beta = beta_d_out,
+                        # prob_beta = preds_prob_beta[[str_c(".pred_", y_level_pos)]],
+                        label = d_out$y) |> 
+        mutate(label = fct_recode(label, "No lapse" = "no",
+                                  "Lapse" = "yes"))
+
+ # SHAP in held out fold
+  # shaps_out <- SHAPforxgboost::shap.prep(xgb_model = extract_fit_engine(model_best),
+  #                    X_train = feat_out |> select(-y) |>  as.matrix()) |> 
+  #   # add id_obs by multiple of number of features
+  #   mutate(id_obs = rep(d_out$id_obs, times = ncol(feat_out) - 1),
+  #          split_num = split_num) |>  
+  #   relocate(id_obs, split_num)
+>>>>>>> ca364c56a8e02e021ba0ecc98ffbd14b769e00be
   
   return(list(probs_out = probs_out))
 }
