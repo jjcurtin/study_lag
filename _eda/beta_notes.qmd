@@ -124,6 +124,11 @@ probs_0 |>
 
 ### Trouble Shooting
 
+* look at performance in folds
+* code to pull examples of folds that work 
+* pull all folds that don't work
+* characterize folds (num lapses, performance, range of probabilities/distribution)
+
 Pull out predicted probabilities for a problematic fold (outer split 2)
 ```{r}
 probs_336_2 <- probs_336 |> 
