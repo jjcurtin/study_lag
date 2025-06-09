@@ -442,8 +442,7 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
 
 Check probabilities
 ```{r}
-probs_out |> 
-  hist(prob_raw)
+hist(probs_out$prob_raw)
 ```
 
 
