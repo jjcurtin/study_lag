@@ -189,40 +189,51 @@ fig_cal_0 + fig_cal_336
 
 
 ```{r}
-global_all <- read_rds(here::here(path_models_lag, "archive/shap_global_all.rds")) |> 
+
+shap_grp_0 <- read_rds(here::here(path_models_lag, 
+                      "final_shapsgrp_kfold_2_x_5_1day_0_v3_kfold_strat_lh_final.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
    mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-          variable_grp = reorder(variable_grp, mean_value, sum),
-          model = factor(model, levels = c("0 lag", "336 lag"),
-                         labels = c("No lag", "2 weeks")))
+         variable_grp = factor(variable_grp, levels = shap_levels))  
 
-shap_levels <- global_all |>
+shap_grp_336 <- read_rds(here::here(path_models_lag, 
+                      "final_shapsgrp_kfold_2_x_5_1day_336_v3_kfold_strat_lh_final.rds")) |> 
+   filter(str_detect(variable_grp, "EMA")) |> 
+  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
+         variable_grp = factor(variable_grp, levels = shap_levels))  
+
+shap_global <- shap_grp_0 |> 
+  mutate(model = "No lag") |> 
+  bind_rows(shap_grp_336 |> 
+              mutate(model = "2 weeks")) |> 
+  mutate(model = factor(model, levels = c("2 weeks", "No lag" ))) |> 
+  group_by(variable_grp, model) |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop")
+
+shap_levels <- shap_global |>
   mutate(variable_grp = reorder(variable_grp, mean_value, sum)) |>
   pull(variable_grp) |>
   levels()
 ```
 
 ```{r}
-feat <- read_csv(here::here(path_processed, 
+feat_0 <- read_csv(here::here(path_processed, 
                             "features_0lag_v3.csv"),
                  col_types = cols()) |> 
   select(label_num, subid, dttm_label, lapse, demo_age, demo_sex, 
          demo_income, demo_race) |> 
   arrange(label_num) 
 
-shaps <- read_rds(here::here(path_models_lag, "archive/outer_shapsgrp_1day_0_v3_nested_main.rds"))
 
-global_feat_0 <- feat |> 
+feat_shaps_0 <- feat |> 
   rename(id_obs = label_num) |>
-  right_join(shaps, by = c("id_obs")) 
+  right_join(shap_grp_0, by = c("id_obs")) 
 ```
 
 
 ```{r}
-baseline_sex <- global_feat_0 |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         group = if_else(demo_sex == "Male", 
+baseline_sex <- feat_shaps_0 |> 
+  mutate(group = if_else(demo_sex == "Male", 
                          "advantaged group (non-Hispanic White, male, above poverty)",
                          "disadvantaged group (not White, female, below poverty)",
                          ),
@@ -252,10 +263,8 @@ baseline_sex <- global_feat_0 |>
 ```
 
 ```{r}
-baseline_race <- global_feat_0 |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         group = if_else(demo_race == "White/Caucasian", 
+baseline_race <- feat_shaps_0 |> 
+  mutate(group = if_else(demo_race == "White/Caucasian", 
                          "advantaged group (non-Hispanic White, male, above poverty)",
                          "disadvantaged group (not White, female, below poverty)",
                          ),
@@ -283,10 +292,8 @@ baseline_race <- global_feat_0 |>
 ```
 
 ```{r}
-baseline_income <- global_feat_0 |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         group = if_else(demo_income >= 1560, 
+baseline_income <- feat_shaps_0 |> 
+  mutate(group = if_else(demo_income >= 1560, 
                          "advantaged group (non-Hispanic White, male, above poverty)",
                          "disadvantaged group (not White, female, below poverty)",
                          ),
@@ -329,21 +336,17 @@ feat_336 <- read_csv(here::here(path_processed,
          demo_income, demo_race) |> 
   arrange(label_num) 
 
-shaps_336 <- read_rds(here::here(path_models_lag, "archive/outer_shapsgrp_1day_336_v3_nested_main.rds"))
 
-
-global_feat_336 <- feat_336 |> 
+feat_shaps_336 <- feat_336 |> 
   rename(id_obs = label_num) |>
-  right_join(shaps_336, by = c("id_obs")) 
+  right_join(shap_grp_336, by = c("id_obs")) 
 ```
 
 
 
 ```{r}
-twoweek_sex <- global_feat_336 |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         group = if_else(demo_sex == "Male", 
+twoweek_sex <- feat_shaps_336 |> 
+  mutate(group = if_else(demo_sex == "Male", 
                          "advantaged group (non-Hispanic White, male, above poverty)",
                          "disadvantaged group (not White, female, below poverty)",
                          ),
@@ -372,10 +375,8 @@ twoweek_sex <- global_feat_336 |>
 ```
 
 ```{r}
-twoweek_race <- global_feat_336 |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         group = if_else(demo_race == "White/Caucasian", 
+twoweek_race <- feat_shaps_336 |> 
+  mutate(group = if_else(demo_race == "White/Caucasian", 
                          "advantaged group (non-Hispanic White, male, above poverty)",
                          "disadvantaged group (not White, female, below poverty)",
                          ),
@@ -403,9 +404,7 @@ twoweek_race <- global_feat_336 |>
 
 ```{r}
 twoweek_income <- global_feat_336 |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         group = if_else(demo_income >= 1560, 
+  mutate(group = if_else(demo_income >= 1560, 
                          "advantaged group (non-Hispanic White, male, above poverty)",
                          "disadvantaged group (not White, female, below poverty)",
                          ),

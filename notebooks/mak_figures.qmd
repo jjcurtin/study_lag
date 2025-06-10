@@ -46,15 +46,28 @@ ci <- read_csv(here::here(path_models_lag, "pp_perf_tibble.csv"),
   mutate(model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"),
                         labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
 
-global_all <- read_rds(here::here(path_models_lag, "archive/shap_global_all.rds")) |> 
+
+shap_grp_0 <- read_rds(here::here(path_models_lag, 
+                      "final_shapsgrp_kfold_2_x_5_1day_0_v3_kfold_strat_lh_final.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
    mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-          variable_grp = reorder(variable_grp, mean_value, sum),
-          model = factor(model, levels = c("336 lag", "168 lag", "72 lag", "24 lag", "0 lag"),
-                         labels = c("2 weeks", "1 week", "3 days", "1 day", "No lag" ))) |> 
-  filter(model %in% c("2 weeks", "No lag"))
+         variable_grp = factor(variable_grp, levels = shap_levels))  
 
-shap_levels <- global_all |>
+shap_grp_336 <- read_rds(here::here(path_models_lag, 
+                      "final_shapsgrp_kfold_2_x_5_1day_336_v3_kfold_strat_lh_final.rds")) |> 
+   filter(str_detect(variable_grp, "EMA")) |> 
+  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
+         variable_grp = factor(variable_grp, levels = shap_levels))  
+
+shap_global <- shap_grp_0 |> 
+  mutate(model = "No lag") |> 
+  bind_rows(shap_grp_336 |> 
+              mutate(model = "2 weeks")) |> 
+  mutate(model = factor(model, levels = c("2 weeks", "No lag" ))) |> 
+  group_by(variable_grp, model) |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop")
+
+shap_levels <- shap_global |>
   mutate(variable_grp = reorder(variable_grp, mean_value, sum)) |>
   pull(variable_grp) |>
   levels()
@@ -101,7 +114,8 @@ pp_tidy |>
 ## Figure 3: Global and Local Shapley Plots
 
 ```{r}
-global_panel <- global_all |>
+global_panel <- shap_global |>
+  mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |> 
   ggplot() +
   geom_bar(aes(x = variable_grp, y = mean_value, fill = model), 
            stat = "identity", position = "dodge") +
@@ -117,29 +131,20 @@ global_panel <- global_all |>
 ```
 
 ```{r}
-shap_feat_0 <- read_rds(here::here(path_models_lag, 
-                                   "archive/outer_shapsgrp_1day_0_v3_nested_main.rds")) |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels)) |> 
+shap_grp_0_sum <- shap_grp_0 |> 
   group_by(variable_grp) |> 
-  summarize(min(value), max(value)) |> 
+  summarize(min = min(value), max = max(value)) |> 
   mutate(model = "No lag")
 
-shap_feat_336 <- read_rds(here::here(path_models_lag, 
-                                     "archive/outer_shapsgrp_1day_336_v3_nested_main.rds")) |> 
-  filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels))  |> 
+shap_grp_336_sum <- shap_grp_336 |> 
   group_by(variable_grp) |> 
-  summarize(min(value), max(value)) |> 
+  summarize(min = min(value), max = max(value)) |> 
   mutate(model = "2 weeks")
 
-panel_shap_local <- shap_feat_0 |>
-  bind_rows(shap_feat_336) |> 
+panel_shap_local <- shap_grp_0_sum |>
+  bind_rows(shap_grp_336_sum) |> 
   mutate(model = factor(model, levels = c("2 weeks", "No lag"))) |> 
-  rename(min = `min(value)`,
-         max = `max(value)`) |> 
+  mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |> 
   ggplot() +
   geom_segment(aes(x = variable_grp, y = min, yend = max, group = model,
                    color = model),
