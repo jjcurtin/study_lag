@@ -20,9 +20,9 @@ suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
 suppressPackageStartupMessages(library(tidyposterior))
 
-path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
-path_shared <- format_path("studydata/risk/data_processed/shared")
-path_processed <- format_path("studydata/risk/data_processed/lag")
+path_models_lag <- format_path(str_c("risk/models/lag"))
+path_shared <- format_path("risk/data_processed/shared")
+path_processed <- format_path("risk/data_processed/lag")
 
 options(knitr.kable.NA = '')
 ```

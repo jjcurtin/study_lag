@@ -31,9 +31,9 @@ library(patchwork)
 
 theme_set(theme_classic())
 
-path_models_lag <- format_path(str_c("studydata/risk/models/lag"))
-path_shared <- format_path("studydata/risk/data_processed/shared")
-path_processed <- format_path("studydata/risk/data_processed/lag")
+path_models_lag <- format_path(str_c("risk/models/lag"))
+path_shared <- format_path("risk/data_processed/shared")
+path_processed <- format_path("risk/data_processed/lag")
 ```
 
 Data for figures
@@ -45,6 +45,17 @@ ci <- read_csv(here::here(path_models_lag, "pp_perf_tibble.csv"),
                                  show_col_types = FALSE) |> 
   mutate(model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"),
                         labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
+
+preds_0 <- read_rds(here::here(path_models_lag, 
+                               "final_preds_kfold_1_x_5_1day_0_v3_strat_lh_final.rds")) 
+preds_24 <- read_rds(here::here(path_models_lag, 
+                               "final_preds_kfold_1_x_5_1day_24_v3_strat_lh_final.rds")) 
+preds_72 <- read_rds(here::here(path_models_lag, 
+                               "final_preds_kfold_1_x_5_1day_72_v3_strat_lh_final.rds")) 
+preds_168 <- read_rds(here::here(path_models_lag, 
+                               "final_preds_kfold_1_x_5_1day_168_v3_strat_lh_final.rds")) 
+preds_336 <- read_rds(here::here(path_models_lag, 
+                               "final_preds_kfold_1_x_5_1day_336_v3_strat_lh_final.rds")) 
 
 
 shap_grp_0 <- read_rds(here::here(path_models_lag, 
@@ -110,8 +121,86 @@ pp_tidy |>
   theme_classic() 
 ```
 
+## Figure 3: Calibrated Model Performance
 
-## Figure 3: Global and Local Shapley Plots
+
+```{r}
+bin_width = 0.10
+
+preds_all_logi <- preds_0 |> 
+  mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+         lapse = if_else(label == "Lapse", 1, 0)) |> 
+  mutate(model = "No lag") |> 
+  bind_rows(preds_24 |> 
+              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "1 day")) |> 
+  bind_rows(preds_72 |> 
+              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "3 days")) |> 
+  bind_rows(preds_168 |> 
+              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "1 week")) |> 
+  bind_rows(preds_336 |> 
+              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "2 weeks")) |> 
+  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
+
+preds_all_beta <- preds_0 |> 
+  mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
+         lapse = if_else(label == "Lapse", 1, 0)) |> 
+  mutate(model = "No lag") |> 
+  bind_rows(preds_24 |> 
+              mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "1 day")) |> 
+  bind_rows(preds_72 |> 
+              mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "3 days")) |> 
+  bind_rows(preds_168 |> 
+              mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "1 week")) |> 
+  bind_rows(preds_336 |> 
+              mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "2 weeks")) |> 
+  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
+```
+
+
+```{r}
+#| label: fig-cal
+#| fig-cap: "Calibration plots of predicted lapse probabilities for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted lapse probability (x-axis) is binned in deciles. Observed lapse probabilities (y-axis) represent the proportion of true lapses observed in each bin. The dashed line represents a perfectly calibrated model. Curves above the diagonal indicate underconfidence (predicted probabilities are too low), while curves below indicate overconfidence (predicted probabilities are too high). "
+#| fig-width: 8
+#| fig-height: 5
+
+preds_all_beta |> 
+  group_by(bins, model)  |> 
+  summarize(mean_lapse = mean(lapse),
+            .groups = "drop") |> 
+  mutate(bins = as.numeric(bins),
+         midpoints = bin_width/2 + bin_width * (bins - 1))  |> 
+  ggplot(data = _, aes(x = midpoints, y = mean_lapse)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dotted") +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~ model) +
+  labs(x = "Predicted Lapse Probability (bin mid-point)",
+       y = "Observed Lapse Probability",
+       title = "Beta Calibration") +
+  scale_x_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1)) +
+  scale_y_continuous(breaks = seq(0, 1, bin_width),
+                     limits = c(0, 1)) 
+```
+
+
+## Figure 4: Global and Local Shapley Plots
 
 ```{r}
 global_panel <- shap_global |>
@@ -166,7 +255,7 @@ panel_shap_local <- shap_grp_0_sum |>
 
 
 ```{r}
-#| label: fig-3
+#| label: fig-4
 #| fig-cap: "Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B displays the variation in local feature importance for the no lag and 2-week lag models. Lines start at minimum Shapley value and end at maximum Shapley value."
 #| fig-width: 8
 #| fig-height: 5

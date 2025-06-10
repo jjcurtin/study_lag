@@ -12,7 +12,7 @@ format:
 params:
   study: "lag"
   window: "1day"
-  lead: 0
+  lead: 24
   version: "v3"
   cv: "kfold"
   model: "strat_lh_final"
@@ -287,7 +287,7 @@ Check calibration
 bin_width = 0.10
 
 all |> 
-  mutate(bins = cut(prob_iso, breaks = seq(0, 1, bin_width)), 
+  mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
          lapse = if_else(label == "Lapse", 1, 0)) |> 
   group_by(bins)  |> 
   summarize(mean_lapse = mean(lapse),

@@ -224,15 +224,15 @@ We calculated Shapley values in log-odds units for binary classification models 
 
 
 ## Model Evaluation
-
 @fig-pp presents the full posterior probability distributions for auROC for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). The median auROCs from these posterior distributions were `r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_median))` (no lag), `r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_median))` (1-day lag), `r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_median))` (3-day lag), `r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_median))` (1-week lag), and `r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_median))` (2-week lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: no lag [`r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_lower))`-`r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "0 lag") |> pull(pp_upper))`], 1-day lag [`r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_lower))`-`r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "24 lag") |> pull(pp_upper))`], 3-day lag [`r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_lower))`-`r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "72 lag") |> pull(pp_upper))`], 1-week lag [`r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_lower))`-`r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "168 lag") |> pull(pp_upper))`], 2-week lag [`r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_lower))`-`r sprintf("%1.2f", test_metrics_all_pp_perf |> filter(model == "336 lag") |> pull(pp_upper))`]. 
-
-<!--KW: Add calibration plots-->
 
 
 {{< embed notebooks/mak_figures.qmd#fig-pp >}} 
 
+## Model Calibration
+Histograms of the raw predicted probabilities for the best model configuration for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag) are presented in the supplement. Models were generally well-calibrated, indicating that predicted lapse probabilities aligned closely with observed lapse rates (see @fig-cal). Calibration was strongest for the no lag and 1-day lag models. Models with longer lags (1 week and 2 weeks) showed reduced calibration accuracy, particularly at higher predicted probabilities.
 
+{{< embed notebooks/mak_figures.qmd#fig-cal >}} 
 
 ## Model Comparisons
 
@@ -252,11 +252,11 @@ We calculated Shapley values in log-odds units for binary classification models 
 
 Global feature importance is an indicator of how important a feature category was to the model's predictions, on average (i.e., across all participants and all observations). The top three globally important feature categories (i.e., highest mean |Shapley value|) for all models were past use, future efficacy, and craving. This was also consistent across demographic groups (plots of global feature importance by demographic group are availble for the no lag and 2-week lag models in the supplement). Panel A of @fig-3 shows the relative ranking of feature categories for the no lag and 2-week lag models. 
 
+<!--KW: Update Shapley results-->
 Local feature importance is an indicator of how important a feature category is at a specific prediction timepoint (i.e., for a single individual on a specific day). Local importance can be used to map feature categories onto clinical interventions and recommendations (e.g., What does this individual need right now?). Panel B of @fig-3 shows the range of local feature importance (minimum Shapley value and maximum Shapley value) for each EMA feature category for the no lag and 2-week lag models. This plot suggests that even feature categories with low global importance (e.g., past pleasant event) have a wide range of local importance values, suggesting that for some people at some moments in time these features are clinically important.
 
-{{< embed notebooks/mak_figures.qmd#fig-3 >}} 
+{{< embed notebooks/mak_figures.qmd#fig-4 >}} 
 
-<!--KW: Shapleys not yet updated-->
 
 ## Discussion
 
