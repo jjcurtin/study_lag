@@ -24,6 +24,15 @@ path_lag <- format_path("studydata/risk/data_processed/lag")
 feats_0 <- read_csv(here::here(path_lag, "features_0lag_v3.csv"),
                     show_col_types = FALSE)
 
+feats_24 <- read_csv(here::here(path_lag, "features_24lag_v3.csv"),
+                    show_col_types = FALSE)
+
+feats_72 <- read_csv(here::here(path_lag, "features_72lag_v3.csv"),
+                    show_col_types = FALSE)
+
+feats_168 <- read_csv(here::here(path_lag, "features_168lag_v3.csv"),
+                    show_col_types = FALSE)
+
 feats_336 <- read_csv(here::here(path_lag, "features_336lag_v3.csv"),
                     show_col_types = FALSE)
 
@@ -37,6 +46,18 @@ feats_336 |>
 feats_0 |> 
   left_join(strat, by = "subid") |> 
   write_csv(here::here(path_shared, "features_0lag_v3.csv"))
+
+feats_24 |> 
+  left_join(strat, by = "subid") |> 
+  write_csv(here::here(path_shared, "features_24lag_v3.csv"))
+
+feats_72 |> 
+  left_join(strat, by = "subid") |> 
+  write_csv(here::here(path_shared, "features_72lag_v3.csv"))
+
+feats_168 |> 
+  left_join(strat, by = "subid") |> 
+  write_csv(here::here(path_shared, "features_168lag_v3.csv"))
 ```
 
 
