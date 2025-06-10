@@ -18,7 +18,7 @@ Information on this issue below. Still unclear why this error is not occurring w
 
 ### Background
 
-This error usually comes from the beta calibration fitting procedure failing during the optimization step. Specifically, it typically arises during root-finding or optimization when the method being used expects the function values at the endpoints of the interval to have opposite signs, but they don’t.
+This error usually comes from the beta calibration fitting procedure failing during the optimization step. Specifically, it typically arises during root-finding or optimization when the method being used expects the function values at the endpoints of the interval to have opposite signs, but they don't.
 
 This is often seen when:
 
@@ -39,6 +39,7 @@ Effectiveness of different calibrations in 0 lag model - *Beta clearly seems to 
 ```{r}
 #| code-fold: true
 #| message: false
+#| warning: false
 
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(tidymodels))
@@ -164,7 +165,7 @@ Odd truncated distribution in split 1 and 3 - *May explain weird peaks seeing in
 
 Beta callibration may not work well when there are sharp spikes at 0 or 1.
 
-- Beta calibration models the relationship between predicted probabilities and actual outcomes by fitting a logistic function to the CDF of a Beta distribution. The beta distribution is defined on the open interval (0, 1) — it cannot handle exact values of 0 or 1.
+- Beta calibration models the relationship between predicted probabilities and actual outcomes by fitting a logistic function to the CDF of a Beta distribution. The beta distribution is defined on the open interval (0, 1) it cannot handle exact values of 0 or 1.
 - The logit function becomes unstable at 0 or 1.
 - The optimization routines used often rely on the function having different signs at the endpoints. When all probabilities are near 0 or 1, the function becomes flat or undefined, leading to the error `f() values at end points not of opposite sign`.
 
@@ -287,7 +288,9 @@ model_cal <- fit_best_model(config_best, feat = feat_cal_in, "classification")
 # beta calibration
 beta <- predict(model_cal, feat_cal_out,
                 type = "prob") |>
-  mutate(truth = feat_cal_out$y) |>
+  mutate(truth = feat_cal_out$y) 
+
+beta <- beta |>
   cal_estimate_beta(truth = truth,
                     estimate = dplyr::starts_with(".pred_"),
                     smooth = TRUE)
@@ -308,7 +311,14 @@ Formula is same formula from betacal package.
 
 ```{r}
 library(betacal)
-cal_model <- betacal::beta_calibration(feat_cal_out$.pred_yes, feat_cal_out$y, parameters = "abm")
+
+beta <- predict(model_cal, feat_cal_out,
+                type = "prob") |>
+  
+  mutate(truth = feat_cal_out$y) 
+
+cal_model <- betacal::beta_calibration(beta$.pred_yes, beta$truth, parameters = "abm")
+
 # Extract parameters
 a <- cal_model$map[1]
 b <- cal_model$map[2]
@@ -319,7 +329,7 @@ logit_calibrated <- a * log(preds_prob$.pred_yes) + b * log(1 - preds_prob$.pred
 beta_d_out <- 1 / (1 + exp(-logit_calibrated))
 ```
 
-
+*Need Yes as second factor level?*
 ```{r}
 hist(beta_d_out)
 ```
@@ -410,7 +420,13 @@ fit_predict_eval <- function(split_num, splits, configs_best,
   #                     smooth = TRUE)
   # preds_prob_beta <- preds_prob |>
   #   cal_apply(beta)
-  cal_model <- betacal::beta_calibration(feat_cal_out$.pred_yes, feat_cal_out$y, parameters = "abm")
+  
+  beta <- predict(model_cal, feat_cal_out,
+                type = "prob") |>
+  mutate(truth = feat_cal_out$y) 
+
+  cal_model <- betacal::beta_calibration(beta$.pred_yes, feat_cal_out$y, parameters = "abm")
+
     # Extract parameters
     a <- cal_model$map[1]
     b <- cal_model$map[2]

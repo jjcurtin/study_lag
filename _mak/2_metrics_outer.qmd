@@ -10,13 +10,17 @@ format:
   html:
     embed-resources: true
 params:
+  
   study: "lag"
   window: "1day"
   lead: 168
   version: "v3"
   cv: "nested"
   model: "strat_lh"
+<<<<<<< HEAD
+=======
 
+>>>>>>> c71443ec201fcb87f473176bd76f9cfcd963f59a
 editor_options: 
   chunk_output_type: console
 ---
@@ -213,7 +217,7 @@ batch_names <- batch_names[str_detect(batch_names, "train") &
                            str_detect(batch_names, 
                                       str_c(as.character(lead), "lag"))]
   
-batch_name <- batch_names[1] # can source any batch given assumptions above
+batch_name <- batch_names[2] # can source any batch given assumptions above
 path_batch <- here::here(path_input, batch_name)
 source(here::here(path_batch, "input", "training_controls.R"))
 source(here::here(path_batch, "input", "fun_chtc.R"))
@@ -238,7 +242,6 @@ if(!file.exists(here::here(path_models, str_c("outer_preds_",
   } else {
     d <- read_rds(here::here(path_batch, "input", fn))
   }
-  
   
 
   # Read in lapse_strat.csv if stratifying
