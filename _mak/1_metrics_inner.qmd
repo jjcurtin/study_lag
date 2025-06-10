@@ -12,11 +12,11 @@ format:
 params:
   study: "lag"
   window: "1day"
-  lead: 168
+  lead: 336
   version: "v3"
-  cv: "nested"
+  cv: "kfold"
   algorithms: "all"   # "all" or name of specific algorithm
-  model: "strat_lh" # "main" or "baseline"
+  model: "strat_lh_final" # "main" or "baseline"
 editor_options: 
   chunk_output_type: console
 ---
