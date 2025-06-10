@@ -1,0 +1,42 @@
+---
+title: "Make features with strat var"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+editor_options: 
+  chunk_output_type: console
+format:
+  html:
+    embed-resources: true
+---
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
+suppressPackageStartupMessages(library(tidyposterior))
+library(kableExtra)
+
+
+path_shared <- format_path("studydata/risk/data_processed/shared")
+path_lag <- format_path("studydata/risk/data_processed/lag")
+```
+
+```{r}
+feats_0 <- read_csv(here::here(path_lag, "features_0lag_v3.csv"),
+                    show_col_types = FALSE)
+
+feats_336 <- read_csv(here::here(path_lag, "features_336lag_v3.csv"),
+                    show_col_types = FALSE)
+
+strat <- read_csv(here::here(path_shared, "strat_lh.csv"),
+                    show_col_types = FALSE)
+
+feats_336 |> 
+  left_join(strat, by = "subid") |> 
+  write_csv(here::here(path_shared, "features_336lag_v3.csv"))
+
+feats_0 |> 
+  left_join(strat, by = "subid") |> 
+  write_csv(here::here(path_shared, "features_0lag_v3.csv"))
+```
+
+

@@ -48,10 +48,10 @@ source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true
 # SET GLOBAL PARAMETERS--------------------
 study <- "lag"
 window <- "1day"
-lead <- 336
+lead <- 0
 version <- "v3" #feature version (v1 = 24 hour fence, v2 = 6 hour fence, v3 = 1day/24 hour fence)
 algorithm <- "xgboost"
-model <- "test"
+model <- "strat_lh_final"
 
 feature_set <- c("all") # EMA Features set names
 data_trn <- str_c("features_", lead, "lag_", version, ".csv")  
@@ -59,7 +59,7 @@ data_trn <- str_c("features_", lead, "lag_", version, ".csv")
 seed_splits <- 102030
 
 ml_mode <- "classification"   # regression or classification
-configs_per_job <- 50 # number of model configurations that will be fit/evaluated within each CHTC
+configs_per_job <- 25 # number of model configurations that will be fit/evaluated within each CHTC
 
 # RESAMPLING FOR OUTCOME-----------------------------------
 # note that ratio is under_ratio, which is used by downsampling as is
@@ -86,10 +86,10 @@ y_level_neg <- "no"
 
 
 # CV SETTINGS---------------------------------
-cv_resample_type <- "nested" # can be boot, kfold, or nested
-cv_resample = NULL # can be repeats_x_folds (e.g., 1_x_10, 10_x_10) or number of bootstraps (e.g., 100)
-cv_inner_resample <- "2_x_5" # can also be a single number for bootstrapping (i.e., 100)
-cv_outer_resample <- "6_x_5" # outer resample will always be kfold
+cv_resample_type <- "kfold" # can be boot, kfold, or nested
+cv_resample = "2_x_5" # can be repeats_x_folds (e.g., 1_x_10, 10_x_10) or number of bootstraps (e.g., 100)
+cv_inner_resample <- NULL # can also be a single number for bootstrapping (i.e., 100)
+cv_outer_resample <- NULL # outer resample will always be kfold
 cv_group <- "subid" # set to NULL if not grouping
 cv_strat <- TRUE
 
@@ -132,7 +132,7 @@ hp2_nnet <- seq(0, 0.1, length.out = 15) # penalty
 hp3_nnet <- seq(5, 30, length.out = 5) # hidden units
 
 # FORMAT DATA------
-format_data <- function (df, lapse_strat = NULL){
+format_data <- function (df){
   
   df <- df |> 
     rename(y = !!y_col_name) |> 
