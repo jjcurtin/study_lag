@@ -229,10 +229,7 @@ We calculated Shapley values in log-odds units for binary classification models 
 
 {{< embed notebooks/mak_figures.qmd#fig-pp >}} 
 
-## Model Calibration
-Histograms of the raw predicted probabilities for the best model configuration for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag) are presented in the supplement. Models were generally well-calibrated, indicating that predicted lapse probabilities aligned closely with observed lapse rates (see @fig-cal). Calibration was strongest for the no lag and 1-day lag models. Models with longer lags (1 week and 2 weeks) showed reduced calibration accuracy, particularly at higher predicted probabilities.
 
-{{< embed notebooks/mak_figures.qmd#fig-cal >}} 
 
 ## Model Comparisons
 
@@ -240,13 +237,19 @@ Histograms of the raw predicted probabilities for the best model configuration f
 
 {{< embed notebooks/mak_tables.qmd#tbl-model >}} 
 
-
 ## Fairness Analyses
 
 @tbl-fairness presents the median difference in auROC, 95% Bayesian CI, and posterior probability that the auROC difference was greater than 0 for the three fairness contrasts: race/ethnicity (Non-Hispanic White; *N* = 131 vs. not White; *N* = 20), sex at birth (male; *N* = 77 vs. female; *N* = 74), and income (above poverty; *N* = 102 vs. below poverty; *N* = 49). Median auROC differences greater than 0 indicate the model, on average, performed better for the advantaged group (male, non-Hispanic White, and above poverty) compared to the non-advantaged group (female, not White, below poverty). In @tbl-fairness we present fairness analyses for our baseline model (no lag) and for our longest lagged model (2-week lag), as this is likely the most clinically useful lagged model for providing advanced warning of lapse risk. Fairness analyses for all five models are available in the supplement. There was strong evidence (probabilities > .81) that our models performed better for the advantaged groups compared to the non-advantaged groups. On average, across all five models, there was a median decrease in auROC of `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median) |>  abs()) |> median()` (range `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median)) |> min()`-`r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "non-hispanic white vs not white") |> pull(median)) |> max()`) for participants who were not White compared to non-Hispanic White participants. On average, across all five models, there was a median decrease in auROC of `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> median()` (range `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> min()`-`r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "male vs female") |> pull(median)) |> max()`) for female participants compared to male participants. On average, across all five models, there was a median decrease in auROC of `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> median()` (range `r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> min()`-`r sprintf("%1.2f", pp_dem_contrast |> filter(contrast == "above poverty vs below poverty") |> pull(median)) |> max()`) for participants below the federal poverty line compared to participants above the federal poverty line. The proportion of positive lapse labels over all labels (lapse and no lapse) for each demographic subgroup were relatively consistent across groups: race/ethnicity (6%, not White vs. 8%, non-Hispanic White), income (12%, below poverty vs. 7%, above poverty), sex at birth (9%, female vs. 7%, male).
 
 
 {{< embed notebooks/mak_tables.qmd#tbl-fairness >}} 
+
+## Model Calibration
+
+Histograms of the raw predicted probabilities for the best model configuration for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag) are presented in the supplement. Models were generally well-calibrated, indicating that predicted lapse probabilities aligned closely with observed lapse rates (see @fig-cal). Calibration was strongest for the no lag and 1-day lag models. Models with longer lags (1 week and 2 weeks) showed reduced calibration accuracy, particularly at higher predicted probabilities.
+
+{{< embed notebooks/mak_figures.qmd#fig-cal >}} 
+
 
 ## Feature Importance
 
