@@ -12,7 +12,7 @@ format:
 params:
   study: "lag"
   window: "1day"
-  lead: 0
+  lead: 168
   version: "v3"
   cv: "kfold"
   model: "strat_lh_final"
@@ -300,6 +300,7 @@ shaps_out_grp <- all |>
                                 "past/future risky situation (EMA item)",
                                 variable_grp),
          variable_grp = if_else(str_detect(variable_grp, "ema_9"), 
+                                "past/future stressful event (EMA item)",
                                 variable_grp),
          variable_grp = if_else(str_detect(variable_grp, "ema_10"), 
                                 "future efficacy (EMA item)", 

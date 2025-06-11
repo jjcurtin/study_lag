@@ -59,16 +59,14 @@ preds_336 <- read_rds(here::here(path_models_lag,
 
 
 shap_grp_0 <- read_rds(here::here(path_models_lag, 
-                      "final_shapsgrp_kfold_2_x_5_1day_0_v3_kfold_strat_lh_final.rds")) |> 
+                      "final_shapsgrp_kfold_1_x_5_1day_0_v3_strat_lh_final.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
-   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels))  
+   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"))  
 
 shap_grp_336 <- read_rds(here::here(path_models_lag, 
-                      "final_shapsgrp_kfold_2_x_5_1day_336_v3_kfold_strat_lh_final.rds")) |> 
+                      "final_shapsgrp_kfold_1_x_5_1day_336_v3_strat_lh_final.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels))  
+  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"))  
 
 shap_global <- shap_grp_0 |> 
   mutate(model = "No lag") |> 
@@ -127,16 +125,6 @@ pp_tidy |>
 ```{r}
 bin_width = 0.10
 
-preds_all_logi <- preds_0 |> 
-  mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
-         lapse = if_else(label == "Lapse", 1, 0)) |> 
-  mutate(model = "No lag") |> 
-  bind_rows(preds_336 |> 
-              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("No lag",  "2 weeks")))
-
 preds_all_beta <- preds_0 |> 
   mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
          lapse = if_else(label == "Lapse", 1, 0)) |> 
@@ -147,15 +135,15 @@ preds_all_beta <- preds_0 |>
               mutate(model = "2 weeks")) |> 
   mutate(model = factor(model, levels = c("No lag", "2 weeks")))
 
-preds_all_raw <- preds_0 |> 
-  mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
-         lapse = if_else(label == "Lapse", 1, 0)) |> 
-  mutate(model = "No lag") |> 
-  bind_rows(preds_336 |> 
-              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("No lag",  "2 weeks")))
+# preds_all_raw <- preds_0 |> 
+#   mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
+#          lapse = if_else(label == "Lapse", 1, 0)) |> 
+#   mutate(model = "No lag") |> 
+#   bind_rows(preds_336 |> 
+#               mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
+#                      lapse = if_else(label == "Lapse", 1, 0)) |> 
+#               mutate(model = "2 weeks")) |> 
+#   mutate(model = factor(model, levels = c("No lag",  "2 weeks")))
 ```
 
 
@@ -177,8 +165,7 @@ preds_all_beta |>
   geom_point() +
   facet_wrap(~ model) +
   labs(x = "Predicted Lapse Probability (bin mid-point)",
-       y = "Observed Lapse Probability",
-       title = "Beta Calibration") +
+       y = "Observed Lapse Probability") +
   scale_x_continuous(breaks = seq(0, 1, bin_width),
                      limits = c(0, 1)) +
   scale_y_continuous(breaks = seq(0, 1, bin_width),

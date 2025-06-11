@@ -168,24 +168,24 @@ preds_all |>
 ```{r}
 bin_width = 0.10
 
-preds_all_logi <- preds_0 |> 
-  mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+preds_all_raw <- preds_0 |> 
+  mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
          lapse = if_else(label == "Lapse", 1, 0)) |> 
   mutate(model = "No lag") |> 
   bind_rows(preds_24 |> 
-              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
               mutate(model = "1 day")) |> 
   bind_rows(preds_72 |> 
-              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
               mutate(model = "3 days")) |> 
   bind_rows(preds_168 |> 
-              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
               mutate(model = "1 week")) |> 
   bind_rows(preds_336 |> 
-              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
               mutate(model = "2 weeks")) |> 
   mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
@@ -208,28 +208,6 @@ preds_all_beta <- preds_0 |>
               mutate(model = "1 week")) |> 
   bind_rows(preds_336 |> 
               mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
-
-preds_all_raw <- preds_0 |> 
-  mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
-         lapse = if_else(label == "Lapse", 1, 0)) |> 
-  mutate(model = "No lag") |> 
-  bind_rows(preds_24 |> 
-              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "1 day")) |> 
-  bind_rows(preds_72 |> 
-              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "3 days")) |> 
-  bind_rows(preds_168 |> 
-              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "1 week")) |> 
-  bind_rows(preds_336 |> 
-              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
               mutate(model = "2 weeks")) |> 
   mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
@@ -285,30 +263,55 @@ preds_all_beta |>
                      limits = c(0, 1)) 
 ```
 
-
-
-### Figure S3: Global Shapley Plots for Baseline and 2-Week Lag Model by Demographic Group
-
+### Figure S3: Global Shapley Plots for all 5 Models
 
 ```{r}
 
 shap_grp_0 <- read_rds(here::here(path_models_lag, 
-                      "final_shapsgrp_kfold_2_x_5_1day_0_v3_kfold_strat_lh_final.rds")) |> 
+                      "final_shapsgrp_kfold_1_x_5_1day_0_v3_strat_lh_final.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
    mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels))  
+         variable_grp = factor(variable_grp, levels = shap_levels)) 
+
+
+shap_grp_24 <- read_rds(here::here(path_models_lag, 
+                      "final_shapsgrp_kfold_1_x_5_1day_24_v3_strat_lh_final.rds")) |> 
+   filter(str_detect(variable_grp, "EMA")) |> 
+   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
+         variable_grp = factor(variable_grp, levels = shap_levels)) 
+
+
+shap_grp_72 <- read_rds(here::here(path_models_lag, 
+                      "final_shapsgrp_kfold_1_x_5_1day_72_v3_strat_lh_final.rds")) |> 
+   filter(str_detect(variable_grp, "EMA")) |> 
+   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
+         variable_grp = factor(variable_grp, levels = shap_levels)) 
+
+
+shap_grp_168 <- read_rds(here::here(path_models_lag, 
+                      "final_shapsgrp_kfold_1_x_5_1day_168_v3_strat_lh_final.rds")) |> 
+   filter(str_detect(variable_grp, "EMA")) |> 
+   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
+         variable_grp = factor(variable_grp, levels = shap_levels)) 
 
 shap_grp_336 <- read_rds(here::here(path_models_lag, 
-                      "final_shapsgrp_kfold_2_x_5_1day_336_v3_kfold_strat_lh_final.rds")) |> 
+                      "final_shapsgrp_kfold_1_x_5_1day_336_v3_strat_lh_final.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
          variable_grp = factor(variable_grp, levels = shap_levels))  
 
 shap_global <- shap_grp_0 |> 
   mutate(model = "No lag") |> 
+  bind_rows(shap_grp_24 |> 
+              mutate(model = "1 day")) |>
+  bind_rows(shap_grp_72 |> 
+              mutate(model = "3 days")) |>
+  bind_rows(shap_grp_168 |> 
+              mutate(model = "1 week")) |>
   bind_rows(shap_grp_336 |> 
               mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("2 weeks", "No lag" ))) |> 
+  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days",
+                                          "1 week", "2 weeks"))) |> 
   group_by(variable_grp, model) |> 
   summarize(mean_value = mean(abs(value)), .groups = "drop")
 
@@ -319,6 +322,28 @@ shap_levels <- shap_global |>
 ```
 
 ```{r}
+shap_global |>
+  mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |> 
+  ggplot() +
+  geom_bar(aes(x = variable_grp, y = mean_value), 
+           stat = "identity", position = "dodge",
+           color = "black", fill = "light grey") +
+  labs(y = "Mean(|Shapley Value|)",
+       x = NULL,
+       fill = NULL) +
+  facet_wrap(~model, nrow = 1) +
+  theme(axis.text=element_text(size=9.5),
+        legend.key.size = unit(0.25, "cm"),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+        legend.position = "right") +
+  coord_flip()
+```
+
+
+### Figure S4: Global Shapley Plots for Baseline and 2-Week Lag Model by Demographic Group
+
+
+```{r}
 feat_0 <- read_csv(here::here(path_processed, 
                             "features_0lag_v3.csv"),
                  col_types = cols()) |> 
@@ -327,7 +352,7 @@ feat_0 <- read_csv(here::here(path_processed,
   arrange(label_num) 
 
 
-feat_shaps_0 <- feat |> 
+feat_shaps_0 <- feat_0 |> 
   rename(id_obs = label_num) |>
   right_join(shap_grp_0, by = c("id_obs")) 
 ```
@@ -505,7 +530,7 @@ twoweek_race <- feat_shaps_336 |>
 ```
 
 ```{r}
-twoweek_income <- global_feat_336 |> 
+twoweek_income <- feat_shaps_336 |> 
   mutate(group = if_else(demo_income >= 1560, 
                          "advantaged group (non-Hispanic White, male, above poverty)",
                          "disadvantaged group (not White, female, below poverty)",
