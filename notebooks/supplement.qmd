@@ -270,35 +270,30 @@ preds_all_beta |>
 shap_grp_0 <- read_rds(here::here(path_models_lag, 
                       "final_shapsgrp_kfold_1_x_5_1day_0_v3_strat_lh_final.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
-   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels)) 
+   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)")) 
 
 
 shap_grp_24 <- read_rds(here::here(path_models_lag, 
                       "final_shapsgrp_kfold_1_x_5_1day_24_v3_strat_lh_final.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
-   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels)) 
+   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)")) 
 
 
 shap_grp_72 <- read_rds(here::here(path_models_lag, 
                       "final_shapsgrp_kfold_1_x_5_1day_72_v3_strat_lh_final.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
-   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels)) 
+   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)")) 
 
 
 shap_grp_168 <- read_rds(here::here(path_models_lag, 
                       "final_shapsgrp_kfold_1_x_5_1day_168_v3_strat_lh_final.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
-   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels)) 
+   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)")) 
 
 shap_grp_336 <- read_rds(here::here(path_models_lag, 
                       "final_shapsgrp_kfold_1_x_5_1day_336_v3_strat_lh_final.rds")) |> 
    filter(str_detect(variable_grp, "EMA")) |> 
-  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"),
-         variable_grp = factor(variable_grp, levels = shap_levels))  
+  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"))  
 
 shap_global <- shap_grp_0 |> 
   mutate(model = "No lag") |> 
