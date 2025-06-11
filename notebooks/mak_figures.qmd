@@ -161,7 +161,7 @@ preds_all_raw <- preds_0 |>
 
 ```{r}
 #| label: fig-cal
-#| fig-cap: "Calibration plots of predicted lapse probabilities for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted lapse probability (x-axis) is binned in deciles. Observed lapse probabilities (y-axis) represent the proportion of true lapses observed in each bin. The dashed line represents a perfectly calibrated model. "
+#| fig-cap: "Calibration plots of beta-calibrated lapse probabilities for the baseline (no lag) and 2-week lag models. Predicted lapse probability (x-axis) is binned in deciles. Observed lapse probabilities (y-axis) represent the proportion of true lapses observed in each bin. The dashed line represents a perfectly calibrated model. "
 #| fig-width: 8
 #| fig-height: 5
 
