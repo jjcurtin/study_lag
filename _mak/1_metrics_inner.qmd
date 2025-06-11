@@ -67,8 +67,8 @@ Absolute paths
 
 source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
 
-path_input <- format_path(str_c("studydata/risk/chtc/", study))
-path_models <- format_path(str_c("studydata/risk/models/", study))
+path_input <- format_path(str_c("risk/chtc/", study))
+path_models <- format_path(str_c("risk/models/", study))
 ```
 
 Chunk Defaults

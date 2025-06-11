@@ -1,5 +1,5 @@
 ---
-title: "Fits and evaluates final model selected from inner resampling method on all data"
+title: "Fits final model selected from inner resampling method on all data and calculates probabilities"
 author: "Kendra Wyant and John Curtin"
 date: "`r lubridate::today()`"
 output: 
@@ -12,7 +12,7 @@ format:
 params:
   study: "lag"
   window: "1day"
-  lead: 24
+  lead: 72
   version: "v3"
   cv: "kfold"
   model: "strat_lh_final"
@@ -29,9 +29,7 @@ This script fits and evaluates final model selected from inner resampling method
 
 This script creates the following files in the `models` folder
 
-* outer_preds_*.rds
-* outer_shaps_*.rds
-* outer_shapsgrp_*.rds
+* final_preds_*.rds
 
 
 
@@ -217,9 +215,8 @@ ASSUMPTIONS:
 * format_data() is same for all batches
 * Assumes full recipe is for all algorithms is present in all training controls with branches/ifs to select proper algorithm specific steps
 
-Map over all outer splits to get predicted probabilities and SHAPs from held out outer folds.  Then save predicted probs and SHAPs
+Map over all outer splits to get predicted probabilities from held out folds.  Then save predicted probs
 
-NOTE: Delete `outer_metrics_*` or this code chunk won't run!
 ```{r}
 # can source any training control given assumptions above
 batch_names <- list.dirs(path_input, full.names = FALSE, recursive = FALSE)

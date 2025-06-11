@@ -131,51 +131,37 @@ preds_all_logi <- preds_0 |>
   mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
          lapse = if_else(label == "Lapse", 1, 0)) |> 
   mutate(model = "No lag") |> 
-  bind_rows(preds_24 |> 
-              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "1 day")) |> 
-  bind_rows(preds_72 |> 
-              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "3 days")) |> 
-  bind_rows(preds_168 |> 
-              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "1 week")) |> 
   bind_rows(preds_336 |> 
               mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
               mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
+  mutate(model = factor(model, levels = c("No lag",  "2 weeks")))
 
 preds_all_beta <- preds_0 |> 
   mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
          lapse = if_else(label == "Lapse", 1, 0)) |> 
-  mutate(model = "No lag") |> 
-  bind_rows(preds_24 |> 
-              mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "1 day")) |> 
-  bind_rows(preds_72 |> 
-              mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "3 days")) |> 
-  bind_rows(preds_168 |> 
-              mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "1 week")) |> 
+  mutate(model = "No lag") |>  
   bind_rows(preds_336 |> 
               mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
               mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
+  mutate(model = factor(model, levels = c("No lag", "2 weeks")))
+
+preds_all_raw <- preds_0 |> 
+  mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
+         lapse = if_else(label == "Lapse", 1, 0)) |> 
+  mutate(model = "No lag") |> 
+  bind_rows(preds_336 |> 
+              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "2 weeks")) |> 
+  mutate(model = factor(model, levels = c("No lag",  "2 weeks")))
 ```
 
 
 ```{r}
 #| label: fig-cal
-#| fig-cap: "Calibration plots of predicted lapse probabilities for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted lapse probability (x-axis) is binned in deciles. Observed lapse probabilities (y-axis) represent the proportion of true lapses observed in each bin. The dashed line represents a perfectly calibrated model. Curves above the diagonal indicate underconfidence (predicted probabilities are too low), while curves below indicate overconfidence (predicted probabilities are too high). "
+#| fig-cap: "Calibration plots of predicted lapse probabilities for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted lapse probability (x-axis) is binned in deciles. Observed lapse probabilities (y-axis) represent the proportion of true lapses observed in each bin. The dashed line represents a perfectly calibrated model. "
 #| fig-width: 8
 #| fig-height: 5
 
