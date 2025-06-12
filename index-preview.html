@@ -9,7 +9,7 @@
     <meta name="author" content="Gaylen E. Fronk">
     <meta name="author" content="Jiachen Yu">
     <meta name="author" content="John J. Curtin">
-    <meta name="dcterms.date" content="2025-06-11">
+    <meta name="dcterms.date" content="2025-06-12">
     <meta name="keywords" content="Substance use disorders, Precision mental health">
 
     <title>Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models</title>
@@ -194,10 +194,10 @@
 <meta name="citation_author" content="Gaylen E. Fronk">
 <meta name="citation_author" content="Jiachen Yu">
 <meta name="citation_author" content="John J. Curtin">
-<meta name="citation_publication_date" content="2025-06-11">
-<meta name="citation_cover_date" content="2025-06-11">
+<meta name="citation_publication_date" content="2025-06-12">
+<meta name="citation_cover_date" content="2025-06-12">
 <meta name="citation_year" content="2025">
-<meta name="citation_online_date" content="2025-06-11">
+<meta name="citation_online_date" content="2025-06-12">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Disparities in the Treatment of Substance Use Disorders: Does Where You Live Matter?;,citation_abstract=This study focused on (1) whether disparities in timely receipt of substance use services can be explained in part by the characteristics of the community in which the clients reside and (2) whether the effect of community characteristics on timely receipt of services was similar across racial/ethnic groups. The sample was composed of adults receiving publicly funded outpatient treatment in Washington State. Treatment data were linked to data from the US census. The outcome studied was “Initiation and Engagement” in treatment (IET), a measure noting timely receipt of services at the beginning of treatment. Community characteristics studied included community level economic disadvantage and concentration of American Indian, Latino, and Black residents in the community. Black and American Indian clients were less likely to initiate or engage in treatment compared to non-Latino white clients, and American Indian clients living in economically disadvantaged communities were at even greater risk of not initiating treatment. Community economic disadvantage and racial/ethnic makeup of the community were associated with treatment initiation, but not engagement, although they did not entirely explain the disparities found in IET.;,citation_author=Andrea Acevedo;,citation_author=Lee Panas;,citation_author=Deborah Garnick;,citation_author=Dolores Acevedo-Garcia;,citation_author=Jennifer Miles;,citation_author=Grant Ritter;,citation_author=Kevin Campbell;,citation_publication_date=2018-10;,citation_cover_date=2018-10;,citation_year=2018;,citation_issue=4;,citation_doi=10.1007/s11414-018-9586-y;,citation_issn=1556-3308;,citation_volume=45;,citation_language=en-US;,citation_journal_title=The Journal of Behavioral Health Services &amp;amp;amp; Research;">
 <meta name="citation_reference" content="citation_title=ARDI Alcohol-Attributable Deaths, US  CDC;,citation_publisher=https://nccd.cdc.gov/DPH_ARDI/Default/Report.aspx?T=AAM&amp;amp;amp;P=F1F85724-AEC5-4421-BC88-3E8899866842&amp;R=EACE3036-77C9-4893-9F93-17A5E1FEBE01&amp;M=7F40785C-D481-440A-970F-50EFBD21B35B&amp;F=&amp;D=;">
@@ -353,7 +353,7 @@
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">June 11, 2025</p>
+              <p class="date">June 12, 2025</p>
             </div>
           </div>
           
@@ -1561,7 +1561,7 @@ Figure&nbsp;4: Panel A displays the global importance (mean |Shapley value|) for
 <section id="model-characterization-1" class="level2">
 <h2 class="anchored" data-anchor-id="model-characterization-1">Model Characterization</h2>
 <p>After applying a beta transformation to our predicted probabilities, we found that our models were generally well calibrated. Well-calibrated probabilities are important because they indicate that the predicted probability aligns closely with the true likelihood of an outcome (i.e., a lapse). Our baseline (no lag) model had excellent calibration. However, the calibration plots suggest that with a longer lag time of 2 weeks, the model tends to overpredict the likelihood of lapses at higher predicted probabilities.</p>
-<p>This pattern may not be necessarily problematic. Research suggests that people often struggle to interpret probabilistic feedback, especially when it’s provided in raw numerical form <span class="citation" data-cites="zikmund-fisherRightToolWhat2013 fagerlinMakingNumbersMatter2007 zipkinEvidencebasedRiskCommunication2014">(<a href="#ref-zikmund-fisherRightToolWhat2013" role="doc-biblioref">Zikmund-Fisher 2013</a>; <a href="#ref-fagerlinMakingNumbersMatter2007" role="doc-biblioref">Fagerlin et al. 2007</a>; <a href="#ref-zipkinEvidencebasedRiskCommunication2014" role="doc-biblioref">Zipkin et al. 2014</a>)</span>. As a result, it may be more effective to communicate risk using coarser categoriesc(e.g., low, medium, or high risk) or through relative changes in risk (e.g., “Your risk of lapse is higher this week compared to last week”). These forms of feedback may be less sensitive to minor miscalibrations at the extremes.</p>
+<p>This pattern may not be necessarily problematic. Research suggests that people often struggle to interpret probabilistic feedback, especially when it’s provided in raw numerical form <span class="citation" data-cites="zikmund-fisherRightToolWhat2013 fagerlinMakingNumbersMatter2007 zipkinEvidencebasedRiskCommunication2014">(<a href="#ref-zikmund-fisherRightToolWhat2013" role="doc-biblioref">Zikmund-Fisher 2013</a>; <a href="#ref-fagerlinMakingNumbersMatter2007" role="doc-biblioref">Fagerlin et al. 2007</a>; <a href="#ref-zipkinEvidencebasedRiskCommunication2014" role="doc-biblioref">Zipkin et al. 2014</a>)</span>. As a result, it may be more effective to communicate risk using coarser categories (e.g., low, medium, or high risk) or through relative changes in risk (e.g., “Your risk of lapse is higher this week compared to last week”). These forms of feedback may be less sensitive to small miscalibrations at the extremes.</p>
 <p>Global feature importance indicates how important a feature category was to the model’s predictions, on average across all participants and all observations. Past use proved to be the most important feature across all models. This is unsurprising given that our outcome was lapse and past behavior is often the best predictor of future behavior. This finding also supports decades of clinical research on relapse prevention, where lapses (i.e., single instances of goal inconsistent alcohol use) are seen as precursors to relapse (i.e., full return to harmful drinking) <span class="citation" data-cites="marlattRelapsePreventionMaintenance1985">(<a href="#ref-marlattRelapsePreventionMaintenance1985" role="doc-biblioref">Marlatt and Gordon 1985</a>)</span>.</p>
 <p>The relative ordering of top global features remained somewhat consistent across models. However, the magnitude of their importance varied by lag time. Future efficacy was a strong predictor for more immediate model predictions (i.e., no lag and 1-day lag), but its importance diminished as lag time increased. This feature was nearly as important as past use in the baseline (no lag) model, so its reduced importance in the 2 week model may help explain that model’s lower performance.</p>
 <p>Craving was consistently important, in magnitude and ranking, across all models. However, as lag time increased past/future risky situations increased in importance even surpassing craving. These descriptive representations of important features suggest opportunities to augment longer-lagged models with additional features. For example, it is reasonable that self-efficacy about the next week would matter less for predictions two weeks out. Including features that reflect longer forward facing time frames may improve performance for longer-lagged models.</p>
