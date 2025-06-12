@@ -19,57 +19,6 @@ This file contains the supplemental materials for *Lagged Predictions of Next We
 
 -----
 
-
-
-```{r}
-#| echo: false
-
-suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
-suppressPackageStartupMessages(library(tidyposterior))
-suppressPackageStartupMessages(library(kableExtra))
-library(patchwork)
-
-
-theme_set(theme_classic())
-
-options(knitr.kable.NA = '')
-
-path_models_lag <- format_path(str_c("risk/models/lag"))
-path_processed <- format_path(str_c("risk/data_processed/lag"))
-```
-
-
-```{r}
-#| echo: false
-
-
-pp_tidy <- read_csv(here::here(path_models_lag, "posteriors.csv"), 
-                                 show_col_types = FALSE) 
-
-ci <- read_csv(here::here(path_models_lag, "pp_perf_tibble.csv"), 
-                                 show_col_types = FALSE) |> 
-  mutate(model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"),
-                        labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
-
-pp_dem <- read_csv(here::here(path_models_lag, "pp_dem_all.csv"), 
-                                 show_col_types = FALSE)
-
-pp_dem_contrast <- read_csv(here::here(path_models_lag, "pp_dem_contrast_all.csv"), 
-                                 show_col_types = FALSE) |> 
-  mutate(lag = factor(lag, levels = c("0", "24", "72", "168", "336"),
-                        labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
-
-labels <- read_csv(here::here(path_processed, "labels_1day_0lag.csv"),
-                   show_col_types = FALSE)
-
-dem_tbl <- read_csv(here::here(path_processed, "dem_tibble.csv"),
-                   show_col_types = FALSE)
-
-labels_dem <- labels |> 
-  left_join(dem_tbl, by = "subid")
-```
-
 ## Transparency Report 1.0 (full, 36 items; Aczel et al., 2019)
 
 **Manuscript Title:** Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support   
@@ -125,6 +74,48 @@ The following have been made publicly available…
 ### Figure S1: Raw Predicted Probabilities
 
 ```{r}
+#| code-fold: true
+
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
+suppressPackageStartupMessages(library(tidyposterior))
+suppressPackageStartupMessages(library(kableExtra))
+library(patchwork)
+
+
+theme_set(theme_classic())
+
+options(knitr.kable.NA = '')
+
+path_models_lag <- format_path(str_c("risk/models/lag"))
+path_processed <- format_path(str_c("risk/data_processed/lag"))
+
+pp_tidy <- read_csv(here::here(path_models_lag, "posteriors.csv"), 
+                                 show_col_types = FALSE) 
+
+ci <- read_csv(here::here(path_models_lag, "pp_perf_tibble.csv"), 
+                                 show_col_types = FALSE) |> 
+  mutate(model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"),
+                        labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
+
+pp_dem <- read_csv(here::here(path_models_lag, "pp_dem_all.csv"), 
+                                 show_col_types = FALSE)
+
+pp_dem_contrast <- read_csv(here::here(path_models_lag, "pp_dem_contrast_all.csv"), 
+                                 show_col_types = FALSE) |> 
+  mutate(lag = factor(lag, levels = c("0", "24", "72", "168", "336"),
+                        labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
+
+labels <- read_csv(here::here(path_processed, "labels_1day_0lag.csv"),
+                   show_col_types = FALSE)
+
+dem_tbl <- read_csv(here::here(path_processed, "dem_tibble.csv"),
+                   show_col_types = FALSE)
+
+labels_dem <- labels |> 
+  left_join(dem_tbl, by = "subid")
+
+
 preds_0 <- read_rds(here::here(path_models_lag, 
                                "final_preds_kfold_1_x_5_1day_0_v3_strat_lh_final.rds")) 
 preds_24 <- read_rds(here::here(path_models_lag, 
@@ -135,10 +126,7 @@ preds_168 <- read_rds(here::here(path_models_lag,
                                "final_preds_kfold_1_x_5_1day_168_v3_strat_lh_final.rds")) 
 preds_336 <- read_rds(here::here(path_models_lag, 
                                "final_preds_kfold_1_x_5_1day_336_v3_strat_lh_final.rds")) 
-```
 
-
-```{r}
 preds_all <- preds_0 |> 
   mutate(model = "No lag") |> 
   bind_rows(preds_24 |> 
@@ -152,8 +140,13 @@ preds_all <- preds_0 |>
   mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
 ```
 
+Our models produced variation in predicted probabilities, with probabilities spanning nearly the entire 0 - 1 range. The 2-week lagged model had fewer high raw probabilities (all probabilities were < .80).  Histograms of the raw predicted probabilities for the best configuration for all 5 models are presented below. 
 
 ```{r}
+#| fig-cap: "Histograms of raw probabilities of our best model configurations for each classification model (no lag, 1-day, 3-day, 1-week and 2-week lags)."
+#| fig-width: 8
+#| fig-height: 5
+
 preds_all |> 
   ggplot(aes(x = prob_raw)) +
   geom_histogram(color = "black", fill = "light grey", binwidth = .10,
@@ -165,7 +158,14 @@ preds_all |>
 
 ### Figure S2: Calibration Plots for all Models
 
+The raw probabilities produced by our final models were not well calibrated. Brier scores for the no lag model (.071) and the 2-week lag model (.077) were roughly equivalent to the base rate of lapses (.076). Below we present the calibration plots of our raw predicted lapse probabilities for each model.
+
 ```{r}
+#| fig-cap: "Calibration plots of raw predicted lapse probabilities for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted lapse probability (x-axis) is binned in deciles. Observed lapse probabilities (y-axis) represent the proportion of true lapses observed in each bin. The dashed line represents a perfectly calibrated model. "
+#| fig-width: 8
+#| fig-height: 5
+#| code-fold: true
+
 bin_width = 0.10
 
 preds_all_raw <- preds_0 |> 
@@ -211,12 +211,6 @@ preds_all_beta <- preds_0 |>
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
               mutate(model = "2 weeks")) |> 
   mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
-```
-
-```{r}
-#| fig-cap: "Calibration plots of raw predicted lapse probabilities for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted lapse probability (x-axis) is binned in deciles. Observed lapse probabilities (y-axis) represent the proportion of true lapses observed in each bin. The dashed line represents a perfectly calibrated model. "
-#| fig-width: 8
-#| fig-height: 5
 
 preds_all_raw |> 
   group_by(bins, model)  |> 
@@ -238,10 +232,15 @@ preds_all_raw |>
                      limits = c(0, 1)) 
 ```
 
+
+
+Beta-calibration was selected as the best calibration method (i.e., it had the lowest average brier score across the no lag and 2-week lag models). Brier scores for the no lag model (.043) and the 2-week model (.061) indicated improved calibration with the beta transformation. Notably, there was a 40% reduction in error for no lag beta-calibrated probabilities compared to the no lag raw probabilities (there was a corresponding 21% reduction in error for the 2-week lag model). Below we present calibration plots for the beta-calibrated probabilities for all 5 models.
+
 ```{r}
 #| fig-cap: "Calibration plots of beta-calibrated predicted lapse probabilities for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted lapse probability (x-axis) is binned in deciles. Observed lapse probabilities (y-axis) represent the proportion of true lapses observed in each bin. The dashed line represents a perfectly calibrated model. "
 #| fig-width: 8
 #| fig-height: 5
+#| code-fold: true
 
 preds_all_beta |> 
   group_by(bins, model)  |> 
@@ -265,7 +264,13 @@ preds_all_beta |>
 
 ### Figure S3: Global Shapley Plots for all 5 Models
 
+The top globally important feature category (i.e., highest mean |Shapley value|) for all models was past use. Future efficacy was a strong predictor for more immediate model predictions (i.e., no lag and 1-day lag), but as lag time increased importance attenuated. On the other hand, as lag time increased past/future risky situations increased in importance. Craving was consistently important, in magnitude, across all models.
+
 ```{r}
+#| #| fig-cap: "Global importance (mean |Shapley value|) for feature categories shown separately by model. Feature categories are ordered by their aggregate global importance."
+#| fig-width: 8
+#| fig-height: 5
+#| code-fold: true
 
 shap_grp_0 <- read_rds(here::here(path_models_lag, 
                       "final_shapsgrp_kfold_1_x_5_1day_0_v3_strat_lh_final.rds")) |> 
@@ -314,9 +319,7 @@ shap_levels <- shap_global |>
   mutate(variable_grp = reorder(variable_grp, mean_value, sum)) |>
   pull(variable_grp) |>
   levels()
-```
 
-```{r}
 shap_global |>
   mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |> 
   ggplot() +
@@ -337,8 +340,14 @@ shap_global |>
 
 ### Figure S4: Global Shapley Plots for Baseline and 2-Week Lag Model by Demographic Group
 
+We saw similar patterns in global feature importance across different demographic subgroups (race/ethnicity, income, sex at birth). Plots of global feature importance by demographic subgroup for the no lag and 2-week lag models are presented below. 
 
 ```{r}
+#| fig-cap: "Global importance (mean |Shapley value|) for feature categories for no lag and two week lag model by demographic group. The importance of each feature category for advantaged and disadvantaged demographic groups are displayed separately by color."
+#| fig-height: 6
+#| fig-width: 7
+#| code-fold: true
+
 feat_0 <- read_csv(here::here(path_processed, 
                             "features_0lag_v3.csv"),
                  col_types = cols()) |> 
@@ -350,10 +359,7 @@ feat_0 <- read_csv(here::here(path_processed,
 feat_shaps_0 <- feat_0 |> 
   rename(id_obs = label_num) |>
   right_join(shap_grp_0, by = c("id_obs")) 
-```
 
-
-```{r}
 baseline_sex <- feat_shaps_0 |> 
   mutate(group = if_else(demo_sex == "Male", 
                          "advantaged group (non-Hispanic White, male, above poverty)",
@@ -382,9 +388,7 @@ baseline_sex <- feat_shaps_0 |>
         strip.placement = "outside") +
   scale_fill_manual(values = c("#cb6bce", "#240e31")) +
   coord_flip()
-```
 
-```{r}
 baseline_race <- feat_shaps_0 |> 
   mutate(group = if_else(demo_race == "White/Caucasian", 
                          "advantaged group (non-Hispanic White, male, above poverty)",
@@ -411,9 +415,8 @@ baseline_race <- feat_shaps_0 |>
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   scale_fill_manual(values = c("#cb6bce", "#240e31")) +
   coord_flip()
-```
 
-```{r}
+
 baseline_income <- feat_shaps_0 |> 
   mutate(group = if_else(demo_income >= 1560, 
                          "advantaged group (non-Hispanic White, male, above poverty)",
@@ -440,17 +443,11 @@ baseline_income <- feat_shaps_0 |>
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   scale_fill_manual(values = c("#cb6bce", "#240e31")) +
   coord_flip()
-```
 
 
-
-```{r}
 no_lag <- baseline_sex + baseline_race + baseline_income 
-```
 
 
-
-```{r}
 feat_336 <- read_csv(here::here(path_processed, 
                             "features_336lag_v3.csv"),
                  col_types = cols()) |> 
@@ -462,11 +459,7 @@ feat_336 <- read_csv(here::here(path_processed,
 feat_shaps_336 <- feat_336 |> 
   rename(id_obs = label_num) |>
   right_join(shap_grp_336, by = c("id_obs")) 
-```
 
-
-
-```{r}
 twoweek_sex <- feat_shaps_336 |> 
   mutate(group = if_else(demo_sex == "Male", 
                          "advantaged group (non-Hispanic White, male, above poverty)",
@@ -494,9 +487,7 @@ twoweek_sex <- feat_shaps_336 |>
         strip.placement = "outside") +
   scale_fill_manual(values = c("#cb6bce", "#240e31")) +
   coord_flip()
-```
 
-```{r}
 twoweek_race <- feat_shaps_336 |> 
   mutate(group = if_else(demo_race == "White/Caucasian", 
                          "advantaged group (non-Hispanic White, male, above poverty)",
@@ -522,9 +513,7 @@ twoweek_race <- feat_shaps_336 |>
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   scale_fill_manual(values = c("#cb6bce", "#240e31")) +
   coord_flip()
-```
 
-```{r}
 twoweek_income <- feat_shaps_336 |> 
   mutate(group = if_else(demo_income >= 1560, 
                          "advantaged group (non-Hispanic White, male, above poverty)",
@@ -550,37 +539,23 @@ twoweek_income <- feat_shaps_336 |>
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   scale_fill_manual(values = c("#cb6bce", "#240e31")) +
   coord_flip()
-```
 
-
-```{r}
 twoweek_lag <- twoweek_sex + twoweek_race + twoweek_income  + 
   plot_layout(guides = "collect") &
   theme(legend.position = "bottom", legend.direction = "vertical") 
-```
-
-
-```{r}
-#| label: fig-dem
-#| fig-cap: "Global importance (mean |Shapley value|) for feature categories for no lag and two week lag model by demographic group. The importance of each feature category for advantaged and disadvantaged demographic groups are displayed separately by color."
-#| fig-height: 6
-#| fig-width: 7
 
 no_lag/twoweek_lag 
-
 ```
-
 
 
 ## Supplemental Tables
-
 
 ### Table S1: Demographic Contrasts for all Models
 
 ```{r}
 #| label: tbl-fairness
 #| tbl-cap: "This table reports the bayesian model contrasts for each demographic group comparison separately by model and contrast. The median value represents the difference in median area under the ROC curve (auROC) between the two groups. A negative value indicates lower auROC performance for the disadvantaged group (female, not White, income below poverty) compared to the advantaged group (male, White, income above poverty)."
-
+#| code-fold: true
 
 pp_sex <- pp_dem_contrast |> 
   filter(contrast == "male vs female") |> 
