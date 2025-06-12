@@ -138,16 +138,8 @@ preds_all <- preds_0 |>
   bind_rows(preds_336 |> 
               mutate(model = "2 weeks")) |> 
   mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
-```
 
-Our models produced variation in predicted probabilities, with probabilities spanning nearly the entire 0 - 1 range. The 2-week lagged model had fewer high raw probabilities (all probabilities were < .80).  Histograms of the raw predicted probabilities for the best configuration for all 5 models are presented below. 
-
-```{r}
-#| fig-cap: "Histograms of raw probabilities of our best model configurations for each classification model (no lag, 1-day, 3-day, 1-week and 2-week lags)."
-#| fig-width: 8
-#| fig-height: 5
-
-preds_all |> 
+preds_hist <- preds_all |> 
   ggplot(aes(x = prob_raw)) +
   geom_histogram(color = "black", fill = "light grey", binwidth = .10,
                  boundary = 0) +
@@ -156,14 +148,22 @@ preds_all |>
   scale_x_continuous(breaks = seq(0, 1, by = 0.2))
 ```
 
+Our models produced variation in predicted probabilities, with probabilities spanning nearly the entire 0 - 1 range. The 2-week lagged model had fewer high raw probabilities (all probabilities were < .80).  Histograms of the raw predicted probabilities for the best configuration for all 5 models are presented below. 
+
+```{r}
+#| label: fig-s1
+#| fig-cap: "Histograms of raw probabilities of our best model configurations for each classification model (no lag, 1-day, 3-day, 1-week and 2-week lags)."
+#| fig-width: 8
+#| fig-height: 5
+
+preds_hist
+```
+
 ### Figure S2: Calibration Plots for all Models
 
 The raw probabilities produced by our final models were not well calibrated. Brier scores for the no lag model (.071) and the 2-week lag model (.077) were roughly equivalent to the base rate of lapses (.076). Below we present the calibration plots of our raw predicted lapse probabilities for each model.
 
 ```{r}
-#| fig-cap: "Calibration plots of raw predicted lapse probabilities for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted lapse probability (x-axis) is binned in deciles. Observed lapse probabilities (y-axis) represent the proportion of true lapses observed in each bin. The dashed line represents a perfectly calibrated model. "
-#| fig-width: 8
-#| fig-height: 5
 #| code-fold: true
 
 bin_width = 0.10
@@ -212,7 +212,7 @@ preds_all_beta <- preds_0 |>
               mutate(model = "2 weeks")) |> 
   mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
 
-preds_all_raw |> 
+fig_raw <- preds_all_raw |> 
   group_by(bins, model)  |> 
   summarize(mean_lapse = mean(lapse),
             .groups = "drop") |> 
@@ -230,19 +230,8 @@ preds_all_raw |>
                      limits = c(0, 1)) +
   scale_y_continuous(breaks = seq(0, 1, bin_width),
                      limits = c(0, 1)) 
-```
 
-
-
-Beta-calibration was selected as the best calibration method (i.e., it had the lowest average brier score across the no lag and 2-week lag models). Brier scores for the no lag model (.043) and the 2-week model (.061) indicated improved calibration with the beta transformation. Notably, there was a 40% reduction in error for no lag beta-calibrated probabilities compared to the no lag raw probabilities (there was a corresponding 21% reduction in error for the 2-week lag model). Below we present calibration plots for the beta-calibrated probabilities for all 5 models.
-
-```{r}
-#| fig-cap: "Calibration plots of beta-calibrated predicted lapse probabilities for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted lapse probability (x-axis) is binned in deciles. Observed lapse probabilities (y-axis) represent the proportion of true lapses observed in each bin. The dashed line represents a perfectly calibrated model. "
-#| fig-width: 8
-#| fig-height: 5
-#| code-fold: true
-
-preds_all_beta |> 
+fig_beta <- preds_all_beta |> 
   group_by(bins, model)  |> 
   summarize(mean_lapse = mean(lapse),
             .groups = "drop") |> 
@@ -262,14 +251,32 @@ preds_all_beta |>
                      limits = c(0, 1)) 
 ```
 
+```{r}
+#| label: fig-s2-raw
+#| fig-cap: "Calibration plots of raw predicted lapse probabilities for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted lapse probability (x-axis) is binned in deciles. Observed lapse probabilities (y-axis) represent the proportion of true lapses observed in each bin. The dashed line represents a perfectly calibrated model. "
+#| fig-width: 8
+#| fig-height: 5
+
+fig_raw
+```
+
+
+Beta-calibration was selected as the best calibration method (i.e., it had the lowest average brier score across the no lag and 2-week lag models). Brier scores for the no lag model (.043) and the 2-week model (.061) indicated improved calibration with the beta transformation. Notably, there was a 40% reduction in error for no lag beta-calibrated probabilities compared to the no lag raw probabilities (there was a corresponding 21% reduction in error for the 2-week lag model). Below we present calibration plots for the beta-calibrated probabilities for all 5 models.
+
+```{r}
+#| label: fig-s2-beta
+#| fig-cap: "Calibration plots of beta-calibrated predicted lapse probabilities for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted lapse probability (x-axis) is binned in deciles. Observed lapse probabilities (y-axis) represent the proportion of true lapses observed in each bin. The dashed line represents a perfectly calibrated model. "
+#| fig-width: 8
+#| fig-height: 5
+
+fig_beta
+```
+
 ### Figure S3: Global Shapley Plots for all 5 Models
 
 The top globally important feature category (i.e., highest mean |Shapley value|) for all models was past use. Future efficacy was a strong predictor for more immediate model predictions (i.e., no lag and 1-day lag), but as lag time increased importance attenuated. On the other hand, as lag time increased past/future risky situations increased in importance. Craving was consistently important, in magnitude, across all models.
 
 ```{r}
-#| #| fig-cap: "Global importance (mean |Shapley value|) for feature categories shown separately by model. Feature categories are ordered by their aggregate global importance."
-#| fig-width: 8
-#| fig-height: 5
 #| code-fold: true
 
 shap_grp_0 <- read_rds(here::here(path_models_lag, 
@@ -320,7 +327,7 @@ shap_levels <- shap_global |>
   pull(variable_grp) |>
   levels()
 
-shap_global |>
+fig_s3 <- shap_global |>
   mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |> 
   ggplot() +
   geom_bar(aes(x = variable_grp, y = mean_value), 
@@ -337,15 +344,22 @@ shap_global |>
   coord_flip()
 ```
 
+```{r}
+#| label: fig-s3
+#| fig-cap: "Global importance (mean |Shapley value|) for feature categories shown separately by model. Feature categories are ordered by their aggregate global importance."
+#| fig-width: 8
+#| fig-height: 5
+
+fig_s3
+```
+
+
 
 ### Figure S4: Global Shapley Plots for Baseline and 2-Week Lag Model by Demographic Group
 
 We saw similar patterns in global feature importance across different demographic subgroups (race/ethnicity, income, sex at birth). Plots of global feature importance by demographic subgroup for the no lag and 2-week lag models are presented below. 
 
 ```{r}
-#| fig-cap: "Global importance (mean |Shapley value|) for feature categories for no lag and two week lag model by demographic group. The importance of each feature category for advantaged and disadvantaged demographic groups are displayed separately by color."
-#| fig-height: 6
-#| fig-width: 7
 #| code-fold: true
 
 feat_0 <- read_csv(here::here(path_processed, 
@@ -544,7 +558,15 @@ twoweek_lag <- twoweek_sex + twoweek_race + twoweek_income  +
   plot_layout(guides = "collect") &
   theme(legend.position = "bottom", legend.direction = "vertical") 
 
-no_lag/twoweek_lag 
+fig_s4 <- no_lag/twoweek_lag 
+```
+
+```{r}
+#| label: fig-s4
+#| fig-cap: "Global importance (mean |Shapley value|) for feature categories for no lag and two week lag model by demographic group. The importance of each feature category for advantaged and disadvantaged demographic groups are displayed separately by color."
+#| fig-height: 6
+#| fig-width: 7
+fig_s4
 ```
 
 
