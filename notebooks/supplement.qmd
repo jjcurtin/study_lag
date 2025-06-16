@@ -1,6 +1,5 @@
 ---
 title: "Supplemental Material"
-subtitle: "Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support"
 author: "Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, and John J. Curtin"
 date: last-modified
 number-sections: true
@@ -15,13 +14,13 @@ editor_options:
   chunk_output_type: console
 ---
 
-This file contains the supplemental materials for *Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support*. It includes a transparency report and all supplemental figures and tables. Additional materials are made available on our study's OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)).   
+This file contains the supplemental materials for *Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models*. It includes a transparency report and all supplemental figures and tables. Additional materials are made available on our study's OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)).   
 
 -----
 
 ## Transparency Report 1.0 (full, 36 items; Aczel et al., 2019)
 
-**Manuscript Title:** Lagged Predictions of Next Week Alcohol Use for Precision Mental Health Support   
+**Manuscript Title:** Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models   
 **Authors:** Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, and John J. Curtin   
 **Corresponding author’s email address:** jjcurtin@wisc.edu   
 **Link to Project Repository:** [https://osf.io/xta67/](https://osf.io/xta67/)      
