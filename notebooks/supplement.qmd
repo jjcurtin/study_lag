@@ -79,6 +79,7 @@ suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
 suppressPackageStartupMessages(library(tidyposterior))
 suppressPackageStartupMessages(library(kableExtra))
+suppressPackageStartupMessages(library(ggrepel))
 library(patchwork)
 
 
