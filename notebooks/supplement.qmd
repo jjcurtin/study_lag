@@ -410,7 +410,7 @@ shap_levels <- shap_global |>
 label_data <- shap_global |>
   filter(model == 336)
 
-shap_global |>
+fig_s3 <- shap_global |>
   mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |> 
   ggplot() +
   geom_line(aes(x = model, y = mean_value, color = variable_grp)) +
