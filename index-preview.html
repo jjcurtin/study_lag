@@ -1,54 +1,177 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="generator" content="quarto-1.6.39">
 
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="author" content="Kendra Wyant">
+    <meta name="author" content="Gaylen E. Fronk">
+    <meta name="author" content="Jiachen Yu">
+    <meta name="author" content="John J. Curtin">
+    <meta name="dcterms.date" content="2025-06-12">
+    <meta name="keywords" content="Substance use disorders, Precision mental health">
 
-<meta name="author" content="Kendra Wyant">
-<meta name="author" content="Gaylen E. Fronk">
-<meta name="author" content="Jiachen Yu">
-<meta name="author" content="John J. Curtin">
-<meta name="dcterms.date" content="2025-06-12">
-<meta name="keywords" content="Substance use disorders, Precision mental health">
+    <title>Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models</title>
+    <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      div.columns{display: flex; gap: min(4vw, 1.5em);}
+      div.column{flex: auto; overflow-x: auto;}
+      div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+      ul.task-list{list-style: none;}
+      ul.task-list li input[type="checkbox"] {
+        width: 0.8em;
+        margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+        vertical-align: middle;
+      }
+      /* CSS for syntax highlighting */
+      pre > code.sourceCode { white-space: pre; position: relative; }
+      pre > code.sourceCode > span { line-height: 1.25; }
+      pre > code.sourceCode > span:empty { height: 1.2em; }
+      .sourceCode { overflow: visible; }
+      code.sourceCode > span { color: inherit; text-decoration: inherit; }
+      div.sourceCode { margin: 1em 0; }
+      pre.sourceCode { margin: 0; }
+      @media screen {
+      div.sourceCode { overflow: auto; }
+      }
+      @media print {
+      pre > code.sourceCode { white-space: pre-wrap; }
+      pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+      }
+      pre.numberSource code
+        { counter-reset: source-line 0; }
+      pre.numberSource code > span
+        { position: relative; left: -4em; counter-increment: source-line; }
+      pre.numberSource code > span > a:first-child::before
+        { content: counter(source-line);
+          position: relative; left: -1em; text-align: right; vertical-align: baseline;
+          border: none; display: inline-block;
+          -webkit-touch-callout: none; -webkit-user-select: none;
+          -khtml-user-select: none; -moz-user-select: none;
+          -ms-user-select: none; user-select: none;
+          padding: 0 4px; width: 4em;
+        }
+      pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+      div.sourceCode
+        {   }
+      @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+      }
+      /* CSS for citations */
+      div.csl-bib-body { }
+      div.csl-entry {
+        clear: both;
+        margin-bottom: 0em;
+      }
+      .hanging-indent div.csl-entry {
+        margin-left:2em;
+        text-indent:-2em;
+      }
+      div.csl-left-margin {
+        min-width:2em;
+        float:left;
+      }
+      div.csl-right-inline {
+        margin-left:2em;
+        padding-left:1em;
+      }
+      div.csl-indent {
+        margin-left: 2em;
+      }    </style>
 
-<title>Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models</title>
-<style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-ul.task-list{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-  width: 0.8em;
-  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
-  vertical-align: middle;
-}
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+    <style>
+      body.hypothesis-enabled #quarto-embed-header {
+        padding-right: 36px;
+      }
 
+      #quarto-embed-header {
+        height: 3em;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: solid 1px;
+      }
 
+      #quarto-embed-header h6 {
+        font-size: 1.1em;
+        padding-top: 0.6em;
+        margin-left: 1em;
+        margin-right: 1em;
+        font-weight: 400;
+      }
+
+      #quarto-embed-header a.quarto-back-link,
+      #quarto-embed-header a.quarto-download-embed {
+        font-size: 0.8em;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        margin-left: 1em;
+        margin-right: 1em;
+      }
+
+      .quarto-back-container {
+        padding-left: 0.5em;
+        display: flex;
+      }
+
+      .headroom {
+          will-change: transform;
+          transition: transform 200ms linear;
+      }
+
+      .headroom--pinned {
+          transform: translateY(0%);
+      }
+
+      .headroom--unpinned {
+          transform: translateY(-100%);
+      }      
+    </style>
+
+    <script>
+    window.document.addEventListener("DOMContentLoaded", function () {
+
+      var header = window.document.querySelector("#quarto-embed-header");
+      const titleBannerEl = window.document.querySelector("body > #title-block-header");
+      if (titleBannerEl) {
+        titleBannerEl.style.paddingTop = header.clientHeight + "px";
+      }
+      const contentEl = window.document.getElementById('quarto-content');
+      for (const child of contentEl.children) {
+        child.style.paddingTop = header.clientHeight + "px";
+        child.style.marginTop = "1em";
+      }
+
+      // Use the article root if the `back` call doesn't work. This isn't perfect
+      // but should typically work
+      window.quartoBackToArticle = () => {
+        var currentUrl = window.location.href;
+        window.history.back();
+        setTimeout(() => {
+            // if location was not changed in 100 ms, then there is no history back
+            if(currentUrl === window.location.href){              
+                // redirect to site root
+                window.location.href = "index.html";
+            }
+        }, 100);
+      }
+
+      const headroom = new window.Headroom(header, {
+        tolerance: 5,
+        onPin: function () {
+        },
+        onUnpin: function () {
+        },
+      });
+      headroom.init();
+    });
+    </script>
+
+    
+<script src="site_libs/manuscript-notebook/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -62,9 +185,8 @@ div.csl-indent {
 <script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
-
-
-<meta name="citation_title" content="Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models">
+     
+      <meta name="citation_title" content="Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models">
 <meta name="citation_abstract" content="We evaluated machine learning models predicting future alcohol lapses within 24-hour prediction windows that were systematically lagged further into the future (1 day, 3 days, 1 week, and 2 weeks). We engineered features from 4x daily ecological momentary assessment. Participants (N=151; 51% male; mean age=41; 87% White, 97% Non-Hispanic) in early recovery from alcohol use disorder provided data for up to three months. We used nested cross-validation to select and evaluate models. Median posterior probabilities for auROCs were high (0.85–0.91). Still, performance declined with increasing lags (probabilities = 1). However, these differences in performance are small and likely not clinically meaningful. Models also performed worse for non-advantaged groups (not White vs. non-Hispanic White, below poverty vs. above poverty, female vs. male; probabilities &amp;amp;gt; .81). This study demonstrates the feasibility of predicting next-day alcohol lapses up to two weeks into the future. This advanced notice offers time to implement support options not immediately available. However, fairness concerns remain and are discussed further in the paper.
 ">
 <meta name="citation_keywords" content="Substance use disorders,Precision mental health">
@@ -169,9 +291,16 @@ div.csl-indent {
 <meta name="citation_reference" content="citation_title=Evidence-based risk communication: A systematic review;,citation_abstract=BACKGROUND: Effective communication of risks and benefits to patients is critical for shared decision making. PURPOSE: To review the comparative effectiveness of methods of communicating probabilistic information to patients that maximize their cognitive and behavioral outcomes. DATA SOURCES: PubMed (1966 to March 2014) and CINAHL, EMBASE, and the Cochrane Central Register of Controlled Trials (1966 to December 2011) using several keywords and structured terms. STUDY SELECTION: Prospective or cross-sectional studies that recruited patients or healthy volunteers and compared any method of communicating probabilistic information with another method. DATA EXTRACTION: Two independent reviewers extracted study characteristics and assessed risk of bias. DATA SYNTHESIS: Eighty-four articles, representing 91 unique studies, evaluated various methods of numerical and visual risk display across several risk scenarios and with diverse outcome measures. Studies showed that visual aids (icon arrays and bar graphs) improved patients’ understanding and satisfaction. Presentations including absolute risk reductions were better than those including relative risk reductions for maximizing accuracy and seemed less likely than presentations with relative risk reductions to influence decisions to accept therapy. The presentation of numbers needed to treat reduced understanding. Comparative effects of presentations of frequencies (such as 1 in 5) versus event rates (percentages, such as 20%) were inconclusive. LIMITATION: Most studies were small and highly variable in terms of setting, context, and methods of administering interventions. CONCLUSION: Visual aids and absolute risk formats can improve patients’ understanding of probabilistic information, whereas numbers needed to treat can lessen their understanding. Due to study heterogeneity, the superiority of any single method for conveying probabilistic information is not established, but there are several good options to help clinicians communicate with patients. PRIMARY FUNDING SOURCE: None.;,citation_author=Daniella A. Zipkin;,citation_author=Craig A. Umscheid;,citation_author=Nancy L. Keating;,citation_author=Elizabeth Allen;,citation_author=KoKo Aung;,citation_author=Rebecca Beyth;,citation_author=Scott Kaatz;,citation_author=Devin M. Mann;,citation_author=Jeremy B. Sussman;,citation_author=Deborah Korenstein;,citation_author=Connie Schardt;,citation_author=Avishek Nagi;,citation_author=Richard Sloane;,citation_author=David A. Feldstein;,citation_publication_date=2014-08;,citation_cover_date=2014-08;,citation_year=2014;,citation_issue=4;,citation_doi=10.7326/M14-0295;,citation_issn=1539-3704;,citation_pmid=25133362;,citation_volume=161;,citation_language=en-US;,citation_journal_title=Annals of Internal Medicine;">
 </head>
 
-<body>
+  <body class="quarto-notebook">
+    <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
+      
+      <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link" href=""><i class="bi bi-caret-left"></i> Back to Article</a>
+      <h6><i class="bi bi-journal-code"></i> Article Notebook</h6>
 
-<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+            <a href="./index.qmd" class="btn btn-primary quarto-download-embed" download="index.qmd">Download Source</a>
+          </div>
+
+     <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models</h1>
@@ -232,7 +361,7 @@ div.csl-indent {
               </div>
       </div>
       <div class="quarto-title-meta-column-end quarto-other-formats-target">
-      <div class="quarto-alternate-formats"><div class="quarto-title-meta-heading">Other Formats</div><div class="quarto-title-meta-contents"><p><a href="index.docx"><i class="bi bi-file-word"></i>MS Word</a></p></div></div></div>
+      </div>
     </div>
 
     <div>
@@ -296,18 +425,13 @@ div.csl-indent {
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
   </ul>
-<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="index-preview.html"><i class="bi bi-journal-code"></i>Article Notebook</a></li><li><a href="notebooks\ana_fairness-preview.html"><i class="bi bi-journal-code"></i>Fairness analyses</a></li><li><a href="notebooks\ana_time_subgroup-preview.html"><i class="bi bi-journal-code"></i>Group by Time Effects</a></li><li><a href="notebooks\mak_figures-preview.html"><i class="bi bi-journal-code"></i>Make All Figures for Main Manuscript</a></li><li><a href="notebooks\mak_tables-preview.html"><i class="bi bi-journal-code"></i>Make All Tables for Main Manuscript</a></li><li><a href="notebooks\ana_calibration-preview.html"><i class="bi bi-journal-code"></i>Model calibration</a></li><li><a href="notebooks\ana_bayesian-preview.html"><i class="bi bi-journal-code"></i>Model evaluation</a></li><li><a href="notebooks\supplement-preview.html"><i class="bi bi-journal-code"></i>Supplemental Material</a></li></ul></div></nav>
+</nav>
 </div>
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
 </div>
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">      
 
-
-
-  
-
-
-<!-- 4/2/25 - At 8,264 words. 
+       <!-- 4/2/25 - At 8,264 words. 
 
 
 <!--Notes:
@@ -322,6 +446,38 @@ Psychology of Addictive Behavior
 Impact factor: 3.2
 40 page limit
 -->
+<div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">source</span>(<span class="st">"https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>path_models_lag <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="st">"risk/models/lag"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>path_processed <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="st">"risk/data_processed/lag"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">knitr.kable.NA =</span> <span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in tibbles for in-line code</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>test_metrics_all_pp_perf <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">"pp_perf_tibble.csv"</span>), </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>ci_baseline <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">"contrast_baseline.csv"</span>), </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">"contrast_adjacent.csv"</span>), </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>pp_dem <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">"pp_dem_all.csv"</span>), <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>pp_dem_contrast <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">"pp_dem_contrast_all.csv"</span>), <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>screen <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_processed, <span class="st">"dem_tibble.csv"</span>),</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                   <span class="at">col_types =</span> <span class="fu">cols</span>())</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>lapses_per_subid <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_processed, <span class="st">"lapse_tibble.csv"</span>),</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                             <span class="at">col_types =</span> <span class="fu">cols</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 <p>Alcohol and other substance use disorders (SUDs) are serious chronic conditions, characterized by high relapse rates<span class="citation" data-cites="mclellanDrugDependenceChronic2000 dennisManagingAddictionChronic2007">(<a href="#ref-mclellanDrugDependenceChronic2000" role="doc-biblioref">McLellan et al. 2000</a>; <a href="#ref-dennisManagingAddictionChronic2007" role="doc-biblioref">Dennis and Scott 2007</a>)</span>, substantial co-morbidity with other physical and mental health problems<span class="citation" data-cites="substanceabuseandmentalhealthservicesadministration2023NSDUHDetailed dennisManagingAddictionChronic2007">(<a href="#ref-substanceabuseandmentalhealthservicesadministration2023NSDUHDetailed" role="doc-biblioref">Substance Abuse and Mental Health Services Administration n.d.</a>; <a href="#ref-dennisManagingAddictionChronic2007" role="doc-biblioref">Dennis and Scott 2007</a>)</span>, and an increased risk of mortality <span class="citation" data-cites="hedegaardDrugOverdoseDeaths centersfordiseasecontrolandpreventioncdcAnnualAverageUnited">(<a href="#ref-hedegaardDrugOverdoseDeaths" role="doc-biblioref">Hedegaard et al. n.d.</a>; <a href="#ref-centersfordiseasecontrolandpreventioncdcAnnualAverageUnited" role="doc-biblioref">Centers for Disease Control and Prevention (CDC) n.d.</a>)</span>. Too few individuals receive medications or clinician-delivered interventions to help them initially achieve abstinence and/or reduce harms associated with their use <span class="citation" data-cites="substanceabuseandmentalhealthservicesadministration2023NSDUHDetailed">(<a href="#ref-substanceabuseandmentalhealthservicesadministration2023NSDUHDetailed" role="doc-biblioref">Substance Abuse and Mental Health Services Administration n.d.</a>)</span>. Yet, this problem is even worse for subsequent continuing care during SUD recovery. Continuing care, including both risk monitoring and ongoing support, is the gold standard for managing chronic health conditions such as diabetes, asthma, and HIV. Yet, continuing care for SUDs is largely lacking despite ample evidence that SUDs are chronic, relapsing conditions <span class="citation" data-cites="substanceabuseandmentalhealthservicesadministration2023NSDUHDetailed stanojlovicTargetingBarriersSubstance2021 sociasAdoptingCascadeCare2016">(<a href="#ref-substanceabuseandmentalhealthservicesadministration2023NSDUHDetailed" role="doc-biblioref">Substance Abuse and Mental Health Services Administration n.d.</a>; <a href="#ref-stanojlovicTargetingBarriersSubstance2021" role="doc-biblioref">Stanojlović and Davidson 2021</a>; <a href="#ref-sociasAdoptingCascadeCare2016" role="doc-biblioref">Socías, Volkow, and Wood 2016</a>)</span>.</p>
@@ -378,12 +534,13 @@ Impact factor: 3.2
 <p>A <em>prediction timepoint</em> (<a href="#fig-method" class="quarto-xref">Figure&nbsp;1</a>, Panel A) is the hour at which our model calculates a predicted probability of a lapse within a future 24-hour prediction window for any specific individual. We calculated the features used to make predictions at each prediction timepoint within a feature scoring epoch that included all available EMAs up until, but not including, the prediction timepoint. The first prediction timepoint for each participant was 24 hours from midnight on their study start date. This ensured at least 24 hours of past EMAs were available in the feature scoring epoch. Subsequent prediction timepoints for each participant repeatedly rolled forward hour-by-hour until the end of their study participation.</p>
 <p>The <em>prediction window</em> (<a href="#fig-method" class="quarto-xref">Figure&nbsp;1</a>, Panel B) spans a period of time in which a lapse might occur. The prediction window width for all models was 24 hours (i.e., models predicted the probability of a lapse occurring within a specific 24-hour period). Prediction windows rolled forward hour-by-hour with the prediction timepoint. However, there were five possible <em>lag times</em> between the prediction timepoint and start of the associated prediction window. A prediction window either started immediately after the prediction time point (no lag) or was lagged by 1 day, 3 days, 1 week, or 2 weeks into the future.</p>
 <p>Given this structure, our models provided hour-by-hour predicted probabilities of an alcohol lapse in a future 24 hour period. Depending on the model, that future period (the prediction window) might start immediately after the prediction timepoint or up to 2 weeks into the future. For example, at midnight on the 30th day of participation, the feature scoring epoch would include the past 30 days of EMAs. Separate models would predict the probability of lapse for 24 hour periods staring at midnight that day, or similar 24 hour periods starting 1 day, 3 days, 1 week or 2 weeks after midnight on day 30.</p>
-<div class="quarto-embed-nb-cell">
-<div id="cell-fig-method" class="cell">
+<div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-method">
+<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div id="cell-fig-method" class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>knitr::include_graphics(path <span class="op">=</span> here::here(<span class="st">"figures/methods.png"</span>), error <span class="op">=</span> FALSE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-method" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-method-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="fig-method-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
 <a href="index_files/figure-html/notebooks-mak_figures-fig-method-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: Panel A shows the prediction timepoints at which our model calculated a predicted probability of a lapse. All available data up until, but not including, the prediction timepoint was used to generate these predictions. Features were created for varying feature scoring epochs before the prediction timepoint (i.e., 12, 24, 48, 72, and 168 hours). Prediction timepoints were updated hourly. Panel B shows how the prediction window (i.e., window in which a lapse might occur) rolls forward hour-by-hour with the prediction timepoint. The prediction window width for all models was 24 hours. Additionally, there were five possible lag times between the prediction timepoint and start of the prediction window. A prediction window either started immediately after the prediction timepoint (no lag) or was lagged by 1 day, 3 days, 1 week, or 2 weeks."><img src="index_files/figure-html/notebooks-mak_figures-fig-method-output-1.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-method-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -392,7 +549,7 @@ Figure&nbsp;1: Panel A shows the prediction timepoints at which our model calcul
 </figure>
 </div>
 </div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="labels" class="level3">
@@ -452,9 +609,32 @@ Figure&nbsp;1: Panel A shows the prediction timepoints at which our model calcul
 <section id="demographic-and-lapse-characteristics" class="level2">
 <h2 class="anchored" data-anchor-id="demographic-and-lapse-characteristics">Demographic and Lapse Characteristics</h2>
 <p><a href="#tbl-demohtml" class="quarto-xref">Table&nbsp;1</a> provides a detailed breakdown of the demographic and clinical characteristics of our sample (N = 151).</p>
-<div class="quarto-embed-nb-cell">
-<div class="cell">
-<div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_tables.qmd" data-notebook-title="Make All Tables for Main Manuscript" data-notebook-cellid="cell-tbl-demohtml">
+<div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
+
+<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_a <span class="op">&lt;-</span> <span class="st">"N = 151"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>footnote_table_dem_b <span class="op">&lt;-</span> <span class="st">"*Two participants reported 100 or more quit attempts. We removed these outliers prior to calculating the mean (M), standard deviation (SD), and range."</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>table_dem <span class="op">|&gt;</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  knitr::kable() <span class="op">|&gt;</span> </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  kable_classic() <span class="op">|&gt;</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">3</span>, end_row <span class="op">=</span> <span class="dv">4</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">6</span>, end_row <span class="op">=</span> <span class="dv">10</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">12</span>, end_row <span class="op">=</span> <span class="dv">13</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">15</span>, end_row <span class="op">=</span> <span class="dv">20</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">22</span>, end_row <span class="op">=</span> <span class="dv">30</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">33</span>, end_row <span class="op">=</span> <span class="dv">37</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Alcohol Use Disorder Milestones"</span>, </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">39</span>, end_row <span class="op">=</span> <span class="dv">42</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Lifetime History of Treatment (Can choose more than 1)"</span>, </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">44</span>, end_row <span class="op">=</span> <span class="dv">50</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Received Medication for Alcohol Use Disorder"</span>, </span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">51</span>, end_row <span class="op">=</span> <span class="dv">52</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(<span class="st">"Current (Past 3 Month) Drug Use"</span>, </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                         start_row <span class="op">=</span> <span class="dv">53</span>, end_row <span class="op">=</span> <span class="dv">60</span>, bold <span class="op">=</span> FALSE) <span class="op">|&gt;</span> </span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">62</span>, end_row <span class="op">=</span> <span class="dv">63</span>) <span class="op">|&gt;</span> </span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  kableExtra::footnote(general <span class="op">=</span> c(footnote_table_dem_a, footnote_table_dem_b), escape<span class="op">=</span>FALSE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-demohtml" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-demohtml-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: Demographic and Clinical Characteristics
@@ -1049,19 +1229,35 @@ Table&nbsp;1: Demographic and Clinical Characteristics
 </div>
 </div>
 </figure>
-</div>
-</div>
+</div></div></div>
+</div></div>
 </div>
 </section>
 <section id="model-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="model-evaluation">Model Evaluation</h2>
 <p><a href="#fig-pp" class="quarto-xref">Figure&nbsp;2</a> presents the full posterior probability distributions for auROC for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). The median auROCs from these posterior distributions were 0.91 (no lag), 0.89 (1-day lag), 0.88 (3-day lag), 0.87 (1-week lag), and 0.85 (2-week lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: no lag [0.90-0.92], 1-day lag [0.88-0.90], 3-day lag [0.87-0.90], 1-week lag [0.85-0.89], 2-week lag [0.83-0.87].</p>
-<div class="quarto-embed-nb-cell">
-<div id="cell-fig-pp" class="cell" data-fig-width="7" data-fig-height="6">
+<div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-pp">
+<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="cell-fig-pp" class="cell" data-fig-width="7" data-fig-height="6">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="op">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  mutate(model <span class="op">=</span> factor(model, levels <span class="op">=</span> c(<span class="st">"lag0"</span>, <span class="st">"lag24"</span>, <span class="st">"lag72"</span>, <span class="st">"lag168"</span>, <span class="st">"lag336"</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                        labels <span class="op">=</span> c(<span class="st">"No lag"</span>, <span class="st">"1 day"</span>, <span class="st">"3 days"</span>, <span class="st">"1 week"</span>, <span class="st">"2 weeks"</span>))) <span class="op">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  ggplot() <span class="op">+</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  geom_histogram(aes(x <span class="op">=</span> posterior), fill <span class="op">=</span> <span class="st">"light grey"</span>, color <span class="op">=</span> <span class="st">"black"</span>, linewidth <span class="op">=</span> <span class="fl">.5</span>,  </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                 bins <span class="op">=</span> <span class="dv">60</span>) <span class="op">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> <span class="dv">3400</span>, yend <span class="op">=</span> <span class="dv">3800</span>, x <span class="op">=</span> pp_median, xend <span class="op">=</span> pp_median),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>               linewidth <span class="op">=</span> <span class="fl">.5</span>, data <span class="op">=</span> ci) <span class="op">+</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> <span class="dv">3600</span>, yend <span class="op">=</span> <span class="dv">3600</span>, x <span class="op">=</span> pp_lower, xend <span class="op">=</span> pp_upper),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                linewidth <span class="op">=</span> <span class="fl">.5</span>, data <span class="op">=</span> ci) <span class="op">+</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  facet_wrap(<span class="op">~</span>model, ncol <span class="op">=</span> <span class="dv">1</span>) <span class="op">+</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  geom_vline(xintercept <span class="op">=</span> <span class="fl">.5</span>, linewidth <span class="op">=</span> <span class="fl">.5</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>) <span class="op">+</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  scale_y_continuous(<span class="st">"Posterior Samples"</span>) <span class="op">+</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  xlab(<span class="st">"Area Under ROC Curve"</span>) <span class="op">+</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  expand_limits(x <span class="op">=</span> c(<span class="fl">.5</span>, <span class="dv">1</span>)) <span class="op">+</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  theme_classic() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-pp" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-pp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="fig-pp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
 <a href="index_files/figure-html/notebooks-mak_figures-fig-pp-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Posterior probability distributions for area under ROC curve (auROC) for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Each distribution reflects 8,000 posterior samples (4 chains × 2,000 samples) from a Bayesian hierarchical generalized linear model. Horizonatal lines depict 95% Bayesian credible intervals (CI) and vertical solid lines depict median posterior probability for auROC. Vertical dashed line represents expected performance from a random classifier (.5 auROC)."><img src="index_files/figure-html/notebooks-mak_figures-fig-pp-output-1.png" width="672" height="576" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1070,15 +1266,27 @@ Figure&nbsp;2: Posterior probability distributions for area under ROC curve (auR
 </figure>
 </div>
 </div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="model-comparisons" class="level2">
 <h2 class="anchored" data-anchor-id="model-comparisons">Model Comparisons</h2>
 <p><a href="#tbl-model" class="quarto-xref">Table&nbsp;2</a> presents the median difference in auROC, 95% Bayesian CI, and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts. Median auROC differences greater than 0 indicate the more immediate model, on average, out-performed the more lagged model (e.g., no lag - 1-day lag, 1-day lag - 3-day lag). There was strong evidence (probabilities = 1) that the lagged models performed worse than the baseline (no lag) model, with average drops in auROC ranging from 0.02-0.06, and the previous adjacent lagged model, with average drops in auROC ranging from 0.01-0.02.</p>
-<div class="quarto-embed-nb-cell">
-<div class="cell">
-<div id="tbl-model" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_tables.qmd" data-notebook-title="Make All Tables for Main Manuscript" data-notebook-cellid="cell-tbl-model">
+<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div class="cell">
+
+<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>footnote_table_model <span class="op">&lt;-</span> <span class="st">"Median auROC differences greater than 0 indicate the more immediate model, on average, out-performed the more lagged model (e.g., no lag - 1-day lag, 1-day lag - 3-day lag). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently)."</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>table_ci <span class="op">|&gt;</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  knitr::kable() <span class="op">|&gt;</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  kable_classic() <span class="op">|&gt;</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  kableExtra::column_spec(<span class="dv">1</span>, width <span class="op">=</span> <span class="st">"25em"</span>) <span class="op">|&gt;</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">2</span>, end_row <span class="op">=</span> <span class="dv">5</span>) <span class="op">|&gt;</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">7</span>, end_row <span class="op">=</span> <span class="dv">9</span>) <span class="op">|&gt;</span> </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  kableExtra::row_spec(<span class="dv">5</span>, extra_css <span class="op">=</span> <span class="st">"border-bottom: 1px solid"</span>) <span class="op">|&gt;</span> </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  kableExtra::add_footnote(label <span class="op">=</span> footnote_table_model,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                           notation <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                           escape <span class="op">=</span> FALSE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-model" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts.
@@ -1168,8 +1376,8 @@ Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), a
 </div>
 </div>
 </figure>
-</div>
-</div>
+</div></div></div>
+</div></div>
 </div>
 </section>
 <section id="fairness-analyses-1" class="level2">
@@ -1177,9 +1385,21 @@ Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), a
 <p><a href="#tbl-fairness" class="quarto-xref">Table&nbsp;3</a> presents the median difference in auROC, 95% Bayesian CI, and posterior probability that the auROC difference was greater than 0 for the three fairness contrasts: race/ethnicity (Non-Hispanic White; <em>N</em> = 131 vs.&nbsp;not White; <em>N</em> = 20), sex at birth (male; <em>N</em> = 77 vs.&nbsp;female; <em>N</em> = 74), and income (above poverty; <em>N</em> = 102 vs.&nbsp;below poverty; <em>N</em> = 49). Median auROC differences greater than 0 indicate the model, on average, performed better for the advantaged group (male, non-Hispanic White, and above poverty) compared to the non-advantaged group (female, not White, below poverty). In <a href="#tbl-fairness" class="quarto-xref">Table&nbsp;3</a> we present fairness analyses for our baseline model (no lag) and for our longest lagged model (2-week lag), as this is likely the most clinically useful lagged model for providing advanced warning of lapse risk. Fairness analyses for all five models are available in the supplement.</p>
 <p>There was strong evidence (probabilities &gt; .81) that our models performed better for the advantaged groups compared to the non-advantaged groups. On average, across all five models, there was a median decrease in auROC of 0.13 (range 0.13-0.17) for participants who were not White compared to non-Hispanic White participants. On average, across all five models, there was a median decrease in auROC of 0.05 (range 0.04-0.10) for female participants compared to male participants. On average, across all five models, there was a median decrease in auROC of 0.02 (range 0.01-0.04) for participants below the federal poverty line compared to participants above the federal poverty line.</p>
 <p>The proportion of positive lapse labels over all labels (lapse and no lapse) for each demographic subgroup were relatively consistent across groups: race/ethnicity (6%, not White vs.&nbsp;8%, non-Hispanic White), income (12%, below poverty vs.&nbsp;7%, above poverty), sex at birth (9%, female vs.&nbsp;7%, male).</p>
-<div class="quarto-embed-nb-cell">
-<div class="cell">
-<div id="tbl-fairness" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_tables.qmd" data-notebook-title="Make All Tables for Main Manuscript" data-notebook-cellid="cell-tbl-fairness">
+<div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div class="cell">
+
+<div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>footnote_table_fair <span class="op">&lt;-</span> <span class="st">"Median auROC differences greater than 0 indicate the model, on average, performed better for the advantaged group (male, non-Hispanic White, and above poverty) compared to the non-advantaged group (female, not White, below poverty). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently for fairness subgroups)."</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>table_ci_fair <span class="op">|&gt;</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  knitr::kable() <span class="op">|&gt;</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  kable_classic() <span class="op">|&gt;</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  kableExtra::column_spec(<span class="dv">1</span>, width <span class="op">=</span> <span class="st">"25em"</span>) <span class="op">|&gt;</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">2</span>, end_row <span class="op">=</span> <span class="dv">4</span>) <span class="op">|&gt;</span> </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  kableExtra::group_rows(start_row <span class="op">=</span> <span class="dv">6</span>, end_row <span class="op">=</span> <span class="dv">8</span>) <span class="op">|&gt;</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  kableExtra::row_spec(<span class="dv">4</span>, extra_css <span class="op">=</span> <span class="st">"border-bottom: 1px solid"</span>)  <span class="op">|&gt;</span> </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  kableExtra::add_footnote(label <span class="op">=</span> footnote_table_fair,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                           notation <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                           escape <span class="op">=</span> FALSE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-fairness" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fairness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;3: Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts.
@@ -1263,20 +1483,37 @@ Table&nbsp;3: Median difference in auROC, 95% Bayesian credible interval (CI), a
 </div>
 </div>
 </figure>
-</div>
-</div>
+</div></div></div>
+</div></div>
 </div>
 </section>
 <section id="model-calibration-1" class="level2">
 <h2 class="anchored" data-anchor-id="model-calibration-1">Model Calibration</h2>
 <p>The raw probabilities produced by our final models were not well calibrated. Brier scores for the no lag model (.071) and the 2-week lag model (.077) were roughly equivalent to the base rate of lapses (.076). The base rate of positive cases (i.e., lapses) can be used as a benchmark, as it is what we would expect a brier score to be for a model that predicted the same probability for all observations. However, our models did produce variation in predicted probabilities, with probabilities spanning nearly the entire 0 - 1 range. Histograms of the raw predicted probabilities for all 5 models are available in the supplement.</p>
 <p>Beta-calibration was selected as the best calibration method (i.e., it had the lowest average brier score across the no lag and 2-week lag models). Brier scores for the no lag model (.043) and the 2-week model (.061) indicated improved calibration with the beta transformation. Notably, there was a 40% reduction in error for no lag beta-calibrated probabilities compared to the no lag raw probabilities (there was a corresponding 21% reduction in error for the 2-week lag model). <a href="#fig-cal" class="quarto-xref">Figure&nbsp;3</a> shows the calibration plots for beta-calibrated probabilities for the no lag and 2-week lag model. Calibration plots for both raw and beta-calibrated probabilities for all 5 models are available in the supplement.</p>
-<div class="quarto-embed-nb-cell">
-<div id="cell-fig-cal" class="cell" data-fig-width="8" data-fig-height="5">
+<div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-cal">
+<div class="cell-container"><div class="cell-decorator"><pre>In [11]:</pre></div><div id="cell-fig-cal" class="cell" data-fig-width="8" data-fig-height="5">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>preds_all_beta <span class="op">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  group_by(bins, model)  <span class="op">|&gt;</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  summarize(mean_lapse <span class="op">=</span> mean(lapse),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>            .groups <span class="op">=</span> <span class="st">"drop"</span>) <span class="op">|&gt;</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  mutate(bins <span class="op">=</span> <span class="im">as</span>.numeric(bins),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>         midpoints <span class="op">=</span> bin_width<span class="op">/</span><span class="dv">2</span> <span class="op">+</span> bin_width <span class="op">*</span> (bins <span class="op">-</span> <span class="dv">1</span>))  <span class="op">|&gt;</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  ggplot(data <span class="op">=</span> _, aes(x <span class="op">=</span> midpoints, y <span class="op">=</span> mean_lapse)) <span class="op">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  geom_abline(slope <span class="op">=</span> <span class="dv">1</span>, intercept <span class="op">=</span> <span class="dv">0</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>) <span class="op">+</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  geom_line() <span class="op">+</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  geom_point() <span class="op">+</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  facet_wrap(<span class="op">~</span> model) <span class="op">+</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  labs(x <span class="op">=</span> <span class="st">"Predicted Lapse Probability (bin mid-point)"</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>       y <span class="op">=</span> <span class="st">"Observed Lapse Probability"</span>) <span class="op">+</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  scale_x_continuous(breaks <span class="op">=</span> seq(<span class="dv">0</span>, <span class="dv">1</span>, bin_width),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                     limits <span class="op">=</span> c(<span class="dv">0</span>, <span class="dv">1</span>)) <span class="op">+</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  scale_y_continuous(breaks <span class="op">=</span> seq(<span class="dv">0</span>, <span class="dv">1</span>, bin_width),</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>                     limits <span class="op">=</span> c(<span class="dv">0</span>, <span class="dv">1</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-cal" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-cal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="fig-cal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
 <a href="index_files/figure-html/notebooks-mak_figures-fig-cal-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Calibration plots of beta-calibrated lapse probabilities for the baseline (no lag) and 2-week lag models. Predicted probabilities (x-axis) are binned into deciles. Observed lapse probability (y-axis) represents the proportion of actual lapses observed in each bin. The dashed diagonal represents perfect calibration. Points below the line indicate overestimation and points above the line indicate underestimation."><img src="index_files/figure-html/notebooks-mak_figures-fig-cal-output-1.png" width="768" height="480" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1285,19 +1522,22 @@ Figure&nbsp;3: Calibration plots of beta-calibrated lapse probabilities for the 
 </figure>
 </div>
 </div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="feature-importance-1" class="level2">
 <h2 class="anchored" data-anchor-id="feature-importance-1">Feature Importance</h2>
 <p>Global feature importance is an indicator of how important a feature category was to the model’s predictions, on average (i.e., across all participants and all observations). The top globally important feature category (i.e., highest mean |Shapley value|) for all models was past use. Future efficacy was a strong predictor for more immediate model predictions (i.e., no lag and 1-day lag), but its importance diminished as lag time increased. On the other hand, as lag time increased past/future risky situations increased in importance. Craving was consistently important, in magnitude, across all models. Panel A of <a href="#fig-4" class="quarto-xref">Figure&nbsp;4</a> shows the relative ranking of feature categories for the no lag and 2-week lag models. Plots of global feature importance for all 5 models are available in the supplement. These findings were also consistent across demographic subgroups (plots of global feature importance by demographic group are available for the no lag and 2-week lag models in the supplement).</p>
 <p>Local feature importance is an indicator of how important a feature category is at a specific prediction timepoint (i.e., for a single individual on a specific day). Local importance can be used to map feature categories onto clinical interventions and recommendations (e.g., What does this individual need right now?). Panel B of <a href="#fig-4" class="quarto-xref">Figure&nbsp;4</a> shows the range of local feature importance (minimum Shapley value and maximum Shapley value) for each EMA feature category for the no lag and 2-week lag models. This plot suggests that even feature categories with low global importance (e.g., valence/arousal and past pleasant event) have a wide range of local importance values, suggesting that for some people at some moments in time these features are clinically important.</p>
-<div class="quarto-embed-nb-cell">
-<div id="cell-fig-4" class="cell" data-fig-width="8" data-fig-height="5">
+<div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-4">
+<div class="cell-container"><div class="cell-decorator"><pre>In [12]:</pre></div><div id="cell-fig-4" class="cell" data-fig-width="8" data-fig-height="5">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>global_panel <span class="op">+</span> panel_shap_local <span class="op">+</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  plot_layout(guides <span class="op">=</span> <span class="st">"collect"</span>) <span class="op">&amp;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  plot_annotation(tag_levels <span class="op">=</span> <span class="st">"A"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-4" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="fig-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
 <a href="index_files/figure-html/notebooks-mak_figures-fig-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;4: Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B displays the variation in local feature importance for the no lag and 2-week lag models. Lines start at minimum Shapley value and end at maximum Shapley value."><img src="index_files/figure-html/notebooks-mak_figures-fig-4-output-1.png" width="768" height="480" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1306,7 +1546,7 @@ Figure&nbsp;4: Panel A displays the global importance (mean |Shapley value|) for
 </figure>
 </div>
 </div>
-</div>
+</div></div>
 </div>
 </section>
 </section>
@@ -1510,19 +1750,17 @@ Zipkin, Daniella A., Craig A. Umscheid, Nancy L. Keating, Elizabeth Allen, KoKo 
 </div>
 </section>
 </section>
-
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
 <ol>
 <li id="fn1"><p>Defined as scores &gt;2.2 or 2.8, respectively, on the psychosis or paranoia scales of the Symptom Checklist–90 <span class="citation" data-cites="derogatislBriefSymptomInventory">(<a href="#ref-derogatislBriefSymptomInventory" role="doc-biblioref">Derogatis, L.R., n.d.</a>)</span><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>We used this conservative 24-hour fence for labeling windows as no lapse (vs.&nbsp;excluded) to increase the fidelity of these labels. Given that most windows were labeled no lapse, and the outcome was highly unbalanced, it was not problematic to exclude some no lapse events to further increase confidence in those labels.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3"><p>Priors were set as follows: residual standard deviation ~ normal(location=0, scale=exp(2)), intercept (after centering predictors) ~ normal(location=2.3, scale=1.3), the two coefficients for window width contrasts ~ normal (location=0, scale=2.69), and covariance ~ decov(regularization=1, concentration=1, shape=1, scale=1).<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn4"><p>The poverty cutoff was defined from the 2024 federal poverty line for the 48 contiguous United States. Participants at or below $15,060 annual income were categorized as below poverty.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
-</section></div></main>
-<!-- /main column -->
-<script id="quarto-html-after-body" type="application/javascript">
+</section>
+     </main>
+<!-- /main column -->  <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -1938,9 +2176,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>
-</div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
@@ -1971,9 +2207,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   };
   
 })();
-          </script>
-
-
-
-
+          </script> 
+  
 </body></html>
