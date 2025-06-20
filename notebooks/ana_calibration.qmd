@@ -42,27 +42,22 @@ preds_336 <- read_rds(here::here(path_models, "final_preds_kfold_1_x_5_1day_336_
 ```{r}
 brier <- tibble(model = "No lag",
                 raw = brier_class(preds_0, truth = label, prob_raw)$.estimate,
-                iso = brier_class(preds_0, truth = label, prob_iso)$.estimate,
                 logi = brier_class(preds_0, truth = label, prob_logi)$.estimate,
                 beta = brier_class(preds_0, truth = label, prob_beta)$.estimate) |> 
   bind_rows(tibble(model = "1 day",
                    raw = brier_class(preds_24, truth = label, prob_raw)$.estimate,
-                   iso = brier_class(preds_24, truth = label, prob_iso)$.estimate,
                    logi = brier_class(preds_24, truth = label, prob_logi)$.estimate,
                    beta = brier_class(preds_24, truth = label, prob_beta)$.estimate)) |> 
   bind_rows(tibble(model = "3 days",
                    raw = brier_class(preds_72, truth = label, prob_raw)$.estimate,
-                   iso = brier_class(preds_72, truth = label, prob_iso)$.estimate,
                    logi = brier_class(preds_72, truth = label, prob_logi)$.estimate,
                    beta = brier_class(preds_72, truth = label, prob_beta)$.estimate)) |> 
   bind_rows(tibble(model = "1 week",
                    raw = brier_class(preds_168, truth = label, prob_raw)$.estimate,
-                   iso = brier_class(preds_168, truth = label, prob_iso)$.estimate,
                    logi = brier_class(preds_168, truth = label, prob_logi)$.estimate,
                    beta = brier_class(preds_168, truth = label, prob_beta)$.estimate)) |> 
   bind_rows(tibble(model = "2 weeks",
                    raw = brier_class(preds_336, truth = label, prob_raw)$.estimate,
-                   iso = brier_class(preds_336, truth = label, prob_iso)$.estimate,
                    logi = brier_class(preds_336, truth = label, prob_logi)$.estimate,
                    beta = brier_class(preds_336, truth = label, prob_beta)$.estimate)) |> 
   write_csv(here::here(path_models, "brier_scores.csv"))
@@ -71,7 +66,6 @@ brier <- tibble(model = "No lag",
 brier |> 
   rename(Model = model, 
          `Raw (uncalibrated)` = raw,
-         `Isotonic calibration` = iso,
          `Logistic calibration` = logi,
          `Beta calibration` = beta) |> 
   knitr::kable(digits = 2) |> 

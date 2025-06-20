@@ -707,3 +707,19 @@ pp_sex |>
 ```
 
 
+### Table S2: Brier scores for all models
+
+```{r}
+brier <- read_csv(here::here(path_models_lag, "brier_scores.csv"))
+  
+brier |> 
+  rename(Model = model, 
+         `Raw (uncalibrated)` = raw,
+         `Logistic calibration` = logi,
+         `Beta calibration` = beta) |> 
+  knitr::kable(digits = 2) |> 
+  kableExtra::kable_classic()
+```
+
+
+
