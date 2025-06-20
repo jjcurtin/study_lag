@@ -1580,7 +1580,7 @@ Histograms of raw probabilities of our best model configurations for each classi
 </section>
 <section id="figure-s2-calibration-plots-for-all-models" class="level3">
 <h3 class="anchored" data-anchor-id="figure-s2-calibration-plots-for-all-models">Figure S2: Calibration Plots for all Models</h3>
-<p>The raw probabilities produced by our final models were not well calibrated. Brier scores for the no lag model (.071) and the 2-week lag model (.077) were roughly equivalent to the base rate of lapses (.076). Below we present the calibration plots of our raw predicted lapse probabilities for each model.</p>
+<p>The raw probabilities produced by our final models were not well calibrated. Beta and logistic calibration methods improved probability accuracy. Below we present the calibration plots of our raw predicted lapse probabilities for each model. In supplemental table S2 we report the brier scores for raw and calibrated probabilities for each model.</p>
 <div class="cell-container code-fold"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1738,7 +1738,7 @@ Calibration plots of raw and calibrated predicted lapse probabilities (beta, iso
 </section>
 <section id="figure-s3-global-shapley-plots-for-all-5-models" class="level3">
 <h3 class="anchored" data-anchor-id="figure-s3-global-shapley-plots-for-all-5-models">Figure S3: Global Shapley Plots for all 5 Models</h3>
-<p>The top globally important feature category (i.e., highest mean |Shapley value|) for all models was past use. Future efficacy was a strong predictor for more immediate model predictions (i.e., no lag and 1-day lag), but as lag time increased importance attenuated. On the other hand, as lag time increased past/future risky situations increased in importance. Craving was consistently important, in magnitude, across all models.</p>
+<p>The top globally important feature category (i.e., highest mean |Shapley value|) for all models was past use. Future efficacy was a strong predictor for more immediate model predictions (i.e., no lag and 1-day lag), but as lag time increased importance attenuated. On the other hand, as lag time increased past/future risky situations increased in importance. Craving was relatively consistently important, in magnitude, across all models.</p>
 <div class="cell-container code-fold"><div class="cell-decorator"><pre>In [5]:</pre></div><div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1821,9 +1821,11 @@ Calibration plots of raw and calibrated predicted lapse probabilities (beta, iso
 <span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dv">72</span>, <span class="dv">168</span>, <span class="dv">336</span>),</span>
 <span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;No lag&quot;</span>, <span class="st">&quot;1 day&quot;</span>, <span class="st">&quot;3 days&quot;</span>, <span class="st">&quot;1 week&quot;</span>, <span class="st">&quot;2 weeks&quot;</span>),</span>
 <span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">425</span>)) <span class="sc">+</span></span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="fl">9.5</span>),</span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.key.size =</span> <span class="fu">unit</span>(<span class="fl">0.25</span>, <span class="st">&quot;cm&quot;</span>),</span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;maroon&quot;</span>, <span class="st">&quot;Navy&quot;</span>, <span class="st">&quot;#3cb44b&quot;</span>, </span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>                                <span class="st">&quot;magenta&quot;</span>, <span class="st">&quot;cyan&quot;</span>, <span class="st">&quot;#9A6324&quot;</span>, <span class="st">&quot;purple&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="fl">9.5</span>),</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.key.size =</span> <span class="fu">unit</span>(<span class="fl">0.25</span>, <span class="st">&quot;cm&quot;</span>),</span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="cell-fig-s3" class="cell">
@@ -1833,10 +1835,10 @@ Calibration plots of raw and calibrated predicted lapse probabilities (beta, iso
 <div id="fig-s3" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-s3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class>
-<a href="supplement_files/figure-html/fig-s3-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Global importance (mean |Shapley value|) for feature categories shown separately by model. Feature categories are ordered by their aggregate global importance."><img role="img" src="supplement_files/figure-html/fig-s3-1.png" class="img-fluid figure-img" width="768"></a>
+<a href="supplement_files/figure-html/fig-s3-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Global importance (mean |Shapley value|) for feature categories by lag time."><img role="img" src="supplement_files/figure-html/fig-s3-1.png" class="img-fluid figure-img" width="768"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-s3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Global importance (mean |Shapley value|) for feature categories shown separately by model. Feature categories are ordered by their aggregate global importance.
+Global importance (mean |Shapley value|) for feature categories by lag time.
 </figcaption>
 </figure>
 </div>
