@@ -161,7 +161,7 @@ preds_hist
 
 ### Figure S2: Calibration Plots for all Models
 
-The raw probabilities produced by our final models were not well calibrated. Brier scores for the no lag model (.071) and the 2-week lag model (.077) were roughly equivalent to the base rate of lapses (.076). Below we present the calibration plots of our raw predicted lapse probabilities for each model.
+The raw probabilities produced by our final models were not well calibrated. Beta and logistic calibration methods improved probability accuracy. Below we present the calibration plots of our raw predicted lapse probabilities for each model. In supplemental table S2 we report the brier scores for raw and calibrated probabilities for each model.
 
 ```{r}
 #| code-fold: true
@@ -312,7 +312,7 @@ plot_cal
 
 ### Figure S3: Global Shapley Plots for all 5 Models
 
-The top globally important feature category (i.e., highest mean |Shapley value|) for all models was past use. Future efficacy was a strong predictor for more immediate model predictions (i.e., no lag and 1-day lag), but as lag time increased importance attenuated. On the other hand, as lag time increased past/future risky situations increased in importance. Craving was consistently important, in magnitude, across all models.
+The top globally important feature category (i.e., highest mean |Shapley value|) for all models was past use. Future efficacy was a strong predictor for more immediate model predictions (i.e., no lag and 1-day lag), but as lag time increased importance attenuated. On the other hand, as lag time increased past/future risky situations increased in importance. Craving was relatively consistently important, in magnitude, across all models.
 
 ```{r}
 #| code-fold: true
@@ -395,6 +395,8 @@ fig_s3 <- shap_global |>
   scale_x_continuous(breaks = c(0, 24, 72, 168, 336),
                      labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks"),
                      limits = c(0, 425)) +
+  scale_color_manual(values = c("maroon", "Navy", "#3cb44b", 
+                                "magenta", "cyan", "#9A6324", "purple")) +
   theme(axis.text=element_text(size=9.5),
         legend.key.size = unit(0.25, "cm"),
         legend.position = "none")
@@ -402,7 +404,7 @@ fig_s3 <- shap_global |>
 
 ```{r}
 #| label: fig-s3
-#| fig-cap: "Global importance (mean |Shapley value|) for feature categories shown separately by model. Feature categories are ordered by their aggregate global importance."
+#| fig-cap: "Global importance (mean |Shapley value|) for feature categories by lag time."
 #| fig-width: 8
 #| fig-height: 5
 
