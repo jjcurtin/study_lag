@@ -14,9 +14,7 @@ These models, which predict discrete onsets of alcohol lapse, are well-suited fo
 
 Given the potential of our models' to support scalable, adaptive, and personalized continuing care, we request that our manuscript be considered for the open collection *"Emerging Applications of Machine Learning and AI for Predictive Modeling in Precision Medicine,"* edited by Dr. Muthuraman. In addition to our study aligning with the core tenants of precision medicine, it explicitly evaluates model performance discrepancies across demographic subgroups with known disparities in substance use treatment access, furthering this collection's call for careful considerations of equity and access.  
 
-We preregistered our data analytic strategy. We reported how we determined the sample size, all data exclusions, all manipulations, and all study measures. Finally, we made our data, questionnaires and other study materials publicly available on our OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)), and our annotated analysis scripts and results publicly available on our study website ([https://jjcurtin.github.io/study_lag/](https://jjcurtin.github.io/study_lag/)).
-
-All authors and contributors complied with the APA ethical standards in our treatment of participants during the course of this research study, and all study procedures were approved by the University of Wisconsin-Madison Institutional Review Board. The authors do not have any conflicts of interest to report regarding the submitted work.     
+Finally, we preregistered our data analytic plan and made all data and study measures publicly available on our OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)). Our annotated analysis scripts and results are publicly available on our study website ([https://jjcurtin.github.io/study_lag/](https://jjcurtin.github.io/study_lag/)).
 
 
 The corresponding author is:     
@@ -29,7 +27,21 @@ EMAIL: jjcurtin@wisc.edu
 PH: 608-262-0387    
 FAX: 608-262-4029    
 
-<!--suggest potential reviewers-->
+Suggested reviewers for this manuscript are:
+1. Sang Won Bae, Ph.D.
+Department of Systems and Enterprises
+Stevens Institute of Technology
+sbae4@stevens.edu
+
+2. Scott Walters, Ph.D.
+Department of Public Health
+University of North Texas Health Science Center
+scott.walters@unthsc.edu
+
+3. Zachary Cohen, Ph.D.
+Department of Psychology
+University of Arizona
+cohenzd@arizona.edu
 
 
 If we can provide any additional information that would be of assistance, please do not hesitate to ask. We look forward to hearing from you regarding this manuscript.    
