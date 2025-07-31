@@ -136,16 +136,6 @@ preds_all_raw <- preds_0 |>
   mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")),
          prob = "Raw (uncalibrated)")
 
-preds_all_beta <- preds_0 |> 
-  mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
-         lapse = if_else(label == "Lapse", 1, 0)) |> 
-  mutate(model = "No lag") |> 
-  bind_rows(preds_336 |> 
-              mutate(bins = cut(prob_beta, breaks = seq(0, 1, bin_width)), 
-                     lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")),
-         prob = "Beta calibration")
 
 preds_all_logi <- preds_0 |> 
   mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
@@ -159,7 +149,6 @@ preds_all_logi <- preds_0 |>
          prob = "Logistic calibration")
 
 preds_all <- preds_all_raw |> 
-  bind_rows(preds_all_beta) |> 
   bind_rows(preds_all_logi) 
 
 mini_hist <- preds_all_raw |>
@@ -186,7 +175,6 @@ mini_hist <- preds_all_raw |>
 
 preds_all |> 
   mutate(prob = factor(prob, levels = c("Raw (uncalibrated)", 
-                                        "Beta calibration", 
                                         "Logistic calibration"))) |> 
   group_by(bins, model, prob)  |> 
   summarize(mean_lapse = mean(lapse), .groups = "drop") |> 
@@ -215,8 +203,8 @@ preds_all |>
   scale_y_continuous(limits = c(-0.08, 1), breaks = seq(0,1, bin_width),
                      expand = c(0, 0)) +
   coord_cartesian(clip = "off") +
-  scale_color_manual(values = c("black", "#458892", "#cb6bce")) +
-  scale_linetype_manual(values = c("solid", "twodash", "dotted")) +
+  scale_color_manual(values = c("black", "#cb6bce")) +
+  scale_linetype_manual(values = c("solid", "twodash")) +
   theme_classic(base_size = 11) +
   theme(
     legend.position = "bottom",

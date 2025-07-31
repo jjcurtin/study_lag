@@ -32,16 +32,6 @@ lead <- params$lead
 version <- params$version
 ```
 
-Function conflicts
-```{r}
-#| message: false
-#| warning: false
-
-# handle conflicts
-options(conflicts.policy = "depends.ok")
-devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/fun_ml.R?raw=true")
-tidymodels_conflictRules()
-```
 
 Packages, functions, and paths
 ```{r}
@@ -50,6 +40,7 @@ Packages, functions, and paths
 
 library(tidyverse)
 library(tidymodels)
+options(conflicts.policy = "depends.ok")
 
 devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
 

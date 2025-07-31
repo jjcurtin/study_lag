@@ -212,7 +212,7 @@ To further characterize and understand our models, we used our inner resampling 
 
 #### Model Calibration
 
-The best model configuration for each classification model was fit on the full data set. We fit this configuration using single 5-fold cross-validation. This method allowed us to obtain a single predicted probability for each observation, while still using separate data for model training and prediction. We calibrated our raw probabilities using two candidate calibration methods: logistic, and beta calibration. We calculated brier scores to assess the accuracy of our raw and calibrated probabilities for the no lag and 2-week lag models. Brier scores range from 0 (perfect accuracy) to 1 (perfect inaccuracy). A table of brier scores for all five models is available in the supplement. We provide calibration plots for the no lag and 2-week lag models (calibration plots for all five models are available in the supplement).
+The best model configuration for each classification model was fit on the full data set. We fit this configuration using single 5-fold cross-validation. This method allowed us to obtain a single predicted probability for each observation, while still using separate data for model training and prediction. We calibrated our probabilities using logistic calibration <!--KW: add ref-->. We calculated brier scores to assess the accuracy of our raw and calibrated probabilities for the no lag and 2-week lag models. Brier scores range from 0 (perfect accuracy) to 1 (perfect inaccuracy). A table of brier scores for all five models is available in the supplement. We provide calibration plots for the no lag and 2-week lag models (calibration plots for all five models are available in the supplement).
 
 #### Feature Importance
 
@@ -259,7 +259,7 @@ The proportion of positive lapse labels over all labels (lapse and no lapse) for
 
 The raw probabilities produced by our final models were not well calibrated. Brier scores for the no lag model (.071) and the 2-week lag model (.077) were roughly equivalent to the base rate of lapses (.077 and .076 for the no lag and 2-week lag models, respectively). The base rate of positive cases (i.e., lapses) can be used as a benchmark, as it is what we would expect a brier score to be for a model that predicted the same probability for all observations. However, our models did produce variation in predicted probabilities, with probabilities spanning nearly the entire 0 - 1 range (see histograms of raw probabilities in @fig-cal). 
 
-Both beta and logistic calibration showed excellent improvement to the no lag model with brier scores of .043 for both methods. Calibration also improved probability accuracy for the 2 week model with brier scores of .061 and .063 for beta and logistic calibration, respectively. @fig-cal shows the calibration plots for the raw and calibrated probabilities for the no lag and 2-week lag model. Calibration plots and brier scores for all 5 models are available in the supplement.
+Logistic calibration showed excellent improvement to the no lag model with a brier score of .043. Calibration also improved probability accuracy for the 2 week model with a brier score .063. @fig-cal shows the calibration plots for the raw and calibrated probabilities for the no lag and 2-week lag model. Calibration plots and brier scores for all 5 models are available in the supplement.
 
 {{< embed notebooks/mak_figures.qmd#fig-cal >}} 
 

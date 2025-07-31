@@ -2,3 +2,7 @@
   quarto-pub:
     - id: d4df4374-3987-49d5-8112-9dc5ff88364c
       url: https://kendra-wyant.quarto.pub/callibration
+- source: beta_notes.qmd
+  quarto-pub:
+    - id: a26e51c2-8cf5-449d-81e6-eed3ead4c0be
+      url: https://kendra-wyant.quarto.pub/beta-callibration-notes
