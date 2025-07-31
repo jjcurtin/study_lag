@@ -169,7 +169,7 @@ mini_hist <- preds_all_raw |>
 
 ```{r}
 #| label: fig-cal
-#| fig-cap: "Calibration plots of raw and calibrated lapse probabilities for the baseline (no lag) and 2-week lag models. Predicted probabilities (x-axis) are binned into deciles. Observed lapse probability (y-axis) represents the proportion of actual lapses observed in each bin. The dashed diagonal represents perfect calibration. Points below the line indicate overestimation and points above the line indicate underestimation. Raw probabilities are depicted as solid black curve. Beta and logistic calibrated probabilites are depicted as green dashed curve and pink dotted curve, respectively. The grey histogram along the bottom of the plot represents the proportion of raw probabilities in each bin."
+#| fig-cap: "Calibration plots of raw and calibrated lapse probabilities for the baseline (no lag) and 2-week lag models. Predicted probabilities (x-axis) are binned into deciles. Observed lapse probability (y-axis) represents the proportion of actual lapses observed in each bin. The dashed diagonal represents perfect calibration. Points below the line indicate overestimation and points above the line indicate underestimation. Raw probabilities are depicted as the solid black curves. Logistic calibrated probabilites are depicted as the pink dashed curves, respectively. The grey histogram along the bottom of the plot represents the proportion of raw probabilities in each bin."
 #| fig-width: 6
 #| fig-height: 6
 

@@ -212,7 +212,7 @@ To further characterize and understand our models, we used our inner resampling 
 
 #### Model Calibration
 
-The best model configuration for each classification model was fit on the full data set. We fit this configuration using single 5-fold cross-validation. This method allowed us to obtain a single predicted probability for each observation, while still using separate data for model training and prediction. We calibrated our probabilities using logistic calibration <!--KW: add ref-->. We calculated brier scores to assess the accuracy of our raw and calibrated probabilities for the no lag and 2-week lag models. Brier scores range from 0 (perfect accuracy) to 1 (perfect inaccuracy). A table of brier scores for all five models is available in the supplement. We provide calibration plots for the no lag and 2-week lag models (calibration plots for all five models are available in the supplement).
+The best model configuration for each classification model was fit on the full data set. We fit this configuration using single 5-fold cross-validation. This method allowed us to obtain a single predicted probability for each observation, while still using separate data for model training and prediction. We calibrated our probabilities using logistic calibration [@plattProbabilisticOutputsSupport1999]. We calculated brier scores to assess the accuracy of our raw and calibrated probabilities for the no lag and 2-week lag models. Brier scores range from 0 (perfect accuracy) to 1 (perfect inaccuracy). A table of brier scores for all five models is available in the supplement. We provide calibration plots for the no lag and 2-week lag models (calibration plots for all five models are available in the supplement).
 
 #### Feature Importance
 
