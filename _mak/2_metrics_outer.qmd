@@ -13,14 +13,10 @@ params:
   
   study: "lag"
   window: "1day"
-  lead: 168
+  lead: 336
   version: "v3"
   cv: "nested"
   model: "strat_lh"
-<<<<<<< HEAD
-=======
-
->>>>>>> c71443ec201fcb87f473176bd76f9cfcd963f59a
 editor_options: 
   chunk_output_type: console
 ---

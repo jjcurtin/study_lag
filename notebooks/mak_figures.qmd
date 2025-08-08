@@ -146,7 +146,7 @@ preds_all_logi <- preds_0 |>
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
               mutate(model = "2 weeks")) |> 
   mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")),
-         prob = "Logistic calibration")
+         prob = "Platt calibration")
 
 preds_all <- preds_all_raw |> 
   bind_rows(preds_all_logi) 
@@ -169,13 +169,13 @@ mini_hist <- preds_all_raw |>
 
 ```{r}
 #| label: fig-cal
-#| fig-cap: "Calibration plots of raw and calibrated lapse probabilities for the baseline (no lag) and 2-week lag models. Predicted probabilities (x-axis) are binned into deciles. Observed lapse probability (y-axis) represents the proportion of actual lapses observed in each bin. The dashed diagonal represents perfect calibration. Points below the line indicate overestimation and points above the line indicate underestimation. Raw probabilities are depicted as the solid black curves. Logistic calibrated probabilites are depicted as the pink dashed curves, respectively. The grey histogram along the bottom of the plot represents the proportion of raw probabilities in each bin."
+#| fig-cap: "Calibration plots of raw and calibrated lapse probabilities for the baseline (no lag) and 2-week lag models. Predicted probabilities (x-axis) are binned into deciles. Observed lapse probability (y-axis) represents the proportion of actual lapses observed in each bin. The dashed diagonal represents perfect calibration. Points below the line indicate overestimation and points above the line indicate underestimation. Raw probabilities are depicted as solid black curves. Platt calibrated probabilites are depicted as pink dashed curves. The grey histogram along the bottom of the plot represents the proportion of raw probabilities in each bin."
 #| fig-width: 6
 #| fig-height: 6
 
 preds_all |> 
   mutate(prob = factor(prob, levels = c("Raw (uncalibrated)", 
-                                        "Logistic calibration"))) |> 
+                                        "Platt calibration"))) |> 
   group_by(bins, model, prob)  |> 
   summarize(mean_lapse = mean(lapse), .groups = "drop") |> 
   mutate(
@@ -236,48 +236,12 @@ global_panel <- shap_global |>
   coord_flip()
 ```
 
-```{r}
-shap_grp_0_sum <- shap_grp_0 |> 
-  group_by(variable_grp) |> 
-  summarize(min = min(value), max = max(value)) |> 
-  mutate(model = "No lag")
-
-shap_grp_336_sum <- shap_grp_336 |> 
-  group_by(variable_grp) |> 
-  summarize(min = min(value), max = max(value)) |> 
-  mutate(model = "2 weeks")
-
-panel_shap_local <- shap_grp_0_sum |>
-  bind_rows(shap_grp_336_sum) |> 
-  mutate(model = factor(model, levels = c("2 weeks", "No lag"))) |> 
-  mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |> 
-  ggplot() +
-  geom_segment(aes(x = variable_grp, y = min, yend = max, group = model,
-                   color = model),
-               position = position_dodge(width = .5), 
-               linewidth = 1) +
-  ylab("Raw Shapley Value") +
-  xlab(NULL) +
-  labs(color = NULL) +
-  scale_color_manual(values = c("#458892", "#751c6d")) +
-  theme(legend.position = "none",
-        axis.text=element_text(size=9.5),
-        panel.border = element_rect(colour = "black", fill = NA, 
-                                    linewidth = 1))+
-  geom_hline(aes(yintercept = 0), linetype = "dashed",
-             linewidth = .5) +
-  scale_y_continuous(limits = c(-2, 6), breaks = seq(-2, 6, 2)) +
-  coord_flip()
-```
-
 
 ```{r}
 #| label: fig-4
-#| fig-cap: "Panel A displays the global importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color. Panels B displays the variation in local feature importance for the no lag and 2-week lag models. Lines start at minimum Shapley value and end at maximum Shapley value."
+#| fig-cap: "Global feature importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color."
 #| fig-width: 8
 #| fig-height: 5
 
-global_panel + panel_shap_local + 
-  plot_layout(guides = "collect") &
-  plot_annotation(tag_levels = "A") 
+global_panel 
 ```
