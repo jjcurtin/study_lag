@@ -228,7 +228,7 @@ global_panel <- shap_global |>
   labs(y = "Mean(|Shapley Value|)",
        x = NULL,
        fill = NULL) +
-  scale_fill_manual(values = c("#cb6bce", "#240e31")) +
+  scale_fill_manual(values = c("#8A177C", "#240e31")) +
   theme(axis.text=element_text(size=9.5),
         legend.key.size = unit(0.25, "cm"),
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
