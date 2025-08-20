@@ -169,7 +169,7 @@ mini_hist <- preds_all_raw |>
 
 ```{r}
 #| label: fig-cal
-#| fig-cap: "Calibration plots of raw and calibrated lapse probabilities for the baseline (no lag) and 2-week lag models. Predicted probabilities (x-axis) are binned into deciles. Observed lapse probability (y-axis) represents the proportion of actual lapses observed in each bin. The dashed diagonal represents perfect calibration. Points below the line indicate overestimation and points above the line indicate underestimation. Raw probabilities are depicted as solid black curves. Platt calibrated probabilites are depicted as pink dashed curves. The grey histogram along the bottom of the plot represents the proportion of raw probabilities in each bin."
+#| fig-cap: "Calibration plots of raw and calibrated lapse probabilities for the baseline (no lag) and 2-week lagged models. Predicted probabilities (x-axis) are binned into deciles. Observed lapse probability (y-axis) represents the proportion of actual lapses observed in each bin. The dashed diagonal represents perfect calibration. Points below the line indicate overestimation and points above the line indicate underestimation. Raw probabilities are depicted as solid black curves. Platt calibrated probabilites are depicted as pink dashed curves. The grey histogram along the bottom of the plot represents the proportion of raw probabilities in each bin."
 #| fig-width: 6
 #| fig-height: 6
 
@@ -228,7 +228,7 @@ global_panel <- shap_global |>
   labs(y = "Mean(|Shapley Value|)",
        x = NULL,
        fill = NULL) +
-  scale_fill_manual(values = c("#458892", "#751c6d")) +
+  scale_fill_manual(values = c("#cb6bce", "#240e31")) +
   theme(axis.text=element_text(size=9.5),
         legend.key.size = unit(0.25, "cm"),
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
@@ -239,7 +239,7 @@ global_panel <- shap_global |>
 
 ```{r}
 #| label: fig-4
-#| fig-cap: "Global feature importance (mean |Shapley value|) for feature categories for the no lag and 2-week lag models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color."
+#| fig-cap: "Global feature importance (mean |Shapley value|) for feature categories for the no lag and 2-week lagged models. Feature categories are ordered by their aggregate global importance. The importance of each feature category for each model is displayed separately by color."
 #| fig-width: 8
 #| fig-height: 5
 
