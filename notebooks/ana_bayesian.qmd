@@ -79,7 +79,7 @@ pp <- test_metrics_all |>
          id2 = repeat_num) |> 
   perf_mod(formula = statistic ~ model + (1 | id2/id),
          transform = tidyposterior::logit_trans,  # for skewed & bounded AUC
-         iter = 4000, chains = 4, adapt_delta = .999, # increased iteration from 2000 to fix divergence issues
+         iter = 6000, chains = 4, adapt_delta = .9999, # increased iteration from 2000 to fix divergence issues
          family = gaussian, 
 )  
 
@@ -118,25 +118,25 @@ pp_perf_tibble
 
 
 ci_baseline <- pp |>
-  contrast_models(list("lag0", "lag0", "lag0", "lag0"), 
-                  list("lag24", "lag72", "lag168", "lag336")) |> 
+  contrast_models(list("lag24", "lag72", "lag168", "lag336"), 
+                  list("lag0", "lag0", "lag0", "lag0")) |> 
   summary(size = 0) |> 
   mutate(contrast = factor(contrast, 
-                           levels = c("lag0 vs lag24", "lag0 vs lag72", "lag0 vs lag168", 
-                                      "lag0 vs lag336"),
-                           labels = c("0 vs. 24", "0 vs. 72", 
-                                      "0 vs. 168", "0 vs. 336")))
+                           levels = c("lag24 vs lag0", "lag72 vs lag0", "lag168 vs lag0", 
+                                      "lag336 vs lag0"),
+                           labels = c("24 vs. 0", "72 vs. 0", 
+                                      "168 vs. 0", "336 vs. 0")))
 
 ci_median_baseline <- pp |> 
-  contrast_models(list("lag0", "lag0", "lag0", "lag0"), 
-                  list("lag24", "lag72", "lag168", "lag336")) |>  
+  contrast_models(list("lag24", "lag72", "lag168", "lag336"), 
+                  list("lag0", "lag0", "lag0", "lag0")) |>  
   group_by(contrast) |> 
   summarize(median = quantile(difference, .5)) |> 
   mutate(contrast = factor(contrast, 
-                           levels = c("lag0 vs. lag24", "lag0 vs. lag72", "lag0 vs. lag168", 
-                                      "lag0 vs. lag336"),
-                           labels = c("0 vs. 24", "0 vs. 72", 
-                                      "0 vs. 168", "0 vs. 336")))
+                           levels = c("lag24 vs. lag0", "lag72 vs. lag0", "lag168 vs. lag0", 
+                                      "lag336 vs. lag0"),
+                           labels = c("24 vs. 0", "72 vs. 0", 
+                                      "168 vs. 0", "336 vs. 0")))
 
 
 ci_baseline <- ci_baseline |> 
@@ -154,23 +154,23 @@ ci_baseline
 
 ```{r}
 ci_lag <- pp |>
-  contrast_models(list("lag24", "lag72", "lag168"), 
-                  list("lag72", "lag168", "lag336")) |> 
+  contrast_models(list("lag72", "lag168", "lag336"), 
+                  list("lag24", "lag72", "lag168")) |> 
   summary(size = 0) |> 
   mutate(contrast = factor(contrast, 
-                           levels = c("lag24 vs lag72", "lag72 vs lag168", 
-                                      "lag168 vs lag336"),
-                           labels = c("24 vs. 72", "72 vs. 168", "168 vs. 336")))
+                           levels = c("lag72 vs lag24", "lag168 vs lag72", 
+                                      "lag336 vs lag168"),
+                           labels = c("72 vs. 24", "168 vs. 72", "336 vs. 168")))
 
 ci_median_lag <- pp |> 
-  contrast_models(list("lag24", "lag72", "lag168"), 
-                  list("lag72", "lag168", "lag336")) |>  
+  contrast_models(list("lag72", "lag168", "lag336"), 
+                  list("lag24", "lag72", "lag168")) |> 
   group_by(contrast) |> 
   summarize(median = quantile(difference, .5)) |> 
   mutate(contrast = factor(contrast, 
-                           levels = c("lag24 vs. lag72", "lag72 vs. lag168", 
-                                      "lag168 vs. lag336"),
-                           labels = c("24 vs. 72", "72 vs. 168", "168 vs. 336")))
+                           levels = c("lag72 vs. lag24", "lag168 vs. lag72", 
+                                      "lag336 vs. lag168"),
+                           labels = c("72 vs. 24", "168 vs. 72", "336 vs. 168")))
 
 ci_lag <- ci_lag |> 
   left_join(ci_median_lag, by = c("contrast")) |> 

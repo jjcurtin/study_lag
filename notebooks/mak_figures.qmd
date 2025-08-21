@@ -44,7 +44,7 @@ pp_tidy <- read_csv(here::here(path_models_lag, "posteriors.csv"),
 ci <- read_csv(here::here(path_models_lag, "pp_perf_tibble.csv"), 
                                  show_col_types = FALSE) |> 
   mutate(model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"),
-                        labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
+                        labels = c("No lag", "1-day", "3-day", "1-week", "2-week")))
 
 preds_0 <- read_rds(here::here(path_models_lag, 
                                "final_preds_kfold_1_x_5_1day_0_v3_strat_lh_final.rds")) 
@@ -71,8 +71,8 @@ shap_grp_336 <- read_rds(here::here(path_models_lag,
 shap_global <- shap_grp_0 |> 
   mutate(model = "No lag") |> 
   bind_rows(shap_grp_336 |> 
-              mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("2 weeks", "No lag" ))) |> 
+              mutate(model = "2-week")) |> 
+  mutate(model = factor(model, levels = c("2-week", "No lag" ))) |> 
   group_by(variable_grp, model) |> 
   summarize(mean_value = mean(abs(value)), .groups = "drop")
 
@@ -103,7 +103,7 @@ knitr::include_graphics(path = here::here("figures/methods.png"), error = FALSE)
 
 pp_tidy |> 
   mutate(model = factor(model, levels = c("lag0", "lag24", "lag72", "lag168", "lag336"),
-                        labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks"))) |>
+                        labels = c("No lag", "1-day", "3-day", "1-week", "2-week"))) |>
   ggplot() + 
   geom_histogram(aes(x = posterior), fill = "light grey", color = "black", linewidth = .5,  
                  bins = 60) +
@@ -132,8 +132,8 @@ preds_all_raw <- preds_0 |>
   bind_rows(preds_336 |> 
               mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")),
+              mutate(model = "2-week")) |> 
+  mutate(model = factor(model, levels = c("No lag", "2-week")),
          prob = "Raw (uncalibrated)")
 
 
@@ -144,8 +144,8 @@ preds_all_logi <- preds_0 |>
   bind_rows(preds_336 |> 
               mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")),
+              mutate(model = "2-week")) |> 
+  mutate(model = factor(model, levels = c("No lag", "1-day", "3-day", "1-week", "2-week")),
          prob = "Platt calibration")
 
 preds_all <- preds_all_raw |> 
@@ -154,7 +154,7 @@ preds_all <- preds_all_raw |>
 mini_hist <- preds_all_raw |>
   count(bins, model) |> 
   bind_rows(tibble(bins = "(0.9,1]",
-                   model = "2 weeks",
+                   model = "2-week",
                    n = 0)) |> 
   group_by(model) |> 
   mutate(
@@ -162,7 +162,7 @@ mini_hist <- preds_all_raw |>
     x = bin_width / 2 + bin_width * (bins - 1),       
     y = n / max(n) * 0.07
   ) |> 
-  mutate(model = factor(model, levels = c("No lag", "2 weeks"))) 
+  mutate(model = factor(model, levels = c("No lag", "2-week"))) 
 
 ```
 
@@ -228,7 +228,7 @@ global_panel <- shap_global |>
   labs(y = "Mean(|Shapley Value|)",
        x = NULL,
        fill = NULL) +
-  scale_fill_manual(values = c("#8A177C", "#240e31")) +
+  scale_fill_manual(values = c("#cb6bce", "#240e31")) +
   theme(axis.text=element_text(size=9.5),
         legend.key.size = unit(0.25, "cm"),
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),

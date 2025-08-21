@@ -155,11 +155,11 @@ calc_pp <- function (lag, dem_var) {
   
   contrast_lists <- 
     if (dem_var == "sex") {
-    c(list("male"), list("female"))
+    c(list("female"), list("male"))
   } else if (dem_var == "income") {
-    c(list("above poverty"), list("below poverty"))
+    c(list("below poverty"), list("above poverty"))
   } else if (dem_var == "race") {
-    c(list("non-hispanic white"), list("not white"))
+    c(list("not white"), list("non-hispanic white"))
   } else {
     stop(dem_var, " not in data")
   }

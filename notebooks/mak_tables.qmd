@@ -413,15 +413,15 @@ table_ci <- ci_baseline |>
   add_row(contrast = "Baseline Contrasts", median = "", ci = "", probability = "") |> 
   mutate(contrast = factor(contrast,
                            levels = c("Baseline Contrasts",
-                                      "0 vs. 24",
-                                      "0 vs. 72",
-                                      "0 vs. 168",
-                                      "0 vs. 336"),
+                                      "24 vs. 0",
+                                      "72 vs. 0",
+                                      "168 vs. 0",
+                                      "336 vs. 0"),
                            labels = c("Baseline Contrasts",
-                                      "No lag vs. 1 day",
-                                      "No lag vs. 3 days",
-                                      "No lag vs. 1 week",
-                                      "No lag vs. 2 weeks"))) |> 
+                                      "1 day vs. No lag",
+                                      "3 days vs. No lag",
+                                      "1 week vs. No lag",
+                                      "2 weeks vs. No lag"))) |> 
   arrange(contrast) |> 
   rbind(ci_lag |> 
           mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
@@ -432,13 +432,13 @@ table_ci <- ci_baseline |>
                   probability = "") |> 
           mutate(contrast = factor(contrast,
                            levels = c("Adjacent Contrasts",
-                                      "24 vs. 72",
-                                      "72 vs. 168",
-                                      "168 vs. 336"),
+                                      "72 vs. 24",
+                                      "168 vs. 72",
+                                      "336 vs. 168"),
                            labels = c("Adjacent Contrasts",
-                                      "1 day vs. 3 days",
-                                      "3 days vs. 1 week",
-                                      "1 week vs. 2 weeks"))) |> 
+                                      "3 days vs. 1 day",
+                                      "1 week vs. 3 days",
+                                      "2 weeks vs. 1 week"))) |> 
           arrange(contrast)) |> 
     rename(Contrast = contrast,
          Median = median,
@@ -454,13 +454,13 @@ table_ci <- ci_baseline |>
                   probability = "") |> 
           mutate(contrast = factor(contrast,
                            levels = c("Fairness Contrasts (No Lag)",
-                                      "male vs female",
-                                      "non-hispanic white vs not white",
-                                      "above poverty vs below poverty"),
+                                      "female vs male",
+                                      "not white vs non-hispanic white",
+                                      "below poverty vs above poverty"),
                            labels = c("Fairness Contrasts (No Lag)",
-                                      "male vs. female",
-                                      "non-Hispanic White vs. not White",
-                                      "above poverty vs. below poverty"))) |> 
+                                      "female vs. male",
+                                      "not White vs. non-Hispanic White",
+                                      "below poverty vs. above poverty"))) |> 
           arrange(contrast) |> 
     rbind(ci_fairness_336 |> 
           mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
@@ -471,13 +471,13 @@ table_ci <- ci_baseline |>
                   probability = "") |> 
           mutate(contrast = factor(contrast,
                            levels = c("Fairness Contrasts (2-week Lag)",
-                                      "male vs female",
-                                      "non-hispanic white vs not white",
-                                      "above poverty vs below poverty"),
+                                      "female vs male",
+                                      "not white vs non-hispanic white",
+                                      "below poverty vs above poverty"),
                            labels = c("Fairness Contrasts (2-week Lag)",
-                                      "male vs. female",
-                                      "non-Hispanic White vs. not White",
-                                      "above poverty vs. below poverty"))) |> 
+                                      "female vs. male",
+                                      "not White vs. non-Hispanic White",
+                                      "below poverty vs. above poverty"))) |> 
           arrange(contrast)) |> 
   rename(Contrast = contrast,
          Median = median,
@@ -525,7 +525,7 @@ table_dem |>
 #| label: tbl-model
 #| tbl-cap: "Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts."
 
-footnote_table_model <- "Median auROC differences greater than 0 indicate the more immediate model, on average, out-performed the more lagged model (e.g., no lag - 1-day lag, 1-day lag - 3-day lag). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently)."
+footnote_table_model <- "Median auROC differences less than 0 indicate the more lagged model, on average, performed worse than the more immediate model (e.g., 1-day lag - no lag, 3-day lag - 1-day lag). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently)."
 
 table_ci |> 
   knitr::kable() |> 
@@ -543,9 +543,9 @@ table_ci |>
 
 ```{r }
 #| label: tbl-fairness
-#| tbl-cap: "Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts."
+#| tbl-cap: "Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for fairness contrasts for the no lag and 2-week lagged models."
 
-footnote_table_fair <- "Median auROC differences greater than 0 indicate the model, on average, performed better for the advantaged group (male, non-Hispanic White, and above poverty) compared to the non-advantaged group (female, not White, below poverty). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently for fairness subgroups)."
+footnote_table_fair <- "Median auROC differences less than 0 indicate the model, on average, performed worse for the disadvantaged group (female, not White, income below poverty) compared to the advantaged group (male, non-Hispanic White, income above poverty). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently for fairness subgroups)."
 
 table_ci_fair |> 
   knitr::kable() |> 

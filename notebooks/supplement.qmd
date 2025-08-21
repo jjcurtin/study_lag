@@ -96,7 +96,7 @@ pp_tidy <- read_csv(here::here(path_models_lag, "posteriors.csv"),
 ci <- read_csv(here::here(path_models_lag, "pp_perf_tibble.csv"), 
                                  show_col_types = FALSE) |> 
   mutate(model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"),
-                        labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
+                        labels = c("No lag", "1-day", "3-day", "1-week", "2-week")))
 
 pp_dem <- read_csv(here::here(path_models_lag, "pp_dem_all.csv"), 
                                  show_col_types = FALSE)
@@ -104,7 +104,7 @@ pp_dem <- read_csv(here::here(path_models_lag, "pp_dem_all.csv"),
 pp_dem_contrast <- read_csv(here::here(path_models_lag, "pp_dem_contrast_all.csv"), 
                                  show_col_types = FALSE) |> 
   mutate(lag = factor(lag, levels = c("0", "24", "72", "168", "336"),
-                        labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
+                        labels = c("No lag", "1-day", "3-day", "1-week", "2-week")))
 
 labels <- read_csv(here::here(path_processed, "labels_1day_0lag.csv"),
                    show_col_types = FALSE)
@@ -130,14 +130,14 @@ preds_336 <- read_rds(here::here(path_models_lag,
 preds_all <- preds_0 |> 
   mutate(model = "No lag") |> 
   bind_rows(preds_24 |> 
-              mutate(model = "1 day")) |> 
+              mutate(model = "1-day")) |> 
   bind_rows(preds_72 |> 
-              mutate(model = "3 days")) |> 
+              mutate(model = "3-day")) |> 
   bind_rows(preds_168 |> 
-              mutate(model = "1 week")) |> 
+              mutate(model = "1-week")) |> 
   bind_rows(preds_336 |> 
-              mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")))
+              mutate(model = "2-week")) |> 
+  mutate(model = factor(model, levels = c("No lag", "1-day", "3-day", "1-week", "2-week")))
 
 preds_hist <- preds_all |> 
   ggplot(aes(x = prob_raw)) +
@@ -175,20 +175,20 @@ preds_all_raw <- preds_0 |>
   bind_rows(preds_24 |> 
               mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "1 day")) |> 
+              mutate(model = "1-day")) |> 
   bind_rows(preds_72 |> 
               mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "3 days")) |> 
+              mutate(model = "3-day")) |> 
   bind_rows(preds_168 |> 
               mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "1 week")) |> 
+              mutate(model = "1-week")) |> 
   bind_rows(preds_336 |> 
               mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")),
+              mutate(model = "2-week")) |> 
+  mutate(model = factor(model, levels = c("No lag", "1-day", "3-day", "1-week", "2-week")),
          prob = "Raw (uncalibrated)")
 
 preds_all_logi <- preds_0 |> 
@@ -198,20 +198,20 @@ preds_all_logi <- preds_0 |>
   bind_rows(preds_24 |> 
               mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "1 day")) |> 
+              mutate(model = "1-day")) |> 
   bind_rows(preds_72 |> 
               mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "3 days")) |> 
+              mutate(model = "3-day")) |> 
   bind_rows(preds_168 |> 
               mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "1 week")) |> 
+              mutate(model = "1-week")) |> 
   bind_rows(preds_336 |> 
               mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
                      lapse = if_else(label == "Lapse", 1, 0)) |> 
-              mutate(model = "2 weeks")) |> 
-  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")),
+              mutate(model = "2-week")) |> 
+  mutate(model = factor(model, levels = c("No lag", "1-day", "3-day", "1-week", "2-week")),
          prob = "Platt calibration")
 
 preds_all <- preds_all_raw |> 
@@ -220,7 +220,7 @@ preds_all <- preds_all_raw |>
 mini_hist <- preds_all_raw |>
   count(bins, model) |> 
   bind_rows(tibble(bins = "(0.9,1]",
-                   model = "2 weeks",
+                   model = "2-week",
                    n = 0)) |> 
   group_by(model) |> 
   mutate(
@@ -228,8 +228,8 @@ mini_hist <- preds_all_raw |>
     x = bin_width / 2 + bin_width * (bins - 1),       
     y = n / max(n) * 0.07
   ) |> 
-  mutate(model = factor(model, levels = c("No lag", "1 day", "3 days",
-                                          "1 week", "2 weeks"))) 
+  mutate(model = factor(model, levels = c("No lag", "1-day", "3-day",
+                                          "1-week", "2-week"))) 
 
 
 plot_cal <- preds_all |> 
@@ -368,7 +368,7 @@ fig_s3 <- shap_global |>
     segment.angle = 20
   ) +
   scale_x_continuous(breaks = c(0, 24, 72, 168, 336),
-                     labels = c("No lag", "1 day", "3 days", "1 week", "2 weeks"),
+                     labels = c("No lag", "1-day", "3-day", "1-week", "2-week"),
                      limits = c(0, 425)) +
   scale_color_manual(values = c("maroon", "Navy", "#3cb44b", 
                                 "magenta", "cyan", "#9A6324", "purple")) +
@@ -390,7 +390,7 @@ fig_s3
 
 ### Figure S4: Global Shapley Plots for Baseline and 2-Week Lag Model by Demographic Group
 
-We saw similar patterns in global feature importance across different demographic subgroups (race/ethnicity, income, sex at birth). Plots of global feature importance by demographic subgroup for the no lag and 2-week lag models are presented below. 
+We saw similar patterns in global feature importance across different demographic subgroups (race/ethnicity, income, sex at birth). Plots of global feature importance by demographic subgroup for the no lag and 2-week lagged models are presented below. 
 
 ```{r}
 #| code-fold: true
@@ -596,7 +596,7 @@ fig_s4 <- no_lag/twoweek_lag
 
 ```{r}
 #| label: fig-s4
-#| fig-cap: "Global importance (mean |Shapley value|) for feature categories for no lag and two week lag model by demographic group. The importance of each feature category for advantaged and disadvantaged demographic groups are displayed separately by color."
+#| fig-cap: "Global importance (mean |Shapley value|) for feature categories for no lag and 2-week lagged model by demographic group. The importance of each feature category for advantaged and disadvantaged demographic groups are displayed separately by color."
 #| fig-height: 6
 #| fig-width: 7
 fig_s4
@@ -613,7 +613,7 @@ fig_s4
 #| code-fold: true
 
 pp_sex <- pp_dem_contrast |> 
-  filter(contrast == "male vs female") |> 
+  filter(contrast == "female vs male") |> 
    mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
          median = as.character(round(median, 3)),
          probability = as.character(round(probability, 3))) |> 
@@ -624,7 +624,7 @@ pp_sex <- pp_dem_contrast |>
          Probability = probability)
 
 pp_income <- pp_dem_contrast |> 
-  filter(contrast == "above poverty vs below poverty") |> 
+  filter(contrast == "below poverty vs above poverty") |> 
    mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
          median = as.character(round(median, 3)),
          probability = as.character(round(probability, 3))) |> 
@@ -635,7 +635,7 @@ pp_income <- pp_dem_contrast |>
          `Probability ` = probability)
 
 pp_race <- pp_dem_contrast |> 
-  filter(contrast == "non-hispanic white vs not white") |> 
+  filter(contrast == "not white vs non-hispanic white") |> 
    mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
          median = as.character(round(median, 3)),
          probability = as.character(round(probability, 3))) |> 
@@ -658,6 +658,11 @@ pp_sex |>
 ```{r}
 brier <- read_csv(here::here(path_models_lag, "brier_scores.csv"),
                   show_col_types = FALSE) |> 
+  mutate(model = factor(model, 
+                        levels = c("No lag", "1 day", "3 days",
+                                   "1 week", "2 weeks"),
+                        labels = c("No lag", "1-day", "3-day",
+                                   "1-week", "2-week"))) |> 
   select(-beta)
   
 brier |> 
