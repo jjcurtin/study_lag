@@ -125,7 +125,8 @@ ci_baseline <- pp |>
                            levels = c("lag24 vs lag0", "lag72 vs lag0", "lag168 vs lag0", 
                                       "lag336 vs lag0"),
                            labels = c("24 vs. 0", "72 vs. 0", 
-                                      "168 vs. 0", "336 vs. 0")))
+                                      "168 vs. 0", "336 vs. 0")),
+         probability = 1 - probability)
 
 ci_median_baseline <- pp |> 
   contrast_models(list("lag24", "lag72", "lag168", "lag336"), 
@@ -160,7 +161,8 @@ ci_lag <- pp |>
   mutate(contrast = factor(contrast, 
                            levels = c("lag72 vs lag24", "lag168 vs lag72", 
                                       "lag336 vs lag168"),
-                           labels = c("72 vs. 24", "168 vs. 72", "336 vs. 168")))
+                           labels = c("72 vs. 24", "168 vs. 72", "336 vs. 168")),
+         probability = 1 - probability)
 
 ci_median_lag <- pp |> 
   contrast_models(list("lag72", "lag168", "lag336"), 

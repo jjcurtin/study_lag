@@ -97,7 +97,7 @@ knitr::include_graphics(path = here::here("figures/methods.png"), error = FALSE)
 
 ```{r}
 #| label: fig-pp
-#| fig-cap: "Posterior probability distributions for area under ROC curve (auROC) for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Each distribution reflects 8,000 posterior samples (4 chains × 2,000 samples) from a Bayesian hierarchical generalized linear model. Horizonatal lines depict 95% Bayesian credible intervals (CI) and vertical solid lines depict median posterior probability for auROC. Vertical dashed line represents expected performance from a random classifier (.5 auROC)."
+#| fig-cap: "Posterior probability distributions for area under ROC curve (auROC) for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Each distribution reflects 12,000 posterior samples (4 chains × 3,000 samples) from a Bayesian hierarchical generalized linear model. Horizonatal lines depict 95% Bayesian credible intervals (CI) and vertical solid lines depict median posterior probability for auROC. Vertical dashed line represents expected performance from a random classifier (.5 auROC)."
 #| fig-width: 6
 #| fig-height: 6
 
@@ -107,9 +107,9 @@ pp_tidy |>
   ggplot() + 
   geom_histogram(aes(x = posterior), fill = "light grey", color = "black", linewidth = .5,  
                  bins = 60) +
-  geom_segment(mapping = aes(y = 3400, yend = 3800, x = pp_median, xend = pp_median),
+  geom_segment(mapping = aes(y = 5800, yend = 6400, x = pp_median, xend = pp_median),
                linewidth = .5, data = ci) +
-  geom_segment(mapping = aes(y = 3600, yend = 3600, x = pp_lower, xend = pp_upper),
+  geom_segment(mapping = aes(y = 6100, yend = 6100, x = pp_lower, xend = pp_upper),
                 linewidth = .5, data = ci) +
   facet_wrap(~model, ncol = 1) +
   geom_vline(xintercept = .5, linewidth = .5, linetype = "dashed") +

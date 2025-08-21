@@ -166,7 +166,8 @@ calc_pp <- function (lag, dem_var) {
       
   ci_contrast <- pp |>
     contrast_models(contrast_lists[1],  contrast_lists[2]) |> 
-  summary(size = 0) 
+  summary(size = 0) |> 
+    mutate(probability = 1 - probability)
   
   ci_median_contrast <- pp |> 
     contrast_models(contrast_lists[1],  contrast_lists[2]) |>  
