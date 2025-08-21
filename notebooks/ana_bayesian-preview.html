@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
     <meta name="author" content="Kendra Wyant">
-    <meta name="dcterms.date" content="2025-06-11">
+    <meta name="dcterms.date" content="2025-08-20">
 
     <title>Model evaluation</title>
     <style>
@@ -1129,7 +1129,7 @@ function nexttick(func) {
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">June 11, 2025</p>
+              <p class="date">August 20, 2025</p>
             </div>
           </div>
           
@@ -1238,8 +1238,8 @@ $ repeat_num &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2
 <pre><code>
 SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 0.000793 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 7.93 seconds.
+Chain 1: Gradient evaluation took 7.3e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.73 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -1256,15 +1256,15 @@ Chain 1: Iteration: 3200 / 4000 [ 80%]  (Sampling)
 Chain 1: Iteration: 3600 / 4000 [ 90%]  (Sampling)
 Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 7.623 seconds (Warm-up)
-Chain 1:                4.108 seconds (Sampling)
-Chain 1:                11.731 seconds (Total)
+Chain 1:  Elapsed Time: 7.979 seconds (Warm-up)
+Chain 1:                4.481 seconds (Sampling)
+Chain 1:                12.46 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
 Chain 2: 
-Chain 2: Gradient evaluation took 6e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.6 seconds.
+Chain 2: Gradient evaluation took 3.3e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.33 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
@@ -1281,15 +1281,15 @@ Chain 2: Iteration: 3200 / 4000 [ 80%]  (Sampling)
 Chain 2: Iteration: 3600 / 4000 [ 90%]  (Sampling)
 Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 6.408 seconds (Warm-up)
-Chain 2:                8.851 seconds (Sampling)
-Chain 2:                15.259 seconds (Total)
+Chain 2:  Elapsed Time: 7.019 seconds (Warm-up)
+Chain 2:                9.187 seconds (Sampling)
+Chain 2:                16.206 seconds (Total)
 Chain 2: 
 
 SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
 Chain 3: 
-Chain 3: Gradient evaluation took 4.3e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.43 seconds.
+Chain 3: Gradient evaluation took 2.7e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.27 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
@@ -1306,15 +1306,15 @@ Chain 3: Iteration: 3200 / 4000 [ 80%]  (Sampling)
 Chain 3: Iteration: 3600 / 4000 [ 90%]  (Sampling)
 Chain 3: Iteration: 4000 / 4000 [100%]  (Sampling)
 Chain 3: 
-Chain 3:  Elapsed Time: 7.853 seconds (Warm-up)
-Chain 3:                6.011 seconds (Sampling)
-Chain 3:                13.864 seconds (Total)
+Chain 3:  Elapsed Time: 8.112 seconds (Warm-up)
+Chain 3:                6.217 seconds (Sampling)
+Chain 3:                14.329 seconds (Total)
 Chain 3: 
 
 SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
 Chain 4: 
-Chain 4: Gradient evaluation took 5.4e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.54 seconds.
+Chain 4: Gradient evaluation took 2.6e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.26 seconds.
 Chain 4: Adjust your expectations accordingly!
 Chain 4: 
 Chain 4: 
@@ -1331,9 +1331,9 @@ Chain 4: Iteration: 3200 / 4000 [ 80%]  (Sampling)
 Chain 4: Iteration: 3600 / 4000 [ 90%]  (Sampling)
 Chain 4: Iteration: 4000 / 4000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 7.654 seconds (Warm-up)
-Chain 4:                6.64 seconds (Sampling)
-Chain 4:                14.294 seconds (Total)
+Chain 4:  Elapsed Time: 7.863 seconds (Warm-up)
+Chain 4:                6.774 seconds (Sampling)
+Chain 4:                14.637 seconds (Total)
 Chain 4: </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
@@ -1385,25 +1385,25 @@ to find out why this is a problem and how to eliminate them.</code></pre>
 <h4 class="anchored" data-anchor-id="baseline-contrasts">Baseline Contrasts</h4>
 <div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ci_baseline <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>), </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>), </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(<span class="at">size =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, </span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag0 vs lag24&quot;</span>, <span class="st">&quot;lag0 vs lag72&quot;</span>, <span class="st">&quot;lag0 vs lag168&quot;</span>, </span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag0 vs lag336&quot;</span>),</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;0 vs. 24&quot;</span>, <span class="st">&quot;0 vs. 72&quot;</span>, </span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;0 vs. 168&quot;</span>, <span class="st">&quot;0 vs. 336&quot;</span>)))</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag24 vs lag0&quot;</span>, <span class="st">&quot;lag72 vs lag0&quot;</span>, <span class="st">&quot;lag168 vs lag0&quot;</span>, </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag336 vs lag0&quot;</span>),</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;24 vs. 0&quot;</span>, <span class="st">&quot;72 vs. 0&quot;</span>, </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;168 vs. 0&quot;</span>, <span class="st">&quot;336 vs. 0&quot;</span>)))</span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>ci_median_baseline <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>), </span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>)) <span class="sc">|&gt;</span>  </span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>), </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>, <span class="st">&quot;lag0&quot;</span>)) <span class="sc">|&gt;</span>  </span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contrast) <span class="sc">|&gt;</span> </span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">median =</span> <span class="fu">quantile</span>(difference, .<span class="dv">5</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, </span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag0 vs. lag24&quot;</span>, <span class="st">&quot;lag0 vs. lag72&quot;</span>, <span class="st">&quot;lag0 vs. lag168&quot;</span>, </span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag0 vs. lag336&quot;</span>),</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;0 vs. 24&quot;</span>, <span class="st">&quot;0 vs. 72&quot;</span>, </span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;0 vs. 168&quot;</span>, <span class="st">&quot;0 vs. 336&quot;</span>)))</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag24 vs. lag0&quot;</span>, <span class="st">&quot;lag72 vs. lag0&quot;</span>, <span class="st">&quot;lag168 vs. lag0&quot;</span>, </span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag336 vs. lag0&quot;</span>),</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;24 vs. 0&quot;</span>, <span class="st">&quot;72 vs. 0&quot;</span>, </span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;168 vs. 0&quot;</span>, <span class="st">&quot;336 vs. 0&quot;</span>)))</span>
 <span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>ci_baseline <span class="ot">&lt;-</span> ci_baseline <span class="sc">|&gt;</span> </span>
@@ -1415,12 +1415,12 @@ to find out why this is a problem and how to eliminate them.</code></pre>
 <span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>ci_baseline</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 10
-  contrast  probability   mean  lower  upper  size pract_neg pract_equiv
-  &lt;fct&gt;           &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
-1 0 vs. 168           1 0.0426 0.0369 0.0486     0        NA          NA
-2 0 vs. 24            1 0.0212 0.0168 0.0256     0        NA          NA
-3 0 vs. 336           1 0.0629 0.0557 0.0702     0        NA          NA
-4 0 vs. 72            1 0.0303 0.0254 0.0354     0        NA          NA
+  contrast  probability    mean   lower   upper  size pract_neg pract_equiv
+  &lt;fct&gt;           &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+1 168 vs. 0           0 -0.0426 -0.0486 -0.0369     0        NA          NA
+2 24 vs. 0            0 -0.0212 -0.0256 -0.0168     0        NA          NA
+3 336 vs. 0           0 -0.0629 -0.0702 -0.0557     0        NA          NA
+4 72 vs. 0            0 -0.0303 -0.0354 -0.0254     0        NA          NA
 # ℹ 2 more variables: pract_pos &lt;dbl&gt;, median &lt;dbl&gt;</code></pre>
 </div>
 </div></div>
@@ -1429,23 +1429,23 @@ to find out why this is a problem and how to eliminate them.</code></pre>
 <h4 class="anchored" data-anchor-id="adjacent-contrasts">Adjacent Contrasts</h4>
 <div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>), </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>), </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(<span class="at">size =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, </span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag24 vs lag72&quot;</span>, <span class="st">&quot;lag72 vs lag168&quot;</span>, </span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag168 vs lag336&quot;</span>),</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;24 vs. 72&quot;</span>, <span class="st">&quot;72 vs. 168&quot;</span>, <span class="st">&quot;168 vs. 336&quot;</span>)))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag72 vs lag24&quot;</span>, <span class="st">&quot;lag168 vs lag72&quot;</span>, </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag336 vs lag168&quot;</span>),</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;72 vs. 24&quot;</span>, <span class="st">&quot;168 vs. 72&quot;</span>, <span class="st">&quot;336 vs. 168&quot;</span>)))</span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>ci_median_lag <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>), </span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>)) <span class="sc">|&gt;</span>  </span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">contrast_models</span>(<span class="fu">list</span>(<span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>, <span class="st">&quot;lag336&quot;</span>), </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">list</span>(<span class="st">&quot;lag24&quot;</span>, <span class="st">&quot;lag72&quot;</span>, <span class="st">&quot;lag168&quot;</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contrast) <span class="sc">|&gt;</span> </span>
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">median =</span> <span class="fu">quantile</span>(difference, .<span class="dv">5</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, </span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag24 vs. lag72&quot;</span>, <span class="st">&quot;lag72 vs. lag168&quot;</span>, </span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag168 vs. lag336&quot;</span>),</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;24 vs. 72&quot;</span>, <span class="st">&quot;72 vs. 168&quot;</span>, <span class="st">&quot;168 vs. 336&quot;</span>)))</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;lag72 vs. lag24&quot;</span>, <span class="st">&quot;lag168 vs. lag72&quot;</span>, </span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;lag336 vs. lag168&quot;</span>),</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;72 vs. 24&quot;</span>, <span class="st">&quot;168 vs. 72&quot;</span>, <span class="st">&quot;336 vs. 168&quot;</span>)))</span>
 <span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>ci_lag <span class="ot">&lt;-</span> ci_lag <span class="sc">|&gt;</span> </span>
 <span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ci_median_lag, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;contrast&quot;</span>)) <span class="sc">|&gt;</span> </span>
@@ -1457,11 +1457,11 @@ to find out why this is a problem and how to eliminate them.</code></pre>
 <span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>ci_lag</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 10
-  contrast    probability    mean   lower  upper  size pract_neg pract_equiv
-  &lt;fct&gt;             &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
-1 24 vs. 72          1.00 0.00907 0.00457 0.0135     0        NA          NA
-2 72 vs. 168         1    0.0123  0.00752 0.0173     0        NA          NA
-3 168 vs. 336        1    0.0202  0.0148  0.0259     0        NA          NA
+  contrast    probability     mean   lower    upper  size pract_neg pract_equiv
+  &lt;fct&gt;             &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+1 72 vs. 24      0.000375 -0.00907 -0.0135 -0.00457     0        NA          NA
+2 168 vs. 72     0        -0.0123  -0.0173 -0.00752     0        NA          NA
+3 336 vs. 168    0        -0.0202  -0.0259 -0.0148      0        NA          NA
 # ℹ 2 more variables: pract_pos &lt;dbl&gt;, median &lt;dbl&gt;</code></pre>
 </div>
 </div></div>

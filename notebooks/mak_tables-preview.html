@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
     <meta name="author" content="Kendra Wyant">
-    <meta name="dcterms.date" content="2025-06-11">
+    <meta name="dcterms.date" content="2025-08-20">
 
     <title>Make All Tables for Main Manuscript</title>
     <style>
@@ -1105,7 +1105,221 @@ function nexttick(func) {
 });
 </script>
 
-<style type="text/css">.lightable-minimal {border-collapse: separate;border-spacing: 16px 1px;width: 100%;margin-bottom: 10px;}.lightable-minimal td {margin-left: 5px;margin-right: 5px;}.lightable-minimal th {margin-left: 5px;margin-right: 5px;}.lightable-minimal thead tr:last-child th {border-bottom: 2px solid #00000050;empty-cells: hide;}.lightable-minimal tbody tr:first-child td {padding-top: 0.5em;}.lightable-minimal.lightable-hover tbody tr:hover {background-color: #f5f5f5;}.lightable-minimal.lightable-striped tbody tr:nth-child(even) {background-color: #f5f5f5;}.lightable-classic {border-top: 0.16em solid #111111;border-bottom: 0.16em solid #111111;width: 100%;margin-bottom: 10px;margin: 10px 5px;}.lightable-classic tfoot tr td {border: 0;}.lightable-classic tfoot tr:first-child td {border-top: 0.14em solid #111111;}.lightable-classic caption {color: #222222;}.lightable-classic td {padding-left: 5px;padding-right: 5px;color: #222222;}.lightable-classic th {padding-left: 5px;padding-right: 5px;font-weight: normal;color: #222222;}.lightable-classic thead tr:last-child th {border-bottom: 0.10em solid #111111;}.lightable-classic.lightable-hover tbody tr:hover {background-color: #F9EEC1;}.lightable-classic.lightable-striped tbody tr:nth-child(even) {background-color: #f5f5f5;}.lightable-classic-2 {border-top: 3px double #111111;border-bottom: 3px double #111111;width: 100%;margin-bottom: 10px;}.lightable-classic-2 tfoot tr td {border: 0;}.lightable-classic-2 tfoot tr:first-child td {border-top: 3px double #111111;}.lightable-classic-2 caption {color: #222222;}.lightable-classic-2 td {padding-left: 5px;padding-right: 5px;color: #222222;}.lightable-classic-2 th {padding-left: 5px;padding-right: 5px;font-weight: normal;color: #222222;}.lightable-classic-2 tbody tr:last-child td {border-bottom: 3px double #111111;}.lightable-classic-2 thead tr:last-child th {border-bottom: 1px solid #111111;}.lightable-classic-2.lightable-hover tbody tr:hover {background-color: #F9EEC1;}.lightable-classic-2.lightable-striped tbody tr:nth-child(even) {background-color: #f5f5f5;}.lightable-material {min-width: 100%;white-space: nowrap;table-layout: fixed;font-family: Roboto, sans-serif;border: 1px solid #EEE;border-collapse: collapse;margin-bottom: 10px;}.lightable-material tfoot tr td {border: 0;}.lightable-material tfoot tr:first-child td {border-top: 1px solid #EEE;}.lightable-material th {height: 56px;padding-left: 16px;padding-right: 16px;}.lightable-material td {height: 52px;padding-left: 16px;padding-right: 16px;border-top: 1px solid #eeeeee;}.lightable-material.lightable-hover tbody tr:hover {background-color: #f5f5f5;}.lightable-material.lightable-striped tbody tr:nth-child(even) {background-color: #f5f5f5;}.lightable-material.lightable-striped tbody td {border: 0;}.lightable-material.lightable-striped thead tr:last-child th {border-bottom: 1px solid #ddd;}.lightable-material-dark {min-width: 100%;white-space: nowrap;table-layout: fixed;font-family: Roboto, sans-serif;border: 1px solid #FFFFFF12;border-collapse: collapse;margin-bottom: 10px;background-color: #363640;}.lightable-material-dark tfoot tr td {border: 0;}.lightable-material-dark tfoot tr:first-child td {border-top: 1px solid #FFFFFF12;}.lightable-material-dark th {height: 56px;padding-left: 16px;padding-right: 16px;color: #FFFFFF60;}.lightable-material-dark td {height: 52px;padding-left: 16px;padding-right: 16px;color: #FFFFFF;border-top: 1px solid #FFFFFF12;}.lightable-material-dark.lightable-hover tbody tr:hover {background-color: #FFFFFF12;}.lightable-material-dark.lightable-striped tbody tr:nth-child(even) {background-color: #FFFFFF12;}.lightable-material-dark.lightable-striped tbody td {border: 0;}.lightable-material-dark.lightable-striped thead tr:last-child th {border-bottom: 1px solid #FFFFFF12;}.lightable-paper {width: 100%;margin-bottom: 10px;color: #444;}.lightable-paper tfoot tr td {border: 0;}.lightable-paper tfoot tr:first-child td {border-top: 1px solid #00000020;}.lightable-paper thead tr:last-child th {color: #666;vertical-align: bottom;border-bottom: 1px solid #00000020;line-height: 1.15em;padding: 10px 5px;}.lightable-paper td {vertical-align: middle;border-bottom: 1px solid #00000010;line-height: 1.15em;padding: 7px 5px;}.lightable-paper.lightable-hover tbody tr:hover {background-color: #F9EEC1;}.lightable-paper.lightable-striped tbody tr:nth-child(even) {background-color: #00000008;}.lightable-paper.lightable-striped tbody td {border: 0;}</style>
+<style type="text/css">
+.lightable-minimal {
+border-collapse: separate;
+border-spacing: 16px 1px;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-minimal td {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal th {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal thead tr:last-child th {
+border-bottom: 2px solid #00000050;
+empty-cells: hide;
+}
+.lightable-minimal tbody tr:first-child td {
+padding-top: 0.5em;
+}
+.lightable-minimal.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-minimal.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic {
+border-top: 0.16em solid #111111;
+border-bottom: 0.16em solid #111111;
+width: 100%;
+margin-bottom: 10px;
+margin: 10px 5px;
+}
+.lightable-classic tfoot tr td {
+border: 0;
+}
+.lightable-classic tfoot tr:first-child td {
+border-top: 0.14em solid #111111;
+}
+.lightable-classic caption {
+color: #222222;
+}
+.lightable-classic td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic thead tr:last-child th {
+border-bottom: 0.10em solid #111111;
+}
+.lightable-classic.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic-2 {
+border-top: 3px double #111111;
+border-bottom: 3px double #111111;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-classic-2 tfoot tr td {
+border: 0;
+}
+.lightable-classic-2 tfoot tr:first-child td {
+border-top: 3px double #111111;
+}
+.lightable-classic-2 caption {
+color: #222222;
+}
+.lightable-classic-2 td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic-2 th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic-2 tbody tr:last-child td {
+border-bottom: 3px double #111111;
+}
+.lightable-classic-2 thead tr:last-child th {
+border-bottom: 1px solid #111111;
+}
+.lightable-classic-2.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic-2.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #EEE;
+border-collapse: collapse;
+margin-bottom: 10px;
+}
+.lightable-material tfoot tr td {
+border: 0;
+}
+.lightable-material tfoot tr:first-child td {
+border-top: 1px solid #EEE;
+}
+.lightable-material th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+}
+.lightable-material td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+border-top: 1px solid #eeeeee;
+}
+.lightable-material.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #ddd;
+}
+.lightable-material-dark {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #FFFFFF12;
+border-collapse: collapse;
+margin-bottom: 10px;
+background-color: #363640;
+}
+.lightable-material-dark tfoot tr td {
+border: 0;
+}
+.lightable-material-dark tfoot tr:first-child td {
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF60;
+}
+.lightable-material-dark td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF;
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark.lightable-hover tbody tr:hover {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody tr:nth-child(even) {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material-dark.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #FFFFFF12;
+}
+.lightable-paper {
+width: 100%;
+margin-bottom: 10px;
+color: #444;
+}
+.lightable-paper tfoot tr td {
+border: 0;
+}
+.lightable-paper tfoot tr:first-child td {
+border-top: 1px solid #00000020;
+}
+.lightable-paper thead tr:last-child th {
+color: #666;
+vertical-align: bottom;
+border-bottom: 1px solid #00000020;
+line-height: 1.15em;
+padding: 10px 5px;
+}
+.lightable-paper td {
+vertical-align: middle;
+border-bottom: 1px solid #00000010;
+line-height: 1.15em;
+padding: 7px 5px;
+}
+.lightable-paper.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-paper.lightable-striped tbody tr:nth-child(even) {
+background-color: #00000008;
+}
+.lightable-paper.lightable-striped tbody td {
+border: 0;
+}
+</style>
   
       </head>
 
@@ -1140,7 +1354,7 @@ function nexttick(func) {
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">June 11, 2025</p>
+              <p class="date">August 20, 2025</p>
             </div>
           </div>
           
@@ -1582,15 +1796,15 @@ Attaching package: &#39;janitor&#39;</code></pre>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">contrast =</span> <span class="st">&quot;Baseline Contrasts&quot;</span>, <span class="at">median =</span> <span class="st">&quot;&quot;</span>, <span class="at">ci =</span> <span class="st">&quot;&quot;</span>, <span class="at">probability =</span> <span class="st">&quot;&quot;</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast,</span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Baseline Contrasts&quot;</span>,</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;0 vs. 24&quot;</span>,</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;0 vs. 72&quot;</span>,</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;0 vs. 168&quot;</span>,</span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;0 vs. 336&quot;</span>),</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;24 vs. 0&quot;</span>,</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;72 vs. 0&quot;</span>,</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;168 vs. 0&quot;</span>,</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;336 vs. 0&quot;</span>),</span>
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Baseline Contrasts&quot;</span>,</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;No lag vs. 1 day&quot;</span>,</span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;No lag vs. 3 days&quot;</span>,</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;No lag vs. 1 week&quot;</span>,</span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;No lag vs. 2 weeks&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;1 day vs. No lag&quot;</span>,</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;3 days vs. No lag&quot;</span>,</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;1 week vs. No lag&quot;</span>,</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;2 weeks vs. No lag&quot;</span>))) <span class="sc">|&gt;</span> </span>
 <span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(contrast) <span class="sc">|&gt;</span> </span>
 <span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(ci_lag <span class="sc">|&gt;</span> </span>
 <span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">ci =</span> <span class="fu">str_c</span>(<span class="st">&quot;[&quot;</span>, <span class="fu">round</span>(lower, <span class="dv">3</span>), <span class="st">&quot;, &quot;</span>, <span class="fu">round</span>(upper, <span class="dv">3</span>), <span class="st">&quot;]&quot;</span>),</span>
@@ -1601,13 +1815,13 @@ Attaching package: &#39;janitor&#39;</code></pre>
 <span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>                  <span class="at">probability =</span> <span class="st">&quot;&quot;</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast,</span>
 <span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Adjacent Contrasts&quot;</span>,</span>
-<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;24 vs. 72&quot;</span>,</span>
-<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;72 vs. 168&quot;</span>,</span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;168 vs. 336&quot;</span>),</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;72 vs. 24&quot;</span>,</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;168 vs. 72&quot;</span>,</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;336 vs. 168&quot;</span>),</span>
 <span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Adjacent Contrasts&quot;</span>,</span>
-<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;1 day vs. 3 days&quot;</span>,</span>
-<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;3 days vs. 1 week&quot;</span>,</span>
-<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;1 week vs. 2 weeks&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;3 days vs. 1 day&quot;</span>,</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;1 week vs. 3 days&quot;</span>,</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;2 weeks vs. 1 week&quot;</span>))) <span class="sc">|&gt;</span> </span>
 <span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>          <span class="fu">arrange</span>(contrast)) <span class="sc">|&gt;</span> </span>
 <span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">Contrast =</span> contrast,</span>
 <span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>         <span class="at">Median =</span> median,</span>
@@ -1623,13 +1837,13 @@ Attaching package: &#39;janitor&#39;</code></pre>
 <span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>                  <span class="at">probability =</span> <span class="st">&quot;&quot;</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast,</span>
 <span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Fairness Contrasts (No Lag)&quot;</span>,</span>
-<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;male vs female&quot;</span>,</span>
-<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;non-hispanic white vs not white&quot;</span>,</span>
-<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;above poverty vs below poverty&quot;</span>),</span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;female vs male&quot;</span>,</span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;not white vs non-hispanic white&quot;</span>,</span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;below poverty vs above poverty&quot;</span>),</span>
 <span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Fairness Contrasts (No Lag)&quot;</span>,</span>
-<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;male vs. female&quot;</span>,</span>
-<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;non-Hispanic White vs. not White&quot;</span>,</span>
-<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;above poverty vs. below poverty&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;female vs. male&quot;</span>,</span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;not White vs. non-Hispanic White&quot;</span>,</span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;below poverty vs. above poverty&quot;</span>))) <span class="sc">|&gt;</span> </span>
 <span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>          <span class="fu">arrange</span>(contrast) <span class="sc">|&gt;</span> </span>
 <span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbind</span>(ci_fairness_336 <span class="sc">|&gt;</span> </span>
 <span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">ci =</span> <span class="fu">str_c</span>(<span class="st">&quot;[&quot;</span>, <span class="fu">round</span>(lower, <span class="dv">3</span>), <span class="st">&quot;, &quot;</span>, <span class="fu">round</span>(upper, <span class="dv">3</span>), <span class="st">&quot;]&quot;</span>),</span>
@@ -1640,13 +1854,13 @@ Attaching package: &#39;janitor&#39;</code></pre>
 <span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>                  <span class="at">probability =</span> <span class="st">&quot;&quot;</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast,</span>
 <span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Fairness Contrasts (2-week Lag)&quot;</span>,</span>
-<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;male vs female&quot;</span>,</span>
-<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;non-hispanic white vs not white&quot;</span>,</span>
-<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;above poverty vs below poverty&quot;</span>),</span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;female vs male&quot;</span>,</span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;not white vs non-hispanic white&quot;</span>,</span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;below poverty vs above poverty&quot;</span>),</span>
 <span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Fairness Contrasts (2-week Lag)&quot;</span>,</span>
-<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;male vs. female&quot;</span>,</span>
-<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;non-Hispanic White vs. not White&quot;</span>,</span>
-<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;above poverty vs. below poverty&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;female vs. male&quot;</span>,</span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;not White vs. non-Hispanic White&quot;</span>,</span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;below poverty vs. above poverty&quot;</span>))) <span class="sc">|&gt;</span> </span>
 <span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>          <span class="fu">arrange</span>(contrast)) <span class="sc">|&gt;</span> </span>
 <span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Contrast =</span> contrast,</span>
 <span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>         <span class="at">Median =</span> median,</span>
@@ -2243,7 +2457,7 @@ Demographic and Clinical Characteristics
 <div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
 
 <div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>footnote_table_model <span class="ot">&lt;-</span> <span class="st">&quot;Median auROC differences greater than 0 indicate the more immediate model, on average, out-performed the more lagged model (e.g., no lag - 1-day lag, 1-day lag - 3-day lag). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently).&quot;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>footnote_table_model <span class="ot">&lt;-</span> <span class="st">&quot;Median auROC differences less than 0 indicate the more lagged model, on average, performed worse than the more immediate model (e.g., 1-day lag - no lag, 3-day lag - 1-day lag). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently).&quot;</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>table_ci <span class="sc">|&gt;</span> </span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
@@ -2279,28 +2493,28 @@ Median difference in auROC, 95% Bayesian credible interval (CI), and posterior p
   </tr>
   <tr grouplength="4"><td colspan="4" style="border-bottom: 0;"><strong></strong></td></tr>
 <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> No lag vs. 1 day </td>
-   <td style="text-align:left;"> 0.021 </td>
-   <td style="text-align:left;"> [0.017, 0.026] </td>
-   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> 1 day vs. No lag </td>
+   <td style="text-align:left;"> -0.021 </td>
+   <td style="text-align:left;"> [-0.026, -0.017] </td>
+   <td style="text-align:left;"> 0 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> No lag vs. 3 days </td>
-   <td style="text-align:left;"> 0.03 </td>
-   <td style="text-align:left;"> [0.025, 0.035] </td>
-   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> 3 days vs. No lag </td>
+   <td style="text-align:left;"> -0.03 </td>
+   <td style="text-align:left;"> [-0.035, -0.025] </td>
+   <td style="text-align:left;"> 0 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> No lag vs. 1 week </td>
-   <td style="text-align:left;"> 0.043 </td>
-   <td style="text-align:left;"> [0.037, 0.049] </td>
-   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> 1 week vs. No lag </td>
+   <td style="text-align:left;"> -0.043 </td>
+   <td style="text-align:left;"> [-0.049, -0.037] </td>
+   <td style="text-align:left;"> 0 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;border-bottom: 1px solid" indentlevel="1"> No lag vs. 2 weeks </td>
-   <td style="text-align:left;border-bottom: 1px solid"> 0.063 </td>
-   <td style="text-align:left;border-bottom: 1px solid"> [0.056, 0.07] </td>
-   <td style="text-align:left;border-bottom: 1px solid"> 1 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;border-bottom: 1px solid" indentlevel="1"> 2 weeks vs. No lag </td>
+   <td style="text-align:left;border-bottom: 1px solid"> -0.063 </td>
+   <td style="text-align:left;border-bottom: 1px solid"> [-0.07, -0.056] </td>
+   <td style="text-align:left;border-bottom: 1px solid"> 0 </td>
   </tr>
   <tr>
    <td style="text-align:left;width: 25em; "> Adjacent Contrasts </td>
@@ -2310,27 +2524,27 @@ Median difference in auROC, 95% Bayesian credible interval (CI), and posterior p
   </tr>
   <tr grouplength="3"><td colspan="4" style="border-bottom: 0;"><strong></strong></td></tr>
 <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> 1 day vs. 3 days </td>
-   <td style="text-align:left;"> 0.009 </td>
-   <td style="text-align:left;"> [0.005, 0.014] </td>
-   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> 3 days vs. 1 day </td>
+   <td style="text-align:left;"> -0.009 </td>
+   <td style="text-align:left;"> [-0.014, -0.005] </td>
+   <td style="text-align:left;"> 0 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> 3 days vs. 1 week </td>
-   <td style="text-align:left;"> 0.012 </td>
-   <td style="text-align:left;"> [0.008, 0.017] </td>
-   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> 1 week vs. 3 days </td>
+   <td style="text-align:left;"> -0.012 </td>
+   <td style="text-align:left;"> [-0.017, -0.008] </td>
+   <td style="text-align:left;"> 0 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> 1 week vs. 2 weeks </td>
-   <td style="text-align:left;"> 0.02 </td>
-   <td style="text-align:left;"> [0.015, 0.026] </td>
-   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> 2 weeks vs. 1 week </td>
+   <td style="text-align:left;"> -0.02 </td>
+   <td style="text-align:left;"> [-0.026, -0.015] </td>
+   <td style="text-align:left;"> 0 </td>
   </tr>
 </tbody>
 <tfoot>
 <tr>
-<td style="padding: 0; border:0;" colspan="100%"><sup></sup> Median auROC differences greater than 0 indicate the more immediate model, on average, out-performed the more lagged model (e.g., no lag - 1-day lag, 1-day lag - 3-day lag). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently).</td>
+<td style="padding: 0; border:0;" colspan="100%"><sup></sup> Median auROC differences less than 0 indicate the more lagged model, on average, performed worse than the more immediate model (e.g., 1-day lag - no lag, 3-day lag - 1-day lag). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently).</td>
 </tr>
 </tfoot>
 </table>
@@ -2346,7 +2560,7 @@ Median difference in auROC, 95% Bayesian credible interval (CI), and posterior p
 <div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div class="cell">
 
 <div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>footnote_table_fair <span class="ot">&lt;-</span> <span class="st">&quot;Median auROC differences greater than 0 indicate the model, on average, performed better for the advantaged group (male, non-Hispanic White, and above poverty) compared to the non-advantaged group (female, not White, below poverty). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently for fairness subgroups).&quot;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>footnote_table_fair <span class="ot">&lt;-</span> <span class="st">&quot;Median auROC differences less than 0 indicate the model, on average, performed worse for the disadvantaged group (female, not White, income below poverty) compared to the advantaged group (male, non-Hispanic White, income above poverty). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently for fairness subgroups).&quot;</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>table_ci_fair <span class="sc">|&gt;</span> </span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
@@ -2360,7 +2574,7 @@ Median difference in auROC, 95% Bayesian credible interval (CI), and posterior p
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>                           <span class="at">escape =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-fairness" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fairness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts.
+Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for fairness contrasts for the no lag and 2-week lagged models.
 </figcaption>
 <div aria-describedby="tbl-fairness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -2382,22 +2596,22 @@ Median difference in auROC, 95% Bayesian credible interval (CI), and posterior p
   </tr>
   <tr grouplength="3"><td colspan="4" style="border-bottom: 0;"><strong></strong></td></tr>
 <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> male vs. female </td>
-   <td style="text-align:left;"> 0.043 </td>
-   <td style="text-align:left;"> [0.028, 0.059] </td>
-   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> female vs. male </td>
+   <td style="text-align:left;"> -0.043 </td>
+   <td style="text-align:left;"> [-0.059, -0.028] </td>
+   <td style="text-align:left;"> 0 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> non-Hispanic White vs. not White </td>
-   <td style="text-align:left;"> 0.131 </td>
-   <td style="text-align:left;"> [0.057, 0.222] </td>
-   <td style="text-align:left;"> 0.999 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> not White vs. non-Hispanic White </td>
+   <td style="text-align:left;"> -0.131 </td>
+   <td style="text-align:left;"> [-0.222, -0.057] </td>
+   <td style="text-align:left;"> 0.002 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;border-bottom: 1px solid" indentlevel="1"> above poverty vs. below poverty </td>
-   <td style="text-align:left;border-bottom: 1px solid"> 0.012 </td>
-   <td style="text-align:left;border-bottom: 1px solid"> [-0.007, 0.033] </td>
-   <td style="text-align:left;border-bottom: 1px solid"> 0.848 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;border-bottom: 1px solid" indentlevel="1"> below poverty vs. above poverty </td>
+   <td style="text-align:left;border-bottom: 1px solid"> -0.012 </td>
+   <td style="text-align:left;border-bottom: 1px solid"> [-0.033, 0.007] </td>
+   <td style="text-align:left;border-bottom: 1px solid"> 0.152 </td>
   </tr>
   <tr>
    <td style="text-align:left;width: 25em; "> Fairness Contrasts (2-week Lag) </td>
@@ -2407,27 +2621,27 @@ Median difference in auROC, 95% Bayesian credible interval (CI), and posterior p
   </tr>
   <tr grouplength="3"><td colspan="4" style="border-bottom: 0;"><strong></strong></td></tr>
 <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> male vs. female </td>
-   <td style="text-align:left;"> 0.098 </td>
-   <td style="text-align:left;"> [0.073, 0.125] </td>
-   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> female vs. male </td>
+   <td style="text-align:left;"> -0.098 </td>
+   <td style="text-align:left;"> [-0.125, -0.073] </td>
+   <td style="text-align:left;"> 0 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> non-Hispanic White vs. not White </td>
-   <td style="text-align:left;"> 0.13 </td>
-   <td style="text-align:left;"> [0.058, 0.208] </td>
-   <td style="text-align:left;"> 0.998 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> not White vs. non-Hispanic White </td>
+   <td style="text-align:left;"> -0.13 </td>
+   <td style="text-align:left;"> [-0.208, -0.058] </td>
+   <td style="text-align:left;"> 0.002 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> above poverty vs. below poverty </td>
-   <td style="text-align:left;"> 0.039 </td>
-   <td style="text-align:left;"> [0.008, 0.073] </td>
-   <td style="text-align:left;"> 0.98 </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> below poverty vs. above poverty </td>
+   <td style="text-align:left;"> -0.039 </td>
+   <td style="text-align:left;"> [-0.073, -0.008] </td>
+   <td style="text-align:left;"> 0.02 </td>
   </tr>
 </tbody>
 <tfoot>
 <tr>
-<td style="padding: 0; border:0;" colspan="100%"><sup></sup> Median auROC differences greater than 0 indicate the model, on average, performed better for the advantaged group (male, non-Hispanic White, and above poverty) compared to the non-advantaged group (female, not White, below poverty). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently for fairness subgroups).</td>
+<td style="padding: 0; border:0;" colspan="100%"><sup></sup> Median auROC differences less than 0 indicate the model, on average, performed worse for the disadvantaged group (female, not White, income below poverty) compared to the advantaged group (male, non-Hispanic White, income above poverty). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is greater than 0 (i.e., the models are performing differently for fairness subgroups).</td>
 </tr>
 </tfoot>
 </table>
