@@ -1279,9 +1279,9 @@ Table&nbsp;1: Demographic and Clinical Characteristics
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  ggplot() <span class="op">+</span> </span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  geom_histogram(aes(x <span class="op">=</span> posterior), fill <span class="op">=</span> <span class="st">"light grey"</span>, color <span class="op">=</span> <span class="st">"black"</span>, linewidth <span class="op">=</span> <span class="fl">.5</span>,  </span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                 bins <span class="op">=</span> <span class="dv">60</span>) <span class="op">+</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> <span class="dv">3400</span>, yend <span class="op">=</span> <span class="dv">3800</span>, x <span class="op">=</span> pp_median, xend <span class="op">=</span> pp_median),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> <span class="dv">5800</span>, yend <span class="op">=</span> <span class="dv">6400</span>, x <span class="op">=</span> pp_median, xend <span class="op">=</span> pp_median),</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>               linewidth <span class="op">=</span> <span class="fl">.5</span>, data <span class="op">=</span> ci) <span class="op">+</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> <span class="dv">3600</span>, yend <span class="op">=</span> <span class="dv">3600</span>, x <span class="op">=</span> pp_lower, xend <span class="op">=</span> pp_upper),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  geom_segment(mapping <span class="op">=</span> aes(y <span class="op">=</span> <span class="dv">6100</span>, yend <span class="op">=</span> <span class="dv">6100</span>, x <span class="op">=</span> pp_lower, xend <span class="op">=</span> pp_upper),</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                linewidth <span class="op">=</span> <span class="fl">.5</span>, data <span class="op">=</span> ci) <span class="op">+</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  facet_wrap(<span class="op">~</span>model, ncol <span class="op">=</span> <span class="dv">1</span>) <span class="op">+</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  geom_vline(xintercept <span class="op">=</span> <span class="fl">.5</span>, linewidth <span class="op">=</span> <span class="fl">.5</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>) <span class="op">+</span></span>
@@ -1348,25 +1348,25 @@ Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), a
 <td colspan="4" style="text-align: left; border-bottom: 0;"><strong></strong></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 25em; padding-left: 2em;" data-indentlevel="1">1 day vs. No lag</td>
+<td style="text-align: left; width: 25em; padding-left: 2em;" data-indentlevel="1">1-day vs. No lag</td>
 <td style="text-align: left;">-0.021</td>
 <td style="text-align: left;">[-0.025, -0.017]</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 25em; padding-left: 2em;" data-indentlevel="1">3 days vs. No lag</td>
+<td style="text-align: left; width: 25em; padding-left: 2em;" data-indentlevel="1">3-day vs. No lag</td>
 <td style="text-align: left;">-0.03</td>
 <td style="text-align: left;">[-0.035, -0.025]</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 25em; padding-left: 2em;" data-indentlevel="1">1 week vs. No lag</td>
+<td style="text-align: left; width: 25em; padding-left: 2em;" data-indentlevel="1">1-week vs. No lag</td>
 <td style="text-align: left;">-0.042</td>
 <td style="text-align: left;">[-0.048, -0.037]</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 25em; padding-left: 2em; border-bottom: 1px solid;" data-indentlevel="1">2 weeks vs. No lag</td>
+<td style="text-align: left; width: 25em; padding-left: 2em; border-bottom: 1px solid;" data-indentlevel="1">2-week vs. No lag</td>
 <td style="text-align: left; border-bottom: 1px solid;">-0.062</td>
 <td style="text-align: left; border-bottom: 1px solid;">[-0.07, -0.056]</td>
 <td style="text-align: left; border-bottom: 1px solid;">1</td>
@@ -1381,19 +1381,19 @@ Table&nbsp;2: Median difference in auROC, 95% Bayesian credible interval (CI), a
 <td colspan="4" style="text-align: left; border-bottom: 0;"><strong></strong></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 25em; padding-left: 2em;" data-indentlevel="1">3 days vs. 1 day</td>
+<td style="text-align: left; width: 25em; padding-left: 2em;" data-indentlevel="1">3-day vs. 1-day</td>
 <td style="text-align: left;">-0.009</td>
 <td style="text-align: left;">[-0.013, -0.005]</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 25em; padding-left: 2em;" data-indentlevel="1">1 week vs. 3 days</td>
+<td style="text-align: left; width: 25em; padding-left: 2em;" data-indentlevel="1">1-week vs. 3-day</td>
 <td style="text-align: left;">-0.012</td>
 <td style="text-align: left;">[-0.017, -0.008]</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 25em; padding-left: 2em;" data-indentlevel="1">2 weeks vs. 1 week</td>
+<td style="text-align: left; width: 25em; padding-left: 2em;" data-indentlevel="1">2-week vs. 1-week</td>
 <td style="text-align: left;">-0.02</td>
 <td style="text-align: left;">[-0.026, -0.015]</td>
 <td style="text-align: left;">1</td>
