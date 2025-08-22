@@ -409,11 +409,11 @@ feat_shaps_0 <- feat_0 |>
 
 baseline_sex <- feat_shaps_0 |> 
   mutate(group = if_else(demo_sex == "Male", 
-                         "advantaged group (non-Hispanic White, male, above poverty)",
-                         "disadvantaged group (not White, female, below poverty)",
+                        "advantaged group (non-Hispanic White, male, above poverty line)",
+                         "disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
                          ),
-         group = factor(group, levels = c("disadvantaged group (not White, female, below poverty)",
-                                          "advantaged group (non-Hispanic White, male, above poverty)")),
+         group = factor(group, levels = c("disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                                          "advantaged group (non-Hispanic White, male, above poverty line)")),
          model = "No Lag") |> 
   group_by(model, group, variable_grp) |> 
   summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
@@ -438,11 +438,11 @@ baseline_sex <- feat_shaps_0 |>
 
 baseline_race <- feat_shaps_0 |> 
   mutate(group = if_else(demo_race == "White/Caucasian", 
-                         "advantaged group (non-Hispanic White, male, above poverty)",
-                         "disadvantaged group (not White, female, below poverty)",
+                         "advantaged group (non-Hispanic White, male, above poverty line)",
+                         "disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
                          ),
-         group = factor(group, levels = c("disadvantaged group (not White, female, below poverty)",
-                                          "advantaged group (non-Hispanic White, male, above poverty)"))) |> 
+         group = factor(group, levels = c("disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                                          "advantaged group (non-Hispanic White, male, above poverty line)"))) |> 
   group_by(group, variable_grp) |> 
   summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
   arrange(mean_value) |> 
@@ -466,11 +466,11 @@ baseline_race <- feat_shaps_0 |>
 
 baseline_income <- feat_shaps_0 |> 
   mutate(group = if_else(demo_income >= 1560, 
-                         "advantaged group (non-Hispanic White, male, above poverty)",
-                         "disadvantaged group (not White, female, below poverty)",
+                         "advantaged group (non-Hispanic White, male, above poverty line)",
+                         "disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
                          ),
-         group = factor(group, levels = c("disadvantaged group (not White, female, below poverty)",
-                                          "advantaged group (non-Hispanic White, male, above poverty)"))) |> 
+         group = factor(group, levels = c("disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                                          "advantaged group (non-Hispanic White, male, above poverty line)"))) |> 
   group_by(group, variable_grp) |> 
   summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
   arrange(mean_value) |> 
@@ -509,11 +509,11 @@ feat_shaps_336 <- feat_336 |>
 
 twoweek_sex <- feat_shaps_336 |> 
   mutate(group = if_else(demo_sex == "Male", 
-                         "advantaged group (non-Hispanic White, male, above poverty)",
-                         "disadvantaged group (not White, female, below poverty)",
+                         "advantaged group (non-Hispanic White, male, above poverty line)",
+                         "disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
                          ),
-         group = factor(group, levels = c("disadvantaged group (not White, female, below poverty)",
-                                          "advantaged group (non-Hispanic White, male, above poverty)")),
+         group = factor(group, levels = c("disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                                          "advantaged group (non-Hispanic White, male, above poverty line)")),
          model = "2-Week Lag") |> 
   group_by(model, group, variable_grp) |> 
   summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
@@ -537,11 +537,11 @@ twoweek_sex <- feat_shaps_336 |>
 
 twoweek_race <- feat_shaps_336 |> 
   mutate(group = if_else(demo_race == "White/Caucasian", 
-                         "advantaged group (non-Hispanic White, male, above poverty)",
-                         "disadvantaged group (not White, female, below poverty)",
+                         "advantaged group (non-Hispanic White, male, above poverty line)",
+                         "disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
                          ),
-         group = factor(group, levels = c("disadvantaged group (not White, female, below poverty)",
-                                          "advantaged group (non-Hispanic White, male, above poverty)"))) |> 
+         group = factor(group, levels = c("disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                                          "advantaged group (non-Hispanic White, male, above poverty line)"))) |> 
   group_by(group, variable_grp) |> 
   summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
   arrange(mean_value) |> 
@@ -563,11 +563,11 @@ twoweek_race <- feat_shaps_336 |>
 
 twoweek_income <- feat_shaps_336 |> 
   mutate(group = if_else(demo_income >= 1560, 
-                         "advantaged group (non-Hispanic White, male, above poverty)",
-                         "disadvantaged group (not White, female, below poverty)",
+                         "advantaged group (non-Hispanic White, male, above poverty line)",
+                         "disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
                          ),
-         group = factor(group, levels = c("disadvantaged group (not White, female, below poverty)",
-                                          "advantaged group (non-Hispanic White, male, above poverty)"))) |> 
+         group = factor(group, levels = c("disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                                          "advantaged group (non-Hispanic White, male, above poverty line)"))) |> 
   group_by(group, variable_grp) |> 
   summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
   arrange(mean_value) |> 
@@ -609,7 +609,7 @@ fig_s4
 
 ```{r}
 #| label: tbl-fairness
-#| tbl-cap: "This table reports the bayesian model contrasts for each demographic group comparison separately by model and contrast. The median value represents the difference in median area under the ROC curve (auROC) between the two groups. A negative value indicates lower auROC performance for the disadvantaged group (female, not White, income below poverty) compared to the advantaged group (male, White, income above poverty)."
+#| tbl-cap: "This table reports the bayesian model contrasts for each demographic group comparison separately by model and contrast. The median value represents the difference in median area under the ROC curve (auROC) between the two groups. A negative value indicates lower auROC performance for the disadvantaged group (female, non-White and/or Hispanic, income below poverty line) compared to the advantaged group (male, non-Hispanic White, income above poverty line)."
 #| code-fold: true
 
 pp_sex <- pp_dem_contrast |> 

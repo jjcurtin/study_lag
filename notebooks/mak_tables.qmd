@@ -73,7 +73,7 @@ dem_sex <-  screen |>
   group_by(var) |>
   summarise(n = n()) |>
   mutate(perc = (n / sum(n)) * 100) |> 
-  add_row(var = "Sex Assigned at Birth", .before = 1)
+  add_row(var = "Sex at Birth", .before = 1)
 
 dem_race <- screen |>
   select(var = dem_3) |>

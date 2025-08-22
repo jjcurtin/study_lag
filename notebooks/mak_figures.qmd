@@ -97,7 +97,7 @@ knitr::include_graphics(path = here::here("figures/methods.png"), error = FALSE)
 
 ```{r}
 #| label: fig-pp
-#| fig-cap: "Posterior probability distributions for area under ROC curve (auROC) for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Each distribution reflects 12,000 posterior samples (4 chains × 3,000 samples) from a Bayesian hierarchical generalized linear model. Horizonatal lines depict 95% Bayesian credible intervals (CI) and vertical solid lines depict median posterior probability for auROC. Vertical dashed line represents expected performance from a random classifier (.5 auROC)."
+#| fig-cap: "Posterior probability distributions for area under ROC curve (auROC) for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Each distribution reflects 12,000 posterior samples (4 chains × 3,000 samples) from a Bayesian hierarchical generalized linear model. Horizontal lines depict 95% Bayesian credible intervals (CI) and vertical solid lines depict median posterior probability for auROC. Vertical dashed line represents expected performance from a random classifier (.5 auROC)."
 #| fig-width: 6
 #| fig-height: 6
 
@@ -169,7 +169,7 @@ mini_hist <- preds_all_raw |>
 
 ```{r}
 #| label: fig-cal
-#| fig-cap: "Calibration plots of raw and calibrated lapse probabilities for the baseline (no lag) and 2-week lagged models. Predicted probabilities (x-axis) are binned into deciles. Observed lapse probability (y-axis) represents the proportion of actual lapses observed in each bin. The dashed diagonal represents perfect calibration. Points below the line indicate overestimation and points above the line indicate underestimation. Raw probabilities are depicted as solid black curves. Platt calibrated probabilites are depicted as pink dashed curves. The grey histogram along the bottom of the plot represents the proportion of raw probabilities in each bin."
+#| fig-cap: "Calibration plots of raw and calibrated lapse probabilities for the baseline (no lag) and 2-week lagged models. Predicted probabilities (x-axis) are binned into deciles. Observed lapse probability (y-axis) represents the proportion of actual lapses observed in each bin. The dashed diagonal represents perfect calibration. Points below the line indicate overestimation and points above the line indicate underestimation. Raw probabilities are depicted as solid black curves. Platt calibrated probabilities are depicted as pink dashed curves. The grey histogram along the bottom of the plot represents the proportion of raw probabilities in each bin."
 #| fig-width: 6
 #| fig-height: 6
 
