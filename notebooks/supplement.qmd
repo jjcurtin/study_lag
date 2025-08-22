@@ -1,0 +1,677 @@
+---
+title: "Supplemental Material"
+author: "Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, and John J. Curtin"
+date: last-modified
+number-sections: true
+format: 
+  html: 
+    embed-resources: true
+    toc: true 
+    toc_depth: 5
+execute:
+  echo: false
+editor_options: 
+  chunk_output_type: console
+---
+
+This file contains the supplemental materials for *Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models*. It includes a transparency report and all supplemental figures and tables. Additional materials are made available on our study's OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)).   
+
+-----
+
+## Transparency Report 1.0 (full, 36 items; Aczel et al., 2019)
+
+**Manuscript Title:** Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models   
+**Authors:** Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, and John J. Curtin   
+**Corresponding author’s email address:** jjcurtin@wisc.edu   
+**Link to Project Repository:** [https://osf.io/xta67/](https://osf.io/xta67/)      
+
+### Preregistration Section   
+- Prior to analyzing the complete data set, a time-stamped preregistration was posted in an independent, third-party registry for the data analysis plan: Yes  
+
+Comments about your Preregistration: We pre-registered our data analytic strategy on OSF.   
+
+### Methods Section
+The manuscript fully describes…    
+
+- the rationale for the sample size used (e.g., an a priori power analysis): Yes  
+- how participants were recruited: Yes  
+- how participants were selected (e.g., eligibility criteria): Yes  
+- what compensation was offered for participation: Yes  
+- how participant dropout was handled (e.g., replaced, omitted, etc): Yes  
+- how participants were assigned to conditions: N/A.  There are no conditions.  
+- how stimulus materials were randomized: N/A.    
+- whether (and, if so, how) participants, experimenters, and data-analysts were kept naive to potentially biasing information: N/A.  This is an observations study that does not include analysis of group or manipulations.   There were no study conditions to blind.   
+- the study design, procedures, and materials to allow independent replication: Yes   
+-	the measures of interest (e.g., friendliness): Yes   
+-	all operationalizations for the measures of interest (e.g., a questionnaire measuring friendliness): Yes   
+
+### Results and Discussion Section
+The manuscript…  
+
+-	distinguishes explicitly between “confirmatory” (i.e., prespecified) and “exploratory” (i.e., not prespecified) analyses: All analyses were pre-registered.
+-	describes how violations of statistical assumptions were handled: No  
+-	justifies all statistical choices (e.g., including or excluding covariates; applying or not applying transformations; use of multi-level models vs. ANOVA): Yes  
+-	reports the sample size for each cell of the design: Yes  
+-	reports how incomplete or missing data were handled: Yes  
+-	presents protocols for data preprocessing (e.g., cleaning, discarding of cases and items, normalizing, smoothing, artifact correction): Yes  
+
+### Data, Code, and Materials Availability Section
+The following have been made publicly available…  
+
+-	the (processed) data, on which the analyses of the manuscript were based: Yes   
+-	all code and software (that is not copyright protected): Yes   
+-	all instructions, stimuli, and test materials (that are not copyright protected): Yes   
+-	Are the data properly archived (i.e., would a graduate student with relevant background knowledge be able to identify each variable and reproduce the analysis): Yes   
+-	The manuscript includes a statement concerning the availability and location of all research items, including data, materials, and code relevant to the study: Yes   
+
+
+\newpage
+
+
+## Supplemental Figures
+
+### Figure S1: Raw Predicted Probabilities
+
+```{r}
+#| code-fold: true
+
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
+suppressPackageStartupMessages(library(tidyposterior))
+suppressPackageStartupMessages(library(kableExtra))
+suppressWarnings(library(ggrepel))
+library(patchwork)
+
+
+theme_set(theme_classic())
+
+options(knitr.kable.NA = '')
+
+path_models_lag <- format_path(str_c("risk/models/lag"))
+path_processed <- format_path(str_c("risk/data_processed/lag"))
+
+pp_tidy <- read_csv(here::here(path_models_lag, "posteriors.csv"), 
+                                 show_col_types = FALSE) 
+
+ci <- read_csv(here::here(path_models_lag, "pp_perf_tibble.csv"), 
+                                 show_col_types = FALSE) |> 
+  mutate(model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"),
+                        labels = c("No lag", "1-day", "3-day", "1-week", "2-week")))
+
+pp_dem <- read_csv(here::here(path_models_lag, "pp_dem_all.csv"), 
+                                 show_col_types = FALSE)
+
+pp_dem_contrast <- read_csv(here::here(path_models_lag, "pp_dem_contrast_all.csv"), 
+                                 show_col_types = FALSE) |> 
+  mutate(lag = factor(lag, levels = c("0", "24", "72", "168", "336"),
+                        labels = c("No lag", "1-day", "3-day", "1-week", "2-week")))
+
+labels <- read_csv(here::here(path_processed, "labels_1day_0lag.csv"),
+                   show_col_types = FALSE)
+
+dem_tbl <- read_csv(here::here(path_processed, "dem_tibble.csv"),
+                   show_col_types = FALSE)
+
+labels_dem <- labels |> 
+  left_join(dem_tbl, by = "subid")
+
+
+preds_0 <- read_rds(here::here(path_models_lag, 
+                               "final_preds_kfold_1_x_5_1day_0_v3_strat_lh_final.rds")) 
+preds_24 <- read_rds(here::here(path_models_lag, 
+                               "final_preds_kfold_1_x_5_1day_24_v3_strat_lh_final.rds")) 
+preds_72 <- read_rds(here::here(path_models_lag, 
+                               "final_preds_kfold_1_x_5_1day_72_v3_strat_lh_final.rds")) 
+preds_168 <- read_rds(here::here(path_models_lag, 
+                               "final_preds_kfold_1_x_5_1day_168_v3_strat_lh_final.rds")) 
+preds_336 <- read_rds(here::here(path_models_lag, 
+                               "final_preds_kfold_1_x_5_1day_336_v3_strat_lh_final.rds")) 
+
+preds_all <- preds_0 |> 
+  mutate(model = "No lag") |> 
+  bind_rows(preds_24 |> 
+              mutate(model = "1-day")) |> 
+  bind_rows(preds_72 |> 
+              mutate(model = "3-day")) |> 
+  bind_rows(preds_168 |> 
+              mutate(model = "1-week")) |> 
+  bind_rows(preds_336 |> 
+              mutate(model = "2-week")) |> 
+  mutate(model = factor(model, levels = c("No lag", "1-day", "3-day", "1-week", "2-week")))
+
+preds_hist <- preds_all |> 
+  ggplot(aes(x = prob_raw)) +
+  geom_histogram(color = "black", fill = "light grey", binwidth = .10,
+                 boundary = 0) +
+  facet_wrap(~model) +
+  labs(x = "Raw probabilities from final model") +
+  scale_x_continuous(breaks = seq(0, 1, by = 0.2))
+```
+
+Our models produced variation in predicted probabilities, with probabilities spanning nearly the entire 0 - 1 range. The 2-week lagged model had fewer high raw probabilities (all probabilities were < .80).  Histograms of the raw predicted probabilities for the best configuration for all 5 models are presented below. 
+
+```{r}
+#| label: fig-s1
+#| fig-cap: "Histograms of raw probabilities of our best model configurations for each classification model (no lag, 1-day, 3-day, 1-week and 2-week lags)."
+#| fig-width: 8
+#| fig-height: 5
+
+preds_hist
+```
+
+### Figure S2: Calibration Plots for all Models
+
+The raw probabilities produced by our final models were not well calibrated. Beta and logistic calibration methods improved probability accuracy. Below we present the calibration plots of our raw predicted lapse probabilities for each model. In supplemental table S2 we report the brier scores for raw and calibrated probabilities for each model.
+
+```{r}
+#| code-fold: true
+
+bin_width = 0.10
+
+preds_all_raw <- preds_0 |> 
+  mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
+         lapse = if_else(label == "Lapse", 1, 0)) |> 
+  mutate(model = "No lag") |> 
+  bind_rows(preds_24 |> 
+              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "1-day")) |> 
+  bind_rows(preds_72 |> 
+              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "3-day")) |> 
+  bind_rows(preds_168 |> 
+              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "1-week")) |> 
+  bind_rows(preds_336 |> 
+              mutate(bins = cut(prob_raw, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "2-week")) |> 
+  mutate(model = factor(model, levels = c("No lag", "1-day", "3-day", "1-week", "2-week")),
+         prob = "Raw (uncalibrated)")
+
+preds_all_logi <- preds_0 |> 
+  mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+         lapse = if_else(label == "Lapse", 1, 0)) |> 
+  mutate(model = "No lag") |> 
+  bind_rows(preds_24 |> 
+              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "1-day")) |> 
+  bind_rows(preds_72 |> 
+              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "3-day")) |> 
+  bind_rows(preds_168 |> 
+              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "1-week")) |> 
+  bind_rows(preds_336 |> 
+              mutate(bins = cut(prob_logi, breaks = seq(0, 1, bin_width)), 
+                     lapse = if_else(label == "Lapse", 1, 0)) |> 
+              mutate(model = "2-week")) |> 
+  mutate(model = factor(model, levels = c("No lag", "1-day", "3-day", "1-week", "2-week")),
+         prob = "Platt calibration")
+
+preds_all <- preds_all_raw |> 
+  bind_rows(preds_all_logi) 
+
+mini_hist <- preds_all_raw |>
+  count(bins, model) |> 
+  bind_rows(tibble(bins = "(0.9,1]",
+                   model = "2-week",
+                   n = 0)) |> 
+  group_by(model) |> 
+  mutate(
+    bins = seq(1, 10, 1),
+    x = bin_width / 2 + bin_width * (bins - 1),       
+    y = n / max(n) * 0.07
+  ) |> 
+  mutate(model = factor(model, levels = c("No lag", "1-day", "3-day",
+                                          "1-week", "2-week"))) 
+
+
+plot_cal <- preds_all |> 
+  mutate(prob = factor(prob, levels = c("Raw (uncalibrated)", 
+                                        "Platt calibration"))) |> 
+  group_by(bins, model, prob)  |> 
+  summarize(mean_lapse = mean(lapse), .groups = "drop") |> 
+  mutate(
+    bins = as.numeric(bins),
+    midpoints = bin_width/2 + bin_width * (bins - 1)
+  )  |> 
+  ggplot(aes(x = midpoints, y = mean_lapse, group = prob,
+             color = prob, linetype = prob)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "longdash", color = "gray80") +
+  geom_line(linewidth = .7) +
+  geom_rect(data = mini_hist, inherit.aes = FALSE,
+            aes(xmin = x - bin_width / 2,
+                xmax = x + bin_width / 2,
+                ymin = -y,
+                ymax = 0),
+            alpha = .4) +
+  facet_wrap(~ model, ncol = 2) +
+  labs(
+    x = "Predicted Lapse Probability (Bin Midpoint)",
+    y = "Observed Lapse Probability",
+    color = NULL,
+    linetype = NULL
+  ) +
+  scale_x_continuous(breaks = seq(0, 1, bin_width), limits = c(0, 1)) +
+  scale_y_continuous(limits = c(-0.08, 1), breaks = seq(0,1, bin_width),
+                     expand = c(0, 0)) +
+  coord_cartesian(clip = "off") +
+  scale_color_manual(values = c("black", "#cb6bce")) +
+  scale_linetype_manual(values = c("solid", "twodash")) +
+  theme_classic(base_size = 11) +
+  theme(
+    legend.position = "bottom",
+    strip.text = element_text(face = "bold", size = 11),
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(size = 10),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(face = "bold")
+  )
+```
+
+```{r}
+#| label: fig-s2
+#| fig-cap: "Calibration plots of raw and calibrated predicted lapse probabilities (beta, isotonic, and logistic) across models (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted probabilities (x-axis) are binned into deciles. Observed lapse probability (y-axis) represents the proportion of actual lapses observed in each bin. The dashed diagonal represents perfect calibration. Points below the line indicate overestimation and points above the line indicate underestimation. Raw probabilities are depicted as the solid black curves. Platt calibrated probabilites are depicted as the pink dashed curves. The grey histogram along the bottom of the plot represents the proportion of raw probabilities in each bin."
+#| fig-width: 8
+#| fig-height: 10
+
+plot_cal
+```
+
+
+### Figure S3: Global Shapley Plots for all 5 Models
+
+The top globally important feature category (i.e., highest mean |Shapley value|) for all models was past use. Future efficacy was a strong predictor for more immediate model predictions (i.e., no lag and 1-day lag), but as lag time increased importance attenuated. On the other hand, as lag time increased past/future risky situations increased in importance. Craving was relatively consistently important, in magnitude, across all models.
+
+```{r}
+#| code-fold: true
+
+shap_grp_0 <- read_rds(here::here(path_models_lag, 
+                      "final_shapsgrp_kfold_1_x_5_1day_0_v3_strat_lh_final.rds")) |> 
+   filter(str_detect(variable_grp, "EMA")) |> 
+   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)")) 
+
+
+shap_grp_24 <- read_rds(here::here(path_models_lag, 
+                      "final_shapsgrp_kfold_1_x_5_1day_24_v3_strat_lh_final.rds")) |> 
+   filter(str_detect(variable_grp, "EMA")) |> 
+   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)")) 
+
+
+shap_grp_72 <- read_rds(here::here(path_models_lag, 
+                      "final_shapsgrp_kfold_1_x_5_1day_72_v3_strat_lh_final.rds")) |> 
+   filter(str_detect(variable_grp, "EMA")) |> 
+   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)")) 
+
+
+shap_grp_168 <- read_rds(here::here(path_models_lag, 
+                      "final_shapsgrp_kfold_1_x_5_1day_168_v3_strat_lh_final.rds")) |> 
+   filter(str_detect(variable_grp, "EMA")) |> 
+   mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)")) 
+
+shap_grp_336 <- read_rds(here::here(path_models_lag, 
+                      "final_shapsgrp_kfold_1_x_5_1day_336_v3_strat_lh_final.rds")) |> 
+   filter(str_detect(variable_grp, "EMA")) |> 
+  mutate(variable_grp = str_remove(variable_grp, "\\(EMA item\\)"))  
+
+shap_global <- shap_grp_0 |>
+  mutate(model = 0) |>
+  bind_rows(shap_grp_24 |>
+              mutate(model = 24)) |>
+  bind_rows(shap_grp_72 |>
+              mutate(model = 72)) |>
+  bind_rows(shap_grp_168 |>
+              mutate(model = 168)) |>
+  bind_rows(shap_grp_336 |>
+              mutate(model = 336)) |>
+  group_by(variable_grp, model) |>
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
+  mutate(variable_grp = str_remove(variable_grp, "past/future "),
+         variable_grp = if_else(variable_grp == "past pleasant event ",
+                                "pleasant event", variable_grp))
+
+shap_levels <- shap_global |>
+  mutate(variable_grp = reorder(variable_grp, mean_value, sum)) |>
+  pull(variable_grp) |>
+  levels()
+
+label_data <- shap_global |>
+  filter(model == 336)
+
+fig_s3 <- shap_global |>
+  mutate(variable_grp = factor(variable_grp, levels = shap_levels)) |> 
+  ggplot() +
+  geom_line(aes(x = model, y = mean_value, color = variable_grp)) +
+  labs(y = "Mean(|Shapley Value|)",
+       x = NULL,
+       fill = NULL) +
+  geom_text_repel(
+    data = label_data,
+    aes(x = model, y = mean_value, color = variable_grp, label = variable_grp),
+    fontface = "bold",
+    size = 4,
+    direction = "y",
+    hjust = 0,
+    nudge_x = 5,
+    segment.size = .7,
+    segment.alpha = .5,
+    segment.linetype = "dotted",
+    box.padding = 0,
+    segment.curvature = -0.1,
+    segment.ncp = 3,
+    segment.angle = 20
+  ) +
+  scale_x_continuous(breaks = c(0, 24, 72, 168, 336),
+                     labels = c("No lag", "1-day", "3-day", "1-week", "2-week"),
+                     limits = c(0, 425)) +
+  scale_color_manual(values = c("maroon", "Navy", "#3cb44b", 
+                                "magenta", "cyan", "#9A6324", "purple")) +
+  theme(axis.text=element_text(size=9.5),
+        legend.key.size = unit(0.25, "cm"),
+        legend.position = "none")
+```
+
+```{r}
+#| label: fig-s3
+#| fig-cap: "Global importance (mean |Shapley value|) for feature categories by lag time."
+#| fig-width: 8
+#| fig-height: 5
+
+fig_s3
+```
+
+
+
+### Figure S4: Global Shapley Plots for Baseline and 2-Week Lag Model by Demographic Group
+
+We saw similar patterns in global feature importance across different demographic subgroups (race/ethnicity, income, sex assigned at birth). Plots of global feature importance by demographic subgroup for the no lag and 2-week lagged models are presented below. 
+
+```{r}
+#| code-fold: true
+
+feat_0 <- read_csv(here::here(path_processed, 
+                            "features_0lag_v3.csv"),
+                 col_types = cols()) |> 
+  select(label_num, subid, dttm_label, lapse, demo_age, demo_sex, 
+         demo_income, demo_race) |> 
+  arrange(label_num) 
+
+
+feat_shaps_0 <- feat_0 |> 
+  rename(id_obs = label_num) |>
+  right_join(shap_grp_0, by = c("id_obs")) 
+
+baseline_sex <- feat_shaps_0 |> 
+  mutate(group = if_else(demo_sex == "Male", 
+                        "advantaged group (non-Hispanic White, male, above poverty line)",
+                         "disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                         ),
+         group = factor(group, levels = c("disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                                          "advantaged group (non-Hispanic White, male, above poverty line)")),
+         model = "No Lag") |> 
+  group_by(model, group, variable_grp) |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
+  arrange(mean_value) |> 
+  mutate(variable_grp = factor(variable_grp),
+         variable_grp = fct_inorder(variable_grp)) |> 
+  ggplot() +
+  geom_bar(aes(x = variable_grp, y = mean_value, group = group, 
+                 fill = group),  
+             stat = "identity", position = "dodge") +
+  facet_wrap(~model, strip.position = "left") +
+  labs(title = "Sex at Birth",
+       y = NULL,
+       x = NULL,
+       color = NULL) +
+  theme(axis.text=element_text(size=9.5),
+        legend.position = "none",
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+        strip.placement = "outside") +
+  scale_fill_manual(values = c("#cb6bce", "#240e31")) +
+  coord_flip()
+
+baseline_race <- feat_shaps_0 |> 
+  mutate(group = if_else(demo_race == "White/Caucasian", 
+                         "advantaged group (non-Hispanic White, male, above poverty line)",
+                         "disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                         ),
+         group = factor(group, levels = c("disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                                          "advantaged group (non-Hispanic White, male, above poverty line)"))) |> 
+  group_by(group, variable_grp) |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
+  arrange(mean_value) |> 
+  mutate(variable_grp = factor(variable_grp),
+         variable_grp = fct_inorder(variable_grp)) |> 
+  ggplot() +
+  geom_bar(aes(x = variable_grp, y = mean_value, group = group, 
+                 fill = group),  
+             stat = "identity", position = "dodge") +
+  labs(title = "Race/Ethnicity",
+       y = "Mean(|Shapley Value|)",
+       x = NULL,
+       color = NULL) +
+  theme(axis.text=element_text(size=9.5),
+        axis.text.y = element_blank(),
+        legend.position = "none",
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  scale_fill_manual(values = c("#cb6bce", "#240e31")) +
+  coord_flip()
+
+
+baseline_income <- feat_shaps_0 |> 
+  mutate(group = if_else(demo_income >= 1560, 
+                         "advantaged group (non-Hispanic White, male, above poverty line)",
+                         "disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                         ),
+         group = factor(group, levels = c("disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                                          "advantaged group (non-Hispanic White, male, above poverty line)"))) |> 
+  group_by(group, variable_grp) |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
+  arrange(mean_value) |> 
+  mutate(variable_grp = factor(variable_grp),
+         variable_grp = fct_inorder(variable_grp)) |> 
+  ggplot() +
+  geom_bar(aes(x = variable_grp, y = mean_value, group = group, 
+                 fill = group),  
+             stat = "identity", position = "dodge") +
+  labs(title = "Income",
+       y = NULL,
+       x = NULL,
+       color = NULL) +
+  theme(axis.text=element_text(size=9.5),
+        axis.text.y = element_blank(),
+        legend.position = "none",
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  scale_fill_manual(values = c("#cb6bce", "#240e31")) +
+  coord_flip()
+
+
+no_lag <- baseline_sex + baseline_race + baseline_income 
+
+
+feat_336 <- read_csv(here::here(path_processed, 
+                            "features_336lag_v3.csv"),
+                 col_types = cols()) |> 
+  select(label_num, subid, dttm_label, lapse, demo_age, demo_sex, 
+         demo_income, demo_race) |> 
+  arrange(label_num) 
+
+
+feat_shaps_336 <- feat_336 |> 
+  rename(id_obs = label_num) |>
+  right_join(shap_grp_336, by = c("id_obs")) 
+
+twoweek_sex <- feat_shaps_336 |> 
+  mutate(group = if_else(demo_sex == "Male", 
+                         "advantaged group (non-Hispanic White, male, above poverty line)",
+                         "disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                         ),
+         group = factor(group, levels = c("disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                                          "advantaged group (non-Hispanic White, male, above poverty line)")),
+         model = "2-Week Lag") |> 
+  group_by(model, group, variable_grp) |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
+  arrange(mean_value) |> 
+  mutate(variable_grp = factor(variable_grp),
+         variable_grp = fct_inorder(variable_grp)) |> 
+  ggplot() +
+  geom_bar(aes(x = variable_grp, y = mean_value, group = group, 
+                 fill = group),  
+             stat = "identity", position = "dodge") +
+  facet_wrap(~model, strip.position = "left") +
+  labs(title = "Sex at Birth",
+       y = NULL,
+       x = NULL,
+       color = NULL) +
+  theme(axis.text=element_text(size=9.5),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+        strip.placement = "outside") +
+  scale_fill_manual(values = c("#cb6bce", "#240e31")) +
+  coord_flip()
+
+twoweek_race <- feat_shaps_336 |> 
+  mutate(group = if_else(demo_race == "White/Caucasian", 
+                         "advantaged group (non-Hispanic White, male, above poverty line)",
+                         "disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                         ),
+         group = factor(group, levels = c("disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                                          "advantaged group (non-Hispanic White, male, above poverty line)"))) |> 
+  group_by(group, variable_grp) |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
+  arrange(mean_value) |> 
+  mutate(variable_grp = factor(variable_grp),
+         variable_grp = fct_inorder(variable_grp)) |> 
+  ggplot() +
+  geom_bar(aes(x = variable_grp, y = mean_value, group = group, 
+                 fill = group),  
+             stat = "identity", position = "dodge") +
+  labs(title = "Race/Ethnicity",
+       y = "Mean(|Shapley Value|)",
+       x = NULL,
+       color = NULL) +
+  theme(axis.text=element_text(size=9.5),
+        axis.text.y = element_blank(),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  scale_fill_manual(values = c("#cb6bce", "#240e31")) +
+  coord_flip()
+
+twoweek_income <- feat_shaps_336 |> 
+  mutate(group = if_else(demo_income >= 1560, 
+                         "advantaged group (non-Hispanic White, male, above poverty line)",
+                         "disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                         ),
+         group = factor(group, levels = c("disadvantaged group (non-White and/or Hispanic, female, below poverty line)",
+                                          "advantaged group (non-Hispanic White, male, above poverty line)"))) |> 
+  group_by(group, variable_grp) |> 
+  summarize(mean_value = mean(abs(value)), .groups = "drop") |> 
+  arrange(mean_value) |> 
+  mutate(variable_grp = factor(variable_grp),
+         variable_grp = fct_inorder(variable_grp)) |> 
+  ggplot() +
+  geom_bar(aes(x = variable_grp, y = mean_value, group = group, 
+                 fill = group),  
+             stat = "identity", position = "dodge") +
+  labs(title = "Income",
+       y = NULL,
+       x = NULL,
+       color = NULL) +
+  theme(axis.text=element_text(size=9.5),
+        axis.text.y = element_blank(),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  scale_fill_manual(values = c("#cb6bce", "#240e31")) +
+  coord_flip()
+
+twoweek_lag <- twoweek_sex + twoweek_race + twoweek_income  + 
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom", legend.direction = "vertical") 
+
+fig_s4 <- no_lag/twoweek_lag 
+```
+
+```{r}
+#| label: fig-s4
+#| fig-cap: "Global importance (mean |Shapley value|) for feature categories for no lag and 2-week lagged model by demographic group. The importance of each feature category for advantaged and disadvantaged demographic groups are displayed separately by color."
+#| fig-height: 6
+#| fig-width: 7
+fig_s4
+```
+
+
+## Supplemental Tables
+
+### Table S1: Demographic Contrasts for all Models
+
+```{r}
+#| label: tbl-fairness
+#| tbl-cap: "This table reports the bayesian model contrasts for each demographic group comparison separately by model and contrast. The median value represents the difference in median area under the ROC curve (auROC) between the two groups. A negative value indicates lower auROC performance for the disadvantaged group (female, non-White and/or Hispanic, income below poverty line) compared to the advantaged group (male, non-Hispanic White, income above poverty line)."
+#| code-fold: true
+
+pp_sex <- pp_dem_contrast |> 
+  filter(contrast == "female vs male") |> 
+   mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
+         median = as.character(round(median, 3)),
+         probability = as.character(round(probability, 3))) |> 
+  select(lag, median, ci, probability) |> 
+  rename(`Lag`= lag,
+         Median = median,
+         `Bayesian CI` = ci,
+         Probability = probability)
+
+pp_income <- pp_dem_contrast |> 
+  filter(contrast == "below poverty vs above poverty") |> 
+   mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
+         median = as.character(round(median, 3)),
+         probability = as.character(round(probability, 3))) |> 
+  select(lag, median, ci, probability) |> 
+  rename(`Lag`= lag,
+         `Median ` = median,
+         `Bayesian CI ` = ci,
+         `Probability ` = probability)
+
+pp_race <- pp_dem_contrast |> 
+  filter(contrast == "not white vs non-hispanic white") |> 
+   mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
+         median = as.character(round(median, 3)),
+         probability = as.character(round(probability, 3))) |> 
+  select(lag, median, ci, probability) |> 
+  rename(`Lag`= lag,
+         `Median  ` = median,
+         `Bayesian CI  ` = ci,
+         `Probability   ` = probability)
+
+pp_sex |> 
+  full_join(pp_income, by = "Lag") |> 
+  full_join(pp_race, by = "Lag") |> 
+  kbl() |> 
+  add_header_above(c(" " = 1, "Sex assigned at birth" = 3, "Income" = 3, "Race/Ethnicity" = 3))
+```
+
+
+### Table S2: Brier scores for all models
+
+```{r}
+brier <- read_csv(here::here(path_models_lag, "brier_scores.csv"),
+                  show_col_types = FALSE) |> 
+  mutate(model = factor(model, 
+                        levels = c("No lag", "1 day", "3 days",
+                                   "1 week", "2 weeks"),
+                        labels = c("No lag", "1-day", "3-day",
+                                   "1-week", "2-week"))) |> 
+  select(-beta)
+  
+brier |> 
+  rename(Model = model, 
+         `Raw (uncalibrated)` = raw,
+         `Platt calibration` = logi) |> 
+  knitr::kable(digits = 2) |> 
+  kableExtra::kable_classic()
+```
+
+
+

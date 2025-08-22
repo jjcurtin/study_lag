@@ -1458,7 +1458,7 @@ Attaching package: &#39;janitor&#39;</code></pre>
 <span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(var) <span class="sc">|&gt;</span></span>
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
 <span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">perc =</span> (n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">var =</span> <span class="st">&quot;Sex Assigned at Birth&quot;</span>, <span class="at">.before =</span> <span class="dv">1</span>)</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">var =</span> <span class="st">&quot;Sex at Birth&quot;</span>, <span class="at">.before =</span> <span class="dv">1</span>)</span>
 <span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>dem_race <span class="ot">&lt;-</span> screen <span class="sc">|&gt;</span></span>
 <span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">var =</span> dem_3) <span class="sc">|&gt;</span></span>
@@ -1922,7 +1922,7 @@ Demographic and Clinical Characteristics
    <td style="text-align:left;"> 21-72 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> Sex Assigned at Birth </td>
+   <td style="text-align:left;"> Sex at Birth </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:left;">  </td>
