@@ -73,7 +73,7 @@ dem_sex <-  screen |>
   group_by(var) |>
   summarise(n = n()) |>
   mutate(perc = (n / sum(n)) * 100) |> 
-  add_row(var = "Sex", .before = 1)
+  add_row(var = "Sex Assigned at Birth", .before = 1)
 
 dem_race <- screen |>
   select(var = dem_3) |>
@@ -459,8 +459,8 @@ table_ci <- ci_baseline |>
                                       "below poverty vs above poverty"),
                            labels = c("Fairness Contrasts (No Lag)",
                                       "female vs. male",
-                                      "not White vs. non-Hispanic White",
-                                      "below poverty vs. above poverty"))) |> 
+                                      "non-White and/or Hispanic vs. non-Hispanic White",
+                                      "below poverty line vs. above poverty line"))) |> 
           arrange(contrast) |> 
     rbind(ci_fairness_336 |> 
           mutate(ci = str_c("[", round(lower, 3), ", ", round(upper, 3), "]"),
@@ -476,8 +476,8 @@ table_ci <- ci_baseline |>
                                       "below poverty vs above poverty"),
                            labels = c("Fairness Contrasts (2-week Lag)",
                                       "female vs. male",
-                                      "not White vs. non-Hispanic White",
-                                      "below poverty vs. above poverty"))) |> 
+                                      "non-White and/or Hispanic vs. non-Hispanic White",
+                                      "below poverty line vs. above poverty line"))) |> 
           arrange(contrast)) |> 
   rename(Contrast = contrast,
          Median = median,
@@ -523,7 +523,7 @@ table_dem |>
 
 ```{r }
 #| label: tbl-model
-#| tbl-cap: "Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts."
+#| tbl-cap: "Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was smaller than 0 for all baseline and adjacent lag contrasts."
 
 footnote_table_model <- "Median auROC differences less than 0 indicate the more lagged model, on average, performed worse than the more immediate model (e.g., 1-day lag - no lag, 3-day lag - 1-day lag). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is smaller than 0 (i.e., the models are performing differently)."
 
@@ -543,9 +543,9 @@ table_ci |>
 
 ```{r }
 #| label: tbl-fairness
-#| tbl-cap: "Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for fairness contrasts for the no lag and 2-week lagged models."
+#| tbl-cap: "Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was smaller than 0 for fairness contrasts for the no lag and 2-week lagged models."
 
-footnote_table_fair <- "Median auROC differences less than 0 indicate the model, on average, performed worse for the disadvantaged group (female, not White, income below poverty) compared to the advantaged group (male, non-Hispanic White, income above poverty). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is smaller than 0 (i.e., the models are performing differently for fairness subgroups)."
+footnote_table_fair <- "Median auROC differences less than 0 indicate the model, on average, performed worse for the disadvantaged group (female, non-White and/or Hispanic, income below poverty line) compared to the advantaged group (male, non-Hispanic White, income above poverty line). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is smaller than 0 (i.e., the models are performing differently for fairness subgroups)."
 
 table_ci_fair |> 
   knitr::kable() |> 
