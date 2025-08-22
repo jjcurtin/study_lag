@@ -37,7 +37,7 @@ format:
   html: default
   docx: default
   apaish-typst: 
-    documentmode: doc
+    documentmode: man
 citeproc: true
 bibliography: references.bib
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl
