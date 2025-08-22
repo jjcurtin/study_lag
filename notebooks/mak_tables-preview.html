@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
     <meta name="author" content="Kendra Wyant">
-    <meta name="dcterms.date" content="2025-08-21">
+    <meta name="dcterms.date" content="2025-08-22">
 
     <title>Make All Tables for Main Manuscript</title>
     <style>
@@ -1354,7 +1354,7 @@ border: 0;
                 <div>
             <div class="quarto-title-meta-heading">Published</div>
             <div class="quarto-title-meta-contents">
-              <p class="date">August 21, 2025</p>
+              <p class="date">August 22, 2025</p>
             </div>
           </div>
           
@@ -1458,7 +1458,7 @@ Attaching package: &#39;janitor&#39;</code></pre>
 <span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(var) <span class="sc">|&gt;</span></span>
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
 <span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">perc =</span> (n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">var =</span> <span class="st">&quot;Sex&quot;</span>, <span class="at">.before =</span> <span class="dv">1</span>)</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">var =</span> <span class="st">&quot;Sex Assigned at Birth&quot;</span>, <span class="at">.before =</span> <span class="dv">1</span>)</span>
 <span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>dem_race <span class="ot">&lt;-</span> screen <span class="sc">|&gt;</span></span>
 <span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">var =</span> dem_3) <span class="sc">|&gt;</span></span>
@@ -1842,8 +1842,8 @@ Attaching package: &#39;janitor&#39;</code></pre>
 <span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;below poverty vs above poverty&quot;</span>),</span>
 <span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Fairness Contrasts (No Lag)&quot;</span>,</span>
 <span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;female vs. male&quot;</span>,</span>
-<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;not White vs. non-Hispanic White&quot;</span>,</span>
-<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;below poverty vs. above poverty&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;non-White and/or Hispanic vs. non-Hispanic White&quot;</span>,</span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;below poverty line vs. above poverty line&quot;</span>))) <span class="sc">|&gt;</span> </span>
 <span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>          <span class="fu">arrange</span>(contrast) <span class="sc">|&gt;</span> </span>
 <span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbind</span>(ci_fairness_336 <span class="sc">|&gt;</span> </span>
 <span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">ci =</span> <span class="fu">str_c</span>(<span class="st">&quot;[&quot;</span>, <span class="fu">round</span>(lower, <span class="dv">3</span>), <span class="st">&quot;, &quot;</span>, <span class="fu">round</span>(upper, <span class="dv">3</span>), <span class="st">&quot;]&quot;</span>),</span>
@@ -1859,8 +1859,8 @@ Attaching package: &#39;janitor&#39;</code></pre>
 <span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;below poverty vs above poverty&quot;</span>),</span>
 <span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Fairness Contrasts (2-week Lag)&quot;</span>,</span>
 <span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;female vs. male&quot;</span>,</span>
-<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;not White vs. non-Hispanic White&quot;</span>,</span>
-<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;below poverty vs. above poverty&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;non-White and/or Hispanic vs. non-Hispanic White&quot;</span>,</span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;below poverty line vs. above poverty line&quot;</span>))) <span class="sc">|&gt;</span> </span>
 <span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>          <span class="fu">arrange</span>(contrast)) <span class="sc">|&gt;</span> </span>
 <span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Contrast =</span> contrast,</span>
 <span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>         <span class="at">Median =</span> median,</span>
@@ -1922,7 +1922,7 @@ Demographic and Clinical Characteristics
    <td style="text-align:left;"> 21-72 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> Sex </td>
+   <td style="text-align:left;"> Sex Assigned at Birth </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:right;">  </td>
    <td style="text-align:left;">  </td>
@@ -2471,7 +2471,7 @@ Demographic and Clinical Characteristics
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                           <span class="at">escape =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-model" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for all baseline and adjacent lag contrasts.
+Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was smaller than 0 for all baseline and adjacent lag contrasts.
 </figcaption>
 <div aria-describedby="tbl-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -2560,7 +2560,7 @@ Median difference in auROC, 95% Bayesian credible interval (CI), and posterior p
 <div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div class="cell">
 
 <div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>footnote_table_fair <span class="ot">&lt;-</span> <span class="st">&quot;Median auROC differences less than 0 indicate the model, on average, performed worse for the disadvantaged group (female, not White, income below poverty) compared to the advantaged group (male, non-Hispanic White, income above poverty). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is smaller than 0 (i.e., the models are performing differently for fairness subgroups).&quot;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>footnote_table_fair <span class="ot">&lt;-</span> <span class="st">&quot;Median auROC differences less than 0 indicate the model, on average, performed worse for the disadvantaged group (female, non-White and/or Hispanic, income below poverty line) compared to the advantaged group (male, non-Hispanic White, income above poverty line). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is smaller than 0 (i.e., the models are performing differently for fairness subgroups).&quot;</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>table_ci_fair <span class="sc">|&gt;</span> </span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>() <span class="sc">|&gt;</span> </span>
@@ -2574,7 +2574,7 @@ Median difference in auROC, 95% Bayesian credible interval (CI), and posterior p
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>                           <span class="at">escape =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-fairness" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fairness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was greater than 0 for fairness contrasts for the no lag and 2-week lagged models.
+Median difference in auROC, 95% Bayesian credible interval (CI), and posterior probability that that the auROC difference was smaller than 0 for fairness contrasts for the no lag and 2-week lagged models.
 </figcaption>
 <div aria-describedby="tbl-fairness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -2602,13 +2602,13 @@ Median difference in auROC, 95% Bayesian credible interval (CI), and posterior p
    <td style="text-align:left;"> 1 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> not White vs. non-Hispanic White </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> non-White and/or Hispanic vs. non-Hispanic White </td>
    <td style="text-align:left;"> -0.131 </td>
    <td style="text-align:left;"> [-0.222, -0.057] </td>
    <td style="text-align:left;"> 0.999 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;border-bottom: 1px solid" indentlevel="1"> below poverty vs. above poverty </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;border-bottom: 1px solid" indentlevel="1"> below poverty line vs. above poverty line </td>
    <td style="text-align:left;border-bottom: 1px solid"> -0.012 </td>
    <td style="text-align:left;border-bottom: 1px solid"> [-0.033, 0.007] </td>
    <td style="text-align:left;border-bottom: 1px solid"> 0.848 </td>
@@ -2627,13 +2627,13 @@ Median difference in auROC, 95% Bayesian credible interval (CI), and posterior p
    <td style="text-align:left;"> 1 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> not White vs. non-Hispanic White </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> non-White and/or Hispanic vs. non-Hispanic White </td>
    <td style="text-align:left;"> -0.13 </td>
    <td style="text-align:left;"> [-0.208, -0.058] </td>
    <td style="text-align:left;"> 0.998 </td>
   </tr>
   <tr>
-   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> below poverty vs. above poverty </td>
+   <td style="text-align:left;width: 25em; padding-left: 2em;" indentlevel="1"> below poverty line vs. above poverty line </td>
    <td style="text-align:left;"> -0.039 </td>
    <td style="text-align:left;"> [-0.073, -0.008] </td>
    <td style="text-align:left;"> 0.98 </td>
@@ -2641,7 +2641,7 @@ Median difference in auROC, 95% Bayesian credible interval (CI), and posterior p
 </tbody>
 <tfoot>
 <tr>
-<td style="padding: 0; border:0;" colspan="100%"><sup></sup> Median auROC differences less than 0 indicate the model, on average, performed worse for the disadvantaged group (female, not White, income below poverty) compared to the advantaged group (male, non-Hispanic White, income above poverty). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is smaller than 0 (i.e., the models are performing differently for fairness subgroups).</td>
+<td style="padding: 0; border:0;" colspan="100%"><sup></sup> Median auROC differences less than 0 indicate the model, on average, performed worse for the disadvantaged group (female, non-White and/or Hispanic, income below poverty line) compared to the advantaged group (male, non-Hispanic White, income above poverty line). Bayesian CI represents the range of values where there is a 95% probability that the true auROC difference lies within that range. Probability indicates the posterior probability that this difference is smaller than 0 (i.e., the models are performing differently for fairness subgroups).</td>
 </tr>
 </tfoot>
 </table>
