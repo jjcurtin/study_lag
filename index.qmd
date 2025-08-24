@@ -139,6 +139,9 @@ Of the 192 eligible participants, 191 consented to participate in the study at t
 
 Participants completed five study visits over approximately three months. After an initial phone screen, participants attended an in-person screening visit to determine eligibility, complete informed consent, and collect self-report measures. Eligible, consented participants returned approximately one week later for an intake visit. Three additional follow-up visits occurred about every 30 days that participants remained on study. Participants were expected to complete four daily EMAs. Other personal sensing data streams (geolocation, cellular communications, sleep quality, and audio check-ins) were collected as part of the parent grant's aims (R01 AA024391). Participants could earn up to \$150/month if they completed all study visits, had 10% or less missing EMA data, and opted in to provide data for other personal sensing data streams.
 
+## Ethics
+All procedures were approved by the University of Wisconsin-Madison Institutional Review Board (Study #2015-0780) and conducted in accordance with the Declaration of Helsinki. Written informed consent was obtained from all participants prior to participation.
+
 ## Measures
 
 ### Ecological Momentary Assessments
