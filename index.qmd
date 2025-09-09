@@ -116,9 +116,13 @@ In this study, we evaluated the performance of machine learning models that pred
 
 # Methods
 
-## Transparency and Openness
+## Transparency
 
-We adhere to research transparency principles that are crucial for robust and replicable science. We preregistered our data analytic strategy. We reported how we determined the sample size, all data exclusions, all manipulations, and all study measures. We provide a transparency report in the supplement [@aczelConsensusbasedTransparencyChecklist2019]. Finally, our data, questionnaires, preregistration, and other study materials are publicly available on our OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)), and our annotated analysis scripts and results are publicly available on our study website ([https://jjcurtin.github.io/study_lag/](https://jjcurtin.github.io/study_lag/)).
+We adhere to research transparency principles that are crucial for robust and replicable science. We preregistered our data analytic strategy. We reported how we determined the sample size, all data exclusions, all manipulations, and all study measures. We provide a transparency report in the supplement [@aczelConsensusbasedTransparencyChecklist2019]. 
+
+## Data Availability 
+
+Our data, questionnaires, preregistration, and other study materials are publicly available on our OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)). Our annotated analysis scripts and results are publicly available on our study website ([https://jjcurtin.github.io/study_lag/](https://jjcurtin.github.io/study_lag/)).
 
 
 ## Participants
