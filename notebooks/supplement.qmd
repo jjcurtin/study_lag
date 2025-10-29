@@ -1,6 +1,6 @@
 ---
 title: "Supplemental Material"
-author: "Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, and John J. Curtin"
+author: "Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, Claire E. Punturieri, and John J. Curtin"
 date: last-modified
 number-sections: true
 format: 
@@ -14,59 +14,9 @@ editor_options:
   chunk_output_type: console
 ---
 
-This file contains the supplemental materials for *Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models*. It includes a transparency report and all supplemental figures and tables. Additional materials are made available on our study's OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)).   
+This file contains the supplemental materials for *Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models*. It includes all supplemental figures and tables. Additional materials are made available on our study's OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)).   
 
 -----
-
-## Transparency Report 1.0 (full, 36 items; Aczel et al., 2019)
-
-**Manuscript Title:** Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models   
-**Authors:** Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, and John J. Curtin   
-**Corresponding author’s email address:** jjcurtin@wisc.edu   
-**Link to Project Repository:** [https://osf.io/xta67/](https://osf.io/xta67/)      
-
-### Preregistration Section   
-- Prior to analyzing the complete data set, a time-stamped preregistration was posted in an independent, third-party registry for the data analysis plan: Yes  
-
-Comments about your Preregistration: We pre-registered our data analytic strategy on OSF.   
-
-### Methods Section
-The manuscript fully describes…    
-
-- the rationale for the sample size used (e.g., an a priori power analysis): Yes  
-- how participants were recruited: Yes  
-- how participants were selected (e.g., eligibility criteria): Yes  
-- what compensation was offered for participation: Yes  
-- how participant dropout was handled (e.g., replaced, omitted, etc): Yes  
-- how participants were assigned to conditions: N/A.  There are no conditions.  
-- how stimulus materials were randomized: N/A.    
-- whether (and, if so, how) participants, experimenters, and data-analysts were kept naive to potentially biasing information: N/A.  This is an observations study that does not include analysis of group or manipulations.   There were no study conditions to blind.   
-- the study design, procedures, and materials to allow independent replication: Yes   
--	the measures of interest (e.g., friendliness): Yes   
--	all operationalizations for the measures of interest (e.g., a questionnaire measuring friendliness): Yes   
-
-### Results and Discussion Section
-The manuscript…  
-
--	distinguishes explicitly between “confirmatory” (i.e., prespecified) and “exploratory” (i.e., not prespecified) analyses: All analyses were pre-registered.
--	describes how violations of statistical assumptions were handled: No  
--	justifies all statistical choices (e.g., including or excluding covariates; applying or not applying transformations; use of multi-level models vs. ANOVA): Yes  
--	reports the sample size for each cell of the design: Yes  
--	reports how incomplete or missing data were handled: Yes  
--	presents protocols for data preprocessing (e.g., cleaning, discarding of cases and items, normalizing, smoothing, artifact correction): Yes  
-
-### Data, Code, and Materials Availability Section
-The following have been made publicly available…  
-
--	the (processed) data, on which the analyses of the manuscript were based: Yes   
--	all code and software (that is not copyright protected): Yes   
--	all instructions, stimuli, and test materials (that are not copyright protected): Yes   
--	Are the data properly archived (i.e., would a graduate student with relevant background knowledge be able to identify each variable and reproduce the analysis): Yes   
--	The manuscript includes a statement concerning the availability and location of all research items, including data, materials, and code relevant to the study: Yes   
-
-
-\newpage
-
 
 ## Supplemental Figures
 

@@ -1,0 +1,31 @@
+---
+format: pdf
+margin-left: 60pt
+margin-right: 60pt
+margin-bottom: 60pt
+margin-top: 60pt
+---
+
+Dear Dr. Ezhilarasan,
+
+We have addressed the following revision requests.
+
+1. "Authors reporting experiments on humans and/or the use of human tissue samples must confirm that all experiments were performed in accordance with relevant guidelines and regulations. Additionally, the manuscript file must include a statement identifying the institutional and/or licensing committee approving the experiments, including any relevant details, in the “Methods” section. Please check that the information provided in the methods section is unambiguous using the following requirements:
+
+    - A statement to confirm that all methods were carried out in accordance with relevant guidelines and regulations.
+    - A statement to confirm that all experimental protocols were approved by a named institutional and/or licensing committee.
+    - Must include a sentence confirming that informed consent was obtained from all subjects and/or their legal guardian(s).
+
+    We have now included the following under the Methods subheading Ethics: "All procedures were approved by the University of Wisconsin-Madison Institutional Review Board (Study #2015-0780) and carried out in accordance with the principles of the Declaration of Helsinki. All participants provided written informed consent."
+
+2. You have provided the data availability statement as "Our data, questionnaires, preregistration, and other study materials are publicly available on our OSF page (https:/osf.io/xta67). Our annotated analysis scripts and results are publicly available on our study website (https:/jjcurtin.github.io/study_lag)." in the submission system
+
+    Kindly provide the same in the manuscript as well under the heading Data availability
+
+    We have made the requested change. 
+
+
+If we can provide any additional information that can be of assistance, please do not hesitate to ask. Thank you in advance for your consideration.
+
+Sincerely,   
+Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, Claire E, Punturieri, & John J. Curtin

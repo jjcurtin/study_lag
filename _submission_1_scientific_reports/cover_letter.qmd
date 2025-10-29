@@ -1,0 +1,42 @@
+---
+format: pdf
+margin-left: 60pt
+margin-right: 60pt
+margin-bottom: 60pt
+margin-top: 60pt
+---
+
+Dear Dr. Kvedar,    
+
+We are pleased to submit our original manuscript, **“Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models,”** for your consideration at *npj Digital Medicine*. Given the transparency, rigor, and potential impact of our study, we believe it is an excellent fit for the journal. Specifically, this empirical paper develops, evaluates, and contextualizes five machine learning models that predict the probability of a future lapse back to alcohol use up to two weeks in advance. We use ecological momentary assessment (EMA) methods to collect longitudinal, in situ measures of relapse prevention constructs. We use a sophisticated statistical algorithm (XGBoost) and rigorous methods to evaluate how well our models generalize to new people (grouped nested cross-validation). 
+
+These models, which predict discrete onsets of alcohol lapse, are well-suited for integration into digital therapeutics for long-term monitoring of relapse risk in individuals with alcohol use disorder. In addition, the combination of interpretable EMA-derived features and Shapley feature importance methods enables person-specific contextualization of risk factors. These risk factors easily map onto relapse prevention skills that can be delivered through a digital app, ensuring people have access to the right tools at the right time. 
+
+Given the potential of our models to support scalable, adaptive, and personalized continuing care, we request that our manuscript be considered for the open collection *"Emerging Applications of Machine Learning and AI for Predictive Modeling in Precision Medicine,"* edited by Dr. Muthuraman. In addition to our study aligning with the core tenants of precision medicine, it explicitly evaluates model performance discrepancies across demographic subgroups with known disparities in substance use treatment access, furthering this collection's call for careful consideration of equity and access.  
+
+Finally, we preregistered our data analytic plan and made all data and study measures publicly available on our OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)). Our annotated analysis scripts and results are publicly available on our study website ([https://jjcurtin.github.io/study_lag/](https://jjcurtin.github.io/study_lag/)).
+
+
+The corresponding author is:     
+John J. Curtin, Ph.D.     
+Department of Psychology, University of Wisconsin-Madison    
+1202 West Johnson St, Madison, WI 53706    
+email: jjcurtin@wisc.edu     
+phone: 608-262-0387    
+fax: 608-262-4029    
+
+Suggested reviewers for this manuscript are:
+
+1. Zachary Cohen, Ph.D., Department of Psychology, University of Arizona, cohenzd@arizona.edu
+
+2. Michael Businelle, Ph.D., Department of Family and Preventive Medicine
+University of Oklahoma Health Sciences, Michael-Businelle@ouhsc.edu
+
+3. Sang Won Bae, Ph.D., Department of Systems and Enterprises, Stevens Institute of Technology, sbae4@stevens.edu
+
+
+If we can provide any additional information that would be of assistance, please do not hesitate to ask. We look forward to hearing from you regarding this manuscript.    
+
+Sincerely,    
+Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, Claire E, Punturieri, & John J. Curtin
+
