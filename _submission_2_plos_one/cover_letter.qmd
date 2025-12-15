@@ -1,0 +1,26 @@
+---
+format: pdf
+margin-left: 60pt
+margin-right: 60pt
+margin-bottom: 60pt
+margin-top: 60pt
+---
+
+Dear PLOS One Editorial Team,    
+
+We are pleased to submit our research article titled **“Forecasting alcohol lapse risk up to two weeks in advance using time-lagged machine learning models,”** for your consideration at *PLOS One*. Given the transparency and scientific rigor of our study, we believe it is an excellent fit for the journal. Specifically, this empirical paper develops, evaluates, and contextualizes five machine learning models that predict the probability of a future lapse back to alcohol use up to two weeks in advance. We use ecological momentary assessment (EMA) methods to collect longitudinal, in situ measures of relapse prevention constructs. We use a sophisticated statistical algorithm (XGBoost) and rigorous methods to evaluate how well our models generalize to new people (grouped nested cross-validation). 
+
+These models, which predict discrete onsets of alcohol lapse, are well-suited for integration into digital therapeutics for long-term monitoring of relapse risk in individuals with alcohol use disorder. In addition, the combination of interpretable EMA-derived features and Shapley feature importance methods enables person-specific contextualization of risk factors. These risk factors easily map onto relapse prevention skills that can be delivered through a digital app, ensuring people have access to the right tools at the right time. 
+
+Finally, we preregistered our data analytic plan and made all data and study measures publicly available on our OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)). Our annotated analysis scripts and results are publicly available on our study website ([https://jjcurtin.github.io/study_lag/](https://jjcurtin.github.io/study_lag/)).
+
+Suggested Academic Editors:
+
+1. Elisabeth Hildt
+2. Marianna Mazza
+
+If we can provide any additional information that would be of assistance, please do not hesitate to ask. We look forward to hearing from you regarding this manuscript.    
+
+Sincerely,    
+Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, Claire E, Punturieri, & John J. Curtin
+
