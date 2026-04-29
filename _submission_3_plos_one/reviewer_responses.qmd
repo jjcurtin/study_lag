@@ -1,0 +1,84 @@
+---
+format: pdf
+margin-left: 60pt
+margin-right: 60pt
+margin-bottom: 60pt
+margin-top: 60pt
+---
+
+Dear Dr. Bloom,
+
+We are pleased to submit a revised version of our manuscript "Forecasting alcohol lapse risk up to two weeks in advance using time-lagged machine learning models." We thank the reviewer for their thoughtful commentary. We have included detailed responses to each of the editor's and reviewer's concerns beginning on the following page.
+
+If we can provide any additional information that can be of assistance, please do not hesitate to ask. Thank you in advance for your consideration.
+
+Sincerely,    
+
+Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, Claire E, Punturieri, & John J. Curtin
+
+
+---
+
+
+Below, we delineate the reviewer's and editor’s questions, concerns, and requests regarding our original submission, and we detail the ways in which we have addressed each item. All comments have been copied verbatim to avoid misinterpretation.
+
+
+## Editor
+
+### 1. Please ensure that your manuscript meets PLOS ONE's style requirements, including those for file naming.
+
+
+### 2. Please note that PLOS One has specific guidelines on code sharing for submissions in which author-generated code underpins the findings in the manuscript. In these cases, we expect all author-generated code to be made available without restrictions upon publication of the work.
+
+
+### 3. Thank you for stating the following financial disclosure: “This research was supported by grants from the National Institute on Alcohol Abuse and Alcoholism: https://www.niaaa.nih.gov/ (R01 AA024391 to JJC) and the National Institute on Drug Abuse: https://nida.nih.gov/ (R01 DA047315 to JJC).” Please state what role the funders took in the study.  If the funders had no role, please state: "The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript." If this statement is not correct you must amend it as needed. Please include this amended Role of Funder statement in your cover letter; we will change the online submission form on your behalf.
+
+### 4. PLOS requires an ORCID iD for the corresponding author in Editorial Manager on papers submitted after December 6th, 2016. Please ensure that you have an ORCID iD and that it is validated in Editorial Manager. To do this, go to ‘Update my Information’ (in the upper left-hand corner of the main menu), and click on the Fetch/Validate link next to the ORCID field. This will take you to the ORCID site and allow you to create a new iD or authenticate a pre-existing iD in Editorial Manager.
+
+### 5. Please include captions for your Supporting Information files at the end of your manuscript, and update any in-text citations to match accordingly. 
+<!-- http://journals.plos.org/plosone/s/supporting-information.-->
+
+### 6. If the reviewer comments include a recommendation to cite specific previously published works, please review and evaluate these publications to determine whether they are relevant and should be cited. There is no requirement to cite these works unless the editor has indicated otherwise.
+
+
+## Reviewer 1
+
+### 1. The introduction mentions the capability of machine learning models to provide insights into individualized risk factors, leading to tailored momentary supports. Does the present model in the study enable this? Is it possible to generate feature importance rankings for given individuals?
+
+
+
+### 2. Related, a justification for not conducting model training within-persons is needed. To deploy these models for interventions, it seems that a “base” model trained on many people is important, but ideally this model can adapt when it is applied to a given individual (i.e., learning from incorrect predictions during the first few weeks).
+
+
+
+### 3. Could you provide sensitivity and specificity of the final model? These performance metrics are common in machine learning and easier to interpret than auROC (especially for non-ML audiences). Perhaps prediction labels could be made for discrete 24-hour windows, leading to day-level sensitivity/specificity. Accuracy may also be helpful.
+
+
+### 4. Does model sensitivity change as an individual drinks more (i.e., sensitivity to detect first lapse versus second, and so forth)? This may have implications regarding within-person training and the reliability of the model overtime as an individual proceeds through recovery.
+
+
+### 5. Please provide a definition of “feature scoring epoch” when the term is first introduced. (Line 225)
+
+
+### 6. The cross-validation approach has many facets and jargon. A narrative description of this process may be more digestible, and potentially an accompanying figure.
+
+
+### 7. How was ‘past alcohol use’ measured? More detail is needed on how this was measured, particularly regarding timing and amount, especially given its feature importance.
+
+
+### 8. In the abstract, the description around the timing of the prediction is confusing. “predicting next day lapses up to two weeks in advance”. Does this mean prediction of the next day or something that happens in two weeks? Another example is line 105-106: “predicting lapse probability in a 24-hour window that begins two weeks in the future). It is not clear what begins two weeks in the future?
+
+
+### 9. A definition for early recovery at first mention would be helpful.
+
+
+### 10. In the discussion, a consideration for how the results may or may not transfer to a sample as those with harm reduction (versus abstinence) goals would improve the implications
+
+
+### 11. How was compensation prorated for compliance?
+
+
+### 12. Was other substance use considered as a predictor?
+
+
+### 13. There is some question regarding the clinical utility of the 2 – week lag, could that be discussed?
