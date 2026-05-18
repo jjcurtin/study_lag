@@ -6,20 +6,6 @@ margin-bottom: 60pt
 margin-top: 60pt
 ---
 
-Dear Dr. Bloom,
-
-We are pleased to submit a revised version of our manuscript "Forecasting alcohol lapse risk up to two weeks in advance using time-lagged machine learning models." We thank the reviewer for their thoughtful commentary. We have included detailed responses to each of the editor's and reviewer's concerns beginning on the following page.
-
-If we can provide any additional information that can be of assistance, please do not hesitate to ask. Thank you in advance for your consideration.
-
-Sincerely,    
-
-Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, Claire E, Punturieri, & John J. Curtin
-
-
----
-
-
 Below, we delineate the reviewer's and editor’s questions, concerns, and requests regarding our original submission, and we detail the ways in which we have addressed each item. All comments have been copied verbatim to avoid misinterpretation.
 
 
@@ -27,25 +13,38 @@ Below, we delineate the reviewer's and editor’s questions, concerns, and reque
 
 ### 1. Please ensure that your manuscript meets PLOS ONE's style requirements, including those for file naming.
 
+<!--https://journals.plos.org/plosone/s/file?id=wjVg/PLOSOne_formatting_sample_main_body.pdf and
+
+https://journals.plos.org/plosone/s/file?id=ba62/PLOSOne_formatting_sample_title_authors_affiliations.pdf-->
+
 
 ### 2. Please note that PLOS One has specific guidelines on code sharing for submissions in which author-generated code underpins the findings in the manuscript. In these cases, we expect all author-generated code to be made available without restrictions upon publication of the work.
 
+<!--add final notebooks to OSF-->
 
 ### 3. Thank you for stating the following financial disclosure: “This research was supported by grants from the National Institute on Alcohol Abuse and Alcoholism: https://www.niaaa.nih.gov/ (R01 AA024391 to JJC) and the National Institute on Drug Abuse: https://nida.nih.gov/ (R01 DA047315 to JJC).” Please state what role the funders took in the study.  If the funders had no role, please state: "The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript." If this statement is not correct you must amend it as needed. Please include this amended Role of Funder statement in your cover letter; we will change the online submission form on your behalf.
 
+Our updated financial disclosure is documented below and in the cover letter:
+
+ “This research was supported by grants from the National Institute on Alcohol Abuse and Alcoholism: https://www.niaaa.nih.gov/ (R01 AA024391 to JJC) and the National Institute on Drug Abuse: https://nida.nih.gov/ (R01 DA047315 to JJC). The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript." 
+
 ### 4. PLOS requires an ORCID iD for the corresponding author in Editorial Manager on papers submitted after December 6th, 2016. Please ensure that you have an ORCID iD and that it is validated in Editorial Manager. To do this, go to ‘Update my Information’ (in the upper left-hand corner of the main menu), and click on the Fetch/Validate link next to the ORCID field. This will take you to the ORCID site and allow you to create a new iD or authenticate a pre-existing iD in Editorial Manager.
+
+We have confirmed the ORCID ID is validated for the corresponding author.
 
 ### 5. Please include captions for your Supporting Information files at the end of your manuscript, and update any in-text citations to match accordingly. 
 <!-- http://journals.plos.org/plosone/s/supporting-information.-->
 
 ### 6. If the reviewer comments include a recommendation to cite specific previously published works, please review and evaluate these publications to determine whether they are relevant and should be cited. There is no requirement to cite these works unless the editor has indicated otherwise.
 
+N/A
 
 ## Reviewer 1
 
-### 1. The introduction mentions the capability of machine learning models to provide insights into individualized risk factors, leading to tailored momentary supports. Does the present model in the study enable this? Is it possible to generate feature importance rankings for given individuals?
+### 1.  The introduction mentions the capability of machine learning models to provide insights into individualized risk factors, leading to tailored momentary supports. Does the present model in the study enable this? Is it possible to generate feature importance rankings for given individuals?
+Yes, we can generate local feature importance rankings (Shapley values) for every observation from every participant in our dataset. We previously reported global feature importance values, which average across all local Shapley values to provide a general global description of how important a feature is, on average, across all observations from all participants.
 
-
+We have now, however, added a second method to better summarize the local feature importance values. Specifically, we calculate the proportion of observations in which each feature category has the highest Shapley value. This approach describes how frequently a feature category is the most influential contributor to individual predictions.
 
 ### 2. Related, a justification for not conducting model training within-persons is needed. To deploy these models for interventions, it seems that a “base” model trained on many people is important, but ideally this model can adapt when it is applied to a given individual (i.e., learning from incorrect predictions during the first few weeks).
 
@@ -58,27 +57,37 @@ Below, we delineate the reviewer's and editor’s questions, concerns, and reque
 
 
 ### 5. Please provide a definition of “feature scoring epoch” when the term is first introduced. (Line 225)
+We have updated our language so that feature scoring epoch is now only used to describe the windows in which features are calculated (i.e., 12, 24, 48, 72, and 168 hours). This is described in the Feature Engineering section. In the Predictions section (including line 225) and the accompanying Figure 1 we have removed this terminology.
 
 
 ### 6. The cross-validation approach has many facets and jargon. A narrative description of this process may be more digestible, and potentially an accompanying figure.
 
 
 ### 7. How was ‘past alcohol use’ measured? More detail is needed on how this was measured, particularly regarding timing and amount, especially given its feature importance.
+Past use was measured on the first item of the EMA. This item prompted participants to enter the start and end dates and times of any unreported past alcohol use. We now more clearly describe the measurement of this item in the Measures section.
+
+We have also added a paragraph to the Feature Engineering section that explicitly details how past use features were engineered from this EMA item. 
+
+"We calculated raw and difference rate features for past use from reported lapses on the EMA. Raw past use features were generated by dividing the total number of previously reported lapses within a feature scoring epoch by the duration of that epoch. For difference past use rate features, we subtracted the baseline past use rate for that participant (i.e., total number of lapses while on study divided by total hours on study before the prediction window) from their associated raw past use rate. We also calculated raw and difference rate features for completed EMAs (i.e., number of full EMA surveys that were completed in a feature scoring epoch divided by the duration of that epoch)."
 
 
 ### 8. In the abstract, the description around the timing of the prediction is confusing. “predicting next day lapses up to two weeks in advance”. Does this mean prediction of the next day or something that happens in two weeks? Another example is line 105-106: “predicting lapse probability in a 24-hour window that begins two weeks in the future). It is not clear what begins two weeks in the future?
 
 
 ### 9. A definition for early recovery at first mention would be helpful.
+We now provide a definition for early recovery (<= 8 weeks of abstinence) at first mention in the Participants section and in the abstract.
 
 
 ### 10. In the discussion, a consideration for how the results may or may not transfer to a sample as those with harm reduction (versus abstinence) goals would improve the implications
-
+We appreciate this suggestion and have added a paragraph to the Discussion section that considers how lapse, as defined for individuals choosing abstinence, differs from lapse for individuals pursuing other recovery goals, as well as the implications for the generalizability of our models.
 
 ### 11. How was compensation prorated for compliance?
+Compensation was not prorated based on compliance. Participants were compensated \$25 for each month they provided EMA data with less than 10% missingness. We now make this compensation scheme more clear in the methods and provide details on other forms of compensation during the study (e.g., payments to offset cellular plans).<!--susan is confirming this is accurate-->
 
 
 ### 12. Was other substance use considered as a predictor?
+We did not collect information about other substance use on our EMA and therefore could not include this as a predictor in our models. 
 
 
 ### 13. There is some question regarding the clinical utility of the 2 – week lag, could that be discussed?
+<!--this will probably be more clear once 8 is addressed-->

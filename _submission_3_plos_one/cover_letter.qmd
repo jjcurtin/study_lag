@@ -1,0 +1,21 @@
+---
+format: pdf
+margin-left: 60pt
+margin-right: 60pt
+margin-bottom: 60pt
+margin-top: 60pt
+---
+
+Dear Dr. Bloom,
+
+We are pleased to submit a revised version of our manuscript "Forecasting alcohol lapse risk up to two weeks in advance using time-lagged machine learning models." We thank the reviewer for their thoughtful commentary. We have included detailed responses to each of the editor's and reviewer's concerns in the response to reviewers file.
+
+As requested, we have added the funder's role to the financial disclose statement. The updated statement is as follows:
+
+ “This research was supported by grants from the National Institute on Alcohol Abuse and Alcoholism: https://www.niaaa.nih.gov/ (R01 AA024391 to JJC) and the National Institute on Drug Abuse: https://nida.nih.gov/ (R01 DA047315 to JJC). The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript."    
+
+If we can provide any additional information that can be of assistance, please do not hesitate to ask. Thank you in advance for your consideration.
+
+Sincerely,    
+
+Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, Claire E, Punturieri, & John J. Curtin

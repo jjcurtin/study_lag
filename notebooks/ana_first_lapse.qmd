@@ -1,0 +1,112 @@
+---
+title: "Calculate auROC for first vs not-first lapses"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+
+### Set Up Environment
+
+
+Packages, functions, and paths
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(tidymodels)
+options(conflicts.policy = "depends.ok")
+
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true")
+
+path_shared <- format_path("risk2/data_processed/shared")
+path_models <- format_path("risk2/models/combined")
+```
+
+
+### Data
+
+```{r}
+preds <- read_rds(here::here(path_models,
+                             "outer_preds_6_x_5_1_x_5_day_v10_nested_full.rds"))
+
+labels <- read_csv(here::here(path_shared, "lapse_labels_24h_day_gps.csv"),
+                   show_col_types = FALSE)
+```
+
+
+### Create first lapse data frame
+
+```{r}
+first_lapses <- labels |> 
+  filter(lapse == "Lapse") |> 
+  group_by(subid) |> 
+  arrange(window_start) |> 
+  slice_head(n = 1)
+```
+
+
+### Combine data
+
+```{r}
+preds_combined <- labels |> 
+  mutate(first_lapse = if_else(label_num %in% first_lapses$label_num, "Yes", "No")) |> 
+  select(id_obs = label_num,
+         label = lapse,
+         subid,
+         first_lapse) |>
+  right_join(preds, by = c("id_obs", "label")) |> 
+  mutate(label = factor(label, levels = c("Lapse", "No lapse")))
+
+# nrow(first_lapses)
+# preds_combined |> filter(first_lapse == "Yes") |> nrow() |>  unique()
+
+# nrow(preds)
+# nrow(preds_combined) # should be same as nrow(preds)
+```
+
+
+### Calculate auROCs comparing up first lapse to no lapse and not first lapse to no lapse
+
+First lapses
+```{r}
+auroc_first_lapse <- preds_combined |> 
+  filter(first_lapse == "Yes" | label == "No lapse") |> 
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(first_lapse = .estimate) 
+     
+auroc_not_first_lapse <- preds_combined |> 
+  filter(first_lapse == "No") |> 
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(not_first_lapse = .estimate) 
+
+aurocs <- auroc_first_lapse |> 
+  left_join(auroc_not_first_lapse, by = "outer_split_num") |> 
+  arrange(outer_split_num) |> 
+  glimpse()
+```
+
+
+```{r}
+round(median(aurocs$first_lapse), 2)
+round(median(aurocs$not_first_lapse), 2)
+```
+

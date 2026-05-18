@@ -14,3 +14,5 @@
 *.html
 study_lag.Rproj
 index_files
+
+**/*.quarto_ipynb
