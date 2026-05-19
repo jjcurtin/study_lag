@@ -12,31 +12,26 @@ Below, we delineate the reviewer's and editor’s questions, concerns, and reque
 ## Editor
 
 ### 1. Please ensure that your manuscript meets PLOS ONE's style requirements, including those for file naming.
-
 <!--https://journals.plos.org/plosone/s/file?id=wjVg/PLOSOne_formatting_sample_main_body.pdf and
 
 https://journals.plos.org/plosone/s/file?id=ba62/PLOSOne_formatting_sample_title_authors_affiliations.pdf-->
 
 
 ### 2. Please note that PLOS One has specific guidelines on code sharing for submissions in which author-generated code underpins the findings in the manuscript. In these cases, we expect all author-generated code to be made available without restrictions upon publication of the work.
-
 <!--add final notebooks to OSF-->
 
 ### 3. Thank you for stating the following financial disclosure: “This research was supported by grants from the National Institute on Alcohol Abuse and Alcoholism: https://www.niaaa.nih.gov/ (R01 AA024391 to JJC) and the National Institute on Drug Abuse: https://nida.nih.gov/ (R01 DA047315 to JJC).” Please state what role the funders took in the study.  If the funders had no role, please state: "The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript." If this statement is not correct you must amend it as needed. Please include this amended Role of Funder statement in your cover letter; we will change the online submission form on your behalf.
+Our updated financial disclosure is documented below and also in the cover letter:
 
-Our updated financial disclosure is documented below and in the cover letter:
-
- “This research was supported by grants from the National Institute on Alcohol Abuse and Alcoholism: https://www.niaaa.nih.gov/ (R01 AA024391 to JJC) and the National Institute on Drug Abuse: https://nida.nih.gov/ (R01 DA047315 to JJC). The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript." 
+    “This research was supported by grants from the National Institute on Alcohol Abuse and Alcoholism: https://www.niaaa.nih.gov/ (R01 AA024391 to JJC) and the National Institute on Drug Abuse: https://nida.nih.gov/ (R01 DA047315 to JJC). The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript." 
 
 ### 4. PLOS requires an ORCID iD for the corresponding author in Editorial Manager on papers submitted after December 6th, 2016. Please ensure that you have an ORCID iD and that it is validated in Editorial Manager. To do this, go to ‘Update my Information’ (in the upper left-hand corner of the main menu), and click on the Fetch/Validate link next to the ORCID field. This will take you to the ORCID site and allow you to create a new iD or authenticate a pre-existing iD in Editorial Manager.
-
 We have confirmed the ORCID ID is validated for the corresponding author.
 
 ### 5. Please include captions for your Supporting Information files at the end of your manuscript, and update any in-text citations to match accordingly. 
 <!-- http://journals.plos.org/plosone/s/supporting-information.-->
 
-### 6. If the reviewer comments include a recommendation to cite specific previously published works, please review and evaluate these publications to determine whether they are relevant and should be cited. There is no requirement to cite these works unless the editor has indicated otherwise.
-
+### 6. If the reviewer comments include a recommendation to cite specific previously published works, please review and evaluate these publications to determine whether they are relevant and should be cited. There is no requirement to cite these works unless the editor has indicated otherwise.=
 N/A
 
 ## Reviewer 1
@@ -47,11 +42,10 @@ Yes, we can generate local feature importance rankings (Shapley values) for ever
 We have now, however, added a second method to better summarize the local feature importance values. Specifically, we calculate the proportion of observations in which each feature category has the highest Shapley value. This approach describes how frequently a feature category is the most influential contributor to individual predictions.
 
 ### 2. Related, a justification for not conducting model training within-persons is needed. To deploy these models for interventions, it seems that a “base” model trained on many people is important, but ideally this model can adapt when it is applied to a given individual (i.e., learning from incorrect predictions during the first few weeks).
-
-
+When outcomes (such as lapse events) are rare, person-specific models cannot be built until the individual has experienced several positive outcome labels (i.e., lapses). It may take weeks, months, or longer to accrue enough positive labels to calculate auROC in a nested cross-validation framework. We agree with this reviewer that a population model that can learn from new data from a specific individual may be a promising alternative approach.  However, whether this approach yields better predictive performance still remains an empirical question. We have begun exploring how priors from a population model can be gradually downweighted as individual-level data are collected and given greater weight, and our preliminary findings suggest that this approach may outperform population-level models. However, other studies have reported that person-specific models may substantially underperform compared to population-level models. We now discuss this approach and its potential implications in the Discussion section. 
 
 ### 3. Could you provide sensitivity and specificity of the final model? These performance metrics are common in machine learning and easier to interpret than auROC (especially for non-ML audiences). Perhaps prediction labels could be made for discrete 24-hour windows, leading to day-level sensitivity/specificity. Accuracy may also be helpful.
-
+We did not previously report sensitivity, specificity, and accuracy because these are properties of class predictions. They are metrics are calculated at a specific decision threshold. A decision threshold is only necessary when a "decision" about whether to intervene must be made. We intend for our model's predicted probabilities to be used to provide risk-relevant information to an individual irregardless of their predicted risk level. Thus, we believe that assigning a class label of lapse versus no lapse would be less clinically useful (compared to these full-range probability scores) and may even be potentially iatrogenic (e.g., triggering an abstinence violation effect). Moreover, the optimal decision threshold is likely to vary substantially depending on the clinical context and the relative costs of misclassification. For these reasons, we use auROC, which characterizes the "accuracy" of probabilities as the primary focus in the paper. Nonetheless, we now also report sensitivity, specificity, accuracy, and balanced accuracy at a single decision threshold (identified with Youden's index) in a supplemental table. 
 
 ### 4. Does model sensitivity change as an individual drinks more (i.e., sensitivity to detect first lapse versus second, and so forth)? This may have implications regarding within-person training and the reliability of the model overtime as an individual proceeds through recovery.
 
@@ -72,7 +66,10 @@ We have also added a paragraph to the Feature Engineering section that explicitl
 
 
 ### 8. In the abstract, the description around the timing of the prediction is confusing. “predicting next day lapses up to two weeks in advance”. Does this mean prediction of the next day or something that happens in two weeks? Another example is line 105-106: “predicting lapse probability in a 24-hour window that begins two weeks in the future). It is not clear what begins two weeks in the future?
+<!-- update/expand abstract more broadly-->
 
+
+We have updated the abstract, introduction (lines 105-106), and methods to this more clear. 
 
 ### 9. A definition for early recovery at first mention would be helpful.
 We now provide a definition for early recovery (<= 8 weeks of abstinence) at first mention in the Participants section and in the abstract.
