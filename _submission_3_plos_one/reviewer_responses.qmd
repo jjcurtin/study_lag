@@ -55,6 +55,7 @@ We have updated our language so that feature scoring epoch is now only used to d
 
 
 ### 6. The cross-validation approach has many facets and jargon. A narrative description of this process may be more digestible, and potentially an accompanying figure.
+We now open with a narrative description of nested cross-validation in te Cross-validation section. We also have simplified our text and avoided using technical jargon when possible.
 
 
 ### 7. How was ‘past alcohol use’ measured? More detail is needed on how this was measured, particularly regarding timing and amount, especially given its feature importance.
@@ -66,10 +67,7 @@ We have also added a paragraph to the Feature Engineering section that explicitl
 
 
 ### 8. In the abstract, the description around the timing of the prediction is confusing. “predicting next day lapses up to two weeks in advance”. Does this mean prediction of the next day or something that happens in two weeks? Another example is line 105-106: “predicting lapse probability in a 24-hour window that begins two weeks in the future). It is not clear what begins two weeks in the future?
-<!-- update/expand abstract more broadly-->
-
-
-We have updated the abstract, introduction (lines 105-106), and methods to this more clear. 
+Our models provided predicted probabilities of an alcohol lapse in a future 24-hour period (the prediction window). For the 2-week lagged model, that future prediction window starts 2 weeks from the prediction timepoint and ends two weeks and 1 day from the prediction timepoint. We have updated the abstract, introduction (lines 105-106), and methods (see Predictions section) to make this more clear. 
 
 ### 9. A definition for early recovery at first mention would be helpful.
 We now provide a definition for early recovery (<= 8 weeks of abstinence) at first mention in the Participants section and in the abstract.
@@ -87,4 +85,4 @@ We did not collect information about other substance use on our EMA and therefor
 
 
 ### 13. There is some question regarding the clinical utility of the 2 – week lag, could that be discussed?
-<!--this will probably be more clear once 8 is addressed-->
+We hope we have made the clinical utility of the 2-week lagged model more clear with our revisions related to point 8. Given that our 2-week model predicts the probability of a lapse that occurs within a 24-hour prediction window that starts two weeks from the prediction timepoint, this model gives patients 2 weeks to implement changes or engage in recovery activities to address their risk. The focus of previous alcohol lapse prediction research has been on predicting immediate lapses (i.e., the probability of a lapse in a prediction window that starts at the prediction timepoint). This can be helpful, for engaging in an activity in an app, but many recovery supports (e.g., attending a self-help group, scheduling a therapy session, or making plans to meet up with a supportive friend) are not available immediately. If patients knew their risk of lapse was going to be high on a given day two-weeks from now they could schedule the activities that would be most helpful to them in advance. 
