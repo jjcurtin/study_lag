@@ -88,10 +88,13 @@ for (the_subid in first_lapses_0$subid) {
   dttm <- first_lapses_0 |> 
     filter(subid == the_subid) |> 
     pull(dttm_label)
+ 
+  # filter out full 24 hours of lapse
   
   row_ids <- which(
     labels_0_full$subid == the_subid &
-    labels_0_full$dttm_label <= dttm
+    (labels_0_full$dttm_label <= dttm |
+       (labels_0_full$dttm_label > dttm & labels_0_full$dttm_label < dttm + hours(24)))
   )
 
   labels_0_full[row_ids, "first_lapse"] <- "yes"
@@ -99,12 +102,13 @@ for (the_subid in first_lapses_0$subid) {
 
 janitor::tabyl(labels_0_full$first_lapse)
 
-# all subids have more than one lapse because shifting hour by hour
+
 
 labels_0_full |> 
   group_by(first_lapse) |> 
   summarise(n_subid = n_distinct(subid)) 
 ```
+
 
 Combine with preds
 ```{r}
@@ -122,7 +126,7 @@ labels_0_full <- labels_0_full |>
 
 First lapses
 ```{r}
-auroc_first_lapse <- labels_0_full |> 
+auroc_first_lapse_0 <- labels_0_full |> 
   filter(first_lapse == "yes") |> 
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
@@ -132,7 +136,7 @@ auroc_first_lapse <- labels_0_full |>
   select(-c(.estimator, .metric)) |> 
   rename(first_lapse = .estimate) 
      
-auroc_not_first_lapse <- labels_0_full |> 
+auroc_not_first_lapse_0 <- labels_0_full |> 
   filter(first_lapse == "no") |>
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
@@ -142,20 +146,356 @@ auroc_not_first_lapse <- labels_0_full |>
   select(-c(.estimator, .metric)) |> 
   rename(not_first_lapse = .estimate) 
 
-aurocs <- auroc_first_lapse |> 
-  left_join(auroc_not_first_lapse, by = "outer_split_num") |> 
+aurocs_0 <- auroc_first_lapse_0 |> 
+  left_join(auroc_not_first_lapse_0, by = "outer_split_num") |> 
   arrange(outer_split_num) |> 
   glimpse()
+
+aurocs_0 |> 
+  write_csv(here::here(path_models, 
+                       "test_auroc_6_x_5_1day_0_v3_nested_strat_lh_first_vs_later.csv"))
 ```
 
 
 ```{r}
-round(median(aurocs$first_lapse), 2)
-round(median(aurocs$not_first_lapse), 2)
+round(median(aurocs_0$first_lapse), 2)
+round(median(aurocs_0$not_first_lapse), 2)
 
 
 # all data
 labels_0_full |> 
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(first_lapse = .estimate) |> 
+  pull(first_lapse) |> 
+  median()
+```
+
+
+### Get lagged aurocs
+
+
+```{r}
+first_lapses_24 <- labels_24 |> 
+  filter(lapse == "yes") |> 
+  group_by(subid) |> 
+  arrange(dttm_label) |> 
+  slice_head(n = 1) |> 
+  ungroup()
+
+first_lapses_72 <- labels_72 |> 
+  filter(lapse == "yes") |> 
+  group_by(subid) |> 
+  arrange(dttm_label) |> 
+  slice_head(n = 1) |> 
+  ungroup()
+
+first_lapses_168 <- labels_168 |> 
+  filter(lapse == "yes") |> 
+  group_by(subid) |> 
+  arrange(dttm_label) |> 
+  slice_head(n = 1) |> 
+  ungroup()
+
+first_lapses_336 <- labels_336 |> 
+  filter(lapse == "yes") |> 
+  group_by(subid) |> 
+  arrange(dttm_label) |> 
+  slice_head(n = 1) |> 
+  ungroup()
+
+labels_24_full <- labels_24 |> 
+  mutate(first_lapse = if_else(!subid %in% first_lapses_24$subid, "yes", "no"))
+
+labels_72_full <- labels_72 |> 
+  mutate(first_lapse = if_else(!subid %in% first_lapses_72$subid, "yes", "no"))
+
+labels_168_full <- labels_168 |> 
+  mutate(first_lapse = if_else(!subid %in% first_lapses_168$subid, "yes", "no"))
+
+labels_336_full <- labels_336 |> 
+  mutate(first_lapse = if_else(!subid %in% first_lapses_336$subid, "yes", "no"))
+
+for (the_subid in first_lapses_24$subid) {
+  dttm <- first_lapses_24 |> 
+    filter(subid == the_subid) |> 
+    pull(dttm_label)
+ 
+  # filter out full 24 hours of lapse
+  
+  row_ids <- which(
+    labels_24_full$subid == the_subid &
+    (labels_24_full$dttm_label <= dttm |
+       (labels_24_full$dttm_label > dttm & labels_24_full$dttm_label < dttm + hours(24)))
+  )
+
+  labels_24_full[row_ids, "first_lapse"] <- "yes"
+}
+
+for (the_subid in first_lapses_72$subid) {
+  dttm <- first_lapses_72 |> 
+    filter(subid == the_subid) |> 
+    pull(dttm_label)
+ 
+  # filter out full 24 hours of lapse
+  
+  row_ids <- which(
+    labels_72_full$subid == the_subid &
+    (labels_72_full$dttm_label <= dttm |
+       (labels_72_full$dttm_label > dttm & labels_72_full$dttm_label < dttm + hours(24)))
+  )
+
+  labels_72_full[row_ids, "first_lapse"] <- "yes"
+}
+
+for (the_subid in first_lapses_168$subid) {
+  dttm <- first_lapses_168 |> 
+    filter(subid == the_subid) |> 
+    pull(dttm_label)
+ 
+  # filter out full 24 hours of lapse
+  
+  row_ids <- which(
+    labels_168_full$subid == the_subid &
+    (labels_168_full$dttm_label <= dttm |
+       (labels_168_full$dttm_label > dttm & labels_168_full$dttm_label < dttm + hours(24)))
+  )
+
+  labels_168_full[row_ids, "first_lapse"] <- "yes"
+}
+
+for (the_subid in first_lapses_336$subid) {
+  dttm <- first_lapses_336 |> 
+    filter(subid == the_subid) |> 
+    pull(dttm_label)
+ 
+  # filter out full 24 hours of lapse
+  
+  row_ids <- which(
+    labels_336_full$subid == the_subid &
+    (labels_336_full$dttm_label <= dttm |
+       (labels_336_full$dttm_label > dttm & labels_336_full$dttm_label < dttm + hours(24)))
+  )
+
+  labels_336_full[row_ids, "first_lapse"] <- "yes"
+}
+```
+
+
+Combine with preds
+```{r}
+labels_24_full <- labels_24_full |>
+  mutate(label = if_else(lapse == "no", "No lapse", "Lapse"),
+         id_obs = row_number())  |> 
+  select(-lapse) |> 
+  right_join(preds_24, by = c("id_obs", "label")) |> 
+  mutate(label = factor(label, levels = c("Lapse", "No lapse")))
+
+labels_72_full <- labels_72_full |>
+  mutate(label = if_else(lapse == "no", "No lapse", "Lapse"),
+         id_obs = row_number())  |> 
+  select(-lapse) |> 
+  right_join(preds_72, by = c("id_obs", "label")) |> 
+  mutate(label = factor(label, levels = c("Lapse", "No lapse")))
+
+labels_168_full <- labels_168_full |>
+  mutate(label = if_else(lapse == "no", "No lapse", "Lapse"),
+         id_obs = row_number())  |> 
+  select(-lapse) |> 
+  right_join(preds_168, by = c("id_obs", "label")) |> 
+  mutate(label = factor(label, levels = c("Lapse", "No lapse")))
+
+labels_336_full <- labels_336_full |>
+  mutate(label = if_else(lapse == "no", "No lapse", "Lapse"),
+         id_obs = row_number())  |> 
+  select(-lapse) |> 
+  right_join(preds_336, by = c("id_obs", "label")) |> 
+  mutate(label = factor(label, levels = c("Lapse", "No lapse")))
+```
+
+Calculate aurocs
+```{r}
+auroc_first_lapse_24 <- labels_24_full |> 
+  filter(first_lapse == "yes") |> 
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(first_lapse = .estimate) 
+     
+auroc_not_first_lapse_24 <- labels_24_full |> 
+  filter(first_lapse == "no") |>
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(not_first_lapse = .estimate) 
+
+aurocs_24 <- auroc_first_lapse_24 |> 
+  left_join(auroc_not_first_lapse_24, by = "outer_split_num") |> 
+  arrange(outer_split_num) |> 
+  glimpse()
+
+aurocs_24 |> 
+  write_csv(here::here(path_models, 
+                       "test_auroc_6_x_5_1day_24_v3_nested_strat_lh_first_vs_later.csv"))
+
+round(median(aurocs_24$first_lapse), 2)
+round(median(aurocs_24$not_first_lapse), 2)
+
+
+# all data
+labels_24_full |> 
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(first_lapse = .estimate) |> 
+  pull(first_lapse) |> 
+  median()
+```
+
+
+```{r}
+auroc_first_lapse_72 <- labels_72_full |> 
+  filter(first_lapse == "yes") |> 
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(first_lapse = .estimate) 
+     
+auroc_not_first_lapse_72 <- labels_72_full |> 
+  filter(first_lapse == "no") |>
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(not_first_lapse = .estimate) 
+
+aurocs_72 <- auroc_first_lapse_72 |> 
+  left_join(auroc_not_first_lapse_72, by = "outer_split_num") |> 
+  arrange(outer_split_num) |> 
+  glimpse()
+
+aurocs_72 |> 
+  write_csv(here::here(path_models, 
+                       "test_auroc_6_x_5_1day_72_v3_nested_strat_lh_first_vs_later.csv"))
+
+round(median(aurocs_72$first_lapse), 2)
+round(median(aurocs_72$not_first_lapse), 2)
+
+
+# all data
+labels_72_full |> 
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(first_lapse = .estimate) |> 
+  pull(first_lapse) |> 
+  median()
+```
+
+```{r}
+auroc_first_lapse_168 <- labels_168_full |> 
+  filter(first_lapse == "yes") |> 
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(first_lapse = .estimate) 
+     
+auroc_not_first_lapse_168 <- labels_168_full |> 
+  filter(first_lapse == "no") |>
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(not_first_lapse = .estimate) 
+
+aurocs_168 <- auroc_first_lapse_168 |> 
+  left_join(auroc_not_first_lapse_168, by = "outer_split_num") |> 
+  arrange(outer_split_num) |> 
+  glimpse()
+
+aurocs_168 |> 
+  write_csv(here::here(path_models, 
+                       "test_auroc_6_x_5_1day_168_v3_nested_strat_lh_first_vs_later.csv"))
+
+round(median(aurocs_168$first_lapse), 2)
+round(median(aurocs_168$not_first_lapse), 2)
+
+
+# all data
+labels_168_full |> 
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(first_lapse = .estimate) |> 
+  pull(first_lapse) |> 
+  median()
+```
+
+```{r}
+auroc_first_lapse_336 <- labels_336_full |> 
+  filter(first_lapse == "yes") |> 
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(first_lapse = .estimate) 
+     
+auroc_not_first_lapse_336 <- labels_336_full |> 
+  filter(first_lapse == "no") |>
+  nest(.by = outer_split_num, .key = "preds") |> 
+  mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
+                                             truth = label))) |> 
+  select(-preds) |> 
+  unnest(auroc) |> 
+  select(-c(.estimator, .metric)) |> 
+  rename(not_first_lapse = .estimate) 
+
+aurocs_336 <- auroc_first_lapse_336 |> 
+  left_join(auroc_not_first_lapse_336, by = "outer_split_num") |> 
+  arrange(outer_split_num) |> 
+  glimpse()
+
+aurocs_336 |> 
+  write_csv(here::here(path_models, 
+                       "test_auroc_6_x_5_1day_336_v3_nested_strat_lh_first_vs_later.csv"))
+
+round(median(aurocs_336$first_lapse), 2)
+round(median(aurocs_336$not_first_lapse), 2)
+
+
+# all data
+labels_336_full |> 
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 

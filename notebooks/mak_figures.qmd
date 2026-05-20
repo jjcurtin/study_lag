@@ -46,6 +46,9 @@ ci <- read_csv(here::here(path_models_lag, "pp_perf_tibble.csv"),
   mutate(model = factor(model, levels = c("0 lag", "24 lag", "72 lag", "168 lag", "336 lag"),
                         labels = c("No lag", "1-day", "3-day", "1-week", "2-week")))
 
+ci_first_vs_later_lapse <- read_csv(here::here(path_models_lag, "pp_perf_tibble_first_vs_last.csv"),
+                                    show_col_types = FALSE)
+
 preds_0 <- read_rds(here::here(path_models_lag, 
                                "final_preds_kfold_1_x_5_1day_0_v3_strat_lh_final.rds")) 
 preds_24 <- read_rds(here::here(path_models_lag, 
@@ -117,6 +120,32 @@ pp_tidy |>
   xlab("Area Under ROC Curve") +
   expand_limits(x = c(.5, 1)) +
   theme_classic() 
+```
+
+
+
+```{r}
+#| label: fig-sens
+#| fig-cap: ""
+#| message: false
+#| code-fold: true
+
+ci_first_vs_later_lapse |> 
+  mutate(lag = factor(lag, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")),
+         model = factor(model, levels = c("first lapse", "later lapse"))) |>  
+  ggplot(aes(x = lag, y = pp_median, color = model)) + 
+  geom_point(position = position_dodge(width = 0.5), size = 1) +
+  geom_line(position = position_dodge(width = 0.5)) +
+  geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = model),
+               position = position_dodge(width = 0.5)) +
+  scale_y_continuous("auROC", limits = c(.50, 1.0)) +
+  labs(x = NULL,
+       color = NULL) +
+  theme_classic() +
+  theme(legend.position = "right",
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  scale_color_manual(values = c("black", "#cb6bce")) 
+
 ```
 
 ## Figure 3: Calibrated Model Performance

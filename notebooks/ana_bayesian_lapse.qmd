@@ -1,0 +1,210 @@
+---
+title: "Model evaluation on first vs later lapses"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+
+### Set Up Environment
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
+suppressPackageStartupMessages(library(tidyposterior))
+
+path_models_lag <- format_path(str_c("risk/models/lag"))
+path_shared <- format_path("risk/data_processed/shared")
+path_processed <- format_path("risk/data_processed/lag")
+
+options(knitr.kable.NA = '')
+```
+
+
+```{r}
+test_metrics_0 <- read_csv(here::here(path_models_lag,                                
+                                    "test_auroc_6_x_5_1day_0_v3_nested_strat_lh_first_vs_later.csv"), 
+                              col_types = cols()) |> 
+  mutate(fold_num = rep(1:5, 6),
+         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
+                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
+  select(-outer_split_num) 
+
+
+test_metrics_24 <- read_csv(here::here(path_models_lag, 
+                                       "test_auroc_6_x_5_1day_24_v3_nested_strat_lh_first_vs_later.csv"),
+                             col_types = cols()) |> 
+  mutate(fold_num = rep(1:5, 6),
+         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
+                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
+  select(-outer_split_num) 
+
+test_metrics_72 <- read_csv(here::here(path_models_lag, 
+                                       "test_auroc_6_x_5_1day_72_v3_nested_strat_lh_first_vs_later.csv"),
+                              col_types = cols()) |> 
+  mutate(fold_num = rep(1:5, 6),
+         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
+                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
+  select(-outer_split_num) 
+
+
+test_metrics_168 <- read_csv(here::here(path_models_lag, 
+                                        "test_auroc_6_x_5_1day_168_v3_nested_strat_lh_first_vs_later.csv"), 
+                              col_types = cols()) |> 
+  mutate(fold_num = rep(1:5, 6),
+         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
+                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
+  select(-outer_split_num) 
+
+
+test_metrics_336 <- read_csv(here::here(path_models_lag, 
+                                       "test_auroc_6_x_5_1day_336_v3_nested_strat_lh_first_vs_later.csv"),
+                             col_types = cols()) |> 
+  mutate(fold_num = rep(1:5, 6),
+         repeat_num = c(rep(1, 5), rep(2, 5), rep(3, 5), 
+                        rep(4, 5), rep(5, 5), rep(6, 5))) |> 
+  select(-outer_split_num) 
+```
+
+
+#### Model evaluation
+```{r}
+#| output: false
+
+
+# Repeated CV (id = repeat, id2 = fold within repeat)
+# with a common variance:  statistic ~ model + (model | id2/id)
+set.seed(101)
+pp <- test_metrics_0 |> 
+  rename(id = fold_num,
+         id2 = repeat_num) |> 
+  perf_mod(formula = statistic ~ model + (1 | id2/id),
+         transform = tidyposterior::logit_trans,  # for skewed & bounded AUC
+         iter = 6000, chains = 4, adapt_delta = .9999, # increased iteration from 2000 to fix divergence issues
+         family = gaussian, 
+)  
+
+pp_tidy <- pp |> 
+  tidy(seed = 123) 
+
+q = c(.025, .5, .975)
+
+pp_perf_tibble_0 <- pp_tidy |> 
+  group_by(model) |> 
+  summarize(pp_median = quantile(posterior, probs = q[2]),
+            pp_lower = quantile(posterior, probs = q[1]), 
+            pp_upper = quantile(posterior, probs = q[3])) |> 
+  mutate(model = factor(model, levels = c("first_lapse", "not_first_lapse"),
+                        labels = c("first lapse", "later lapse"))) |> 
+  arrange(model)
+
+pp <- test_metrics_24 |> 
+  rename(id = fold_num,
+         id2 = repeat_num) |> 
+  perf_mod(formula = statistic ~ model + (1 | id2/id),
+         transform = tidyposterior::logit_trans,  # for skewed & bounded AUC
+         iter = 6000, chains = 4, adapt_delta = .9999, # increased iteration from 2000 to fix divergence issues
+         family = gaussian, 
+)  
+
+pp_tidy <- pp |> 
+  tidy(seed = 123) 
+
+
+pp_perf_tibble_24 <- pp_tidy |> 
+  group_by(model) |> 
+  summarize(pp_median = quantile(posterior, probs = q[2]),
+            pp_lower = quantile(posterior, probs = q[1]), 
+            pp_upper = quantile(posterior, probs = q[3])) |> 
+  mutate(model = factor(model, levels = c("first_lapse", "not_first_lapse"),
+                        labels = c("first lapse", "later lapse"))) |> 
+  arrange(model)
+
+pp <- test_metrics_72 |> 
+  rename(id = fold_num,
+         id2 = repeat_num) |> 
+  perf_mod(formula = statistic ~ model + (1 | id2/id),
+         transform = tidyposterior::logit_trans,  # for skewed & bounded AUC
+         iter = 6000, chains = 4, adapt_delta = .9999, # increased iteration from 2000 to fix divergence issues
+         family = gaussian, 
+)  
+
+pp_tidy <- pp |> 
+  tidy(seed = 123) 
+
+
+pp_perf_tibble_72 <- pp_tidy |> 
+  group_by(model) |> 
+  summarize(pp_median = quantile(posterior, probs = q[2]),
+            pp_lower = quantile(posterior, probs = q[1]), 
+            pp_upper = quantile(posterior, probs = q[3])) |> 
+  mutate(model = factor(model, levels = c("first_lapse", "not_first_lapse"),
+                        labels = c("first lapse", "later lapse"))) |> 
+  arrange(model)
+
+pp <- test_metrics_168 |> 
+  rename(id = fold_num,
+         id2 = repeat_num) |> 
+  perf_mod(formula = statistic ~ model + (1 | id2/id),
+         transform = tidyposterior::logit_trans,  # for skewed & bounded AUC
+         iter = 6000, chains = 4, adapt_delta = .9999, # increased iteration from 2000 to fix divergence issues
+         family = gaussian, 
+)  
+
+pp_tidy <- pp |> 
+  tidy(seed = 123) 
+
+
+pp_perf_tibble_168 <- pp_tidy |> 
+  group_by(model) |> 
+  summarize(pp_median = quantile(posterior, probs = q[2]),
+            pp_lower = quantile(posterior, probs = q[1]), 
+            pp_upper = quantile(posterior, probs = q[3])) |> 
+  mutate(model = factor(model, levels = c("first_lapse", "not_first_lapse"),
+                        labels = c("first lapse", "later lapse"))) |> 
+  arrange(model)
+
+pp <- test_metrics_336 |> 
+  rename(id = fold_num,
+         id2 = repeat_num) |> 
+  perf_mod(formula = statistic ~ model + (1 | id2/id),
+         transform = tidyposterior::logit_trans,  # for skewed & bounded AUC
+         iter = 6000, chains = 4, adapt_delta = .9999, # increased iteration from 2000 to fix divergence issues
+         family = gaussian, 
+)  
+
+pp_tidy <- pp |> 
+  tidy(seed = 123) 
+
+
+pp_perf_tibble_336 <- pp_tidy |> 
+  group_by(model) |> 
+  summarize(pp_median = quantile(posterior, probs = q[2]),
+            pp_lower = quantile(posterior, probs = q[1]), 
+            pp_upper = quantile(posterior, probs = q[3])) |> 
+  mutate(model = factor(model, levels = c("first_lapse", "not_first_lapse"),
+                        labels = c("first lapse", "later lapse"))) |> 
+  arrange(model)
+```
+
+```{r}
+(pp_perf_tibble_0 |> 
+  mutate(lag = "No lag") |> 
+  bind_rows(pp_perf_tibble_24 |> 
+               mutate(lag = "1 day")) |> 
+  bind_rows(pp_perf_tibble_72 |> 
+               mutate(lag = "3 days")) |> 
+  bind_rows(pp_perf_tibble_168 |> 
+               mutate(lag = "1 week")) |> 
+  bind_rows(pp_perf_tibble_336 |> 
+               mutate(lag = "2 weeks")) |> 
+  write_csv(here::here(path_models_lag, "pp_perf_tibble_first_vs_last.csv")))
+```
+
