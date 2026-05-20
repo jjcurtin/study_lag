@@ -8,7 +8,7 @@
     <meta name="author" content="Kendra Wyant">
     <meta name="dcterms.date" content="2026-05-19">
 
-    <title>Calculate auROC for first vs not-first lapses</title>
+    <title>Model evaluation on first vs later lapses</title>
     <style>
 
 code{white-space: pre-wrap;}
@@ -2292,15 +2292,15 @@ vertical-align: -.125em;
     <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
       
       <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link" href><i class="bi bi-caret-left"></i> Back to Article</a>
-      <h6><i class="bi bi-journal-code"></i> Calculate auROC for first vs not-first lapses</h6>
+      <h6><i class="bi bi-journal-code"></i> Model evaluation on first vs later lapses</h6>
 
-            <a href="../notebooks/ana_first_lapse.qmd" class="btn btn-primary quarto-download-embed" download="ana_first_lapse.qmd">Download Source</a>
+            <a href="../notebooks/ana_bayesian_lapse.qmd" class="btn btn-primary quarto-download-embed" download="ana_bayesian_lapse.qmd">Download Source</a>
           </div>
 
      <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Calculate auROC for first vs not-first lapses</h1>
+      <h1 class="title">Model evaluation on first vs later lapses</h1>
           </div>
 
     
@@ -2341,10 +2341,6 @@ vertical-align: -.125em;
    
   <ul>
   <li><a href="#set-up-environment" id="toc-set-up-environment" class="nav-link active" data-scroll-target="#set-up-environment">Set Up Environment</a></li>
-  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
-  <li><a href="#create-grouping-variable" id="toc-create-grouping-variable" class="nav-link" data-scroll-target="#create-grouping-variable">Create grouping variable</a></li>
-  <li><a href="#calculate-aurocs-comparing-up-first-lapse-to-no-lapse-and-not-first-lapse-to-no-lapse" id="toc-calculate-aurocs-comparing-up-first-lapse-to-no-lapse-and-not-first-lapse-to-no-lapse" class="nav-link" data-scroll-target="#calculate-aurocs-comparing-up-first-lapse-to-no-lapse-and-not-first-lapse-to-no-lapse">Calculate auROCs comparing up first lapse to no lapse and not first lapse to no lapse</a></li>
-  <li><a href="#get-lagged-aurocs" id="toc-get-lagged-aurocs" class="nav-link" data-scroll-target="#get-lagged-aurocs">Get lagged aurocs</a></li>
   </ul>
 </nav>
 </div>
@@ -2354,600 +2350,718 @@ vertical-align: -.125em;
 
        <section id="set-up-environment" class="level3">
 <h3 class="anchored" data-anchor-id="set-up-environment">Set Up Environment</h3>
-<p>Packages, functions, and paths</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.2.0     ✔ readr     2.2.0
-✔ forcats   1.0.1     ✔ stringr   1.6.0
-✔ ggplot2   4.0.2     ✔ tibble    3.3.1
-✔ lubridate 1.9.5     ✔ tidyr     1.3.2
-✔ purrr     1.2.1     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">source</span>(<span class="st">&quot;https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true&quot;</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyposterior))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>path_models_lag <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="fu">str_c</span>(<span class="st">&quot;risk/models/lag&quot;</span>))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>path_shared <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="st">&quot;risk/data_processed/shared&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>path_processed <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="st">&quot;risk/data_processed/lag&quot;</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">knitr.kable.NA =</span> <span class="st">&#39;&#39;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>test_metrics_0 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag,                                </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">&quot;test_auroc_6_x_5_1day_0_v3_nested_strat_lh_first_vs_later.csv&quot;</span>), </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">6</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">5</span>), </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">rep</span>(<span class="dv">4</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">6</span>, <span class="dv">5</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num) </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>test_metrics_24 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">&quot;test_auroc_6_x_5_1day_24_v3_nested_strat_lh_first_vs_later.csv&quot;</span>),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                             <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">6</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">5</span>), </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">rep</span>(<span class="dv">4</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">6</span>, <span class="dv">5</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num) </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>test_metrics_72 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">&quot;test_auroc_6_x_5_1day_72_v3_nested_strat_lh_first_vs_later.csv&quot;</span>),</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                              <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">6</span>),</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">5</span>), </span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">rep</span>(<span class="dv">4</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">6</span>, <span class="dv">5</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num) </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>test_metrics_168 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, </span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">&quot;test_auroc_6_x_5_1day_168_v3_nested_strat_lh_first_vs_later.csv&quot;</span>), </span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>                              <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">6</span>),</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">5</span>), </span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">rep</span>(<span class="dv">4</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">6</span>, <span class="dv">5</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num) </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>test_metrics_336 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, </span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">&quot;test_auroc_6_x_5_1day_336_v3_nested_strat_lh_first_vs_later.csv&quot;</span>),</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>                             <span class="at">col_types =</span> <span class="fu">cols</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fold_num =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">6</span>),</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>         <span class="at">repeat_num =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">5</span>), </span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">rep</span>(<span class="dv">4</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">6</span>, <span class="dv">5</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>outer_split_num) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
+<section id="model-evaluation" class="level4">
+<h4 class="anchored" data-anchor-id="model-evaluation">Model evaluation</h4>
+<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.4.1 ──
-✔ broom        1.0.12     ✔ rsample      1.3.2 
-✔ dials        1.4.2      ✔ tailor       0.1.0 
-✔ infer        1.1.0      ✔ tune         2.0.1 
-✔ modeldata    1.5.1      ✔ workflows    1.3.0 
-✔ parsnip      1.4.1      ✔ workflowsets 1.1.1 
-✔ recipes      1.3.1      ✔ yardstick    1.3.2 
-── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
-✖ scales::discard() masks purrr::discard()
-✖ dplyr::filter()   masks stats::filter()
-✖ recipes::fixed()  masks stringr::fixed()
-✖ dplyr::lag()      masks stats::lag()
-✖ yardstick::spec() masks readr::spec()
-✖ recipes::step()   masks stats::step()</code></pre>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeated CV (id = repeat, id2 = fold within repeat)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># with a common variance:  statistic ~ model + (model | id2/id)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>pp <span class="ot">&lt;-</span> test_metrics_0 <span class="sc">|&gt;</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">id =</span> fold_num,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">id2 =</span> repeat_num) <span class="sc">|&gt;</span> </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">perf_mod</span>(<span class="at">formula =</span> statistic <span class="sc">~</span> model <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id2<span class="sc">/</span>id),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">transform =</span> tidyposterior<span class="sc">::</span>logit_trans,  <span class="co"># for skewed &amp; bounded AUC</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">iter =</span> <span class="dv">6000</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">adapt_delta =</span> .<span class="dv">9999</span>, <span class="co"># increased iteration from 2000 to fix divergence issues</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">family =</span> gaussian, </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>)  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 7.6e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.76 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 1: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 1: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 1: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 1: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 1: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 1: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 1: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 1: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 1: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 1: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 1: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 2.442 seconds (Warm-up)
+Chain 1:                3.897 seconds (Sampling)
+Chain 1:                6.339 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 2.4e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 2: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 2: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 2: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 2: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 2: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 2: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 2: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 2: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 2: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 2: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 2: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 2.491 seconds (Warm-up)
+Chain 2:                2.321 seconds (Sampling)
+Chain 2:                4.812 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 2.2e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 3: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 3: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 3: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 3: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 3: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 3: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 3: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 3: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 3: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 3: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 3: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 2.69 seconds (Warm-up)
+Chain 3:                2.587 seconds (Sampling)
+Chain 3:                5.277 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 2.1e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 4: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 4: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 4: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 4: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 4: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 4: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 4: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 4: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 4: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 4: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 4: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 2.556 seconds (Warm-up)
+Chain 4:                2.428 seconds (Sampling)
+Chain 4:                4.984 seconds (Total)
+Chain 4: </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">conflicts.policy =</span> <span class="st">&quot;depends.ok&quot;</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">source_url</span>(<span class="st">&quot;https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>ℹ SHA-1 hash of file is &quot;0faa14c0c44c2635216370888b7da9bfa8d07979&quot;</code></pre>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>(<span class="at">seed =</span> <span class="dv">123</span>) </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>q <span class="ot">=</span> <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>pp_perf_tibble_0 <span class="ot">&lt;-</span> pp_tidy <span class="sc">|&gt;</span> </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(model) <span class="sc">|&gt;</span> </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">pp_median =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">2</span>]),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_lower =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">1</span>]), </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_upper =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">3</span>])) <span class="sc">|&gt;</span> </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;first_lapse&quot;</span>, <span class="st">&quot;not_first_lapse&quot;</span>),</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>                        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;first lapse&quot;</span>, <span class="st">&quot;later lapse&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(model)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>pp <span class="ot">&lt;-</span> test_metrics_24 <span class="sc">|&gt;</span> </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">id =</span> fold_num,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">id2 =</span> repeat_num) <span class="sc">|&gt;</span> </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">perf_mod</span>(<span class="at">formula =</span> statistic <span class="sc">~</span> model <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id2<span class="sc">/</span>id),</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">transform =</span> tidyposterior<span class="sc">::</span>logit_trans,  <span class="co"># for skewed &amp; bounded AUC</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">iter =</span> <span class="dv">6000</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">adapt_delta =</span> .<span class="dv">9999</span>, <span class="co"># increased iteration from 2000 to fix divergence issues</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">family =</span> gaussian, </span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>)  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 2.5e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 1: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 1: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 1: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 1: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 1: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 1: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 1: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 1: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 1: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 1: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 1: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 3.115 seconds (Warm-up)
+Chain 1:                2.387 seconds (Sampling)
+Chain 1:                5.502 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 2.2e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 2: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 2: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 2: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 2: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 2: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 2: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 2: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 2: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 2: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 2: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 2: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 2.846 seconds (Warm-up)
+Chain 2:                2.72 seconds (Sampling)
+Chain 2:                5.566 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 2.5e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 3: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 3: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 3: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 3: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 3: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 3: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 3: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 3: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 3: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 3: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 3: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 3.192 seconds (Warm-up)
+Chain 3:                2.323 seconds (Sampling)
+Chain 3:                5.515 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 1.7e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.17 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 4: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 4: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 4: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 4: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 4: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 4: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 4: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 4: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 4: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 4: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 4: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 2.379 seconds (Warm-up)
+Chain 4:                2.25 seconds (Sampling)
+Chain 4:                4.629 seconds (Total)
+Chain 4: </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>path_lag <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="st">&quot;risk/data_processed/lag&quot;</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>path_models <span class="ot">&lt;-</span> <span class="fu">format_path</span>(<span class="st">&quot;risk/models/lag&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div></div>
-</section>
-<section id="data" class="level3">
-<h3 class="anchored" data-anchor-id="data">Data</h3>
-<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>preds_0 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models,</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;outer_preds_6_x_5_1day_0_v3_nested_strat_lh.rds&quot;</span>))</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>labels_0 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_lag, <span class="st">&quot;labels_1day_0lag.csv&quot;</span>),</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>preds_24 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;outer_preds_6_x_5_1day_24_v3_nested_strat_lh.rds&quot;</span>))</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>labels_24 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_lag, <span class="st">&quot;labels_1day_24lag.csv&quot;</span>),</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>preds_72 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models,</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;outer_preds_6_x_5_1day_72_v3_nested_strat_lh.rds&quot;</span>))</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>labels_72 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_lag, <span class="st">&quot;labels_1day_72lag.csv&quot;</span>),</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>                   <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>preds_168 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models,</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;outer_preds_6_x_5_1day_168_v3_nested_strat_lh.rds&quot;</span>))</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>labels_168 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_lag, <span class="st">&quot;labels_1day_168lag.csv&quot;</span>),</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>                   <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>preds_336 <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models,</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;outer_preds_6_x_5_1day_336_v3_nested_strat_lh.rds&quot;</span>))</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>labels_336 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_lag, <span class="st">&quot;labels_1day_336lag.csv&quot;</span>),</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>                   <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div></div>
-</section>
-<section id="create-grouping-variable" class="level3">
-<h3 class="anchored" data-anchor-id="create-grouping-variable">Create grouping variable</h3>
-<ul>
-<li>first_lapse = Yes if no lapses on study or all data up until and including first lapse</li>
-<li>first_lapse = No for all data after first lapse</li>
-</ul>
-<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get first lapses</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>(first_lapses_0 <span class="ot">&lt;-</span> labels_0 <span class="sc">|&gt;</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(lapse <span class="sc">==</span> <span class="st">&quot;yes&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subid) <span class="sc">|&gt;</span> </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(dttm_label) <span class="sc">|&gt;</span> </span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>(<span class="at">seed =</span> <span class="dv">123</span>) </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>pp_perf_tibble_24 <span class="ot">&lt;-</span> pp_tidy <span class="sc">|&gt;</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(model) <span class="sc">|&gt;</span> </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">pp_median =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">2</span>]),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_lower =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">1</span>]), </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_upper =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">3</span>])) <span class="sc">|&gt;</span> </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;first_lapse&quot;</span>, <span class="st">&quot;not_first_lapse&quot;</span>),</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;first lapse&quot;</span>, <span class="st">&quot;later lapse&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(model)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>pp <span class="ot">&lt;-</span> test_metrics_72 <span class="sc">|&gt;</span> </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">id =</span> fold_num,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">id2 =</span> repeat_num) <span class="sc">|&gt;</span> </span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">perf_mod</span>(<span class="at">formula =</span> statistic <span class="sc">~</span> model <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id2<span class="sc">/</span>id),</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">transform =</span> tidyposterior<span class="sc">::</span>logit_trans,  <span class="co"># for skewed &amp; bounded AUC</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">iter =</span> <span class="dv">6000</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">adapt_delta =</span> .<span class="dv">9999</span>, <span class="co"># increased iteration from 2000 to fix divergence issues</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">family =</span> gaussian, </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>)  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 84 × 3
-   subid dttm_label          lapse
-   &lt;dbl&gt; &lt;dttm&gt;              &lt;chr&gt;
- 1     2 2017-04-01 01:00:00 yes  
- 2     3 2017-03-25 02:00:00 yes  
- 3     7 2017-06-19 03:00:00 yes  
- 4    10 2017-07-18 05:00:00 yes  
- 5    11 2017-07-20 05:00:00 yes  
- 6    16 2017-10-07 06:00:00 yes  
- 7    19 2017-12-18 02:00:00 yes  
- 8    20 2017-12-31 05:00:00 yes  
- 9    25 2017-11-22 00:00:00 yes  
-10    26 2017-11-16 03:00:00 yes  
-# ℹ 74 more rows</code></pre>
+<pre><code>
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 2.4e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 1: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 1: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 1: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 1: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 1: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 1: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 1: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 1: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 1: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 1: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 1: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 3.116 seconds (Warm-up)
+Chain 1:                2.323 seconds (Sampling)
+Chain 1:                5.439 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 2.3e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 2: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 2: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 2: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 2: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 2: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 2: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 2: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 2: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 2: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 2: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 2: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 2.445 seconds (Warm-up)
+Chain 2:                2.073 seconds (Sampling)
+Chain 2:                4.518 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 2.1e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 3: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 3: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 3: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 3: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 3: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 3: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 3: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 3: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 3: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 3: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 3: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 3.171 seconds (Warm-up)
+Chain 3:                2.332 seconds (Sampling)
+Chain 3:                5.503 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 2.1e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 4: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 4: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 4: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 4: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 4: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 4: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 4: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 4: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 4: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 4: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 4: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 2.507 seconds (Warm-up)
+Chain 4:                2.312 seconds (Sampling)
+Chain 4:                4.819 seconds (Total)
+Chain 4: </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>labels_0_full <span class="ot">&lt;-</span> labels_0 <span class="sc">|&gt;</span> </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">first_lapse =</span> <span class="fu">if_else</span>(<span class="sc">!</span>subid <span class="sc">%in%</span> first_lapses_0<span class="sc">$</span>subid, <span class="st">&quot;yes&quot;</span>, <span class="st">&quot;no&quot;</span>))</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (the_subid <span class="cf">in</span> first_lapses_0<span class="sc">$</span>subid) {</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  dttm <span class="ot">&lt;-</span> first_lapses_0 <span class="sc">|&gt;</span> </span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(subid <span class="sc">==</span> the_subid) <span class="sc">|&gt;</span> </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(dttm_label)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter out full 24 hours of lapse</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  row_ids <span class="ot">&lt;-</span> <span class="fu">which</span>(</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    labels_0_full<span class="sc">$</span>subid <span class="sc">==</span> the_subid <span class="sc">&amp;</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    (labels_0_full<span class="sc">$</span>dttm_label <span class="sc">&lt;=</span> dttm <span class="sc">|</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>       (labels_0_full<span class="sc">$</span>dttm_label <span class="sc">&gt;</span> dttm <span class="sc">&amp;</span> labels_0_full<span class="sc">$</span>dttm_label <span class="sc">&lt;</span> dttm <span class="sc">+</span> <span class="fu">hours</span>(<span class="dv">24</span>)))</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  labels_0_full[row_ids, <span class="st">&quot;first_lapse&quot;</span>] <span class="ot">&lt;-</span> <span class="st">&quot;yes&quot;</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>janitor<span class="sc">::</span><span class="fu">tabyl</span>(labels_0_full<span class="sc">$</span>first_lapse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>(<span class="at">seed =</span> <span class="dv">123</span>) </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>pp_perf_tibble_72 <span class="ot">&lt;-</span> pp_tidy <span class="sc">|&gt;</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(model) <span class="sc">|&gt;</span> </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">pp_median =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">2</span>]),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_lower =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">1</span>]), </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_upper =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">3</span>])) <span class="sc">|&gt;</span> </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;first_lapse&quot;</span>, <span class="st">&quot;not_first_lapse&quot;</span>),</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;first lapse&quot;</span>, <span class="st">&quot;later lapse&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(model)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>pp <span class="ot">&lt;-</span> test_metrics_168 <span class="sc">|&gt;</span> </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">id =</span> fold_num,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">id2 =</span> repeat_num) <span class="sc">|&gt;</span> </span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">perf_mod</span>(<span class="at">formula =</span> statistic <span class="sc">~</span> model <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id2<span class="sc">/</span>id),</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">transform =</span> tidyposterior<span class="sc">::</span>logit_trans,  <span class="co"># for skewed &amp; bounded AUC</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">iter =</span> <span class="dv">6000</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">adapt_delta =</span> .<span class="dv">9999</span>, <span class="co"># increased iteration from 2000 to fix divergence issues</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">family =</span> gaussian, </span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>)  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> labels_0_full$first_lapse      n  percent
-                        no 105007 0.382987
-                       yes 169172 0.617013</code></pre>
+<pre><code>
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 2.5e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 1: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 1: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 1: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 1: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 1: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 1: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 1: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 1: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 1: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 1: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 1: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 2.968 seconds (Warm-up)
+Chain 1:                2.287 seconds (Sampling)
+Chain 1:                5.255 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 2.1e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 2: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 2: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 2: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 2: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 2: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 2: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 2: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 2: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 2: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 2: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 2: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 2.734 seconds (Warm-up)
+Chain 2:                2.287 seconds (Sampling)
+Chain 2:                5.021 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 1.9e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.19 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 3: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 3: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 3: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 3: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 3: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 3: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 3: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 3: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 3: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 3: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 3: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 2.557 seconds (Warm-up)
+Chain 3:                2.339 seconds (Sampling)
+Chain 3:                4.896 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 2.4e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 4: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 4: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 4: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 4: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 4: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 4: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 4: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 4: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 4: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 4: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 4: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 3.247 seconds (Warm-up)
+Chain 4:                2.184 seconds (Sampling)
+Chain 4:                5.431 seconds (Total)
+Chain 4: </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>labels_0_full <span class="sc">|&gt;</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(first_lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_subid =</span> <span class="fu">n_distinct</span>(subid)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>(<span class="at">seed =</span> <span class="dv">123</span>) </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>pp_perf_tibble_168 <span class="ot">&lt;-</span> pp_tidy <span class="sc">|&gt;</span> </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(model) <span class="sc">|&gt;</span> </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">pp_median =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">2</span>]),</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_lower =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">1</span>]), </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_upper =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">3</span>])) <span class="sc">|&gt;</span> </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;first_lapse&quot;</span>, <span class="st">&quot;not_first_lapse&quot;</span>),</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;first lapse&quot;</span>, <span class="st">&quot;later lapse&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(model)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>pp <span class="ot">&lt;-</span> test_metrics_336 <span class="sc">|&gt;</span> </span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">id =</span> fold_num,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">id2 =</span> repeat_num) <span class="sc">|&gt;</span> </span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">perf_mod</span>(<span class="at">formula =</span> statistic <span class="sc">~</span> model <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id2<span class="sc">/</span>id),</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">transform =</span> tidyposterior<span class="sc">::</span>logit_trans,  <span class="co"># for skewed &amp; bounded AUC</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">iter =</span> <span class="dv">6000</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">adapt_delta =</span> .<span class="dv">9999</span>, <span class="co"># increased iteration from 2000 to fix divergence issues</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">family =</span> gaussian, </span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>)  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 2
-  first_lapse n_subid
-  &lt;chr&gt;         &lt;int&gt;
-1 no               82
-2 yes             151</code></pre>
+<pre><code>
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 2.4e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 1: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 1: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 1: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 1: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 1: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 1: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 1: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 1: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 1: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 1: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 1: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 2.426 seconds (Warm-up)
+Chain 1:                2.608 seconds (Sampling)
+Chain 1:                5.034 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 2.1e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 2: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 2: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 2: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 2: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 2: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 2: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 2: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 2: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 2: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 2: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 2: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 3.29 seconds (Warm-up)
+Chain 2:                4.508 seconds (Sampling)
+Chain 2:                7.798 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 2e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.2 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 3: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 3: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 3: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 3: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 3: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 3: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 3: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 3: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 3: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 3: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 3: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 3.198 seconds (Warm-up)
+Chain 3:                4.231 seconds (Sampling)
+Chain 3:                7.429 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL &#39;continuous&#39; NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 2e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.2 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 6000 [  0%]  (Warmup)
+Chain 4: Iteration:  600 / 6000 [ 10%]  (Warmup)
+Chain 4: Iteration: 1200 / 6000 [ 20%]  (Warmup)
+Chain 4: Iteration: 1800 / 6000 [ 30%]  (Warmup)
+Chain 4: Iteration: 2400 / 6000 [ 40%]  (Warmup)
+Chain 4: Iteration: 3000 / 6000 [ 50%]  (Warmup)
+Chain 4: Iteration: 3001 / 6000 [ 50%]  (Sampling)
+Chain 4: Iteration: 3600 / 6000 [ 60%]  (Sampling)
+Chain 4: Iteration: 4200 / 6000 [ 70%]  (Sampling)
+Chain 4: Iteration: 4800 / 6000 [ 80%]  (Sampling)
+Chain 4: Iteration: 5400 / 6000 [ 90%]  (Sampling)
+Chain 4: Iteration: 6000 / 6000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 2.54 seconds (Warm-up)
+Chain 4:                2.078 seconds (Sampling)
+Chain 4:                4.618 seconds (Total)
+Chain 4: </code></pre>
 </div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="ot">&lt;-</span> pp <span class="sc">|&gt;</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>(<span class="at">seed =</span> <span class="dv">123</span>) </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>pp_perf_tibble_336 <span class="ot">&lt;-</span> pp_tidy <span class="sc">|&gt;</span> </span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(model) <span class="sc">|&gt;</span> </span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">pp_median =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">2</span>]),</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_lower =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">1</span>]), </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">pp_upper =</span> <span class="fu">quantile</span>(posterior, <span class="at">probs =</span> q[<span class="dv">3</span>])) <span class="sc">|&gt;</span> </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;first_lapse&quot;</span>, <span class="st">&quot;not_first_lapse&quot;</span>),</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>                        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;first lapse&quot;</span>, <span class="st">&quot;later lapse&quot;</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
-<p>Combine with preds</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>labels_0_full <span class="ot">&lt;-</span> labels_0_full <span class="sc">|&gt;</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">if_else</span>(lapse <span class="sc">==</span> <span class="st">&quot;no&quot;</span>, <span class="st">&quot;No lapse&quot;</span>, <span class="st">&quot;Lapse&quot;</span>),</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">id_obs =</span> <span class="fu">row_number</span>())  <span class="sc">|&gt;</span> </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">right_join</span>(preds_0, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;id_obs&quot;</span>, <span class="st">&quot;label&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">factor</span>(label, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Lapse&quot;</span>, <span class="st">&quot;No lapse&quot;</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div></div>
-</section>
-<section id="calculate-aurocs-comparing-up-first-lapse-to-no-lapse-and-not-first-lapse-to-no-lapse" class="level3">
-<h3 class="anchored" data-anchor-id="calculate-aurocs-comparing-up-first-lapse-to-no-lapse-and-not-first-lapse-to-no-lapse">Calculate auROCs comparing up first lapse to no lapse and not first lapse to no lapse</h3>
-<p>First lapses</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>auroc_first_lapse_0 <span class="ot">&lt;-</span> labels_0_full <span class="sc">|&gt;</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(first_lapse <span class="sc">==</span> <span class="st">&quot;yes&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">first_lapse =</span> .estimate) </span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>     </span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>auroc_not_first_lapse_0 <span class="ot">&lt;-</span> labels_0_full <span class="sc">|&gt;</span> </span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(first_lapse <span class="sc">==</span> <span class="st">&quot;no&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">not_first_lapse =</span> .estimate) </span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>aurocs_0 <span class="ot">&lt;-</span> auroc_first_lapse_0 <span class="sc">|&gt;</span> </span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(auroc_not_first_lapse_0, <span class="at">by =</span> <span class="st">&quot;outer_split_num&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(outer_split_num) <span class="sc">|&gt;</span> </span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>(pp_perf_tibble_0 <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lag =</span> <span class="st">&quot;No lag&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(pp_perf_tibble_24 <span class="sc">|&gt;</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>               <span class="fu">mutate</span>(<span class="at">lag =</span> <span class="st">&quot;1 day&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(pp_perf_tibble_72 <span class="sc">|&gt;</span> </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>               <span class="fu">mutate</span>(<span class="at">lag =</span> <span class="st">&quot;3 days&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(pp_perf_tibble_168 <span class="sc">|&gt;</span> </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>               <span class="fu">mutate</span>(<span class="at">lag =</span> <span class="st">&quot;1 week&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(pp_perf_tibble_336 <span class="sc">|&gt;</span> </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>               <span class="fu">mutate</span>(<span class="at">lag =</span> <span class="st">&quot;2 weeks&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models_lag, <span class="st">&quot;pp_perf_tibble_first_vs_last.csv&quot;</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 30
-Columns: 3
-$ outer_split_num &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,…
-$ first_lapse     &lt;dbl&gt; 0.7933049, 0.8370734, 0.7383610, 0.6766002, 0.8588927,…
-$ not_first_lapse &lt;dbl&gt; 0.8474285, 0.8577014, 0.8504305, 0.8914455, 0.7660186,…</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>aurocs_0 <span class="sc">|&gt;</span> </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models, </span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot;test_auroc_6_x_5_1day_0_v3_nested_strat_lh_first_vs_later.csv&quot;</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">median</span>(aurocs_0<span class="sc">$</span>first_lapse), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.79</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">median</span>(aurocs_0<span class="sc">$</span>not_first_lapse), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.84</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># all data</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>labels_0_full <span class="sc">|&gt;</span> </span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">first_lapse =</span> .estimate) <span class="sc">|&gt;</span> </span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(first_lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">median</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9113233</code></pre>
+<pre><code># A tibble: 10 × 5
+   model       pp_median pp_lower pp_upper lag    
+   &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;  
+ 1 first lapse     0.791    0.766    0.815 No lag 
+ 2 later lapse     0.850    0.830    0.868 No lag 
+ 3 first lapse     0.774    0.750    0.798 1 day  
+ 4 later lapse     0.796    0.773    0.818 1 day  
+ 5 first lapse     0.777    0.749    0.803 3 days 
+ 6 later lapse     0.769    0.741    0.795 3 days 
+ 7 first lapse     0.784    0.759    0.808 1 week 
+ 8 later lapse     0.746    0.718    0.773 1 week 
+ 9 first lapse     0.786    0.759    0.811 2 weeks
+10 later lapse     0.695    0.662    0.726 2 weeks</code></pre>
 </div>
 </div></div>
 </section>
-<section id="get-lagged-aurocs" class="level3">
-<h3 class="anchored" data-anchor-id="get-lagged-aurocs">Get lagged aurocs</h3>
-<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>first_lapses_24 <span class="ot">&lt;-</span> labels_24 <span class="sc">|&gt;</span> </span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(lapse <span class="sc">==</span> <span class="st">&quot;yes&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subid) <span class="sc">|&gt;</span> </span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(dttm_label) <span class="sc">|&gt;</span> </span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>first_lapses_72 <span class="ot">&lt;-</span> labels_72 <span class="sc">|&gt;</span> </span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(lapse <span class="sc">==</span> <span class="st">&quot;yes&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subid) <span class="sc">|&gt;</span> </span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(dttm_label) <span class="sc">|&gt;</span> </span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>first_lapses_168 <span class="ot">&lt;-</span> labels_168 <span class="sc">|&gt;</span> </span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(lapse <span class="sc">==</span> <span class="st">&quot;yes&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subid) <span class="sc">|&gt;</span> </span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(dttm_label) <span class="sc">|&gt;</span> </span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>first_lapses_336 <span class="ot">&lt;-</span> labels_336 <span class="sc">|&gt;</span> </span>
-<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(lapse <span class="sc">==</span> <span class="st">&quot;yes&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(subid) <span class="sc">|&gt;</span> </span>
-<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(dttm_label) <span class="sc">|&gt;</span> </span>
-<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>labels_24_full <span class="ot">&lt;-</span> labels_24 <span class="sc">|&gt;</span> </span>
-<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">first_lapse =</span> <span class="fu">if_else</span>(<span class="sc">!</span>subid <span class="sc">%in%</span> first_lapses_24<span class="sc">$</span>subid, <span class="st">&quot;yes&quot;</span>, <span class="st">&quot;no&quot;</span>))</span>
-<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>labels_72_full <span class="ot">&lt;-</span> labels_72 <span class="sc">|&gt;</span> </span>
-<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">first_lapse =</span> <span class="fu">if_else</span>(<span class="sc">!</span>subid <span class="sc">%in%</span> first_lapses_72<span class="sc">$</span>subid, <span class="st">&quot;yes&quot;</span>, <span class="st">&quot;no&quot;</span>))</span>
-<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>labels_168_full <span class="ot">&lt;-</span> labels_168 <span class="sc">|&gt;</span> </span>
-<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">first_lapse =</span> <span class="fu">if_else</span>(<span class="sc">!</span>subid <span class="sc">%in%</span> first_lapses_168<span class="sc">$</span>subid, <span class="st">&quot;yes&quot;</span>, <span class="st">&quot;no&quot;</span>))</span>
-<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>labels_336_full <span class="ot">&lt;-</span> labels_336 <span class="sc">|&gt;</span> </span>
-<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">first_lapse =</span> <span class="fu">if_else</span>(<span class="sc">!</span>subid <span class="sc">%in%</span> first_lapses_336<span class="sc">$</span>subid, <span class="st">&quot;yes&quot;</span>, <span class="st">&quot;no&quot;</span>))</span>
-<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (the_subid <span class="cf">in</span> first_lapses_24<span class="sc">$</span>subid) {</span>
-<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>  dttm <span class="ot">&lt;-</span> first_lapses_24 <span class="sc">|&gt;</span> </span>
-<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(subid <span class="sc">==</span> the_subid) <span class="sc">|&gt;</span> </span>
-<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(dttm_label)</span>
-<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter out full 24 hours of lapse</span></span>
-<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a>  row_ids <span class="ot">&lt;-</span> <span class="fu">which</span>(</span>
-<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a>    labels_24_full<span class="sc">$</span>subid <span class="sc">==</span> the_subid <span class="sc">&amp;</span></span>
-<span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a>    (labels_24_full<span class="sc">$</span>dttm_label <span class="sc">&lt;=</span> dttm <span class="sc">|</span></span>
-<span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a>       (labels_24_full<span class="sc">$</span>dttm_label <span class="sc">&gt;</span> dttm <span class="sc">&amp;</span> labels_24_full<span class="sc">$</span>dttm_label <span class="sc">&lt;</span> dttm <span class="sc">+</span> <span class="fu">hours</span>(<span class="dv">24</span>)))</span>
-<span id="cb25-52"><a href="#cb25-52" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb25-53"><a href="#cb25-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-54"><a href="#cb25-54" aria-hidden="true" tabindex="-1"></a>  labels_24_full[row_ids, <span class="st">&quot;first_lapse&quot;</span>] <span class="ot">&lt;-</span> <span class="st">&quot;yes&quot;</span></span>
-<span id="cb25-55"><a href="#cb25-55" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb25-56"><a href="#cb25-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-57"><a href="#cb25-57" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (the_subid <span class="cf">in</span> first_lapses_72<span class="sc">$</span>subid) {</span>
-<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a>  dttm <span class="ot">&lt;-</span> first_lapses_72 <span class="sc">|&gt;</span> </span>
-<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(subid <span class="sc">==</span> the_subid) <span class="sc">|&gt;</span> </span>
-<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(dttm_label)</span>
-<span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter out full 24 hours of lapse</span></span>
-<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a>  row_ids <span class="ot">&lt;-</span> <span class="fu">which</span>(</span>
-<span id="cb25-65"><a href="#cb25-65" aria-hidden="true" tabindex="-1"></a>    labels_72_full<span class="sc">$</span>subid <span class="sc">==</span> the_subid <span class="sc">&amp;</span></span>
-<span id="cb25-66"><a href="#cb25-66" aria-hidden="true" tabindex="-1"></a>    (labels_72_full<span class="sc">$</span>dttm_label <span class="sc">&lt;=</span> dttm <span class="sc">|</span></span>
-<span id="cb25-67"><a href="#cb25-67" aria-hidden="true" tabindex="-1"></a>       (labels_72_full<span class="sc">$</span>dttm_label <span class="sc">&gt;</span> dttm <span class="sc">&amp;</span> labels_72_full<span class="sc">$</span>dttm_label <span class="sc">&lt;</span> dttm <span class="sc">+</span> <span class="fu">hours</span>(<span class="dv">24</span>)))</span>
-<span id="cb25-68"><a href="#cb25-68" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb25-69"><a href="#cb25-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-70"><a href="#cb25-70" aria-hidden="true" tabindex="-1"></a>  labels_72_full[row_ids, <span class="st">&quot;first_lapse&quot;</span>] <span class="ot">&lt;-</span> <span class="st">&quot;yes&quot;</span></span>
-<span id="cb25-71"><a href="#cb25-71" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb25-72"><a href="#cb25-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-73"><a href="#cb25-73" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (the_subid <span class="cf">in</span> first_lapses_168<span class="sc">$</span>subid) {</span>
-<span id="cb25-74"><a href="#cb25-74" aria-hidden="true" tabindex="-1"></a>  dttm <span class="ot">&lt;-</span> first_lapses_168 <span class="sc">|&gt;</span> </span>
-<span id="cb25-75"><a href="#cb25-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(subid <span class="sc">==</span> the_subid) <span class="sc">|&gt;</span> </span>
-<span id="cb25-76"><a href="#cb25-76" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(dttm_label)</span>
-<span id="cb25-77"><a href="#cb25-77" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb25-78"><a href="#cb25-78" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter out full 24 hours of lapse</span></span>
-<span id="cb25-79"><a href="#cb25-79" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb25-80"><a href="#cb25-80" aria-hidden="true" tabindex="-1"></a>  row_ids <span class="ot">&lt;-</span> <span class="fu">which</span>(</span>
-<span id="cb25-81"><a href="#cb25-81" aria-hidden="true" tabindex="-1"></a>    labels_168_full<span class="sc">$</span>subid <span class="sc">==</span> the_subid <span class="sc">&amp;</span></span>
-<span id="cb25-82"><a href="#cb25-82" aria-hidden="true" tabindex="-1"></a>    (labels_168_full<span class="sc">$</span>dttm_label <span class="sc">&lt;=</span> dttm <span class="sc">|</span></span>
-<span id="cb25-83"><a href="#cb25-83" aria-hidden="true" tabindex="-1"></a>       (labels_168_full<span class="sc">$</span>dttm_label <span class="sc">&gt;</span> dttm <span class="sc">&amp;</span> labels_168_full<span class="sc">$</span>dttm_label <span class="sc">&lt;</span> dttm <span class="sc">+</span> <span class="fu">hours</span>(<span class="dv">24</span>)))</span>
-<span id="cb25-84"><a href="#cb25-84" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb25-85"><a href="#cb25-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-86"><a href="#cb25-86" aria-hidden="true" tabindex="-1"></a>  labels_168_full[row_ids, <span class="st">&quot;first_lapse&quot;</span>] <span class="ot">&lt;-</span> <span class="st">&quot;yes&quot;</span></span>
-<span id="cb25-87"><a href="#cb25-87" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb25-88"><a href="#cb25-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-89"><a href="#cb25-89" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (the_subid <span class="cf">in</span> first_lapses_336<span class="sc">$</span>subid) {</span>
-<span id="cb25-90"><a href="#cb25-90" aria-hidden="true" tabindex="-1"></a>  dttm <span class="ot">&lt;-</span> first_lapses_336 <span class="sc">|&gt;</span> </span>
-<span id="cb25-91"><a href="#cb25-91" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(subid <span class="sc">==</span> the_subid) <span class="sc">|&gt;</span> </span>
-<span id="cb25-92"><a href="#cb25-92" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(dttm_label)</span>
-<span id="cb25-93"><a href="#cb25-93" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb25-94"><a href="#cb25-94" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter out full 24 hours of lapse</span></span>
-<span id="cb25-95"><a href="#cb25-95" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb25-96"><a href="#cb25-96" aria-hidden="true" tabindex="-1"></a>  row_ids <span class="ot">&lt;-</span> <span class="fu">which</span>(</span>
-<span id="cb25-97"><a href="#cb25-97" aria-hidden="true" tabindex="-1"></a>    labels_336_full<span class="sc">$</span>subid <span class="sc">==</span> the_subid <span class="sc">&amp;</span></span>
-<span id="cb25-98"><a href="#cb25-98" aria-hidden="true" tabindex="-1"></a>    (labels_336_full<span class="sc">$</span>dttm_label <span class="sc">&lt;=</span> dttm <span class="sc">|</span></span>
-<span id="cb25-99"><a href="#cb25-99" aria-hidden="true" tabindex="-1"></a>       (labels_336_full<span class="sc">$</span>dttm_label <span class="sc">&gt;</span> dttm <span class="sc">&amp;</span> labels_336_full<span class="sc">$</span>dttm_label <span class="sc">&lt;</span> dttm <span class="sc">+</span> <span class="fu">hours</span>(<span class="dv">24</span>)))</span>
-<span id="cb25-100"><a href="#cb25-100" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb25-101"><a href="#cb25-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-102"><a href="#cb25-102" aria-hidden="true" tabindex="-1"></a>  labels_336_full[row_ids, <span class="st">&quot;first_lapse&quot;</span>] <span class="ot">&lt;-</span> <span class="st">&quot;yes&quot;</span></span>
-<span id="cb25-103"><a href="#cb25-103" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div></div>
-<p>Combine with preds</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>labels_24_full <span class="ot">&lt;-</span> labels_24_full <span class="sc">|&gt;</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">if_else</span>(lapse <span class="sc">==</span> <span class="st">&quot;no&quot;</span>, <span class="st">&quot;No lapse&quot;</span>, <span class="st">&quot;Lapse&quot;</span>),</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">id_obs =</span> <span class="fu">row_number</span>())  <span class="sc">|&gt;</span> </span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">right_join</span>(preds_24, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;id_obs&quot;</span>, <span class="st">&quot;label&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">factor</span>(label, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Lapse&quot;</span>, <span class="st">&quot;No lapse&quot;</span>)))</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>labels_72_full <span class="ot">&lt;-</span> labels_72_full <span class="sc">|&gt;</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">if_else</span>(lapse <span class="sc">==</span> <span class="st">&quot;no&quot;</span>, <span class="st">&quot;No lapse&quot;</span>, <span class="st">&quot;Lapse&quot;</span>),</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">id_obs =</span> <span class="fu">row_number</span>())  <span class="sc">|&gt;</span> </span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">right_join</span>(preds_72, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;id_obs&quot;</span>, <span class="st">&quot;label&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">factor</span>(label, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Lapse&quot;</span>, <span class="st">&quot;No lapse&quot;</span>)))</span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>labels_168_full <span class="ot">&lt;-</span> labels_168_full <span class="sc">|&gt;</span></span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">if_else</span>(lapse <span class="sc">==</span> <span class="st">&quot;no&quot;</span>, <span class="st">&quot;No lapse&quot;</span>, <span class="st">&quot;Lapse&quot;</span>),</span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">id_obs =</span> <span class="fu">row_number</span>())  <span class="sc">|&gt;</span> </span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">right_join</span>(preds_168, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;id_obs&quot;</span>, <span class="st">&quot;label&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">factor</span>(label, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Lapse&quot;</span>, <span class="st">&quot;No lapse&quot;</span>)))</span>
-<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>labels_336_full <span class="ot">&lt;-</span> labels_336_full <span class="sc">|&gt;</span></span>
-<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">if_else</span>(lapse <span class="sc">==</span> <span class="st">&quot;no&quot;</span>, <span class="st">&quot;No lapse&quot;</span>, <span class="st">&quot;Lapse&quot;</span>),</span>
-<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>         <span class="at">id_obs =</span> <span class="fu">row_number</span>())  <span class="sc">|&gt;</span> </span>
-<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">right_join</span>(preds_336, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;id_obs&quot;</span>, <span class="st">&quot;label&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">factor</span>(label, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Lapse&quot;</span>, <span class="st">&quot;No lapse&quot;</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div></div>
-<p>Calculate aurocs</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>auroc_first_lapse_24 <span class="ot">&lt;-</span> labels_24_full <span class="sc">|&gt;</span> </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(first_lapse <span class="sc">==</span> <span class="st">&quot;yes&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">first_lapse =</span> .estimate) </span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>     </span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>auroc_not_first_lapse_24 <span class="ot">&lt;-</span> labels_24_full <span class="sc">|&gt;</span> </span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(first_lapse <span class="sc">==</span> <span class="st">&quot;no&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">not_first_lapse =</span> .estimate) </span>
-<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>aurocs_24 <span class="ot">&lt;-</span> auroc_first_lapse_24 <span class="sc">|&gt;</span> </span>
-<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(auroc_not_first_lapse_24, <span class="at">by =</span> <span class="st">&quot;outer_split_num&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(outer_split_num) <span class="sc">|&gt;</span> </span>
-<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 30
-Columns: 3
-$ outer_split_num &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,…
-$ first_lapse     &lt;dbl&gt; 0.7795215, 0.7861322, 0.7173364, 0.6717013, 0.8566131,…
-$ not_first_lapse &lt;dbl&gt; 0.7844837, 0.8008565, 0.8180832, 0.8303189, 0.7432217,…</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>aurocs_24 <span class="sc">|&gt;</span> </span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models, </span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot;test_auroc_6_x_5_1day_24_v3_nested_strat_lh_first_vs_later.csv&quot;</span>))</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">median</span>(aurocs_24<span class="sc">$</span>first_lapse), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.76</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">median</span>(aurocs_24<span class="sc">$</span>not_first_lapse), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># all data</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>labels_24_full <span class="sc">|&gt;</span> </span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">first_lapse =</span> .estimate) <span class="sc">|&gt;</span> </span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(first_lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">median</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8898142</code></pre>
-</div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>auroc_first_lapse_72 <span class="ot">&lt;-</span> labels_72_full <span class="sc">|&gt;</span> </span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(first_lapse <span class="sc">==</span> <span class="st">&quot;yes&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">first_lapse =</span> .estimate) </span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>     </span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>auroc_not_first_lapse_72 <span class="ot">&lt;-</span> labels_72_full <span class="sc">|&gt;</span> </span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(first_lapse <span class="sc">==</span> <span class="st">&quot;no&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">not_first_lapse =</span> .estimate) </span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>aurocs_72 <span class="ot">&lt;-</span> auroc_first_lapse_72 <span class="sc">|&gt;</span> </span>
-<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(auroc_not_first_lapse_72, <span class="at">by =</span> <span class="st">&quot;outer_split_num&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(outer_split_num) <span class="sc">|&gt;</span> </span>
-<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 30
-Columns: 3
-$ outer_split_num &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,…
-$ first_lapse     &lt;dbl&gt; 0.7533207, 0.8336034, 0.6931045, 0.6858374, 0.9024679,…
-$ not_first_lapse &lt;dbl&gt; 0.7303143, 0.7775176, 0.7974761, 0.8048731, 0.7320877,…</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>aurocs_72 <span class="sc">|&gt;</span> </span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models, </span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot;test_auroc_6_x_5_1day_72_v3_nested_strat_lh_first_vs_later.csv&quot;</span>))</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">median</span>(aurocs_72<span class="sc">$</span>first_lapse), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.76</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">median</span>(aurocs_72<span class="sc">$</span>not_first_lapse), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.77</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># all data</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>labels_72_full <span class="sc">|&gt;</span> </span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">first_lapse =</span> .estimate) <span class="sc">|&gt;</span> </span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(first_lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">median</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8811099</code></pre>
-</div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [11]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>auroc_first_lapse_168 <span class="ot">&lt;-</span> labels_168_full <span class="sc">|&gt;</span> </span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(first_lapse <span class="sc">==</span> <span class="st">&quot;yes&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">first_lapse =</span> .estimate) </span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>     </span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>auroc_not_first_lapse_168 <span class="ot">&lt;-</span> labels_168_full <span class="sc">|&gt;</span> </span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(first_lapse <span class="sc">==</span> <span class="st">&quot;no&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">not_first_lapse =</span> .estimate) </span>
-<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>aurocs_168 <span class="ot">&lt;-</span> auroc_first_lapse_168 <span class="sc">|&gt;</span> </span>
-<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(auroc_not_first_lapse_168, <span class="at">by =</span> <span class="st">&quot;outer_split_num&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(outer_split_num) <span class="sc">|&gt;</span> </span>
-<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 30
-Columns: 3
-$ outer_split_num &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,…
-$ first_lapse     &lt;dbl&gt; 0.7692811, 0.8343768, 0.7083643, 0.7118573, 0.9035027,…
-$ not_first_lapse &lt;dbl&gt; 0.6989571, 0.7405818, 0.7698609, 0.8091646, 0.6907782,…</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>aurocs_168 <span class="sc">|&gt;</span> </span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models, </span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot;test_auroc_6_x_5_1day_168_v3_nested_strat_lh_first_vs_later.csv&quot;</span>))</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">median</span>(aurocs_168<span class="sc">$</span>first_lapse), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.77</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">median</span>(aurocs_168<span class="sc">$</span>not_first_lapse), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.74</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># all data</span></span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>labels_168_full <span class="sc">|&gt;</span> </span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">first_lapse =</span> .estimate) <span class="sc">|&gt;</span> </span>
-<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(first_lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">median</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8683958</code></pre>
-</div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [12]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>auroc_first_lapse_336 <span class="ot">&lt;-</span> labels_336_full <span class="sc">|&gt;</span> </span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(first_lapse <span class="sc">==</span> <span class="st">&quot;yes&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">first_lapse =</span> .estimate) </span>
-<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>     </span>
-<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>auroc_not_first_lapse_336 <span class="ot">&lt;-</span> labels_336_full <span class="sc">|&gt;</span> </span>
-<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(first_lapse <span class="sc">==</span> <span class="st">&quot;no&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">not_first_lapse =</span> .estimate) </span>
-<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>aurocs_336 <span class="ot">&lt;-</span> auroc_first_lapse_336 <span class="sc">|&gt;</span> </span>
-<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(auroc_not_first_lapse_336, <span class="at">by =</span> <span class="st">&quot;outer_split_num&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(outer_split_num) <span class="sc">|&gt;</span> </span>
-<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 30
-Columns: 3
-$ outer_split_num &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,…
-$ first_lapse     &lt;dbl&gt; 0.6678881, 0.7767964, 0.7209289, 0.7865845, 0.8868538,…
-$ not_first_lapse &lt;dbl&gt; 0.6170462, 0.6479898, 0.7687413, 0.7522558, 0.6284988,…</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>aurocs_336 <span class="sc">|&gt;</span> </span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(path_models, </span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&quot;test_auroc_6_x_5_1day_336_v3_nested_strat_lh_first_vs_later.csv&quot;</span>))</span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">median</span>(aurocs_336<span class="sc">$</span>first_lapse), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.79</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">median</span>(aurocs_336<span class="sc">$</span>not_first_lapse), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.69</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># all data</span></span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>labels_336_full <span class="sc">|&gt;</span> </span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">.by =</span> outer_split_num, <span class="at">.key =</span> <span class="st">&quot;preds&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auroc =</span> <span class="fu">map</span>(preds, \(preds) <span class="fu">roc_auc</span>(preds, prob_raw, </span>
-<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">truth =</span> label))) <span class="sc">|&gt;</span> </span>
-<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>preds) <span class="sc">|&gt;</span> </span>
-<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(auroc) <span class="sc">|&gt;</span> </span>
-<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(.estimator, .metric)) <span class="sc">|&gt;</span> </span>
-<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">first_lapse =</span> .estimate) <span class="sc">|&gt;</span> </span>
-<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(first_lapse) <span class="sc">|&gt;</span> </span>
-<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">median</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8471884</code></pre>
-</div>
-</div></div>
 </section>
      </main>
 <!-- /main column -->  <script id="quarto-html-after-body" type="application/javascript">
