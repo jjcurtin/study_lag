@@ -98,40 +98,39 @@ knitr::include_graphics(path = here::here("figures/methods.PNG"), error = FALSE)
 
 ## Figure 2: Posterior probabilities for auROC by model 
 
+
 ```{r}
 #| label: fig-pp
-#| fig-cap: "Posterior probability distributions for area under ROC curve (auROC) for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). Each distribution reflects 12,000 posterior samples (4 chains × 3,000 samples) from a Bayesian hierarchical generalized linear model. Horizontal lines depict 95% Bayesian credible intervals (CI) and vertical solid lines depict median posterior probability for auROC. Vertical dashed line represents expected performance from a random classifier (.5 auROC)."
+#| fig-cap: "Posterior probabilities for area under the receiver operating curve (auROC) by model (No lag, 1-day, 3-day, 1-week, 2-week). auROC ranges from .5 (chance performance) to 1 (perfect performance). Median posterior probabilities over 12,000 posterior samples (4 chains × 3,000 samples) are depicted as points. Vertical lines represent the 95% Bayesian credible intervals for the posterior distribution."
 #| fig-width: 6
 #| fig-height: 6
 
-pp_tidy |> 
-  mutate(model = factor(model, levels = c("lag0", "lag24", "lag72", "lag168", "lag336"),
-                        labels = c("No lag", "1-day", "3-day", "1-week", "2-week"))) |>
-  ggplot() + 
-  geom_histogram(aes(x = posterior), fill = "light grey", color = "black", linewidth = .5,  
-                 bins = 60) +
-  geom_segment(mapping = aes(y = 5800, yend = 6400, x = pp_median, xend = pp_median),
-               linewidth = .5, data = ci) +
-  geom_segment(mapping = aes(y = 6100, yend = 6100, x = pp_lower, xend = pp_upper),
-                linewidth = .5, data = ci) +
-  facet_wrap(~model, ncol = 1) +
-  geom_vline(xintercept = .5, linewidth = .5, linetype = "dashed") +
-  scale_y_continuous("Posterior Samples") +
-  xlab("Area Under ROC Curve") +
-  expand_limits(x = c(.5, 1)) +
-  theme_classic() 
+ci |> 
+  ggplot(aes(x = model, y = pp_median)) + 
+  geom_point(position = position_dodge(width = 0.5), size = 1) +
+  geom_line(position = position_dodge(width = 0.5)) +
+  geom_segment(mapping = aes(x = model, y = pp_lower, yend = pp_upper),
+               position = position_dodge(width = 0.5)) +
+  scale_y_continuous("auROC", limits = c(.50, 1.0)) +
+  labs(x = NULL,
+       color = NULL) +
+  theme_classic() +
+  theme(legend.position = "right",
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) 
 ```
 
 
+## Figure 3: Posterior probabilities for auROC by model and timing of lapse 
 
 ```{r}
 #| label: fig-sens
-#| fig-cap: ""
+#| fig-cap: "Posterior probabilities for area under the receiver operating curve (auROC) by model (No lag, 1-day, 3-day, 1-week, 2-week) and timing of lapse (first lapse vs. later lapse). auROC ranges from .5 (chance performance) to 1 (perfect performance). Median posterior probabilities over 12,000 posterior samples (4 chains × 3,000 samples) are depicted as points. Vertical lines represent the 95% Bayesian credible intervals for the posterior distribution."
 #| message: false
 #| code-fold: true
 
 ci_first_vs_later_lapse |> 
-  mutate(lag = factor(lag, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks")),
+  mutate(lag = factor(lag, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks"),
+                      labels = c("No lag", "1-day", "3-day", "1-week", "2-week")),
          model = factor(model, levels = c("first lapse", "later lapse"))) |>  
   ggplot(aes(x = lag, y = pp_median, color = model)) + 
   geom_point(position = position_dodge(width = 0.5), size = 1) +
@@ -144,11 +143,11 @@ ci_first_vs_later_lapse |>
   theme_classic() +
   theme(legend.position = "right",
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
-  scale_color_manual(values = c("black", "#cb6bce")) 
+  scale_color_manual(values = c("#4A4747", "#cb6bce")) 
 
 ```
 
-## Figure 3: Calibrated Model Performance
+## Figure 4: Calibrated Model Performance
 
 
 ```{r}
@@ -246,7 +245,7 @@ preds_all |>
 ```
 
 
-## Figure 4: Global and Local Shapley Plots
+## Figure 5: Global and Local Shapley Plots
 
 ```{r}
 global_panel <- shap_global |>
