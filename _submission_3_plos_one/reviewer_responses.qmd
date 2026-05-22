@@ -12,13 +12,16 @@ Below, we delineate the reviewer's and editor’s questions, concerns, and reque
 ## Editor
 
 ### 1. Please ensure that your manuscript meets PLOS ONE's style requirements, including those for file naming.
-<!--https://journals.plos.org/plosone/s/file?id=wjVg/PLOSOne_formatting_sample_main_body.pdf and
+We have reviewed the PLOS One's style requirements and updated our manuscript accordingly. We have also ensured that our file names meet the requirements.
+
+<!--https://journals.plos.org/plosone/s/file?id=wjVg/PLOSOne_formatting_sample_main_body.pdf 
 
 https://journals.plos.org/plosone/s/file?id=ba62/PLOSOne_formatting_sample_title_authors_affiliations.pdf-->
 
 
 ### 2. Please note that PLOS One has specific guidelines on code sharing for submissions in which author-generated code underpins the findings in the manuscript. In these cases, we expect all author-generated code to be made available without restrictions upon publication of the work.
-<!--add final notebooks to OSF-->
+We have uploaded a copy of our code to our OSF page following the recommended guidelines for code sharing. This OSF page is also referenced in our manuscript.
+
 
 ### 3. Thank you for stating the following financial disclosure: “This research was supported by grants from the National Institute on Alcohol Abuse and Alcoholism: https://www.niaaa.nih.gov/ (R01 AA024391 to JJC) and the National Institute on Drug Abuse: https://nida.nih.gov/ (R01 DA047315 to JJC).” Please state what role the funders took in the study.  If the funders had no role, please state: "The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript." If this statement is not correct you must amend it as needed. Please include this amended Role of Funder statement in your cover letter; we will change the online submission form on your behalf.
 Our updated financial disclosure is documented below and also in the cover letter:
@@ -29,7 +32,7 @@ Our updated financial disclosure is documented below and also in the cover lette
 We have confirmed the ORCID ID is validated for the corresponding author.
 
 ### 5. Please include captions for your Supporting Information files at the end of your manuscript, and update any in-text citations to match accordingly. 
-<!-- http://journals.plos.org/plosone/s/supporting-information.-->
+We have included captions for our supporting information files at the end of the manuscript as requested.
 
 ### 6. If the reviewer comments include a recommendation to cite specific previously published works, please review and evaluate these publications to determine whether they are relevant and should be cited. There is no requirement to cite these works unless the editor has indicated otherwise.
 N/A
@@ -48,11 +51,13 @@ When outcomes (such as lapse events) are rare, person-specific models cannot be 
 We did not previously report sensitivity, specificity, and accuracy because these are properties of class predictions. They are metrics calculated at a specific decision threshold. A decision threshold is only necessary when a "decision" about whether to intervene must be made. We intend for our model's predicted probabilities to be used to provide risk-relevant information to an individual irregardless of their predicted risk level. Thus, we believe that assigning a class label of lapse versus no lapse would be less clinically useful (compared to these full-range probability scores) and may even be potentially iatrogenic (e.g., triggering an abstinence violation effect). Moreover, the optimal decision threshold is likely to vary substantially depending on the clinical context and the relative costs of misclassification. For these reasons, we use auROC, which characterizes the "accuracy" of probabilities as the primary focus in the paper. Nonetheless, we now also report sensitivity, specificity, and balanced accuracy at a single decision threshold (identified with Youden's index) in a supplemental table. We chose to use balanced accuracy instead of accuracy because accuracy can be misleading in highly imbalanced datasets. Balanced accuracy corrects for imbalanced data by calculating accuracy for each class separately (i.e., sensitivity and specificity) and then averaging them. 
 
 ### 4. Does model sensitivity change as an individual drinks more (i.e., sensitivity to detect first lapse versus second, and so forth)? This may have implications regarding within-person training and the reliability of the model overtime as an individual proceeds through recovery.
-We have now added a supplemental figure to explore differences in model performance for predicting an individual's first lapse compared to later lapses. Specifically, we calculated auROC separately for first and later lapses across the 30 held-out test sets. Individuals who never lapsed while on study were included in both groups to keep sample sizes relatively equivalent. 
+We have now added an additional analysis and supplemental figure to explore differences in model performance for predicting an individual's first lapse compared to later lapses. Specifically, we calculated auROC separately for first and later lapses across the 30 held-out test sets. Individuals who never lapsed while on study were included in both groups to keep sample sizes relatively equivalent. 
 
-Compared to overall model performance (.85-.91), models performed less well when predicting an individual's first lapse (median auROCs ranging from .78-.79). This performance was relatively consistent across lag times. Conversely, models performed better when predicting later lapses (.87-.94), compared to overall performance. Performance for later lapses showed a moderate decline as lag time increased, mirroring the pattern seen in overall model performance (Figure 1 in main manuscript). 
+We found that, overall, the model performed worse for first lapses than for later lapses, with performance remaining relatively stable across lag times (median auROCs of 0.78–0.79). In contrast, the model performed very well in predicting later lapses (median auROCs of 0.87–0.94). Performance for later lapses showed a moderate decline as lag time increased, mirroring the pattern observed in overall model performance.
 
-This suggests that our models do extremely well at predicting lapses as an individual drinks more. We attribute this to the highly personalized data used as inputs into our model and our model's ability to capture individual differences in lapse probability from our high-dimensional feature set. 
+This suggests that our models do extremely well at predicting lapses that occur later sequentially. This is not surprising given that past alcohol use predicts future alcohol use quite well. Additionally, these findings may indicate that the model is capturing meaningful within-person changes across the recovery trajectory.
+
+Regarding the lower performance on predicting first lapses, this may not be problematic. Lapses are common in recovery and a single lapse does not constitute relapse. However, following a lapse is a vulnerable period where an individual might continue to lapse (and possibly return to previous levels of hazardous drinking) or initiate supports to re-engage with their recovery goals. Clinically, lapses are often referred to as "teachable moments" where opportunities to intervene are well-received. Thus, even if we underestimate risk for the first lapse, the following period may still provide a timely window for accurate risk monitoring and recovery support.
 
 
 ### 5. Please provide a definition of “feature scoring epoch” when the term is first introduced. (Line 225)

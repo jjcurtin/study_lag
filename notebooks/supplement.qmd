@@ -20,8 +20,6 @@ This file contains the supplemental materials for *Forecasting Risk of Alcohol L
 
 ## Supplemental Figures
 
-### Figure S1: Raw Predicted Probabilities
-
 ```{r}
 #| code-fold: true
 
@@ -113,13 +111,14 @@ ci_first_vs_later_lapse <- read_csv(here::here(path_models_lag, "pp_perf_tibble_
                                     show_col_types = FALSE)
 ```
 
-### Figure S1: Model performance by model and timing of lapse
+### Figure A. Model performance by model and timing of lapse
 To understand differences in model performance for predicting an individual's first lapse compared to later lapses, we calculated median area under the receiver operating characteristic curve (auROC) with Bayesian priors and the 95% Bayesian credible intervals separately for first and later lapses across the 30 held-out test sets. Individuals who never lapsed while on study were included in both groups to keep sample sizes relatively equivalent. 
 
 Compared to overall model performance (.85-.91), models performed less well when predicting an individual's first lapse (median auROCs ranging from .78-.79). This performance was relatively consistent across lag times. Conversely, models performed better when predicting later lapses (.87-.94), compared to overall performance. Performance for later lapses showed a moderate decline as lag time increased, mirroring the pattern seen in overall model performance (Figure 1 in main manuscript). 
 
 ```{r}
 #| fig-cap: "Posterior probabilities for area under the receiver operating curve (auROC) by model (No lag, 1-day, 3-day, 1-week, 2-week) and timing of lapse (first vs. later lapse). auROC ranges from .5 (chance performance) to 1 (perfect performance). Median posterior probabilities over 12,000 posterior samples (4 chains × 3,000 samples) are depicted as points. Vertical lines represent the 95% Bayesian credible intervals for the posterior distribution."
+#| fig-warning: false
 
 ci_first_vs_later_lapse |> 
   mutate(lag = factor(lag, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks"),
@@ -141,9 +140,9 @@ ci_first_vs_later_lapse |>
 
 
 
-### Figure S2: Calibration plots for all models
+### Figure B. Calibration plots for all models
 
-Figure S2 shows the calibration plots for the raw and calibrated probabilities for all five models. It also includes a histogram of raw probabilities along the x-axis to illustrate range of predictions and bin size.
+Figure B shows the calibration plots for the raw and calibrated probabilities for all five models. It also includes a histogram of raw probabilities along the x-axis to illustrate range of predictions and bin size.
 
 ```{r}
 #| code-fold: true
@@ -266,9 +265,9 @@ plot_cal
 ```
 
 
-### Figure S3: Global Shapley values as a function of lag time
+### Figure C. Global Shapley values as a function of lag time
 
-Global feature importance is an indicator of how important a feature category was to the model’s predictions, on average (i.e., across all participants and all observations). In Figure S3, we present the global feature importance values across lag times. The magnitude of importance for our two most important features, past use and future efficacy, sharply declined as lag time increased. There were also moderate increases in feature importance for risk situations and valence/arousal with increased lag time.
+Global feature importance is an indicator of how important a feature category was to the model’s predictions, on average (i.e., across all participants and all observations). In Figure C, we present the global feature importance values across lag times. The magnitude of importance for our two most important features, past use and future efficacy, sharply declined as lag time increased. There were also moderate increases in feature importance for risk situations and valence/arousal with increased lag time.
 
 ```{r}
 #| code-fold: true
@@ -368,9 +367,9 @@ fig_s3
 
 
 
-### Figure S4: Global Shapley plots for baseline and 2-week lag models by demographic subgroup
+### Figure D. Global Shapley plots for baseline and 2-week lag models by demographic subgroup
 
-Figure S4 presents the global feature importance values separately by demographic subgroup for the no lag and 2-week lag models. The relative ordering of important features remained consistent across groups.  
+Figure D presents the global feature importance values separately by demographic subgroup for the no lag and 2-week lag models. The relative ordering of important features remained consistent across groups.  
 
 ```{r}
 #| code-fold: true
@@ -585,9 +584,9 @@ fig_s4
 
 ## Supplemental Tables
 
-### Table S1: Classification performance metrics
+### Table A. Classification performance metrics
 
-In Table S1 we report median sensitivity, specificity, and balanced accuracy calculated at a single decision threshold (identified using Youden’s index) across the 30 held-out test sets separately for each model. We calculated these metrics using the Platt-scaled probabilities to provide insight into how well the models can correctly label a prediction window as lapse or no lapse. However, we caution against using classification with these models. A decision threshold is only necessary when a "decision" about whether to intervene must be made. We intend for our model's predicted probabilities to be used to provide risk-relevant information to an individual irregardless of their predicted risk level. We believe that assigning a class label of lapse versus no lapse would be less clinically useful (compared to these full-range probability scores) and may even be potentially iatrogenic. Moreover, the optimal decision threshold is likely to vary substantially depending on the clinical context and the relative costs of misclassification.
+In Table A we report median sensitivity, specificity, and balanced accuracy calculated at a single decision threshold (identified using Youden’s index) across the 30 held-out test sets separately for each model. We calculated these metrics using the Platt-scaled probabilities to provide insight into how well the models can correctly label a prediction window as lapse or no lapse. However, we caution against using classification with these models. A decision threshold is only necessary when a "decision" about whether to intervene must be made. We intend for our model's predicted probabilities to be used to provide risk-relevant information to an individual irregardless of their predicted risk level. We believe that assigning a class label of lapse versus no lapse would be less clinically useful (compared to these full-range probability scores) and may even be potentially iatrogenic. Moreover, the optimal decision threshold is likely to vary substantially depending on the clinical context and the relative costs of misclassification.
 
 ```{r}
 get_metrics <- function(preds) {
@@ -673,9 +672,9 @@ metrics |>
 
 
 
-### Table S2: Demographic Contrasts for all Models
+### Table B. Demographic Contrasts for all Models
 
-Table S2 presents the median difference in auROC, 95% Bayesian CI, and posterior probability that the auROC difference was smaller than 0 for the three fairness contrasts: race/ethnicity (non-White and/or Hispanic; *N* = 20 vs. Non-Hispanic White; *N* = 131), sex at birth (female; *N* = 74 vs. male; *N* = 77), and income (below poverty line; *N* = 49 vs. above poverty line; *N* = 102). Median auROC differences less than 0 indicate the model, on average, performed worse for the non-advantaged group (female, non-White and/or Hispanic, below poverty line) compared to the advantaged group (male, non-Hispanic White, and above poverty line) for all models.
+Table B presents the median difference in auROC, 95% Bayesian CI, and posterior probability that the auROC difference was smaller than 0 for the three fairness contrasts: race/ethnicity (non-White and/or Hispanic; *N* = 20 vs. Non-Hispanic White; *N* = 131), sex at birth (female; *N* = 74 vs. male; *N* = 77), and income (below poverty line; *N* = 49 vs. above poverty line; *N* = 102). Median auROC differences less than 0 indicate the model, on average, performed worse for the non-advantaged group (female, non-White and/or Hispanic, below poverty line) compared to the advantaged group (male, non-Hispanic White, and above poverty line) for all models.
 
 ```{r}
 #| label: tbl-fairness
@@ -723,9 +722,9 @@ pp_sex |>
 ```
 
 
-### Table S3: Brier scores for all models
+### Table C. Brier scores for all models
 
-The raw probabilities produced by our final models were not well calibrated. Consequently, we used Platt scaling to improve calibration. Table S3 presents Brier scores for the raw and Platt scaled probabilities for each model. 
+The raw probabilities produced by our final models were not well calibrated. Consequently, we used Platt scaling to improve calibration. Table C presents Brier scores for the raw and Platt scaled probabilities for each model. 
 
 ```{r}
 #| tbl-cap: "Brier scores for raw and Platt-scaled probabilities by classification model (No lag, 1-day, 3-day, 1-week, 2-week)."

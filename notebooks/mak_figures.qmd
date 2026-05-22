@@ -111,14 +111,13 @@ ci |>
   labs(x = NULL,
        color = NULL) +
   theme_classic() +
-  theme(legend.position = "right",
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) 
+  theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) 
 
 ```
 
 
 
-## Figure 4: Calibrated Model Performance
+## Figure 3: Calibrated Model Performance
 
 
 ```{r}
@@ -207,16 +206,11 @@ preds_all |>
   theme_classic(base_size = 11) +
   theme(
     legend.position = "bottom",
-    strip.text = element_text(size = 11),
-    legend.title = element_text(face = "bold"),
-    legend.text = element_text(size = 10),
-    axis.text = element_text(size = 10),
-    axis.title = element_text(face = "bold")
-  )
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
 ```
 
 
-## Figure 5: Global and Local Shapley Plots
+## Figure 4: Global and Local Shapley Plots
 
 ```{r}
 global_panel <- shap_global |>
@@ -270,9 +264,7 @@ local_panel <- shaps_day_max |>
          x = NULL,
          fill = NULL) +
   scale_fill_manual(values = c("#cb6bce", "#240e31")) +
-  theme(axis.text=element_text(size=9.5),
-        legend.key.size = unit(0.25, "cm"),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+  theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
         legend.position = "right",
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank()) +
