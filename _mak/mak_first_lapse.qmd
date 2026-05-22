@@ -82,7 +82,8 @@ labels_336 <- read_csv(here::here(path_lag, "labels_1day_336lag.csv"),
   ungroup())
 
 labels_0_full <- labels_0 |> 
-  mutate(first_lapse = if_else(!subid %in% first_lapses_0$subid, "yes", "no"))
+  mutate(never_lapse = if_else(!subid %in% first_lapses_0$subid, "yes", "no"),
+         first_lapse = "no")
 
 for (the_subid in first_lapses_0$subid) {
   dttm <- first_lapses_0 |> 
@@ -107,6 +108,12 @@ janitor::tabyl(labels_0_full$first_lapse)
 labels_0_full |> 
   group_by(first_lapse) |> 
   summarise(n_subid = n_distinct(subid)) 
+
+labels_0_full |> 
+  filter(first_lapse == "yes" | never_lapse == "yes") |> nrow()
+
+labels_0_full |> 
+  filter(first_lapse == "no" | never_lapse == "yes") |> nrow()
 ```
 
 
@@ -127,7 +134,7 @@ labels_0_full <- labels_0_full |>
 First lapses
 ```{r}
 auroc_first_lapse_0 <- labels_0_full |> 
-  filter(first_lapse == "yes") |> 
+  filter(first_lapse == "yes" | never_lapse == "yes") |> 
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 
@@ -137,7 +144,7 @@ auroc_first_lapse_0 <- labels_0_full |>
   rename(first_lapse = .estimate) 
      
 auroc_not_first_lapse_0 <- labels_0_full |> 
-  filter(first_lapse == "no") |>
+  filter(first_lapse == "no" | never_lapse == "yes") |>
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 
@@ -209,16 +216,20 @@ first_lapses_336 <- labels_336 |>
   ungroup()
 
 labels_24_full <- labels_24 |> 
-  mutate(first_lapse = if_else(!subid %in% first_lapses_24$subid, "yes", "no"))
+  mutate(never_lapse = if_else(!subid %in% first_lapses_24$subid, "yes", "no"),
+         first_lapse = "no")
 
 labels_72_full <- labels_72 |> 
-  mutate(first_lapse = if_else(!subid %in% first_lapses_72$subid, "yes", "no"))
+  mutate(never_lapse = if_else(!subid %in% first_lapses_72$subid, "yes", "no"),
+         first_lapse = "no")
 
 labels_168_full <- labels_168 |> 
-  mutate(first_lapse = if_else(!subid %in% first_lapses_168$subid, "yes", "no"))
+  mutate(never_lapse = if_else(!subid %in% first_lapses_168$subid, "yes", "no"),
+         first_lapse = "no")
 
 labels_336_full <- labels_336 |> 
-  mutate(first_lapse = if_else(!subid %in% first_lapses_336$subid, "yes", "no"))
+  mutate(never_lapse = if_else(!subid %in% first_lapses_336$subid, "yes", "no"),
+         first_lapse = "no")
 
 for (the_subid in first_lapses_24$subid) {
   dttm <- first_lapses_24 |> 
@@ -320,7 +331,7 @@ labels_336_full <- labels_336_full |>
 Calculate aurocs
 ```{r}
 auroc_first_lapse_24 <- labels_24_full |> 
-  filter(first_lapse == "yes") |> 
+  filter(first_lapse == "yes" | never_lapse == "yes") |> 
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 
@@ -330,7 +341,7 @@ auroc_first_lapse_24 <- labels_24_full |>
   rename(first_lapse = .estimate) 
      
 auroc_not_first_lapse_24 <- labels_24_full |> 
-  filter(first_lapse == "no") |>
+  filter(first_lapse == "no" | never_lapse == "yes") |>
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 
@@ -368,7 +379,7 @@ labels_24_full |>
 
 ```{r}
 auroc_first_lapse_72 <- labels_72_full |> 
-  filter(first_lapse == "yes") |> 
+  filter(first_lapse == "yes" | never_lapse == "yes") |> 
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 
@@ -378,7 +389,7 @@ auroc_first_lapse_72 <- labels_72_full |>
   rename(first_lapse = .estimate) 
      
 auroc_not_first_lapse_72 <- labels_72_full |> 
-  filter(first_lapse == "no") |>
+  filter(first_lapse == "no" | never_lapse == "yes") |>
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 
@@ -415,7 +426,7 @@ labels_72_full |>
 
 ```{r}
 auroc_first_lapse_168 <- labels_168_full |> 
-  filter(first_lapse == "yes") |> 
+  filter(first_lapse == "yes" | never_lapse == "yes") |> 
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 
@@ -425,7 +436,7 @@ auroc_first_lapse_168 <- labels_168_full |>
   rename(first_lapse = .estimate) 
      
 auroc_not_first_lapse_168 <- labels_168_full |> 
-  filter(first_lapse == "no") |>
+  filter(first_lapse == "no" | never_lapse == "yes") |>
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 
@@ -462,7 +473,7 @@ labels_168_full |>
 
 ```{r}
 auroc_first_lapse_336 <- labels_336_full |> 
-  filter(first_lapse == "yes") |> 
+  filter(first_lapse == "yes" | never_lapse == "yes") |> 
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 
@@ -472,7 +483,7 @@ auroc_first_lapse_336 <- labels_336_full |>
   rename(first_lapse = .estimate) 
      
 auroc_not_first_lapse_336 <- labels_336_full |> 
-  filter(first_lapse == "no") |>
+  filter(first_lapse == "no" | never_lapse == "yes") |>
   nest(.by = outer_split_num, .key = "preds") |> 
   mutate(auroc = map(preds, \(preds) roc_auc(preds, prob_raw, 
                                              truth = label))) |> 
