@@ -6,21 +6,19 @@ number-sections: true
 format: 
   html: 
     embed-resources: true
-    toc: true 
-    toc_depth: 5
+    toc: false
 execute:
   echo: false
+  message: false
 editor_options: 
   chunk_output_type: console
 ---
 
-This file contains the supplemental materials for *Forecasting Alcohol Lapse Risk up to Two Weeks in Advance using Time-lagged Machine Learning Models*. It includes all supplemental figures and tables. Additional materials are made available on our study's OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)).   
+This file contains the supplemental materials for *Forecasting Risk of Alcohol Lapse up to Two Weeks in Advance using Time-lagged Machine Learning Models*. It includes all supplemental figures and tables. Additional materials are made available on our study's OSF page ([https://osf.io/xta67/](https://osf.io/xta67/)).   
 
 -----
 
 ## Supplemental Figures
-
-### Figure S1: Raw Predicted Probabilities
 
 ```{r}
 #| code-fold: true
@@ -77,6 +75,18 @@ preds_168 <- read_rds(here::here(path_models_lag,
 preds_336 <- read_rds(here::here(path_models_lag, 
                                "final_preds_kfold_1_x_5_1day_336_v3_strat_lh_final.rds")) 
 
+preds_0_nested <- read_rds(here::here(path_models_lag, 
+                               "outer_preds_6_x_5_1day_0_v3_nested_strat_lh.rds")) 
+preds_24_nested <- read_rds(here::here(path_models_lag, 
+                               "outer_preds_6_x_5_1day_24_v3_nested_strat_lh.rds")) 
+preds_72_nested <- read_rds(here::here(path_models_lag, 
+                               "outer_preds_6_x_5_1day_72_v3_nested_strat_lh.rds")) 
+preds_168_nested <- read_rds(here::here(path_models_lag, 
+                               "outer_preds_6_x_5_1day_168_v3_nested_strat_lh.rds")) 
+preds_336_nested <- read_rds(here::here(path_models_lag, 
+                               "outer_preds_6_x_5_1day_336_v3_nested_strat_lh.rds")) 
+
+
 preds_all <- preds_0 |> 
   mutate(model = "No lag") |> 
   bind_rows(preds_24 |> 
@@ -96,22 +106,45 @@ preds_hist <- preds_all |>
   facet_wrap(~model) +
   labs(x = "Raw probabilities from final model") +
   scale_x_continuous(breaks = seq(0, 1, by = 0.2))
+
+ci_first_vs_later_lapse <- read_csv(here::here(path_models_lag, "pp_perf_tibble_first_vs_last.csv"),
+                                    show_col_types = FALSE)
 ```
 
-Our models produced variation in predicted probabilities, with probabilities spanning nearly the entire 0 - 1 range. The 2-week lagged model had fewer high raw probabilities (all probabilities were < .80).  Histograms of the raw predicted probabilities for the best configuration for all 5 models are presented below. 
+### Figure A. Model performance by model and timing of lapse
+
+To understand differences in model performance for predicting an individual's first lapse compared to later lapses, we calculated median area under the receiver operating characteristic curve (auROC) with Bayesian priors and the 95% Bayesian credible intervals separately for first and later lapses across the 30 held-out test sets. Individuals who never lapsed while on study were included in both groups to keep sample sizes relatively equivalent. 
+
+Compared to overall model performance (.85-.91), models performed less well when predicting an individual's first lapse (median auROCs ranging from .78-.79; Figure A). This performance was relatively consistent across lag times. Conversely, models performed better when predicting later lapses (.87-.94), compared to overall performance. Performance for later lapses showed a moderate decline as lag time increased, mirroring the pattern seen in overall model performance (Figure 1 in main manuscript). 
 
 ```{r}
-#| label: fig-s1
-#| fig-cap: "Histograms of raw probabilities of our best model configurations for each classification model (no lag, 1-day, 3-day, 1-week and 2-week lags)."
-#| fig-width: 8
-#| fig-height: 5
+#| fig-cap: "Posterior probabilities for area under the receiver operating curve (auROC) by model (No lag, 1-day, 3-day, 1-week, 2-week) and timing of lapse (first vs. later lapse). auROC ranges from .5 (chance performance) to 1 (perfect performance). Median posterior probabilities over 12,000 posterior samples (4 chains × 3,000 samples) are depicted as points. Vertical lines represent the 95% Bayesian credible intervals for the posterior distribution."
+#| message: false
+#| warning: false
 
-preds_hist
+ci_first_vs_later_lapse |> 
+  mutate(lag = factor(lag, levels = c("No lag", "1 day", "3 days", "1 week", "2 weeks"),
+                      labels = c("No lag", "1-day", "3-day", "1-week", "2-week")),
+         model = factor(model, levels = c("first lapse", "later lapse"))) |>  
+  ggplot(aes(x = lag, y = pp_median, color = model)) + 
+  geom_point(position = position_dodge(width = 0.5), size = 1) +
+  geom_line(position = position_dodge(width = 0.5)) +
+  geom_segment(mapping = aes(x = lag, y = pp_lower, yend = pp_upper, color = model),
+               position = position_dodge(width = 0.5)) +
+  scale_y_continuous("auROC", limits = c(.50, 1.0)) +
+  labs(x = NULL,
+       color = NULL) +
+  theme_classic() +
+  theme(legend.position = "right",
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  scale_color_manual(values = c("#4A4747", "#cb6bce")) 
 ```
 
-### Figure S2: Calibration Plots for all Models
 
-The raw probabilities produced by our final models were not well calibrated. Beta and logistic calibration methods improved probability accuracy. Below we present the calibration plots of our raw predicted lapse probabilities for each model. In supplemental table S2 we report the brier scores for raw and calibrated probabilities for each model.
+
+### Figure B. Calibration plots for all models
+
+Figure B shows the calibration plots for the raw and calibrated probabilities for all five models. It also includes a histogram of raw probabilities along the x-axis to illustrate range of predictions and bin size.
 
 ```{r}
 #| code-fold: true
@@ -226,7 +259,6 @@ plot_cal <- preds_all |>
 ```
 
 ```{r}
-#| label: fig-s2
 #| fig-cap: "Calibration plots of raw and calibrated predicted lapse probabilities (beta, isotonic, and logistic) across models (no lag, 1-day, 3-day, 1-week, and 2-week lag). Predicted probabilities (x-axis) are binned into deciles. Observed lapse probability (y-axis) represents the proportion of actual lapses observed in each bin. The dashed diagonal represents perfect calibration. Points below the line indicate overestimation and points above the line indicate underestimation. Raw probabilities are depicted as the solid black curves. Platt calibrated probabilites are depicted as the pink dashed curves. The grey histogram along the bottom of the plot represents the proportion of raw probabilities in each bin."
 #| fig-width: 8
 #| fig-height: 10
@@ -235,9 +267,9 @@ plot_cal
 ```
 
 
-### Figure S3: Global Shapley Plots for all 5 Models
+### Figure C. Global Shapley values as a function of lag time
 
-The top globally important feature category (i.e., highest mean |Shapley value|) for all models was past use. Future efficacy was a strong predictor for more immediate model predictions (i.e., no lag and 1-day lag), but as lag time increased importance attenuated. On the other hand, as lag time increased past/future risky situations increased in importance. Craving was relatively consistently important, in magnitude, across all models.
+Global feature importance is an indicator of how important a feature category was to the model’s predictions, on average (i.e., across all participants and all observations). In Figure C, we present the global feature importance values across lag times. The magnitude of importance for our two most important features, past use and future efficacy, sharply declined as lag time increased. There were also moderate increases in feature importance for risk situations and valence/arousal with increased lag time.
 
 ```{r}
 #| code-fold: true
@@ -328,7 +360,6 @@ fig_s3 <- shap_global |>
 ```
 
 ```{r}
-#| label: fig-s3
 #| fig-cap: "Global importance (mean |Shapley value|) for feature categories by lag time."
 #| fig-width: 8
 #| fig-height: 5
@@ -338,9 +369,9 @@ fig_s3
 
 
 
-### Figure S4: Global Shapley Plots for Baseline and 2-Week Lag Model by Demographic Group
+### Figure D. Global Shapley plots for baseline and 2-week lag models by demographic subgroup
 
-We saw similar patterns in global feature importance across different demographic subgroups (race/ethnicity, income, sex at birth). Plots of global feature importance by demographic subgroup for the no lag and 2-week lagged models are presented below. 
+Figure D presents the global feature importance values separately by demographic subgroup for the no lag and 2-week lag models. The relative ordering of important features remained consistent across groups.  
 
 ```{r}
 #| code-fold: true
@@ -555,7 +586,97 @@ fig_s4
 
 ## Supplemental Tables
 
-### Table S1: Demographic Contrasts for all Models
+### Table A. Classification performance metrics
+
+In Table A we report median sensitivity, specificity, and balanced accuracy calculated at a single decision threshold (identified using Youden’s index) across the 30 held-out test sets separately for each model. We calculated these metrics using the Platt-scaled probabilities to provide insight into how well the models can correctly label a prediction window as lapse or no lapse. However, we caution against using classification with these models. A decision threshold is only necessary when a "decision" about whether to intervene must be made. We intend for our model's predicted probabilities to be used to provide risk-relevant information to an individual irregardless of their predicted risk level. We believe that assigning a class label of lapse versus no lapse would be less clinically useful (compared to these full-range probability scores) and may even be potentially iatrogenic. Moreover, the optimal decision threshold is likely to vary substantially depending on the clinical context and the relative costs of misclassification.
+
+```{r}
+get_metrics <- function(preds) {
+  
+  j_thres <- preds |>
+    yardstick::roc_curve(prob_logi, truth = label) |>
+    mutate(j = sensitivity + specificity - 1) |>
+    slice_max(j, n = 1, with_ties = FALSE) |>
+    pull(.threshold)
+  
+  preds |>
+    mutate(
+      estimate = if_else(prob_logi > j_thres, "Lapse", "No lapse"),
+      estimate = factor(estimate, levels = c("Lapse", "No lapse"))
+    ) |>
+    yardstick::conf_mat(truth = label, estimate = estimate) |>
+    summary() |>
+    select(-.estimator) |>
+    filter(.metric %in% c("sens", "spec", "bal_accuracy")) |> 
+    mutate(threshold = j_thres)
+}
+```
+
+```{r}
+splits_0 <- preds_0_nested |>  
+  nest(.by = outer_split_num, .key = "preds") 
+
+splits_24 <- preds_24_nested |>  
+  nest(.by = outer_split_num, .key = "preds") 
+
+splits_72 <- preds_72_nested |>  
+  nest(.by = outer_split_num, .key = "preds")
+
+splits_168 <- preds_168_nested |>
+  nest(.by = outer_split_num, .key = "preds")
+
+splits_336 <- preds_336_nested |>
+  nest(.by = outer_split_num, .key = "preds")
+
+metrics <- splits_0 |>  
+  mutate(metrics = map(preds, get_metrics)) |>  
+  select(-preds) |>  
+  unnest(metrics) |> 
+  mutate(model = "No lag") |> 
+  bind_rows(splits_24 |>  
+              mutate(metrics = map(preds, get_metrics)) |>  
+              select(-preds) |>  
+              unnest(metrics) |> 
+              mutate(model = "1-day")) |> 
+  bind_rows(splits_72 |>
+              mutate(metrics = map(preds, get_metrics)) |>  
+              select(-preds) |>  
+              unnest(metrics) |> 
+              mutate(model = "3-day")) |> 
+  bind_rows(splits_168 |>
+              mutate(metrics = map(preds, get_metrics)) |>
+              select(-preds) |>
+              unnest(metrics) |>
+              mutate(model = "1-week")) |> 
+  bind_rows(splits_336 |>
+              mutate(metrics = map(preds, get_metrics)) |>
+              select(-preds) |>
+              unnest(metrics) |>
+              mutate(model = "2-week")) |> 
+  mutate(model = factor(model, levels = c("No lag", "1-day", "3-day", "1-week", "2-week")))
+```
+
+
+```{r}
+#| label: tbl-metrics
+#| tbl-cap: "Sensitivity, specificity, and balanced accuracy performance estimates for each model at a specific decision threshold identified by Youden’s index."
+
+metrics |> 
+  group_by(model, .metric) |> 
+  summarize(median = median(.estimate), .groups = "drop") |> 
+  pivot_wider(names_from = .metric, values_from = median) |> 
+  select(model, sensitivity = sens, specificity = spec, 
+         `balanced accuracy` = bal_accuracy) |> 
+  knitr::kable(digits = 2) |> 
+  kableExtra::kable_classic()
+```
+
+
+
+
+### Table B. Demographic Contrasts for all Models
+
+Table B presents the median difference in auROC, 95% Bayesian CI, and posterior probability that the auROC difference was smaller than 0 for the three fairness contrasts: race/ethnicity (non-White and/or Hispanic; *N* = 20 vs. Non-Hispanic White; *N* = 131), sex at birth (female; *N* = 74 vs. male; *N* = 77), and income (below poverty line; *N* = 49 vs. above poverty line; *N* = 102). Median auROC differences less than 0 indicate the model, on average, performed worse for the non-advantaged group (female, non-White and/or Hispanic, below poverty line) compared to the advantaged group (male, non-Hispanic White, and above poverty line) for all models.
 
 ```{r}
 #| label: tbl-fairness
@@ -603,9 +724,13 @@ pp_sex |>
 ```
 
 
-### Table S2: Brier scores for all models
+### Table C. Brier scores for all models
+
+The raw probabilities produced by our final models were not well calibrated. Consequently, we used Platt scaling to improve calibration. Table C presents Brier scores for the raw and Platt scaled probabilities for each model. 
 
 ```{r}
+#| tbl-cap: "Brier scores for raw and Platt-scaled probabilities by classification model (No lag, 1-day, 3-day, 1-week, 2-week)."
+#| 
 brier <- read_csv(here::here(path_models_lag, "brier_scores.csv"),
                   show_col_types = FALSE) |> 
   mutate(model = factor(model, 
