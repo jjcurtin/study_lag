@@ -1275,7 +1275,7 @@ Table&nbsp;1: Demographic and Clinical Characteristics
 </section>
 <section id="model-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="model-evaluation">Model Evaluation</h2>
-<p><a href="#fig-pp" class="quarto-xref">Figure&nbsp;2</a> presents the full posterior probability distributions for auROC for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). The median auROCs from these posterior distributions were 0.91 (no lag), 0.89 (1-day lag), 0.88 (3-day lag), 0.87 (1-week lag), and 0.85 (2-week lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: no lag [0.90-0.92], 1-day lag [0.88-0.90], 3-day lag [0.87-0.90], 1-week lag [0.85-0.88], 2-week lag [0.83-0.87]. We report model performance estimates separately by timing of lapse (first vs.&nbsp;later lapses) across models in Figure A in S1 Appendix.</p>
+<p><a href="#fig-pp" class="quarto-xref">Figure&nbsp;2</a> presents the full posterior probability distributions for auROC for each model (no lag, 1-day, 3-day, 1-week, and 2-week lag). The median auROCs from these posterior distributions were 0.91 (no lag), 0.89 (1-day lag), 0.88 (3-day lag), 0.87 (1-week lag), and 0.85 (2-week lag). These values represent our best estimates for the magnitude of the auROC parameter for each model. The 95% Bayesian CI for the auROCs for these models were relatively narrow and did not contain 0.5: no lag [0.90-0.92], 1-day lag [0.88-0.90], 3-day lag [0.87-0.90], 1-week lag [0.85-0.88], 2-week lag [0.83-0.87].</p>
 <div class="quarto-embed-nb-cell" data-notebook="C:\Users\kpaquette2\study_lag\notebooks\mak_figures.qmd" data-notebook-title="Make All Figures for Main Manuscript" data-notebook-cellid="cell-fig-pp">
 <div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="cell-fig-pp" class="cell" data-message="false">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ci <span class="op">|&gt;</span> </span>
@@ -1288,8 +1288,7 @@ Table&nbsp;1: Demographic and Clinical Characteristics
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  labs(x <span class="op">=</span> NULL,</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>       color <span class="op">=</span> NULL) <span class="op">+</span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  theme_classic() <span class="op">+</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  theme(legend.position <span class="op">=</span> <span class="st">"right"</span>,</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        panel.border <span class="op">=</span> element_rect(colour <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> NA, linewidth <span class="op">=</span> <span class="dv">1</span>)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  theme(panel.border <span class="op">=</span> element_rect(colour <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> NA, linewidth <span class="op">=</span> <span class="dv">1</span>)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_line()`: Each group consists of only one observation.
 ℹ Do you need to adjust the group aesthetic?</code></pre>
@@ -1308,6 +1307,7 @@ Figure&nbsp;2: Posterior probabilities for area under the receiver operating cur
 </div>
 </div></div>
 </div>
+<p>We also evaluated how well our model performed in predicting first lapses compared to later lapses (Figure A in S1 Appendix). Overall, the model performed worse for first lapses than for later lapses, with performance remaining relatively stable across lag times (median auROCs of 0.78–0.79). In contrast, the model performed very well in predicting later lapses (median auROCs of 0.87–0.94). Performance for later lapses showed a moderate decline as lag time increased, mirroring the pattern observed in overall model performance.</p>
 </section>
 <section id="model-comparisons" class="level2">
 <h2 class="anchored" data-anchor-id="model-comparisons">Model Comparisons</h2>
@@ -1568,12 +1568,7 @@ Table&nbsp;3: Median difference in auROC, 95% Bayesian credible interval (CI), a
 <span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  theme_classic(base_size <span class="op">=</span> <span class="dv">11</span>) <span class="op">+</span></span>
 <span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  theme(</span>
 <span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    legend.position <span class="op">=</span> <span class="st">"bottom"</span>,</span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    strip.text <span class="op">=</span> element_text(size <span class="op">=</span> <span class="dv">11</span>),</span>
-<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    legend.title <span class="op">=</span> element_text(face <span class="op">=</span> <span class="st">"bold"</span>),</span>
-<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>    legend.text <span class="op">=</span> element_text(size <span class="op">=</span> <span class="dv">10</span>),</span>
-<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>    axis.text <span class="op">=</span> element_text(size <span class="op">=</span> <span class="dv">10</span>),</span>
-<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    axis.title <span class="op">=</span> element_text(face <span class="op">=</span> <span class="st">"bold"</span>)</span>
-<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    panel.border <span class="op">=</span> element_rect(colour <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> NA, linewidth <span class="op">=</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-cal" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1618,6 +1613,7 @@ Figure&nbsp;4: Global (mean |Shapley value|) and local (proportion of days as to
 <h2 class="anchored" data-anchor-id="model-evaluation-and-comparisons">Model Evaluation and Comparisons</h2>
 <p>All the models that we evaluated performed exceptionally well. The no lag model, which predicts the probability of an immediate (i.e., within 24 hours) lapse back to alcohol use, had a .91 median posterior probability for auROC. Our 2-week lagged model, which made the most distal predictions, had a .85 median posterior probability for auROC, suggesting lagged models can be used to shift a 24-hour prediction window meaningfully into the future.</p>
 <p>Across models (no lag, 1 day, 3 days, 1 week, and 2 weeks), model performance systematically decreased as models predicted further into the future. All lagged models had lower performance compared to the no lag baseline model and to the preceding adjacent lag model. This is unsurprising given what we know about prediction and substance use. Many important relapse risk factors are fluctuating processes that can first emerge and/or change day-by-day, if not more frequently. As lag time increases, features become less proximal to the start of the prediction window. Still, we wish to emphasize that our lowest auROC (.85) is still quite good, and the benefit of advanced notice (i.e., 2 weeks) likely outweighs the modest cost to model performance.</p>
+<p>Our models performed better at predicting lapses once a lapse had already occurred. Lower performance in predicting an individual’s first lapse is not necessarily problematic. A single lapse does not constitute a relapse but instead represents a period of vulnerability, during which an individual may either continue to lapse (and potentially relapse, or return to prior levels of hazardous use) or learn from the experience and re-engage with their recovery goals. Given that this critical window often follows the initial lapse, we are confident that our models can still be used to provide timely recovery support.</p>
 <p>Collectively, these results suggest we can achieve clinically meaningful performance up to two weeks out. Our rigorous resampling methods (grouped, nested, k-fold cross-validation) make us confident that these are valid estimates of how our models would perform with new individuals. Furthermore, it should be noted that both the no lag and 2-week lagged models can be combined in a complementary fashion that allows both for highly accurate immediate lapse prediction and advanced warning about future lapse risk.</p>
 </section>
 <section id="model-fairness" class="level2">
