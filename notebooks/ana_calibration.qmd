@@ -1,0 +1,74 @@
+---
+title: "Model calibration"
+author: "Kendra Wyant"
+date: "`r lubridate::today()`"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+format:
+  html:
+    embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+
+### Set Up Environment
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(source("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true"))
+suppressPackageStartupMessages(library(tidymodels))
+
+path_models <- format_path("risk/models/lag")
+
+options(knitr.kable.NA = '')
+```
+
+
+### Read in best model predicitons
+```{r}
+preds_0 <- read_rds(here::here(path_models, "final_preds_kfold_1_x_5_1day_0_v3_strat_lh_final.rds"))
+preds_24 <- read_rds(here::here(path_models, "final_preds_kfold_1_x_5_1day_24_v3_strat_lh_final.rds"))
+preds_72 <- read_rds(here::here(path_models, "final_preds_kfold_1_x_5_1day_72_v3_strat_lh_final.rds"))
+preds_168 <- read_rds(here::here(path_models, "final_preds_kfold_1_x_5_1day_168_v3_strat_lh_final.rds"))
+preds_336 <- read_rds(here::here(path_models, "final_preds_kfold_1_x_5_1day_336_v3_strat_lh_final.rds"))
+```
+
+
+### Brier Scores
+
+
+```{r}
+brier <- tibble(model = "No lag",
+                raw = brier_class(preds_0, truth = label, prob_raw)$.estimate,
+                logi = brier_class(preds_0, truth = label, prob_logi)$.estimate,
+                beta = brier_class(preds_0, truth = label, prob_beta)$.estimate) |> 
+  bind_rows(tibble(model = "1 day",
+                   raw = brier_class(preds_24, truth = label, prob_raw)$.estimate,
+                   logi = brier_class(preds_24, truth = label, prob_logi)$.estimate,
+                   beta = brier_class(preds_24, truth = label, prob_beta)$.estimate)) |> 
+  bind_rows(tibble(model = "3 days",
+                   raw = brier_class(preds_72, truth = label, prob_raw)$.estimate,
+                   logi = brier_class(preds_72, truth = label, prob_logi)$.estimate,
+                   beta = brier_class(preds_72, truth = label, prob_beta)$.estimate)) |> 
+  bind_rows(tibble(model = "1 week",
+                   raw = brier_class(preds_168, truth = label, prob_raw)$.estimate,
+                   logi = brier_class(preds_168, truth = label, prob_logi)$.estimate,
+                   beta = brier_class(preds_168, truth = label, prob_beta)$.estimate)) |> 
+  bind_rows(tibble(model = "2 weeks",
+                   raw = brier_class(preds_336, truth = label, prob_raw)$.estimate,
+                   logi = brier_class(preds_336, truth = label, prob_logi)$.estimate,
+                   beta = brier_class(preds_336, truth = label, prob_beta)$.estimate)) |> 
+  write_csv(here::here(path_models, "brier_scores.csv"))
+
+
+brier |> 
+  rename(Model = model, 
+         `Raw (uncalibrated)` = raw,
+         `Logistic calibration` = logi,
+         `Beta calibration` = beta) |> 
+  knitr::kable(digits = 2) |> 
+  kableExtra::kable_classic()
+```
+
