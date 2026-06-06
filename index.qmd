@@ -237,7 +237,7 @@ We summarized feature importance in two ways. First, we used a traditional appro
 
 {{< embed notebooks/mak_figures.qmd#fig-pp >}} 
 
-We also evaluated how well our model predicted first lapses compared to later lapses (Figure A in S1 Appendix). Overall, performance was worse for first lapses than for later lapses, remaining relatively stable across lag times (median auROCs of 0.78–0.79). In contrast, the model performed very well for later lapses (median auROCs of 0.87–0.94). Performance for later lapses also showed a moderate decline as lag time increased, mirroring the pattern observed in overall model performance.
+We also evaluated how well our models predicted first lapses compared to later lapses (Figure A in S1 Appendix). Overall, performance was worse for first lapses than for later lapses, remaining relatively stable across lag times (median auROCs of 0.78–0.79). In contrast, the model performed very well for later lapses (median auROCs of 0.87–0.94). Performance for later lapses also showed a moderate decline as lag time increased, mirroring the pattern observed in overall model performance.
 
 
 ## Model Comparisons
