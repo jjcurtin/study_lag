@@ -1,0 +1,17 @@
+---
+format: pdf
+margin-left: 60pt
+margin-right: 60pt
+margin-bottom: 60pt
+margin-top: 60pt
+---
+
+Dear Dr. Tovmasyan,
+
+We are pleased to submit a revised version of our manuscript "Forecasting alcohol lapse risk up to two weeks in advance using time-lagged machine learning models." We have addressed all requests by the editor and reviewer.
+
+If we can provide any additional information that can be of assistance, please do not hesitate to ask. Thank you in advance for your consideration.
+
+Sincerely,    
+
+Kendra Wyant, Gaylen E. Fronk, Jiachen Yu, Claire E, Punturieri, & John J. Curtin
