@@ -23,7 +23,7 @@ We added a full stop to the end of line 155.
 
 ### 3. Please justify why participants exhibiting severe psychosis and paranoia were excluded, but not those experiencing severe symptoms of other mental health conditions.
 
-We now elaborate on this study protocol decision. This psychosis/paranoia exclusion criterion was implemented because the study involved the collection of sensitive data without real-time clinical monitoring or treatment, and individuals experiencing severe psychotic symptoms may require a higher level of clinical support than the study protocol was designed to provide. We did not exclude participants based on the presence of severe symptoms of other mental health disorders because we aimed to recruit a sample representative of the broader clinical population, in which AUD commonly co-occurs with other psychiatric disorders. Excluding participants on the basis of other psychiatric symptoms would have substantially reduced the representativeness of the sample and limited the generalizability of the findings.
+We now justify this study protocol decision in the manuscript. Specifically, individuals experiencing severe psychotic symptoms may require a higher level of clinical support than the study protocol provided (e.g., with real-time clinical monitoring or treatment). We did not exclude participants based on the presence of severe symptoms of other mental health disorders because we aimed to recruit a sample representative of the broader AUD population, in which psychiatric disorders frequently co-occur.
 
 
 ### 4. Please move the Ethics statement above the Procedure section.
