@@ -11,7 +11,7 @@ Below, we delineate the concerns and requests regarding our original submission,
 
 ### 1. Please acknowledge in the limitations that positive and negative affect were assessed using a continuous scale. There is evidence to suggest that positive and negative affect are separate, though highly correlated, constructs; therefore, using continuous scale may overlook some of the nuanced ways in which affect is associated with other constructs.
 
-We now address this as a limitation in our discussion.
+We now address this as a limitation in our discussion. See paragraph starting on line 744.
 
 
 ### 2. On p. 35, line 724, you refer to @hsiehSampleSizeTables1989. I assume this is a reference that was not properly converted. Please correct this.
