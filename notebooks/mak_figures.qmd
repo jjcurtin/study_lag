@@ -111,7 +111,8 @@ ci |>
   labs(x = NULL,
        color = NULL) +
   theme_classic() +
-  theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) 
+  theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  theme(text = element_text(size = 15))
 
 ```
 
@@ -203,10 +204,10 @@ preds_all |>
   coord_cartesian(clip = "off") +
   scale_color_manual(values = c("black", "#cb6bce")) +
   scale_linetype_manual(values = c("solid", "twodash")) +
-  theme_classic(base_size = 11) +
   theme(
     legend.position = "bottom",
-    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  theme(text = element_text(size = 15))
 ```
 
 
@@ -225,7 +226,8 @@ global_panel <- shap_global |>
   theme(axis.text=element_text(size=9.5),
         legend.position = "none",
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
-  coord_flip()
+  coord_flip() +
+  theme(text = element_text(size = 15))
 
 n_obs <- max(shap_grp_0$id_obs)
 
@@ -268,7 +270,8 @@ local_panel <- shaps_day_max |>
         legend.position = "right",
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank()) +
-  coord_flip()
+  coord_flip() +
+  theme(text = element_text(size = 15))
 ```
 
 
